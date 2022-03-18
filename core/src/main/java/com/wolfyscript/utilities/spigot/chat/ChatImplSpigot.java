@@ -5,14 +5,21 @@ import com.wolfyscript.utilities.common.adapters.Player;
 import com.wolfyscript.utilities.common.chat.Chat;
 import me.wolfyscript.utilities.api.chat.ClickActionCallback;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import me.wolfyscript.utilities.util.chat.ChatColor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ChatImplSpigot extends Chat {
+
+    private static final Pattern LEGACY_PLACEHOLDER_PATTERN = Pattern.compile("%([^%]+)%");
 
     public ChatImplSpigot(WolfyUtils wolfyUtils) {
         super(wolfyUtils);
@@ -89,7 +96,7 @@ public class ChatImplSpigot extends Chat {
     }
 
     @Override
-    public String convertOldPlaceholder(String s) {
-        return null;
+    public String convertOldPlaceholder(String legacyText) {
+        return legacyText;
     }
 }

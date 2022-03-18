@@ -48,8 +48,8 @@ public class WolfyUtilsSpigot extends WolfyUtils {
     protected WolfyUtilsSpigot(WolfyCoreSpigot core, Plugin plugin, Class<? extends CustomCache> cacheType, boolean init) {
         this.core = core;
         this.plugin = plugin;
-        this.chat = new ChatImpl(this);
         this.languageAPI = new LangAPISpigot(this);
+        this.chat = new ChatImpl(this);
         this.console = new Console((WolfyUtilities) this);
         this.itemUtils = new ItemUtils((WolfyUtilities) this);
         this.permissions = new Permissions(this);

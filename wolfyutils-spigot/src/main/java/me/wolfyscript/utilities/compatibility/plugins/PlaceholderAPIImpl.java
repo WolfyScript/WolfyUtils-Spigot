@@ -52,6 +52,7 @@ public class PlaceholderAPIImpl extends PluginIntegrationAbstract implements Pla
 
     @Override
     public void init(Plugin plugin) {
+        getCore().getLogger().info("init PAPI event");
         Bukkit.getPluginManager().registerEvents(this, core);
 
         var valueProviderRegistry = core.getRegistries().getValueProviders();

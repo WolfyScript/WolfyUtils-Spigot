@@ -18,13 +18,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class LangAPISpigot extends LanguageAPI {
+
+    private static final Pattern LEGACY_PLACEHOLDER_PATTERN = Pattern.compile("%([^%]+)%");
 
     public LangAPISpigot(WolfyUtilsSpigot api) {
         super(api);
@@ -107,6 +111,27 @@ public class LangAPISpigot extends LanguageAPI {
             }
         });
         return result;
+    }
+
+    @Override
+    protected String convertLegacyToMiniMessage(String legacyText) {
+        String rawLegacy = ChatColor.convert(legacyText);
+        Matcher matcher = LEGACY_PLACEHOLDER_PATTERN.matcher(rawLegacy);
+        Map<String, String> foundPlaceholders = new HashMap<>();
+        while (matcher.find()) {
+            //find the old placeholder.
+            foundPlaceholders.put(matcher.group(), "<" + api.getChat().convertOldPlaceholder(matcher.group(1)) + ">");
+        }
+        if (rawLegacy.contains("§")) {
+            rawLegacy = api.getChat().getMiniMessage().serialize(BukkitComponentSerializer.legacy().deserialize(rawLegacy));
+        }
+        //Replace the old placeholders with the new tags after the color conversion, so these tags are not escaped!
+        if (!foundPlaceholders.isEmpty()) {
+            for (Map.Entry<String, String> entry : foundPlaceholders.entrySet()) {
+                rawLegacy = rawLegacy.replace(entry.getKey(), entry.getValue());
+            }
+        }
+        return rawLegacy;
     }
 
     @Deprecated

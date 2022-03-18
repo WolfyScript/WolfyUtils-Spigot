@@ -5,6 +5,7 @@ import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
 import me.wolfyscript.utilities.compatibility.CompatibilityManager;
+import me.wolfyscript.utilities.compatibility.CompatibilityManagerSpigot;
 import me.wolfyscript.utilities.registry.Registries;
 import me.wolfyscript.utilities.util.version.ServerVersion;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -24,7 +25,7 @@ import java.util.Map;
 /**
  * This abstract class is the actual core of the plugin (This class is being extended by the plugin instance).<br>
  * <p>
- * It provides access to internal functionality like {@link Registries}, {@link CompatibilityManager}, and of course the creation of the API instance.<br>
+ * It provides access to internal functionality like {@link Registries}, {@link CompatibilityManagerSpigot}, and of course the creation of the API instance.<br>
  * <p>
  * To get an instance of the API ({@link WolfyUtilities}) for your plugin you need one of the following methods. <br>
  * <ul>
@@ -46,7 +47,7 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
 
     protected WolfyUtilCore() {
         super();
-        if (instance == null && this.getName().equals("WolfyUtilities") && getClass().getPackageName().equals("me.wolfyscript.utilities.main")) {
+        if (instance == null && this.getName().equals("WolfyUtilities") && getClass().getPackageName().equals("com.wolfyscript.utilities.spigot")) {
             instance = this;
         } else {
             throw new IllegalArgumentException("This constructor can only be called by WolfyUtilities itself!");
@@ -96,9 +97,9 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
     }
 
     /**
-     * Gets the {@link CompatibilityManager}, that manages the plugins compatibility features.
+     * Gets the {@link CompatibilityManagerSpigot}, that manages the plugins compatibility features.
      *
-     * @return The {@link CompatibilityManager}.
+     * @return The {@link CompatibilityManagerSpigot}.
      */
     public abstract CompatibilityManager getCompatibilityManager();
 
