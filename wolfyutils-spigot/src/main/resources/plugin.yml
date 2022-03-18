@@ -1,0 +1,44 @@
+name: WolfyUtilities
+version: '${project.version}'
+main: com.wolfyscript.utilities.spigot.WolfyCoreSpigot
+api-version: 1.16
+authors: [ WolfyScript ]
+
+loadbefore:
+  - ChatColor
+  - ChatColor2
+  - StackableItems
+  - DiSky
+  - EpicWorldGenerator
+
+softdepend:
+  - Magic
+  - LWC
+  - PlotSquared
+  - WorldGuard
+  - MythicMobs
+  - MMOItems
+  - BungeeChat
+  - mcMMO
+  - Oraxen
+  - ItemsAdder
+  - ExecutableItems
+  - PlaceholderAPI
+  - eco
+
+commands:
+  wolfyutils:
+    usage: "/wolfyutils"
+    description: "The main command of WolfyUtils"
+  wui:
+    usage: "/wui <input>"
+    description: "Input for chat input actions"
+  wua:
+    usage: "/wui <action_uuid>"
+    description: "Used to handle code execution on chat click events."
+  particle_animation:
+    usage: "/particle_animation spawn"
+    description: "DEBUG! Spawns a test particle animation on the executor."
+  particle_effect:
+    usage: "/particle_effect spawn"
+    description: "DEBUG! Spawns a test particle effect on the target block."
