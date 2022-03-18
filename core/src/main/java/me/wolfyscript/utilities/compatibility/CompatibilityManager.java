@@ -18,12 +18,23 @@
 
 package me.wolfyscript.utilities.compatibility;
 
-public interface CompatibilityManager {
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 
-    /**
-     * Gets the {@link Plugins} instance that manages the compatibility with other plugins.
-     *
-     * @return The {@link Plugins} instance.
-     */
-    Plugins getPlugins();
+public final class CompatibilityManager {
+
+    private final WolfyUtilCore core;
+    private final PluginsSpigot pluginsSpigot;
+
+    public CompatibilityManager(WolfyUtilCore core) {
+        this.core = core;
+        this.pluginsSpigot = new PluginsSpigot(core);
+    }
+
+    public void init() {
+        pluginsSpigot.init();
+    }
+
+    public Plugins getPlugins() {
+        return pluginsSpigot;
+    }
 }

@@ -18,10 +18,9 @@
 
 package com.wolfyscript.utilities.spigot.commands;
 
-import com.wolfyscript.utilities.spigot.WolfyUtilsSpigot;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.gui.GuiHandler;
-import me.wolfyscript.utilities.main.WUPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -35,9 +34,9 @@ import java.util.Objects;
 
 public class InputCommand implements TabExecutor {
 
-    private final WolfyUtilsSpigot plugin;
+    private final WolfyCoreSpigot plugin;
 
-    public InputCommand(WolfyUtilsSpigot plugin) {
+    public InputCommand(WolfyCoreSpigot plugin) {
         this.plugin = plugin;
     }
 

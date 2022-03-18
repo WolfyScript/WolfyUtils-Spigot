@@ -18,8 +18,7 @@
 
 package com.wolfyscript.utilities.spigot.commands;
 
-import com.wolfyscript.utilities.spigot.WolfyUtilsSpigot;
-import me.wolfyscript.utilities.main.WUPlugin;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import me.wolfyscript.utilities.util.version.ServerVersion;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -35,9 +34,9 @@ import java.util.List;
 
 public class InfoCommand implements TabExecutor {
 
-    private final WolfyUtilsSpigot plugin;
+    private final WolfyCoreSpigot plugin;
 
-    public InfoCommand(WolfyUtilsSpigot plugin) {
+    public InfoCommand(WolfyCoreSpigot plugin) {
         this.plugin = plugin;
     }
 

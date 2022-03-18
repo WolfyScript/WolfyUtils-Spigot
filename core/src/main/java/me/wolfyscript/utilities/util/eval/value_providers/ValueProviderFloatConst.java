@@ -16,26 +16,32 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.compatibility;
+package me.wolfyscript.utilities.util.eval.value_providers;
 
-import me.wolfyscript.utilities.api.WolfyUtilCore;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import me.wolfyscript.utilities.util.NamespacedKey;
+import me.wolfyscript.utilities.util.eval.context.EvalContext;
 
-public final class CompatibilityManagerImpl implements CompatibilityManager {
+public class ValueProviderFloatConst extends AbstractValueProvider<Float> implements ValueProviderFloat {
 
-    private final WolfyUtilCore core;
-    private final PluginsImpl pluginsImpl;
+    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("float/const");
 
-    public CompatibilityManagerImpl(WolfyUtilCore core) {
-        this.core = core;
-        this.pluginsImpl = new PluginsImpl(core);
-    }
+    private final float value;
 
-    public void init() {
-        pluginsImpl.init();
+    @JsonCreator
+    public ValueProviderFloatConst(@JsonProperty("value") float value) {
+        super(KEY);
+        this.value = value;
     }
 
     @Override
-    public Plugins getPlugins() {
-        return pluginsImpl;
+    public Float getValue(EvalContext context) {
+        return value;
+    }
+
+    @Override
+    public NamespacedKey getNamespacedKey() {
+        return null;
     }
 }

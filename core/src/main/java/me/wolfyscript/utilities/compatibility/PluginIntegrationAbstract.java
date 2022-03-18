@@ -107,7 +107,7 @@ public abstract class PluginIntegrationAbstract implements PluginIntegration {
      */
     protected final void markAsDoneLoading() {
         setEnabled(true);
-        ((PluginsImpl) core.getCompatibilityManager().getPlugins()).checkDependencies();
+        ((PluginsSpigot) core.getCompatibilityManager().getPlugins()).checkDependencies();
     }
 
     @Override

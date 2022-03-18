@@ -19,7 +19,7 @@
 package me.wolfyscript.utilities.api.chat;
 
 import com.google.common.base.Preconditions;
-import com.wolfyscript.utilities.common.chat.Chat;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.gui.GuiCluster;
 import me.wolfyscript.utilities.api.language.LanguageAPI;
@@ -51,7 +51,7 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ChatImpl extends me.wolfyscript.utilities.api.chat.Chat implements Chat {
+public class ChatImpl extends me.wolfyscript.utilities.api.chat.Chat {
 
     private static final Pattern ADVENTURE_PLACEHOLDER_PATTERN = Pattern.compile("([!?#]?)([a-z0-9_-]*)");
     private static final Pattern LEGACY_PLACEHOLDER_PATTERN = Pattern.compile("%([^%]+)%");
@@ -61,57 +61,10 @@ public class ChatImpl extends me.wolfyscript.utilities.api.chat.Chat implements 
     private final LegacyComponentSerializer LEGACY_SERIALIZER;
     private final BungeeComponentSerializer BUNGEE_SERIALIZER;
 
-    private Component chatPrefix;
-
-    private final WolfyUtilities wolfyUtilities;
-    private final LanguageAPI languageAPI;
-    private final Plugin plugin;
-    private final MiniMessage miniMessage;
-
-    public ChatImpl(@NotNull WolfyUtilities wolfyUtilities) {
-        super();
-        this.wolfyUtilities = wolfyUtilities;
-        this.languageAPI = wolfyUtilities.getLanguageAPI();
-        this.plugin = wolfyUtilities.getPlugin();
-        this.chatPrefix = Component.text("[" + plugin.getName() + "]");
-        this.miniMessage = MiniMessage.builder().tags(TagResolver.standard())/*.debug(System.out::println)*/.build();
+    public ChatImpl(@NotNull WolfyUtils wolfyUtils) {
+        super(wolfyUtils);
         this.LEGACY_SERIALIZER = BukkitComponentSerializer.legacy();
         this.BUNGEE_SERIALIZER = BungeeComponentSerializer.get();
-    }
-
-    /**
-     * @return The chat prefix as a String.
-     * @deprecated Replaced by {@link #getChatPrefix()}
-     */
-    @Deprecated
-    @Override
-    public String getInGamePrefix() {
-        return BukkitComponentSerializer.legacy().serialize(chatPrefix);
-    }
-
-    /**
-     * @param inGamePrefix The chat prefix.
-     * @deprecated Replaced by {@link #setChatPrefix(Component)}
-     */
-    @Deprecated
-    @Override
-    public void setInGamePrefix(String inGamePrefix) {
-        this.chatPrefix = BukkitComponentSerializer.legacy().deserialize(inGamePrefix);
-    }
-
-    @Override
-    public void setChatPrefix(Component chatPrefix) {
-        this.chatPrefix = chatPrefix;
-    }
-
-    @Override
-    public Component getChatPrefix() {
-        return chatPrefix;
-    }
-
-    @Override
-    public MiniMessage getMiniMessage() {
-        return miniMessage;
     }
 
     /**
@@ -140,7 +93,7 @@ public class ChatImpl extends me.wolfyscript.utilities.api.chat.Chat implements 
     public void sendMessage(Player player, boolean prefix, Component component) {
         if (player != null) {
             if (prefix) {
-                component = Component.empty().append(chatPrefix).append(component);
+                component = Component.empty().append(getChatPrefix()).append(component);
             }
             player.spigot().sendMessage(BUNGEE_SERIALIZER.serialize(component));
         }
@@ -263,6 +216,11 @@ public class ChatImpl extends me.wolfyscript.utilities.api.chat.Chat implements 
         return languageAPI.getComponent(key, translateLegacyColor, resolvers);
     }
 
+    @Override
+    public net.kyori.adventure.text.event.ClickEvent executable(com.wolfyscript.utilities.common.adapters.Player player, boolean b, ClickActionCallback clickActionCallback) {
+        return null;
+    }
+
     /**
      * Creates a ClickEvent, that executes code when clicked.<br>
      * It will internally link a command with an id to the code to execute.
@@ -280,7 +238,7 @@ public class ChatImpl extends me.wolfyscript.utilities.api.chat.Chat implements 
         do {
             id = UUID.randomUUID();
         } while (CLICK_DATA_MAP.containsKey(id));
-        CLICK_DATA_MAP.put(id, new PlayerAction(wolfyUtilities, player, action, discard));
+        CLICK_DATA_MAP.put(id, new PlayerAction(((WolfyUtilities) wolfyUtils), player, action, discard));
         return net.kyori.adventure.text.event.ClickEvent.clickEvent(net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND, "/wua " + id);
     }
 
@@ -312,7 +270,7 @@ public class ChatImpl extends me.wolfyscript.utilities.api.chat.Chat implements 
                 do {
                     id = UUID.randomUUID();
                 } while(CLICK_DATA_MAP.containsKey(id));
-                CLICK_DATA_MAP.put(id, new PlayerAction(wolfyUtilities, player, data));
+                CLICK_DATA_MAP.put(id, new PlayerAction(((WolfyUtilities) wolfyUtils), player, data));
                 component.setClickEvent(new net.md_5.bungee.api.chat.ClickEvent(net.md_5.bungee.api.chat.ClickEvent.Action.RUN_COMMAND, "/wua " + id));
             }
             for (ChatEvent<?, ?> chatEvent : data.getChatEvents()) {
@@ -325,6 +283,24 @@ public class ChatImpl extends me.wolfyscript.utilities.api.chat.Chat implements 
             textComponents[i] = component;
         }
         return textComponents;
+    }
+
+    /**
+     * @return The chat prefix as a String.
+     * @deprecated Replaced by {@link #getChatPrefix()}
+     */
+    @Override
+    public String getInGamePrefix() {
+        return null;
+    }
+
+    /**
+     * @param inGamePrefix The chat prefix.
+     * @deprecated Replaced by {@link #setChatPrefix(Component)}
+     */
+    @Override
+    public void setInGamePrefix(String inGamePrefix) {
+
     }
 
     public static void removeClickData(UUID uuid) {
@@ -377,32 +353,62 @@ public class ChatImpl extends me.wolfyscript.utilities.api.chat.Chat implements 
 
     @Override
     public String getConsolePrefix() {
-        return "[" + plugin.getName() + "]";
+        return "[" + wolfyUtils.getName() + "]";
     }
 
     @Override
     public void sendConsoleMessage(String message) {
-        wolfyUtilities.getConsole().info(message);
+        ((WolfyUtilities) wolfyUtils).getConsole().info(message);
     }
 
     @Override
     public void sendConsoleMessage(String message, String... replacements) {
-        wolfyUtilities.getConsole().log(Level.INFO, message, replacements);
+        ((WolfyUtilities) wolfyUtils).getConsole().log(Level.INFO, message, replacements);
     }
 
     @Override
     public void sendConsoleMessage(String message, String[]... replacements) {
-        wolfyUtilities.getConsole().log(Level.INFO, message, replacements);
+        ((WolfyUtilities) wolfyUtils).getConsole().log(Level.INFO, message, replacements);
     }
 
     @Override
     public void sendConsoleWarning(String message) {
-        wolfyUtilities.getConsole().warn(message);
+        ((WolfyUtilities) wolfyUtils).getConsole().warn(message);
     }
 
     @Override
     public void sendDebugMessage(String message) {
-        wolfyUtilities.getConsole().debug(message);
+        ((WolfyUtilities) wolfyUtils).getConsole().debug(message);
+    }
+
+    @Override
+    public void sendMessage(com.wolfyscript.utilities.common.adapters.Player player, Component component) {
+
+    }
+
+    @Override
+    public void sendMessage(com.wolfyscript.utilities.common.adapters.Player player, boolean b, Component component) {
+
+    }
+
+    @Override
+    public void sendMessages(com.wolfyscript.utilities.common.adapters.Player player, Component... components) {
+
+    }
+
+    @Override
+    public void sendMessages(com.wolfyscript.utilities.common.adapters.Player player, boolean b, Component... components) {
+
+    }
+
+    /**
+     * @param player
+     * @param namespacedKey
+     * @param s
+     * @deprecated
+     */
+    public void sendKey(com.wolfyscript.utilities.common.adapters.Player player, NamespacedKey namespacedKey, String s) {
+
     }
 
     /**

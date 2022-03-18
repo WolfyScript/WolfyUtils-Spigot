@@ -16,16 +16,19 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.api.chat;
+package me.wolfyscript.utilities.api.inventory.custom_items.actions;
 
-/**
- * @param <A> defines the type of the value. String or BaseComponent
- * @param <V> defines the type of the Action. HoverEvent.Action or ClickEvent.Action
- */
-public interface ChatEvent<A, V> {
+import me.wolfyscript.utilities.api.inventory.custom_items.actions.DataPlayerEvent;
+import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayer;
+import me.wolfyscript.utilities.util.NamespacedKey;
+import org.bukkit.event.player.PlayerItemBreakEvent;
 
-    V getValue();
+public class EventPlayerItemBreak extends EventPlayer<DataPlayerEvent<PlayerItemBreakEvent>> {
 
-    A getAction();
+    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("player/item_break");
+
+    protected EventPlayerItemBreak() {
+        super(KEY, (Class<DataPlayerEvent<PlayerItemBreakEvent>>)(Object) DataPlayerEvent.class);
+    }
 
 }

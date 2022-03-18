@@ -18,19 +18,10 @@
 
 package me.wolfyscript.utilities.compatibility.plugins.mythicmobs;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import io.lumine.xikage.mythicmobs.MythicMobs;
-import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
-import me.wolfyscript.utilities.api.nms.nbt.NBTItem;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagString;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Links to MythicMobs items and saves the specified item type.
@@ -41,20 +32,14 @@ import java.util.Objects;
  *     AppendType: true
  * </pre>
  */
-public class MythicMobsRefImpl extends APIReference implements MythicMobsRef {
-
-    private static final String ITEM_KEY = "MYTHIC_TYPE";
-
-    private final String itemName;
+public class MythicMobsRefImpl extends AbstractMythicMobsRef {
 
     public MythicMobsRefImpl(String itemName) {
-        super();
-        this.itemName = itemName;
+        super(itemName);
     }
 
     public MythicMobsRefImpl(MythicMobsRefImpl mythicMobsRefImpl) {
         super(mythicMobsRefImpl);
-        this.itemName = mythicMobsRefImpl.itemName;
     }
 
     @Override
@@ -63,58 +48,16 @@ public class MythicMobsRefImpl extends APIReference implements MythicMobsRef {
     }
 
     @Override
-    public ItemStack getIdItem() {
-        return getLinkedItem();
-    }
-
-    @Override
-    public boolean isValidItem(ItemStack itemStack) {
-        var nbtItem = WolfyUtilities.getWUCore().getNmsUtil().getNBTUtil().getItem(itemStack);
-        if (nbtItem != null && nbtItem.hasKey(ITEM_KEY) && nbtItem.getTag(ITEM_KEY) instanceof NBTTagString nbtTagString) {
-            return Objects.equals(this.itemName, nbtTagString.asString());
-        }
-        return false;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        MythicMobsRefImpl that = (MythicMobsRefImpl) o;
-        return Objects.equals(itemName, that.itemName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), itemName);
-    }
-
-    @Override
     public MythicMobsRefImpl clone() {
         return new MythicMobsRefImpl(this);
     }
 
-    @Override
-    public void serialize(JsonGenerator gen, SerializerProvider provider) throws IOException {
-        gen.writeStringField("mythicmobs", itemName);
-    }
-
-    public static class Parser extends APIReference.PluginParser<MythicMobsRefImpl> {
-
-        public Parser() {
-            super("MythicMobs", "mythicmobs");
-        }
+    public static class Parser extends AbstractMythicMobsRef.Parser<MythicMobsRefImpl> {
 
         @Override
-        public @Nullable
-        MythicMobsRefImpl construct(ItemStack itemStack) {
-            NBTItem nbtItem = WolfyUtilities.getWUCore().getNmsUtil().getNBTUtil().getItem(itemStack);
-            if (nbtItem != null && nbtItem.hasKey(ITEM_KEY) && nbtItem.getTag(ITEM_KEY) instanceof NBTTagString nbtTagString) {
-                String name = nbtTagString.asString();
-                if (MythicMobs.inst().getItemManager().getItem(name).isPresent()) {
-                    return new MythicMobsRefImpl(name);
-                }
+        protected MythicMobsRefImpl construct(String value) {
+            if (MythicMobs.inst().getItemManager().getItem(value).isPresent()) {
+                return new MythicMobsRefImpl(value);
             }
             return null;
         }

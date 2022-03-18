@@ -18,8 +18,8 @@
 
 package me.wolfyscript.utilities.registry;
 
-import me.wolfyscript.utilities.util.Keyed;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import me.wolfyscript.utilities.util.Keyed;
 
 public interface Registry<V extends Keyed> extends IRegistry<V> {
 

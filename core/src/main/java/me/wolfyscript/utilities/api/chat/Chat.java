@@ -18,16 +18,18 @@
 
 package me.wolfyscript.utilities.api.chat;
 
+import com.wolfyscript.utilities.common.WolfyUtils;
+import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.gui.GuiCluster;
 import me.wolfyscript.utilities.api.inventory.gui.GuiWindow;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -41,25 +43,24 @@ import java.util.logging.Level;
  * Therefor, translated and click actions are also part of the component eco system.<br>
  * To get those components see the specific method:<br>
  * - {@link com.wolfyscript.utilities.common.chat.Chat#translated}<br>
- * - {@link com.wolfyscript.utilities.common.chat.Chat#executable(Player, boolean, ClickAction)}
- *
+ * - {@link com.wolfyscript.utilities.common.chat.Chat#executable(com.wolfyscript.utilities.common.adapters.Player, boolean, ClickActionCallback)}
  * </p>
- *
- *
- *
  * <br>
  * (Yes this could be an interface, but for backwards compatibility it must be a class!)
  * @deprecated Only contains deprecated methods! Use {@link com.wolfyscript.utilities.common.chat.Chat} instead!
  */
 @Deprecated
-public abstract class Chat implements com.wolfyscript.utilities.common.chat.Chat {
+public abstract class Chat extends com.wolfyscript.utilities.common.chat.Chat {
     
-    protected Chat() { /* Only for the implementation */ }
+    protected Chat(WolfyUtils wolfyUtils) {
+        super(wolfyUtils);
+        /* Only for the implementation */
+    }
 
     /**
      * Sends a message to the player with legacy chat format.
      *
-     * @deprecated Legacy chat format. This will convert the message multiple times (Not efficient!) {@link com.wolfyscript.utilities.common.chat.Chat#sendMessage(Player, Component)} should be used instead!
+     * @deprecated Legacy chat format. This will convert the message multiple times (Not efficient!) {@link com.wolfyscript.utilities.common.chat.Chat#sendMessage(com.wolfyscript.utilities.common.adapters.Player, Component)} should be used instead!
      *             Use {@link com.wolfyscript.utilities.common.chat.Chat#translated(String)} or {@link com.wolfyscript.utilities.common.chat.Chat#translated(String, boolean)} to translate language keys!
      * @param player The player to send the message to.
      * @param message The message to send.
@@ -67,10 +68,14 @@ public abstract class Chat implements com.wolfyscript.utilities.common.chat.Chat
     @Deprecated
     public abstract void sendMessage(Player player, String message);
 
+    public abstract void sendMessage(Player player, Component component);
+
+    public abstract void sendMessage(Player player, boolean prefix, Component component);
+
     /**
      * Sends a message to the player with legacy chat format.
      *
-     * @deprecated Legacy chat format. This will convert the message multiple times (Not efficient!) {@link com.wolfyscript.utilities.common.chat.Chat#sendMessage(Player, Component)} should be used instead!
+     * @deprecated Legacy chat format. This will convert the message multiple times (Not efficient!) {@link com.wolfyscript.utilities.common.chat.Chat#sendMessage(com.wolfyscript.utilities.common.adapters.Player, Component)} should be used instead!
      *             Use {@link com.wolfyscript.utilities.common.chat.Chat#translated(String, List)} or {@link com.wolfyscript.utilities.common.chat.Chat#translated(String, boolean, List)} to translate language keys!
      * @param player The player to send the message to.
      * @param message The message to send.
@@ -79,10 +84,14 @@ public abstract class Chat implements com.wolfyscript.utilities.common.chat.Chat
     @Deprecated
     public abstract void sendMessage(Player player, String message, Pair<String, String>... replacements);
 
+    public abstract void sendMessages(Player player, Component... components);
+
+    public abstract void sendMessages(Player player, boolean prefix, Component... components);
+
     /**
      * Sends messages to the player with legacy chat format.
      *
-     * @deprecated Legacy chat format. This will convert the message multiple times (Not efficient!) {@link #sendMessage(Player, Component)} should be used instead!
+     * @deprecated Legacy chat format. This will convert the message multiple times (Not efficient!) {@link #sendMessage(com.wolfyscript.utilities.common.adapters.Player, Component)} should be used instead!
      *             Use {@link #translated(String)} or {@link #translated(String, boolean)} to translate language keys!
      *             Consider using the {@link GuiCluster#translatedMsgKey(String)} to get the translated global message from the cluster.
      * @param player The player to send the message to.
@@ -94,7 +103,7 @@ public abstract class Chat implements com.wolfyscript.utilities.common.chat.Chat
     /**
      * Sends a global message of the Cluster to the player.
      *
-     * @deprecated Legacy chat format. This will convert the message multiple times (Not efficient!) {@link #sendMessage(Player, Component)} should be used instead!
+     * @deprecated Legacy chat format. This will convert the message multiple times (Not efficient!) {@link #sendMessage(com.wolfyscript.utilities.common.adapters.Player, Component)} should be used instead!
      *             Use {@link #translated(String)} or {@link #translated(String, boolean)} to translate language keys!
      *             Consider using the {@link GuiCluster#translatedMsgKey(String)} to get the translated global message from the cluster.
      * @param player The player to send the message to.
@@ -103,10 +112,16 @@ public abstract class Chat implements com.wolfyscript.utilities.common.chat.Chat
     @Deprecated
     public abstract void sendKey(Player player, String clusterID, String msgKey);
 
+    @Deprecated
+    public abstract void sendKey(Player player, GuiCluster<?> guiCluster, String msgKey);
+
+    @Deprecated
+    public abstract void sendKey(Player player, @NotNull NamespacedKey windowKey, String msgKey);
+
     /**
      * Sends a global message of the Cluster to the player.
      *
-     * @deprecated Legacy chat format. This will convert the message multiple times (Not efficient!) {@link #sendMessage(Player, Component)} should be used instead!
+     * @deprecated Legacy chat format. This will convert the message multiple times (Not efficient!) {@link #sendMessage(com.wolfyscript.utilities.common.adapters.Player, Component)} should be used instead!
      *             Consider using the {@link GuiCluster#translatedMsgKey(String)} to get the translated global message from the cluster.
      * @param player The player to send the message to.
      * @param replacements The placeholder values to replace in the message.
@@ -117,7 +132,7 @@ public abstract class Chat implements com.wolfyscript.utilities.common.chat.Chat
     /**
      * Sends a message of the {@link GuiWindow} to the player.
      *
-     * @deprecated Legacy chat format. This will convert the message multiple times (Not efficient!) {@link #sendMessage(Player, Component)} should be used instead!
+     * @deprecated Legacy chat format. This will convert the message multiple times (Not efficient!) {@link #sendMessage(com.wolfyscript.utilities.common.adapters.Player, Component)} should be used instead!
      *             Consider using the {@link GuiWindow#translatedMsgKey(String)} to get the translated message from the window.
      * @param player The player to send the message to.
      * @param msgKey The key of the messages to send.
@@ -125,11 +140,13 @@ public abstract class Chat implements com.wolfyscript.utilities.common.chat.Chat
     @Deprecated
     public abstract void sendKey(Player player, NamespacedKey namespacedKey, String msgKey, Pair<String, String>... replacements);
 
+    public abstract ClickEvent executable(Player player, boolean discard, ClickAction action);
+
     /**
      * Sends the clickable chat messages to the player.<br>
      * It allows you to also include ClickData with executable code.
      *
-     * @deprecated This was mostly used to run code when a player clicks on a text in chat. That is now replaced by {@link #executable(Player, boolean, ClickAction)}, which can be used in combination of any {@link Component} and is way more flexible!
+     * @deprecated This was mostly used to run code when a player clicks on a text in chat. That is now replaced by {@link #executable(com.wolfyscript.utilities.common.adapters.Player, boolean, ClickAction)}, which can be used in combination of any {@link Component} and is way more flexible!
      *
      * @param player The player to send the message to.
      * @param clickData The click data of the message.
@@ -141,7 +158,7 @@ public abstract class Chat implements com.wolfyscript.utilities.common.chat.Chat
      * Sends the clickable chat messages to the player.<br>
      * It allows you to also include ClickData with executable code.
      *
-     * @deprecated This was mostly used to run code when a player clicks on a text in chat. That is now replaced by {@link #executable(Player, boolean, ClickAction)}, which can be used in combination of any {@link Component} and is way more flexible!
+     * @deprecated This was mostly used to run code when a player clicks on a text in chat. That is now replaced by {@link #executable(com.wolfyscript.utilities.common.adapters.Player, boolean, ClickAction)}, which can be used in combination of any {@link Component} and is way more flexible!
      *
      * @param player The player to send the message to.
      * @param clickData The click data of the message.
@@ -174,6 +191,8 @@ public abstract class Chat implements com.wolfyscript.utilities.common.chat.Chat
      */
     @Deprecated(forRemoval = true)
     public void setIN_GAME_PREFIX(String inGamePrefix) { setInGamePrefix(inGamePrefix); }
+
+    public abstract String convertOldPlaceholder(String oldPlaceholder);
 
     /**
      * @deprecated Due to logger changes it is no longer used and required!
@@ -228,4 +247,18 @@ public abstract class Chat implements com.wolfyscript.utilities.common.chat.Chat
      */
     @Deprecated(forRemoval = true)
     public abstract void sendDebugMessage(String message);
+
+
+    @Override
+    public abstract Component translated(String s);
+
+    @Override
+    public abstract Component translated(String s, boolean b);
+
+    @Override
+    public abstract Component translated(String s, List<? extends TagResolver> list);
+
+    @Override
+    public abstract Component translated(String s, boolean b, List<? extends TagResolver> list);
+
 }
