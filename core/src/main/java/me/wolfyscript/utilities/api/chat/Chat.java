@@ -35,17 +35,8 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
- * Allows sending messages to players, with the specified prefix, translations, placeholders, etc.<br>
- * Additionally, this class provides a system to create text component click events, that execute specified callbacks.
- *
- * <p>
- * Since 3.16.1, the whole message system uses the adventure api to send chat messages.<br>
- * Therefor, translated and click actions are also part of the component eco system.<br>
- * To get those components see the specific method:<br>
- * - {@link com.wolfyscript.utilities.common.chat.Chat#translated}<br>
- * - {@link com.wolfyscript.utilities.common.chat.Chat#executable(com.wolfyscript.utilities.common.adapters.Player, boolean, ClickActionCallback)}
- * </p>
- * <br>
+ * This adds the old backwards compatible methods that use the Bukkit {@link Player} instead of the
+ * new adapter.
  * (Yes this could be an interface, but for backwards compatibility it must be a class!)
  * @deprecated Only contains deprecated methods! Use {@link com.wolfyscript.utilities.common.chat.Chat} instead!
  */
@@ -146,7 +137,7 @@ public abstract class Chat extends com.wolfyscript.utilities.common.chat.Chat {
      * Sends the clickable chat messages to the player.<br>
      * It allows you to also include ClickData with executable code.
      *
-     * @deprecated This was mostly used to run code when a player clicks on a text in chat. That is now replaced by {@link #executable(com.wolfyscript.utilities.common.adapters.Player, boolean, ClickAction)}, which can be used in combination of any {@link Component} and is way more flexible!
+     * @deprecated This was mostly used to run code when a player clicks on a text in chat. That is now replaced by {@link #executable(Player, boolean, ClickAction)}, which can be used in combination of any {@link Component} and is way more flexible!
      *
      * @param player The player to send the message to.
      * @param clickData The click data of the message.
@@ -158,7 +149,7 @@ public abstract class Chat extends com.wolfyscript.utilities.common.chat.Chat {
      * Sends the clickable chat messages to the player.<br>
      * It allows you to also include ClickData with executable code.
      *
-     * @deprecated This was mostly used to run code when a player clicks on a text in chat. That is now replaced by {@link #executable(com.wolfyscript.utilities.common.adapters.Player, boolean, ClickAction)}, which can be used in combination of any {@link Component} and is way more flexible!
+     * @deprecated This was mostly used to run code when a player clicks on a text in chat. That is now replaced by {@link #executable(Player, boolean, ClickAction)}, which can be used in combination of any {@link Component} and is way more flexible!
      *
      * @param player The player to send the message to.
      * @param clickData The click data of the message.
@@ -191,8 +182,6 @@ public abstract class Chat extends com.wolfyscript.utilities.common.chat.Chat {
      */
     @Deprecated(forRemoval = true)
     public void setIN_GAME_PREFIX(String inGamePrefix) { setInGamePrefix(inGamePrefix); }
-
-    public abstract String convertOldPlaceholder(String oldPlaceholder);
 
     /**
      * @deprecated Due to logger changes it is no longer used and required!
@@ -247,18 +236,5 @@ public abstract class Chat extends com.wolfyscript.utilities.common.chat.Chat {
      */
     @Deprecated(forRemoval = true)
     public abstract void sendDebugMessage(String message);
-
-
-    @Override
-    public abstract Component translated(String s);
-
-    @Override
-    public abstract Component translated(String s, boolean b);
-
-    @Override
-    public abstract Component translated(String s, List<? extends TagResolver> list);
-
-    @Override
-    public abstract Component translated(String s, boolean b, List<? extends TagResolver> list);
 
 }

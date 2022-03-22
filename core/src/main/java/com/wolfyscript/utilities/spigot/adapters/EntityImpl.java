@@ -7,15 +7,11 @@ import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.Reference;
-import java.lang.ref.WeakReference;
+public class EntityImpl<T extends Entity> extends BukkitRefAdapter<T> implements com.wolfyscript.utilities.common.adapters.Entity {
 
-public class EntityImpl extends BukkitRefAdapter<Entity> implements com.wolfyscript.utilities.common.adapters.Entity {
-
-    public EntityImpl(Entity entity) {
+    public EntityImpl(T entity) {
         super(entity);
     }
-
 
     @Override
     public @NotNull Location getLocation() {
@@ -63,7 +59,7 @@ public class EntityImpl extends BukkitRefAdapter<Entity> implements com.wolfyscr
     }
 
     @Override
-    public void setRotation(float v, float v1) {
-
+    public void setRotation(float yaw, float pitch) {
+        bukkitRef.setRotation(yaw, pitch);
     }
 }
