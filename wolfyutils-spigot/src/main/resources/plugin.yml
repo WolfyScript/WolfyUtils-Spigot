@@ -25,6 +25,7 @@ softdepend:
   - ExecutableItems
   - PlaceholderAPI
   - eco
+  - zAuctionHouseV3
 
 commands:
   wolfyutils:
