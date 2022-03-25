@@ -4,6 +4,9 @@ main: com.wolfyscript.utilities.spigot.WolfyCoreSpigot
 api-version: 1.16
 authors: [ WolfyScript ]
 
+libraries:
+  - "com.google.inject:guice:5.1.0"
+
 loadbefore:
   - ChatColor
   - ChatColor2
