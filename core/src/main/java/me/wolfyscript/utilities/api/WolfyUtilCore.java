@@ -47,7 +47,7 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
 
     protected WolfyUtilCore() {
         super();
-        if (instance == null && this.getName().equals("WolfyUtilities") && getClass().getPackageName().equals("com.wolfyscript.utilities.spigot")) {
+        if (instance == null && this.getName().equals("WolfyUtilities") && getClass().getPackageName().equals("com.wolfyscript.utilities.bukkit")) {
             instance = this;
         } else {
             throw new IllegalArgumentException("This constructor can only be called by WolfyUtilities itself!");
@@ -60,7 +60,7 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
 
     protected WolfyUtilCore(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
-        if (instance == null && this.getName().equals("WolfyUtilities") && getClass().getPackageName().equals("me.wolfyscript.utilities.main")) {
+        if (instance == null && this.getName().equals("WolfyUtilities") && getClass().getPackageName().equals("com.wolfyscript.utilities.bukkit")) {
             instance = this;
         } else {
             throw new IllegalArgumentException("This constructor can only be called by WolfyUtilities itself!");
