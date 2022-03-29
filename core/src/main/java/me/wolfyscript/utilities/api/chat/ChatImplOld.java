@@ -52,7 +52,7 @@ import java.util.regex.Pattern;
  * Implementation of the old deprecated methods available in the deprecated {@link Chat} class.
  */
 @Deprecated
-abstract class ChatImplOld extends me.wolfyscript.utilities.api.chat.Chat {
+public abstract class ChatImplOld extends me.wolfyscript.utilities.api.chat.Chat {
 
     private static final Pattern ADVENTURE_PLACEHOLDER_PATTERN = Pattern.compile("([!?#]?)([a-z0-9_-]*)");
     private static final Pattern LEGACY_PLACEHOLDER_PATTERN = Pattern.compile("%([^%]+)%");

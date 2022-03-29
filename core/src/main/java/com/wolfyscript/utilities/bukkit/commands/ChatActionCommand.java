@@ -18,7 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.commands;
 
-import me.wolfyscript.utilities.api.chat.ChatImpl;
+import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
 import me.wolfyscript.utilities.api.chat.PlayerAction;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

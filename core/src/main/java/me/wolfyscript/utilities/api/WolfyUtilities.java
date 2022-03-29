@@ -24,6 +24,7 @@ import me.wolfyscript.utilities.api.chat.Chat;
 import me.wolfyscript.utilities.api.config.ConfigAPI;
 import me.wolfyscript.utilities.api.config.YamlConfiguration;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
+import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
@@ -187,5 +188,14 @@ public class WolfyUtilities extends WolfyUtilsBukkit {
      */
     public boolean hasDebuggingMode() {
         return getConfigAPI().getConfig("config") != null && getConfigAPI().getConfig("config").getBoolean("debug");
+    }
+
+    /**
+     * @return The {@link ItemUtils} instance.
+     * @deprecated {@link ItemUtils} is a util class!
+     */
+    @Deprecated(since = "4.16.0.0", forRemoval = true)
+    public ItemUtils getItemUtils() {
+        return new ItemUtils();
     }
 }

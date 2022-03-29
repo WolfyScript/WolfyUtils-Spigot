@@ -1,7 +1,8 @@
-package me.wolfyscript.utilities.api.chat;
+package com.wolfyscript.utilities.bukkit.chat;
 
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.bukkit.adapters.PlayerImpl;
+import me.wolfyscript.utilities.api.chat.ChatImplOld;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

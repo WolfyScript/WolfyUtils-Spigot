@@ -14,8 +14,7 @@ import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomDurabilityLi
 import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomItemPlayerListener;
 import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomParticleListener;
 import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.api.chat.Chat;
-import me.wolfyscript.utilities.api.chat.ChatImpl;
+import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
 import me.wolfyscript.utilities.api.console.Console;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.api.inventory.custom_items.actions.Action;
@@ -120,9 +119,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
+/**
+ * The core implementation of WolfyUtils.<br>
+ * It manages the core plugin of WolfyUtils and there is only one instance of it.<br>
+ *
+ * If you want to use the plugin specific API, see {@link com.wolfyscript.utilities.common.WolfyUtils} & {@link WolfyUtilsBukkit}
+ */
 public final class WolfyCoreBukkit extends WUPlugin {
 
-    private final Chat chat;
     private final Console console;
     private Metrics metrics;
     private WUConfig config;
@@ -136,9 +140,8 @@ public final class WolfyCoreBukkit extends WUPlugin {
      */
     public WolfyCoreBukkit() {
         super();
-        this.chat = api.getChat();
         this.console = api.getConsole();
-        chat.setChatPrefix(Component.text("[", NamedTextColor.GRAY).append(Component.text("WU", NamedTextColor.AQUA)).append(Component.text("] ", NamedTextColor.DARK_GRAY)));
+        api.getChat().setChatPrefix(Component.text("[", NamedTextColor.GRAY).append(Component.text("WU", NamedTextColor.AQUA)).append(Component.text("] ", NamedTextColor.DARK_GRAY)));
         this.messageHandler = new MessageHandler(this);
         this.messageFactory = new MessageFactory(this);
         this.compatibilityManager = new CompatibilityManagerSpigot(this);
@@ -149,9 +152,8 @@ public final class WolfyCoreBukkit extends WUPlugin {
      */
     private WolfyCoreBukkit(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
-        this.chat = api.getChat();
         this.console = api.getConsole();
-        chat.setChatPrefix(Component.text("[", NamedTextColor.GRAY).append(Component.text("WU", NamedTextColor.AQUA)).append(Component.text("] ", NamedTextColor.DARK_GRAY)));
+        api.getChat().setChatPrefix(Component.text("[", NamedTextColor.GRAY).append(Component.text("WU", NamedTextColor.AQUA)).append(Component.text("] ", NamedTextColor.DARK_GRAY)));
         this.messageHandler = new MessageHandler(this);
         this.messageFactory = new MessageFactory(this);
         this.compatibilityManager = new CompatibilityManagerSpigot(this);
@@ -294,11 +296,12 @@ public final class WolfyCoreBukkit extends WUPlugin {
     public void onEnable() {
         this.api.initialize();
         console.info("Minecraft version: " + ServerVersion.getVersion().getVersion());
-        console.info("WolfyUtilities version: " + ServerVersion.getWUVersion().getVersion());
+        console.info("WolfyUtils version: " + ServerVersion.getWUVersion().getVersion());
         console.info("Environment: " + WolfyUtilities.getENVIRONMENT());
         this.adventure = BukkitAudiences.create(this);
         this.config = new WUConfig(api.getConfigAPI(), this);
         compatibilityManager.init();
+
         // Register ReferenceParser
         console.info("Register API references");
         registerAPIReference(new VanillaRef.Parser());
@@ -390,6 +393,6 @@ public final class WolfyCoreBukkit extends WUPlugin {
 
     @Override
     public com.wolfyscript.utilities.common.chat.Chat getChat() {
-        return chat;
+        return api.getChat();
     }
 }

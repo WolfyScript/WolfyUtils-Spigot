@@ -74,7 +74,7 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
     }
 
     private Reflections initReflections() {
-        return new Reflections(new ConfigurationBuilder().forPackages("me.wolfyscript").addClassLoaders(getClassLoader()).addScanners(Scanners.TypesAnnotated, Scanners.SubTypes, Scanners.Resources));
+        return new Reflections(new ConfigurationBuilder().forPackages("me.wolfyscript", "com.wolfyscript").addClassLoaders(getClassLoader()).addScanners(Scanners.TypesAnnotated, Scanners.SubTypes, Scanners.Resources));
     }
 
     /**
@@ -83,6 +83,7 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
      *
      * @return The instance of the core.
      */
+    @Deprecated
     public static WolfyUtilCore getInstance() {
         return instance;
     }

@@ -11,7 +11,7 @@ public class BukkitWrapper {
     }
 
     public static Entity adapt(org.bukkit.entity.Entity bukkitEntity) {
-        return new EntityImpl(bukkitEntity);
+        return new EntityImpl<>(bukkitEntity);
     }
 
     public static World adapt(org.bukkit.World world) {

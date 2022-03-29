@@ -6,7 +6,7 @@ import com.wolfyscript.utilities.common.chat.Chat;
 import com.wolfyscript.utilities.bukkit.language.LangAPISpigot;
 import me.wolfyscript.utilities.api.Permissions;
 import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.api.chat.ChatImpl;
+import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
 import me.wolfyscript.utilities.api.config.ConfigAPI;
 import me.wolfyscript.utilities.api.console.Console;
 import me.wolfyscript.utilities.api.inventory.BookUtil;
@@ -17,7 +17,6 @@ import me.wolfyscript.utilities.api.network.messages.MessageAPI;
 import me.wolfyscript.utilities.api.nms.NMSUtil;
 import me.wolfyscript.utilities.registry.Registries;
 import me.wolfyscript.utilities.util.exceptions.InvalidCacheTypeException;
-import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
@@ -33,7 +32,6 @@ public class WolfyUtilsBukkit extends WolfyUtils {
     private final Chat chat;
     private final LanguageAPI languageAPI;
     private final Console console;
-    private final ItemUtils itemUtils;
     private final Permissions permissions;
     private final BookUtil bookUtil;
     private final MessageAPI messageAPI;
@@ -51,7 +49,6 @@ public class WolfyUtilsBukkit extends WolfyUtils {
         this.languageAPI = new LangAPISpigot(this);
         this.chat = new ChatImpl(this);
         this.console = new Console((WolfyUtilities) this);
-        this.itemUtils = new ItemUtils((WolfyUtilities) this);
         this.permissions = new Permissions(this);
         this.bookUtil = new BookUtil((WolfyUtilities) this);
         this.messageAPI = new MessageAPI((WolfyUtilities) this);
@@ -121,14 +118,6 @@ public class WolfyUtilsBukkit extends WolfyUtils {
      */
     public Permissions getPermissions() {
         return permissions;
-    }
-
-    /**
-     * @return The {@link ItemUtils} instance.
-     * @see ItemUtils More information about ItemUtils.
-     */
-    public ItemUtils getItemUtils() {
-        return itemUtils;
     }
 
     /**
