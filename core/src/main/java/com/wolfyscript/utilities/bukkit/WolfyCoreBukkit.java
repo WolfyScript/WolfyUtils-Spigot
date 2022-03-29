@@ -1,18 +1,18 @@
-package com.wolfyscript.utilities.spigot;
+package com.wolfyscript.utilities.bukkit;
 
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.wolfyscript.utilities.spigot.commands.ChatActionCommand;
-import com.wolfyscript.utilities.spigot.commands.InfoCommand;
-import com.wolfyscript.utilities.spigot.commands.InputCommand;
-import com.wolfyscript.utilities.spigot.commands.SpawnParticleAnimationCommand;
-import com.wolfyscript.utilities.spigot.commands.SpawnParticleEffectCommand;
-import com.wolfyscript.utilities.spigot.listeners.BlockListener;
-import com.wolfyscript.utilities.spigot.listeners.EquipListener;
-import com.wolfyscript.utilities.spigot.listeners.GUIInventoryListener;
-import com.wolfyscript.utilities.spigot.listeners.PlayerListener;
-import com.wolfyscript.utilities.spigot.listeners.custom_item.CustomDurabilityListener;
-import com.wolfyscript.utilities.spigot.listeners.custom_item.CustomItemPlayerListener;
-import com.wolfyscript.utilities.spigot.listeners.custom_item.CustomParticleListener;
+import com.wolfyscript.utilities.bukkit.commands.ChatActionCommand;
+import com.wolfyscript.utilities.bukkit.commands.InfoCommand;
+import com.wolfyscript.utilities.bukkit.commands.InputCommand;
+import com.wolfyscript.utilities.bukkit.commands.SpawnParticleAnimationCommand;
+import com.wolfyscript.utilities.bukkit.commands.SpawnParticleEffectCommand;
+import com.wolfyscript.utilities.bukkit.listeners.BlockListener;
+import com.wolfyscript.utilities.bukkit.listeners.EquipListener;
+import com.wolfyscript.utilities.bukkit.listeners.GUIInventoryListener;
+import com.wolfyscript.utilities.bukkit.listeners.PlayerListener;
+import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomDurabilityListener;
+import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomItemPlayerListener;
+import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomParticleListener;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.chat.Chat;
 import me.wolfyscript.utilities.api.chat.ChatImpl;
@@ -120,7 +120,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
-public final class WolfyCoreSpigot extends WUPlugin {
+public final class WolfyCoreBukkit extends WUPlugin {
 
     private final Chat chat;
     private final Console console;
@@ -134,7 +134,7 @@ public final class WolfyCoreSpigot extends WUPlugin {
     /**
      * Constructor invoked by Spigot when the plugin is loaded.
      */
-    public WolfyCoreSpigot() {
+    public WolfyCoreBukkit() {
         super();
         this.chat = api.getChat();
         this.console = api.getConsole();
@@ -147,7 +147,7 @@ public final class WolfyCoreSpigot extends WUPlugin {
     /**
      * Constructor invoked by MockBukkit to mock the plugin.
      */
-    private WolfyCoreSpigot(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
+    private WolfyCoreBukkit(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
         this.chat = api.getChat();
         this.console = api.getConsole();

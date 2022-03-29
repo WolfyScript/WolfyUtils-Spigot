@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.spigot.listeners.custom_item;
+package com.wolfyscript.utilities.bukkit.listeners.custom_item;
 
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.util.entity.PlayerUtils;

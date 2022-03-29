@@ -1,4 +1,4 @@
-package com.wolfyscript.utilities.spigot.adapters;
+package com.wolfyscript.utilities.bukkit.adapters;
 
 import com.wolfyscript.utilities.common.adapters.Block;
 import com.wolfyscript.utilities.common.adapters.Location;

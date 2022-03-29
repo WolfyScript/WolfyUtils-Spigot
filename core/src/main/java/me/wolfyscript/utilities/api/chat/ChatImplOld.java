@@ -20,7 +20,6 @@ package me.wolfyscript.utilities.api.chat;
 
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.spigot.adapters.PlayerImpl;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.gui.GuiCluster;
 import me.wolfyscript.utilities.util.NamespacedKey;
@@ -45,7 +44,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

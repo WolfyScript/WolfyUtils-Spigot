@@ -18,29 +18,19 @@
 
 package me.wolfyscript.utilities.api;
 
-import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
-import com.wolfyscript.utilities.spigot.WolfyUtilsSpigot;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import me.wolfyscript.utilities.api.chat.Chat;
 import me.wolfyscript.utilities.api.config.ConfigAPI;
 import me.wolfyscript.utilities.api.config.YamlConfiguration;
-import me.wolfyscript.utilities.api.console.Console;
-import me.wolfyscript.utilities.api.inventory.BookUtil;
-import me.wolfyscript.utilities.api.inventory.gui.InventoryAPI;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
-import me.wolfyscript.utilities.api.language.LanguageAPI;
-import me.wolfyscript.utilities.api.network.messages.MessageAPI;
-import me.wolfyscript.utilities.api.nms.NMSUtil;
-import me.wolfyscript.utilities.registry.Registries;
-import me.wolfyscript.utilities.util.exceptions.InvalidCacheTypeException;
-import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
-public class WolfyUtilities extends WolfyUtilsSpigot {
+public class WolfyUtilities extends WolfyUtilsBukkit {
 
     private static final Map<String, Boolean> classes = new HashMap<>();
 
@@ -76,15 +66,15 @@ public class WolfyUtilities extends WolfyUtilsSpigot {
         return hasPlugin("mcMMO");
     }
 
-    WolfyUtilities(WolfyCoreSpigot core, Plugin plugin, Class<? extends CustomCache> cacheType, boolean initialize) {
+    WolfyUtilities(WolfyCoreBukkit core, Plugin plugin, Class<? extends CustomCache> cacheType, boolean initialize) {
         super(core, plugin, cacheType, initialize);
     }
 
-    WolfyUtilities(WolfyCoreSpigot core, Plugin plugin, Class<? extends CustomCache> customCacheClass) {
+    WolfyUtilities(WolfyCoreBukkit core, Plugin plugin, Class<? extends CustomCache> customCacheClass) {
         this(core, plugin, customCacheClass, false);
     }
 
-    WolfyUtilities(WolfyCoreSpigot core, Plugin plugin, boolean init) {
+    WolfyUtilities(WolfyCoreBukkit core, Plugin plugin, boolean init) {
         this(core, plugin, CustomCache.class, init);
     }
 

@@ -16,9 +16,9 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.spigot.commands;
+package com.wolfyscript.utilities.bukkit.commands;
 
-import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import me.wolfyscript.utilities.util.version.ServerVersion;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -34,9 +34,9 @@ import java.util.List;
 
 public class InfoCommand implements TabExecutor {
 
-    private final WolfyCoreSpigot plugin;
+    private final WolfyCoreBukkit plugin;
 
-    public InfoCommand(WolfyCoreSpigot plugin) {
+    public InfoCommand(WolfyCoreBukkit plugin) {
         this.plugin = plugin;
     }
 

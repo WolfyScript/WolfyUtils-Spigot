@@ -1,10 +1,8 @@
-package com.wolfyscript.utilities.spigot.language;
+package com.wolfyscript.utilities.bukkit.language;
 
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.spigot.WolfyUtilsSpigot;
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import me.wolfyscript.utilities.api.inventory.gui.button.ButtonState;
 import me.wolfyscript.utilities.api.language.Language;
 import me.wolfyscript.utilities.api.language.LanguageAPI;
@@ -30,12 +28,12 @@ public class LangAPISpigot extends LanguageAPI {
 
     private static final Pattern LEGACY_PLACEHOLDER_PATTERN = Pattern.compile("%([^%]+)%");
 
-    public LangAPISpigot(WolfyUtilsSpigot api) {
+    public LangAPISpigot(WolfyUtilsBukkit api) {
         super(api);
     }
 
-    private WolfyUtilsSpigot getAPI() {
-        return (WolfyUtilsSpigot) api;
+    private WolfyUtilsBukkit getAPI() {
+        return (WolfyUtilsBukkit) api;
     }
 
     public Language loadLangFile(String lang) {

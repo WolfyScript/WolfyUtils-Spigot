@@ -16,9 +16,9 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.spigot.commands;
+package com.wolfyscript.utilities.bukkit.commands;
 
-import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.gui.GuiHandler;
 import org.bukkit.Bukkit;
@@ -34,9 +34,9 @@ import java.util.Objects;
 
 public class InputCommand implements TabExecutor {
 
-    private final WolfyCoreSpigot plugin;
+    private final WolfyCoreBukkit plugin;
 
-    public InputCommand(WolfyCoreSpigot plugin) {
+    public InputCommand(WolfyCoreBukkit plugin) {
         this.plugin = plugin;
     }
 

@@ -1,4 +1,4 @@
-package com.wolfyscript.utilities.spigot.adapters;
+package com.wolfyscript.utilities.bukkit.adapters;
 
 import org.bukkit.entity.Player;
 

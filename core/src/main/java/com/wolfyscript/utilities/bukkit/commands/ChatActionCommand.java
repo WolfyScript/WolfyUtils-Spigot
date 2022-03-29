@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.spigot.commands;
+package com.wolfyscript.utilities.bukkit.commands;
 
 import me.wolfyscript.utilities.api.chat.ChatImpl;
 import me.wolfyscript.utilities.api.chat.PlayerAction;

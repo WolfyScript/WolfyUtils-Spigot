@@ -1,9 +1,9 @@
-package com.wolfyscript.utilities.spigot;
+package com.wolfyscript.utilities.bukkit;
 
 import com.wolfyscript.utilities.common.WolfyCore;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.chat.Chat;
-import com.wolfyscript.utilities.spigot.language.LangAPISpigot;
+import com.wolfyscript.utilities.bukkit.language.LangAPISpigot;
 import me.wolfyscript.utilities.api.Permissions;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.chat.ChatImpl;
@@ -24,9 +24,9 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.util.Locale;
 
-public class WolfyUtilsSpigot extends WolfyUtils {
+public class WolfyUtilsBukkit extends WolfyUtils {
 
-    private final WolfyCoreSpigot core;
+    private final WolfyCoreBukkit core;
 
     private final Plugin plugin;
 
@@ -45,7 +45,7 @@ public class WolfyUtilsSpigot extends WolfyUtils {
 
     private final boolean initialize;
 
-    protected WolfyUtilsSpigot(WolfyCoreSpigot core, Plugin plugin, Class<? extends CustomCache> cacheType, boolean init) {
+    protected WolfyUtilsBukkit(WolfyCoreBukkit core, Plugin plugin, Class<? extends CustomCache> cacheType, boolean init) {
         this.core = core;
         this.plugin = plugin;
         this.languageAPI = new LangAPISpigot(this);

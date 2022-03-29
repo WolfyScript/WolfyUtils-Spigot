@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.spigot.listeners;
+package com.wolfyscript.utilities.bukkit.listeners;
 
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
 import org.bukkit.event.EventHandler;

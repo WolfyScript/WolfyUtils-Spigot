@@ -1,7 +1,7 @@
 package me.wolfyscript.utilities.api;
 
 import com.wolfyscript.utilities.common.WolfyCore;
-import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
 import me.wolfyscript.utilities.compatibility.CompatibilityManager;
@@ -134,7 +134,7 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
      * @return The WolfyUtilities instance for the plugin.
      */
     public WolfyUtilities getAPI(Plugin plugin, boolean init) {
-        return wolfyUtilsInstances.computeIfAbsent(plugin.getName(), s -> new WolfyUtilities((WolfyCoreSpigot) this, plugin, init));
+        return wolfyUtilsInstances.computeIfAbsent(plugin.getName(), s -> new WolfyUtilities((WolfyCoreBukkit) this, plugin, init));
     }
 
     /**
@@ -147,7 +147,7 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
      * @return The WolfyUtilities instance for the plugin.
      */
     public WolfyUtilities getAPI(Plugin plugin, Class<? extends CustomCache> customCacheClass) {
-        return wolfyUtilsInstances.computeIfAbsent(plugin.getName(), s -> new WolfyUtilities((WolfyCoreSpigot) this, plugin, customCacheClass));
+        return wolfyUtilsInstances.computeIfAbsent(plugin.getName(), s -> new WolfyUtilities((WolfyCoreBukkit) this, plugin, customCacheClass));
     }
 
     /**

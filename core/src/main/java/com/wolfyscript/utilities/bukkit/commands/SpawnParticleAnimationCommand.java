@@ -16,14 +16,22 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.spigot.commands;
+package com.wolfyscript.utilities.bukkit.commands;
 
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.chat.Chat;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import me.wolfyscript.utilities.util.particles.ParticleAnimation;
 import me.wolfyscript.utilities.util.particles.ParticleEffect;
+import me.wolfyscript.utilities.util.particles.ParticleUtils;
+import me.wolfyscript.utilities.util.particles.animators.AnimatorBasic;
+import me.wolfyscript.utilities.util.particles.animators.AnimatorCircle;
 import me.wolfyscript.utilities.util.particles.animators.AnimatorSphere;
 import me.wolfyscript.utilities.util.particles.timer.TimerLinear;
+import me.wolfyscript.utilities.util.particles.timer.TimerPi;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -31,21 +39,23 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.util.Vector;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
-public class SpawnParticleEffectCommand implements CommandExecutor, TabCompleter {
+public class SpawnParticleAnimationCommand implements CommandExecutor, TabCompleter {
 
-    private final List<String> COMMANDS = List.of("spawn");
+    private final List<String> COMMANDS = Arrays.asList("spawn", "stop");
 
     private final WolfyUtilities wolfyUtilities;
     private final Chat chat;
 
-    public SpawnParticleEffectCommand(WolfyUtilities wolfyUtilities) {
+    public SpawnParticleAnimationCommand(WolfyUtilities wolfyUtilities) {
         this.wolfyUtilities = wolfyUtilities;
         this.chat = wolfyUtilities.getChat();
     }
@@ -55,14 +65,37 @@ public class SpawnParticleEffectCommand implements CommandExecutor, TabCompleter
         if (commandSender instanceof Player player) {
             if (args.length > 0) {
                 if (args[0].equalsIgnoreCase("spawn")) {
+                    if (wolfyUtilities.getPermissions().hasPermission(commandSender, "wolfyutilities.command.particle_animation.spawn")) {
+                        var location = player.getLocation();
+                        var particleEffect = new ParticleEffect(Particle.FLAME);
+                        particleEffect.setTimeSupplier(new TimerPi(40, 2*Math.PI));
+                        particleEffect.setAnimator(new AnimatorSphere(2));
+
+                        var first = new ParticleEffect(Particle.SMOKE_NORMAL);
+                        first.setTimeSupplier(new TimerLinear(1, 20));
+                        first.setAnimator(new AnimatorBasic());
+
+                        var second = new ParticleEffect(Particle.SMOKE_NORMAL);
+                        second.setTimeSupplier(new TimerPi(20, 2*Math.PI));
+                        second.setAnimator(new AnimatorCircle(1));
+
+                        var animation = new ParticleAnimation(Material.DIAMOND, "", null, 0, 40, 1,
+                                new ParticleAnimation.ParticleEffectSettings(first, new Vector(0,0,0), 0),
+                                new ParticleAnimation.ParticleEffectSettings(second, new Vector(0,0,0), 5),
+                                new ParticleAnimation.ParticleEffectSettings(particleEffect, new Vector(0,0,0), 20)
+                        );
+                        animation.spawn(location);
+                    }
+                } else if (args[0].equalsIgnoreCase("stop")) {
                     if (wolfyUtilities.getPermissions().hasPermission(commandSender, "wolfyutilities.command.particle_effect.spawn")) {
-                        var block = player.getTargetBlockExact(10);
-                        if (block != null) {
-                            var particleEffect = new ParticleEffect(Particle.FLAME);
-                            particleEffect.setKey(NamespacedKey.wolfyutilties("test"));
-                            particleEffect.setTimeSupplier(new TimerLinear(0.1, 40));
-                            particleEffect.setAnimator(new AnimatorSphere(2));
-                            particleEffect.spawn(block);
+                        if (args.length >= 2) {
+                            try {
+                                UUID uuid = UUID.fromString(args[1]);
+                                ParticleUtils.stopAnimation(uuid);
+                                chat.sendMessage(player, Component.text("Stopped effect with uuid ", NamedTextColor.YELLOW).append(Component.text(args[1], NamedTextColor.GOLD)).append(Component.text("if it was active!")));
+                            } catch (IllegalArgumentException ex) {
+                                chat.sendMessage(player, Component.text("Invalid UUID ", NamedTextColor.RED).append(Component.text(args[1], NamedTextColor.DARK_RED)));
+                            }
                         }
                     }
                 }
@@ -72,16 +105,16 @@ public class SpawnParticleEffectCommand implements CommandExecutor, TabCompleter
     }
 
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
+    public List<String> onTabComplete(@Nonnull CommandSender commandSender, @Nonnull Command command, @Nonnull String s, @Nonnull String[] args) {
         List<String> results = new ArrayList<>();
-        if (wolfyUtilities.getPermissions().hasPermission(commandSender, "wolfyutilities.command.particle_effect.complete")) {
+        if (wolfyUtilities.getPermissions().hasPermission(commandSender, "wolfyutilities.command.particle_animation.complete")) {
             if (commandSender instanceof Player player) {
                 if (args.length > 1) {
                     if (args[0].equalsIgnoreCase("spawn")) {
                         switch (args.length) {
                             case 2:
                                 List<String> effects = new ArrayList<>();
-                                for (NamespacedKey namespacedKey : wolfyUtilities.getRegistries().getParticleEffects().keySet()) {
+                                for (NamespacedKey namespacedKey : wolfyUtilities.getRegistries().getParticleAnimations().keySet()) {
                                     effects.add(namespacedKey.toString());
                                 }
                                 StringUtil.copyPartialMatches(args[1], effects, results);
@@ -101,6 +134,8 @@ public class SpawnParticleEffectCommand implements CommandExecutor, TabCompleter
                             default:
                                 return results;
                         }
+                    } else if (args[0].equalsIgnoreCase("stop")) {
+                        ParticleUtils.getActiveAnimations().forEach(uuid -> results.add(uuid.toString()));
                     }
                 } else {
                     StringUtil.copyPartialMatches(args[0], COMMANDS, results);

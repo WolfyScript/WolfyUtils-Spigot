@@ -1,4 +1,4 @@
-package com.wolfyscript.utilities.spigot.adapters;
+package com.wolfyscript.utilities.bukkit.adapters;
 
 import com.wolfyscript.utilities.common.adapters.Location;
 import com.wolfyscript.utilities.common.adapters.Vector3D;
