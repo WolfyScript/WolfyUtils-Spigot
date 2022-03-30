@@ -45,7 +45,7 @@ import java.util.function.Supplier;
  * Manages compatibility with other plugins. <br>
  * It will load plugin specific integrations that are initialised if the corresponding plugins are enabled.
  */
-final class PluginsSpigot implements Plugins, Listener {
+final class PluginsBukkit implements Plugins, Listener {
 
     private final WolfyUtilCore core;
     private final Map<String, Map<NamespacedKey, PluginAdapter>> pluginAdapters = new HashMap<>();
@@ -53,7 +53,7 @@ final class PluginsSpigot implements Plugins, Listener {
     private final Map<String, Class<? extends PluginIntegrationAbstract>> pluginIntegrationClasses = new HashMap<>();
     private boolean doneLoading = false;
 
-    PluginsSpigot(WolfyUtilCore core) {
+    PluginsBukkit(WolfyUtilCore core) {
         this.core = core;
     }
 

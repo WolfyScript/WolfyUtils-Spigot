@@ -50,7 +50,7 @@ import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReferen
 import me.wolfyscript.utilities.api.inventory.custom_items.references.VanillaRef;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.WolfyUtilitiesRef;
 import me.wolfyscript.utilities.compatibility.CompatibilityManager;
-import me.wolfyscript.utilities.compatibility.CompatibilityManagerSpigot;
+import me.wolfyscript.utilities.compatibility.CompatibilityManagerBukkit;
 import me.wolfyscript.utilities.main.WUPlugin;
 import me.wolfyscript.utilities.main.configs.WUConfig;
 import me.wolfyscript.utilities.messages.MessageFactory;
@@ -144,7 +144,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         api.getChat().setChatPrefix(Component.text("[", NamedTextColor.GRAY).append(Component.text("WU", NamedTextColor.AQUA)).append(Component.text("] ", NamedTextColor.DARK_GRAY)));
         this.messageHandler = new MessageHandler(this);
         this.messageFactory = new MessageFactory(this);
-        this.compatibilityManager = new CompatibilityManagerSpigot(this);
+        this.compatibilityManager = new CompatibilityManagerBukkit(this);
     }
 
     /**
@@ -156,7 +156,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         api.getChat().setChatPrefix(Component.text("[", NamedTextColor.GRAY).append(Component.text("WU", NamedTextColor.AQUA)).append(Component.text("] ", NamedTextColor.DARK_GRAY)));
         this.messageHandler = new MessageHandler(this);
         this.messageFactory = new MessageFactory(this);
-        this.compatibilityManager = new CompatibilityManagerSpigot(this);
+        this.compatibilityManager = new CompatibilityManagerBukkit(this);
     }
 
     @Override

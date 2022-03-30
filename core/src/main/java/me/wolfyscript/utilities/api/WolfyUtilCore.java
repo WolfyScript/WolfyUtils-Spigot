@@ -5,7 +5,7 @@ import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
 import me.wolfyscript.utilities.compatibility.CompatibilityManager;
-import me.wolfyscript.utilities.compatibility.CompatibilityManagerSpigot;
+import me.wolfyscript.utilities.compatibility.CompatibilityManagerBukkit;
 import me.wolfyscript.utilities.registry.Registries;
 import me.wolfyscript.utilities.util.version.ServerVersion;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * This abstract class is the actual core of the plugin (This class is being extended by the plugin instance).<br>
  * <p>
- * It provides access to internal functionality like {@link Registries}, {@link CompatibilityManagerSpigot}, and of course the creation of the API instance.<br>
+ * It provides access to internal functionality like {@link Registries}, {@link CompatibilityManagerBukkit}, and of course the creation of the API instance.<br>
  * <p>
  * To get an instance of the API ({@link WolfyUtilities}) for your plugin you need one of the following methods. <br>
  * <ul>
@@ -98,9 +98,9 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
     }
 
     /**
-     * Gets the {@link CompatibilityManagerSpigot}, that manages the plugins compatibility features.
+     * Gets the {@link CompatibilityManagerBukkit}, that manages the plugins compatibility features.
      *
-     * @return The {@link CompatibilityManagerSpigot}.
+     * @return The {@link CompatibilityManagerBukkit}.
      */
     public abstract CompatibilityManager getCompatibilityManager();
 

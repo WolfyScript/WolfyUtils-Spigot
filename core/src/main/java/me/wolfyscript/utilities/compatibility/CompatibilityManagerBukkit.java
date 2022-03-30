@@ -20,21 +20,21 @@ package me.wolfyscript.utilities.compatibility;
 
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 
-public final class CompatibilityManagerSpigot implements CompatibilityManager {
+public final class CompatibilityManagerBukkit implements CompatibilityManager {
 
     private final WolfyUtilCore core;
-    private final PluginsSpigot pluginsSpigot;
+    private final PluginsBukkit pluginsBukkit;
 
-    public CompatibilityManagerSpigot(WolfyUtilCore core) {
+    public CompatibilityManagerBukkit(WolfyUtilCore core) {
         this.core = core;
-        this.pluginsSpigot = new PluginsSpigot(core);
+        this.pluginsBukkit = new PluginsBukkit(core);
     }
 
     public void init() {
-        pluginsSpigot.init();
+        pluginsBukkit.init();
     }
 
     public Plugins getPlugins() {
-        return pluginsSpigot;
+        return pluginsBukkit;
     }
 }
