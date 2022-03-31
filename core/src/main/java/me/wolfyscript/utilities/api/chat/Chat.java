@@ -59,8 +59,22 @@ public abstract class Chat extends com.wolfyscript.utilities.common.chat.Chat {
     @Deprecated
     public abstract void sendMessage(Player player, String message);
 
+    /**
+     * Sends a chat component message, with the previously set prefix, to the player.
+     *
+     * @param player The player to send the message to.
+     * @param component The component to send.
+     */
     public abstract void sendMessage(Player player, Component component);
 
+    /**
+     * Sends a chat component message to the player.<br>
+     * The prefix can be disabled, which just sends the component as is.
+     *
+     * @param player The player to send the message to.
+     * @param prefix If the message should have the prefix.
+     * @param component The component to send.
+     */
     public abstract void sendMessage(Player player, boolean prefix, Component component);
 
     /**
@@ -75,8 +89,23 @@ public abstract class Chat extends com.wolfyscript.utilities.common.chat.Chat {
     @Deprecated
     public abstract void sendMessage(Player player, String message, Pair<String, String>... replacements);
 
+    /**
+     * Sends chat component messages to the player.<br>
+     * Each message will be composed of the prefix and component.
+     *
+     * @param player The player to send the messages to.
+     * @param components The components to send.
+     */
     public abstract void sendMessages(Player player, Component... components);
 
+    /**
+     * Sends chat component messages to the player.<br>
+     * If `prefix` is set to false, then the messages are just composed of the component.<br>
+     * Otherwise, it does the same as {@link #sendMessages(com.wolfyscript.utilities.common.adapters.Player, Component...)}
+     *
+     * @param player The player to send the messages to.
+     * @param components The components to send.
+     */
     public abstract void sendMessages(Player player, boolean prefix, Component... components);
 
     /**
