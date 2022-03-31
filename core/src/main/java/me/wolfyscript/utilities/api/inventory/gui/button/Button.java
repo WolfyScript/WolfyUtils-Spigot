@@ -110,7 +110,7 @@ public abstract class Button<C extends CustomCache> {
             //No longer set default templates, that should be purely managed by the plugin.
             CallbackButtonRender.UpdateResult updateResult = renderTemplates.render(guiHandler.getCustomCache(), guiHandler, player, guiInventory, item, slot);
             //Replace names and lore in existing lore
-            item = ItemUtils.replaceNameAndLore(guiHandler.getApi().getChat().getMiniMessage(), updateResult.getItemStack(), updateResult.getResolvers());
+            inventory.setItem(slot, ItemUtils.replaceNameAndLore(guiHandler.getApi().getChat().getMiniMessage(), updateResult.getItemStack(), updateResult.getResolvers()));
         } else {
             //Using the legacy placeholder system, with backwards compatibility of the new system.
             HashMap<String, Object> values = new HashMap<>();
@@ -122,9 +122,8 @@ public abstract class Button<C extends CustomCache> {
                 item = state.getRenderAction().render(values, guiHandler.getCustomCache(), guiHandler, player, guiInventory, item, slot, help);
             }
             //Legacy key replacements.
-            item = replaceKeysWithValue(item, values.entrySet().stream().collect(Collectors.toMap(entry -> "<" + guiHandler.getApi().getChat().convertOldPlaceholder(entry.getKey()) + ">", entry -> entry.getValue() != null ? entry.getValue() : "")));
+            inventory.setItem(slot, replaceKeysWithValue(item, values.entrySet().stream().collect(Collectors.toMap(entry -> "<" + guiHandler.getApi().getChat().convertOldPlaceholder(entry.getKey()) + ">", entry -> String.valueOf(entry.getValue())))));
         }
-        inventory.setItem(slot, item);
     }
 
     protected void applyItem(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, ButtonState<C> state, int slot, boolean help) {

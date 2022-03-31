@@ -47,10 +47,16 @@ public interface CallbackButtonRender<C extends CustomCache> extends ButtonRende
      */
     UpdateResult render(C cache, GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, ItemStack itemStack, int slot);
 
+    @Deprecated
     default ItemStack render(HashMap<String, Object> values, C cache, GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, ItemStack itemStack, int slot, boolean helpEnabled) {
         return render(cache, guiHandler, player, guiInventory, itemStack, slot).getItemStack();
     }
 
+    /**
+     * Contains the data that is used to render the button.
+     *
+     * @see CallbackButtonRender
+     */
     class UpdateResult {
 
         private final ItemStack itemStack;
@@ -69,22 +75,52 @@ public interface CallbackButtonRender<C extends CustomCache> extends ButtonRende
             this(itemStack, new TagResolver[0]);
         }
 
+        /**
+         * Creates a new UpdateResult of the specified ItemStack and TagResolvers.
+         *
+         * @param itemStack The ItemStack to render.
+         * @param resolvers The TagResolvers to use to replace tags in display name and lore.
+         * @return a new {@link UpdateResult} instance.
+         */
         public static UpdateResult of(ItemStack itemStack, TagResolver... resolvers) {
             return new UpdateResult(itemStack, resolvers);
         }
 
+        /**
+         * Creates a new UpdateResult of the specified ItemStack and TagResolver.
+         *
+         * @param itemStack The ItemStack to render.
+         * @param resolver The TagResolver to use to replace tags in display name and lore.
+         * @return a new {@link UpdateResult} instance.
+         */
         public static UpdateResult of(ItemStack itemStack, TagResolver resolver) {
             return new UpdateResult(itemStack, resolver);
         }
 
+        /**
+         * Creates a new UpdateResult of the specified ItemStack.
+         *
+         * @param itemStack The ItemStack to render.
+         * @return a new {@link UpdateResult} instance.
+         */
         public static UpdateResult of(ItemStack itemStack) {
             return new UpdateResult(itemStack);
         }
 
+        /**
+         * The ItemStack of this result, that is rendered in the inventory.
+         *
+         * @return the ItemStack of this result.
+         */
         public ItemStack getItemStack() {
             return itemStack;
         }
 
+        /**
+         * The {@link TagResolver}s to use to replace tags in the display name and lore of the item.
+         *
+         * @return An array of all the {@link TagResolver}s of this result.
+         */
         public TagResolver[] getResolvers() {
             return resolvers;
         }
