@@ -26,6 +26,7 @@ import me.wolfyscript.utilities.api.inventory.gui.GuiWindow;
 import me.wolfyscript.utilities.api.inventory.gui.InventoryAPI;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
+import me.wolfyscript.utilities.util.Pair;
 import me.wolfyscript.utilities.util.chat.ChatColor;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -105,12 +106,11 @@ public abstract class Button<C extends CustomCache> {
     }
 
     protected void applyItem(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, ButtonState<C> state, ItemStack item, int slot, boolean help) {
-        List<? extends TagResolver> tagResolvers = new LinkedList<>();
         if (state.getRenderAction() instanceof CallbackButtonRender<C> renderTemplates) {
             //No longer set default templates, that should be purely managed by the plugin.
-            item = renderTemplates.render(tagResolvers, guiHandler.getCustomCache(), guiHandler, player, guiInventory, item, slot);
+            CallbackButtonRender.UpdateResult updateResult = renderTemplates.render(guiHandler.getCustomCache(), guiHandler, player, guiInventory, item, slot);
             //Replace names and lore in existing lore
-            item = ItemUtils.replaceNameAndLore(guiHandler.getApi().getChat().getMiniMessage(), item, tagResolvers.toArray(TagResolver[]::new));
+            item = ItemUtils.replaceNameAndLore(guiHandler.getApi().getChat().getMiniMessage(), updateResult.getItemStack(), updateResult.getResolvers());
         } else {
             //Using the legacy placeholder system, with backwards compatibility of the new system.
             HashMap<String, Object> values = new HashMap<>();
