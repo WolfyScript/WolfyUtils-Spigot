@@ -618,10 +618,23 @@ public class ButtonState<C extends CustomCache> {
         /**
          * Sets the render callback, that is called when the button is rendered.
          *
+         * @deprecated Use the new {@link #render(CallbackButtonRender)} instead! The new callback provides a better solution for tags.
          * @param buttonRender The render callback.
          * @return This button state for chaining.
          */
+        @Deprecated
         public Builder<C> render(@Nullable ButtonRender<C> buttonRender) {
+            this.render = buttonRender;
+            return this;
+        }
+
+        /**
+         * Sets the render callback, that is called when the button is rendered.
+         *
+         * @param buttonRender The render callback.
+         * @return This button state for chaining.
+         */
+        public Builder<C> render(@Nullable CallbackButtonRender<C> buttonRender) {
             this.render = buttonRender;
             return this;
         }
