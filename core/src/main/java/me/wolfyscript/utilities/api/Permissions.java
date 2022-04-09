@@ -19,7 +19,9 @@
 package me.wolfyscript.utilities.api;
 
 import com.wolfyscript.utilities.common.WolfyUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.permissions.Permission;
 
 import java.util.Locale;
 
@@ -55,7 +57,7 @@ public class Permissions {
         StringBuilder permission = new StringBuilder();
         for (String s : permCode.split("\\.")) {
             permission.append(s);
-            if (sender.hasPermission(permission.toString()) || sender.hasPermission(permission.toString() + ".*")) {
+            if (sender.hasPermission(permission.toString()) || sender.hasPermission(permission + ".*")) {
                 return true;
             }
             permission.append(".");

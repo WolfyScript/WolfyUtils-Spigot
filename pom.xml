@@ -6,7 +6,7 @@
 
     <groupId>com.wolfyscript.wolfyutils.spigot</groupId>
     <artifactId>wolfyutils-parent</artifactId>
-    <version>4.16-SNAPSHOT</version>
+    <version>4.16.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>WolfyUtils-Spigot</name>
 
@@ -19,6 +19,8 @@
 
     <properties>
         <java.version>16</java.version>
+        <java.mc18.version>17</java.mc18.version>
+        <wolfyutils.api>4.16-SNAPSHOT</wolfyutils.api>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -27,7 +29,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.10.1</version>
                 <configuration>
                     <release>${java.version}</release>
                 </configuration>
@@ -92,15 +94,21 @@
         </dependency>
         <dependency>
             <groupId>com.wolfyscript.wolfyutils</groupId>
-            <artifactId>wolfyutilities-parent</artifactId>
-            <version>3.16-abstract-api-SNAPSHOT</version>
+            <artifactId>wolfyutilities</artifactId>
+            <version>${wolfyutils.api}</version>
             <scope>provided</scope>
         </dependency>
         <!-- - - - - -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.13.2</version>
+            <version>2.13.2.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>5.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -131,6 +139,7 @@
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
             <version>3.0.0</version>
+            <scope>provided</scope>
         </dependency>
         <!-- Adventure ChatComponent API -->
         <dependency>
