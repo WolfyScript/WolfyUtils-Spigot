@@ -292,7 +292,7 @@ public abstract class ChatImplOld extends me.wolfyscript.utilities.api.chat.Chat
      */
     @Override
     public String getInGamePrefix() {
-        return null;
+        return LEGACY_SERIALIZER.serialize(getChatPrefix());
     }
 
     /**
