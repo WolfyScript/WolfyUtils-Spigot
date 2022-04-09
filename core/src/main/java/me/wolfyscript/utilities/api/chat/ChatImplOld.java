@@ -262,7 +262,7 @@ public abstract class ChatImplOld extends me.wolfyscript.utilities.api.chat.Chat
     @Override
     public TextComponent[] getActionMessage(String prefix, Player player, ClickData... clickData) {
         TextComponent[] textComponents = new TextComponent[clickData.length + 1];
-        textComponents[0] = new TextComponent(prefix);
+        textComponents[0] = new TextComponent(prefix == null ? "" : prefix);
         for (int i = 1; i < textComponents.length; i++) {
             ClickData data = clickData[i - 1];
             TextComponent component = new TextComponent(languageAPI.replaceColoredKeys(data.getMessage()));
