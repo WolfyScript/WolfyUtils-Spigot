@@ -21,12 +21,15 @@ package me.wolfyscript.utilities.compatibility.plugins;
 import me.wolfyscript.utilities.compatibility.PluginIntegration;
 import me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomStack;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 public interface ItemsAdderIntegration extends PluginIntegration {
 
     String KEY = "ItemsAdder";
 
+    @Nullable
     CustomStack getByItemStack(ItemStack itemStack);
 
+    @Nullable
     CustomStack getInstance(String namespacedID);
 }

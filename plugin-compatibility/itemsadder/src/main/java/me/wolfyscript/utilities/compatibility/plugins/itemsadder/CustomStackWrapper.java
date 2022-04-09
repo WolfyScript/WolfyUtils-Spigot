@@ -20,13 +20,20 @@ package me.wolfyscript.utilities.compatibility.plugins.itemsadder;
 
 import org.bukkit.inventory.ItemStack;
 import dev.lone.itemsadder.api.CustomStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CustomStackWrapper implements me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomStack {
 
     private final CustomStack item;
 
-    public CustomStackWrapper(CustomStack item) {
+    private CustomStackWrapper(@NotNull CustomStack item) {
         this.item = item;
+    }
+
+    @Nullable
+    public static CustomStackWrapper wrapStack(@Nullable CustomStack customStack) {
+        return customStack != null ? new CustomStackWrapper(customStack) : null;
     }
 
     @Override
