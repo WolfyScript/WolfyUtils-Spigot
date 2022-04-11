@@ -18,6 +18,7 @@
 
 package me.wolfyscript.utilities.api.inventory.gui;
 
+import com.wolfyscript.utilities.bukkit.TagResolverUtil;
 import me.wolfyscript.utilities.api.chat.Chat;
 import me.wolfyscript.utilities.api.chat.ClickAction;
 import me.wolfyscript.utilities.api.chat.ClickData;
@@ -35,6 +36,7 @@ import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.Pair;
 import me.wolfyscript.utilities.util.chat.ChatColor;
 import me.wolfyscript.utilities.util.reflection.InventoryUpdate;
+import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
@@ -70,6 +72,9 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
     private boolean forceSyncUpdate;
     private int titleUpdatePeriod = -1;
     private int titleUpdateDelay = 20;
+
+    //
+    private boolean useLegacyTitleUpdate = false;
 
     //Inventory
     private final InventoryType inventoryType;
@@ -122,6 +127,16 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
         this.size = size;
         this.forceSyncUpdate = forceSyncUpdate;
         Bukkit.getPluginManager().registerEvents(this, wolfyUtilities.getPlugin());
+
+        //Check if the old title update method is used.
+        try {
+            Class<?> declaringClass = getClass().getMethod("onUpdateTitle", String.class, GUIInventory.class, GuiHandler.class).getDeclaringClass();
+            if (!declaringClass.equals(getClass())) {
+                useLegacyTitleUpdate = true;
+            }
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -162,8 +177,24 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      * @param guiHandler    The handler that the inventory belongs to.
      * @return The new modified title. Color codes using & will be converted.
      */
+    @Deprecated
     public String onUpdateTitle(String originalTitle, @Nullable GUIInventory<C> inventory, GuiHandler<C> guiHandler) {
         return originalTitle;
+    }
+
+    /**
+     * Called each time the title of the window is updated.<br>
+     * By default, that only happens once, when the player opens the inventory.<br>
+     * Using {@link #setTitleUpdateDelay(int)} and {@link #setTitleUpdatePeriod(int)} you can set the frequency at which the title is updated.<br>
+     * When enabled this will be called every specified period.
+     *
+     * @param player        The player that the window belongs to.
+     * @param inventory     The inventory instance, which title is updated. Null when the inventory is opened for the first time!
+     * @param guiHandler    The handler that the inventory belongs to.
+     * @return The new modified title. Color codes using & will be converted.
+     */
+    public Component onUpdateTitle(Player player, @Nullable GUIInventory<C> inventory, GuiHandler<C> guiHandler) {
+        return getInventoryTitle(player);
     }
 
     /**
@@ -230,17 +261,16 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
                     guiHandler.setWindowUpdateTask(Bukkit.getScheduler().runTaskTimer(wolfyUtilities.getPlugin(), () -> {
                         var player = guiHandler.getPlayer();
                         if (player != null) {
-                            String title = onUpdateTitle(getInventoryName(), inv, guiHandler);
-                            PlaceholderAPIIntegration integration = wolfyUtilities.getCore().getCompatibilityManager().getPlugins().getIntegration("PlaceholderAPI", PlaceholderAPIIntegration.class);
-                            if (integration != null) {
-                                title = integration.setPlaceholders(player, integration.setBracketPlaceholders(player, title));
-                            }
-                            InventoryUpdate.updateInventory(wolfyUtilities.getCore(), player, ChatColor.convert(title));
+                            InventoryUpdate.updateInventory(wolfyUtilities.getCore(), player, updateTitle(player, inv, guiHandler));
                         }
                     }, titleUpdateDelay, titleUpdatePeriod));
                 }
             });
         }
+    }
+
+    void setTitle() {
+
     }
 
     /**
@@ -401,8 +431,29 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
     /**
      * @return The inventory name of this Window.
      */
+    @Deprecated
     protected String getInventoryName() {
-        return wolfyUtilities.getLanguageAPI().replaceColoredKeys("$inventories." + namespacedKey.getNamespace() + "." + namespacedKey.getKey() + ".gui_name$");
+        return BukkitComponentSerializer.legacy().serialize(getInventoryTitle(null));
+    }
+
+    protected Component getInventoryTitle(Player player) {
+        return wolfyUtilities.getLanguageAPI().getComponent("inventories." + namespacedKey.getNamespace() + "." + namespacedKey.getKey() + ".gui_name", true, TagResolverUtil.papi(player));
+    }
+
+    Component updateTitle(Player player, GUIInventory<C> guiInventory, GuiHandler<C> guiHandler) {
+        if (useLegacyTitleUpdate) {
+            //This window still uses the deprecated update method
+            String title = onUpdateTitle(getInventoryName(), null, guiHandler);
+            var desc = wolfyUtilities.getCore().getDescription();
+            title = title.replace("%plugin.version%", desc.getVersion()).replace("%plugin.author%", desc.getAuthors().toString()).replace("%plugin.name%", desc.getName());
+
+            PlaceholderAPIIntegration integration = wolfyUtilities.getCore().getCompatibilityManager().getPlugins().getIntegration("PlaceholderAPI", PlaceholderAPIIntegration.class);
+            if (integration != null) {
+                title = integration.setPlaceholders(player, integration.setBracketPlaceholders(player, title));
+            }
+            return BukkitComponentSerializer.legacy().deserialize(title);
+        }
+        return onUpdateTitle(player, guiInventory, guiHandler);
     }
 
     /**
