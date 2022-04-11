@@ -5,7 +5,7 @@
     <parent>
         <artifactId>wolfyutils-parent</artifactId>
         <groupId>com.wolfyscript.wolfyutils.spigot</groupId>
-        <version>4.16-SNAPSHOT</version>
+        <version>4.16.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -40,6 +40,20 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <shadeSourcesContent>true</shadeSourcesContent>
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <artifactSet>
+                                <includes>
+                                    <include>com.wolfyscript.wolfyutils</include>
+                                    <include>com.wolfyscript.wolfyutils.spigot</include>
+                                    <include>org.bstats</include>
+                                    <include>com.fasterxml.jackson.core</include>
+                                    <include>org.reflections</include>
+                                    <include>org.javassist</include>
+                                    <include>net.kyori</include>
+                                </includes>
+                            </artifactSet>
                             <relocations>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
@@ -62,20 +76,6 @@
                                     <shadedPattern>me.wolfyscript.lib.net.kyori</shadedPattern>
                                 </relocation>
                             </relocations>
-                            <shadeSourcesContent>true</shadeSourcesContent>
-                            <shadedArtifactAttached>false</shadedArtifactAttached>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <artifactSet>
-                                <includes>
-                                    <include>com.wolfyscript.wolfyutils</include>
-                                    <include>com.wolfyscript.wolfyutils.spigot</include>
-                                    <include>org.bstats</include>
-                                    <include>com.fasterxml.jackson.core</include>
-                                    <include>org.reflections</include>
-                                    <include>org.javassist</include>
-                                    <include>net.kyori</include>
-                                </includes>
-                            </artifactSet>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
@@ -107,8 +107,8 @@
         <!-- Core modules -->
         <dependency>
             <groupId>com.wolfyscript.wolfyutils</groupId>
-            <artifactId>wolfyutilities-parent</artifactId>
-            <version>3.16-abstract-api-SNAPSHOT</version>
+            <artifactId>wolfyutilities</artifactId>
+            <version>${wolfyutils.api}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -140,7 +140,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.13.2</version>
+            <version>2.13.2.1</version>
             <scope>compile</scope>
         </dependency>
         <!-- Adventure API -->

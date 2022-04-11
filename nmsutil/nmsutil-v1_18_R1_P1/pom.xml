@@ -23,16 +23,11 @@
     <parent>
         <artifactId>nmsutil</artifactId>
         <groupId>com.wolfyscript.wolfyutils.spigot</groupId>
-        <version>4.16-SNAPSHOT</version>
+        <version>4.16.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>nmsutil-v1_18_R1_P1</artifactId>
-
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -50,9 +45,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.10.1</version>
                 <configuration>
-                    <release>17</release>
+                    <release>${java.mc18.version}</release>
                 </configuration>
             </plugin>
             <plugin>

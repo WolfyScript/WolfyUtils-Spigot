@@ -18,7 +18,6 @@
 
 package me.wolfyscript.utilities.util.inventory;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.ArmorType;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.util.chat.ChatColor;
@@ -40,11 +39,8 @@ public class ItemUtils {
 
     public final static ItemStack AIR = new ItemStack(Material.AIR);
 
-    private final WolfyUtilities wolfyUtilities;
-
-    public ItemUtils(WolfyUtilities wolfyUtilities) {
-        this.wolfyUtilities = wolfyUtilities;
-    }
+    @Deprecated(since = "4.16.0.0", forRemoval = true)
+    public ItemUtils() { }
 
     public static boolean isEquipable(Material material) {
         return switch (material.name()) {

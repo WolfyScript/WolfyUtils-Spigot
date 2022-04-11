@@ -63,7 +63,7 @@ public class PlaceholderAPIImpl extends PluginIntegrationAbstract implements Pla
 
     @Override
     public boolean hasAsyncLoading() {
-        return true;
+        return false;
     }
 
     @Override

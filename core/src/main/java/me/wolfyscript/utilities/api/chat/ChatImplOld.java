@@ -20,7 +20,6 @@ package me.wolfyscript.utilities.api.chat;
 
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.spigot.adapters.PlayerImpl;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.gui.GuiCluster;
 import me.wolfyscript.utilities.util.NamespacedKey;
@@ -45,7 +44,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,7 +52,7 @@ import java.util.regex.Pattern;
  * Implementation of the old deprecated methods available in the deprecated {@link Chat} class.
  */
 @Deprecated
-abstract class ChatImplOld extends me.wolfyscript.utilities.api.chat.Chat {
+public abstract class ChatImplOld extends me.wolfyscript.utilities.api.chat.Chat {
 
     private static final Pattern ADVENTURE_PLACEHOLDER_PATTERN = Pattern.compile("([!?#]?)([a-z0-9_-]*)");
     private static final Pattern LEGACY_PLACEHOLDER_PATTERN = Pattern.compile("%([^%]+)%");
@@ -264,7 +262,7 @@ abstract class ChatImplOld extends me.wolfyscript.utilities.api.chat.Chat {
     @Override
     public TextComponent[] getActionMessage(String prefix, Player player, ClickData... clickData) {
         TextComponent[] textComponents = new TextComponent[clickData.length + 1];
-        textComponents[0] = new TextComponent(prefix);
+        textComponents[0] = new TextComponent(prefix == null ? "" : prefix);
         for (int i = 1; i < textComponents.length; i++) {
             ClickData data = clickData[i - 1];
             TextComponent component = new TextComponent(languageAPI.replaceColoredKeys(data.getMessage()));
@@ -294,7 +292,7 @@ abstract class ChatImplOld extends me.wolfyscript.utilities.api.chat.Chat {
      */
     @Override
     public String getInGamePrefix() {
-        return null;
+        return LEGACY_SERIALIZER.serialize(getChatPrefix());
     }
 
     /**
