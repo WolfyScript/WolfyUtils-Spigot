@@ -437,13 +437,13 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
     }
 
     protected Component getInventoryTitle(Player player) {
-        return wolfyUtilities.getLanguageAPI().getComponent("inventories." + namespacedKey.getNamespace() + "." + namespacedKey.getKey() + ".gui_name", true, TagResolverUtil.papi(player));
+        return wolfyUtilities.getLanguageAPI().getComponent("inventories." + namespacedKey.getNamespace() + "." + namespacedKey.getKey() + ".gui_name", TagResolverUtil.papi(player));
     }
 
     Component updateTitle(Player player, GUIInventory<C> guiInventory, GuiHandler<C> guiHandler) {
         if (useLegacyTitleUpdate) {
             //This window still uses the deprecated update method
-            String title = onUpdateTitle(getInventoryName(), null, guiHandler);
+            String title = onUpdateTitle(BukkitComponentSerializer.legacy().serialize(getInventoryTitle(player)), null, guiHandler);
             var desc = wolfyUtilities.getCore().getDescription();
             title = title.replace("%plugin.version%", desc.getVersion()).replace("%plugin.author%", desc.getAuthors().toString()).replace("%plugin.name%", desc.getName());
 
