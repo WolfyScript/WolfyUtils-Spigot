@@ -11,11 +11,6 @@
 
     <artifactId>core</artifactId>
 
-    <properties>
-        <maven.compiler.source>16</maven.compiler.source>
-        <maven.compiler.target>16</maven.compiler.target>
-    </properties>
-
     <dependencies>
         <!-- LWC by Brokkonaut for entity locking -->
         <dependency>
