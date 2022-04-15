@@ -23,6 +23,8 @@ package me.wolfyscript.utilities.util.reflection;
 
 import me.wolfyscript.utilities.util.Reflection;
 import me.wolfyscript.utilities.util.version.ServerVersion;
+import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
+import net.kyori.adventure.text.Component;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -35,6 +37,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**
@@ -45,19 +48,19 @@ public final class InventoryUpdate {
 
     // Classes.
     private final static Class<?> CRAFT_PLAYER_CLASS;
-    private final static Class<?> CHAT_MESSAGE_CLASS;
     private final static Class<?> PACKET_PLAY_OUT_OPEN_WINDOW_CLASS;
     private final static Class<?> I_CHAT_BASE_COMPONENT_CLASS;
     private final static Class<?> CONTAINERS_CLASS;
     private final static Class<?> ENTITY_PLAYER_CLASS;
     private final static Class<?> CONTAINER_CLASS;
+    private final static Class<?> CRAFT_CHAT_MESSAGE_CLASS;
 
     // Methods.
     private final static MethodHandle getHandle;
     private final static MethodHandle getBukkitView;
+    private final static MethodHandle fromJSONOrString;
 
     // Constructors.
-    private static Constructor<?> chatMessageConstructor;
     private static Constructor<?> packetPlayOutOpenWindowConstructor;
 
     // Fields.
@@ -67,39 +70,42 @@ public final class InventoryUpdate {
     static {
         // Initialize classes.
         CRAFT_PLAYER_CLASS = Reflection.getOBC("entity.CraftPlayer");
-        CHAT_MESSAGE_CLASS = Reflection.getNMS("network.chat", "ChatMessage");
+        CRAFT_CHAT_MESSAGE_CLASS = Reflection.getOBC("util.CraftChatMessage");
         PACKET_PLAY_OUT_OPEN_WINDOW_CLASS = Reflection.getNMS("network.protocol.game", "PacketPlayOutOpenWindow");
         I_CHAT_BASE_COMPONENT_CLASS = Reflection.getNMS("network.chat", "IChatBaseComponent");
-        // Check if we use containers, otherwise, can throw errors on older versions.
         CONTAINERS_CLASS = Reflection.getNMS("world.inventory", "Containers");
         ENTITY_PLAYER_CLASS = Reflection.getNMS("server.level", "EntityPlayer");
         CONTAINER_CLASS = Reflection.getNMS("world.inventory", "Container");
 
-        MethodHandle handle = null, bukkitView = null;
-
+        MethodHandle handle = null, bukkitView = null, jsonOrString = null;
         try {
-            int version = ServerVersion.getVersion().getMinor();
             MethodHandles.Lookup lookup = MethodHandles.lookup();
 
             // Initialize methods.
             handle = lookup.findVirtual(CRAFT_PLAYER_CLASS, "getHandle", MethodType.methodType(ENTITY_PLAYER_CLASS));
             bukkitView = lookup.findVirtual(CONTAINER_CLASS, "getBukkitView", MethodType.methodType(InventoryView.class));
+            jsonOrString = lookup.findStatic(CRAFT_CHAT_MESSAGE_CLASS, "fromJSONOrString", MethodType.methodType(I_CHAT_BASE_COMPONENT_CLASS, String.class));
 
             // Initialize constructors.
-            chatMessageConstructor = CHAT_MESSAGE_CLASS.getConstructor(String.class, Object[].class);
             packetPlayOutOpenWindowConstructor = PACKET_PLAY_OUT_OPEN_WINDOW_CLASS.getConstructor(int.class, CONTAINERS_CLASS, I_CHAT_BASE_COMPONENT_CLASS);
 
             // Initialize fields.
-            activeContainerField = (version == 17) ?
-                    ENTITY_PLAYER_CLASS.getField("bV") : (version == 18) ?
-                    ENTITY_PLAYER_CLASS.getField("bW") :
-                    ENTITY_PLAYER_CLASS.getField("activeContainer");
+            int version = ServerVersion.getVersion().getMinor();
+            activeContainerField = ENTITY_PLAYER_CLASS.getField(switch (ServerVersion.getVersion().getMinor()) {
+                case 17 -> "bV";
+                case 18 -> switch (ServerVersion.getVersion().getPatch()) {
+                    case 0, 1 -> "bW";
+                    default -> "bV";
+                };
+                default -> "activeContainer";
+            });
             windowIdField = (version > 16) ? CONTAINER_CLASS.getField("j") : CONTAINER_CLASS.getField("windowId");
         } catch (ReflectiveOperationException exception) {
             exception.printStackTrace();
         }
         getHandle = handle;
         getBukkitView = bukkitView;
+        fromJSONOrString = jsonOrString;
     }
 
     /**
@@ -110,16 +116,18 @@ public final class InventoryUpdate {
      */
     public static void updateInventory(JavaPlugin plugin, Player player, String newTitle) {
         Validate.notNull(player, "Cannot update inventory to null player.");
+        updateInventory(plugin, player, Component.text(newTitle == null ? "" : newTitle));
+    }
+
+    public static void updateInventory(JavaPlugin plugin, Player player, Component newTitle) {
+        Validate.notNull(player, "Cannot update inventory to null player.");
         try {
             // Get EntityPlayer from CraftPlayer.
             Object craftPlayer = CRAFT_PLAYER_CLASS.cast(player);
             Object entityPlayer = getHandle.invoke(craftPlayer);
 
-            if (newTitle != null && newTitle.length() > 32) {
-                newTitle = newTitle.substring(0, 32);
-            }
             // Create new title.
-            Object title = chatMessageConstructor.newInstance(newTitle != null ? newTitle : "", new Object[]{});
+            Object title = fromJSONOrString.invoke(BukkitComponentSerializer.gson().serialize(newTitle));
             // Get activeContainer from EntityPlayer.
             Object activeContainer = activeContainerField.get(entityPlayer);
             // Get windowId from activeContainer.
