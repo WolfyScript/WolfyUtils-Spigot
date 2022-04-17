@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.api.nms.v1_18_R2.inventory;
+package me.wolfyscript.utilities.api.nms.v1_18_R2.item.crafting;
 
 import me.wolfyscript.utilities.api.nms.inventory.ExtendedRecipeChoice;
 import net.minecraft.world.item.crafting.Ingredient;

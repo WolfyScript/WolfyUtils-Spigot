@@ -25,9 +25,9 @@ import me.wolfyscript.utilities.api.nms.inventory.FunctionalCookingRecipe;
 import me.wolfyscript.utilities.api.nms.inventory.FunctionalFurnaceRecipe;
 import me.wolfyscript.utilities.api.nms.inventory.ExtendedRecipeChoice;
 import me.wolfyscript.utilities.api.nms.inventory.RecipeType;
-import me.wolfyscript.utilities.api.nms.v1_18_R2.inventory.FunctionalCampfireRecipeImpl;
-import me.wolfyscript.utilities.api.nms.v1_18_R2.inventory.FunctionalFurnaceRecipeImpl;
-import me.wolfyscript.utilities.api.nms.v1_18_R2.inventory.ExtendedRecipeChoiceImpl;
+import me.wolfyscript.utilities.api.nms.v1_18_R2.item.crafting.FunctionalCampfireRecipeImpl;
+import me.wolfyscript.utilities.api.nms.v1_18_R2.item.crafting.FunctionalFurnaceRecipeImpl;
+import me.wolfyscript.utilities.api.nms.v1_18_R2.item.crafting.ExtendedRecipeChoiceImpl;
 import me.wolfyscript.utilities.api.nms.v1_18_R2.inventory.RecipeIterator;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import net.minecraft.resources.ResourceLocation;
@@ -72,13 +72,13 @@ public class RecipeUtilImpl extends me.wolfyscript.utilities.api.nms.RecipeUtil 
     }
 
     @Override
-    public FunctionalFurnaceRecipe furnaceRecipe(NamespacedKey key, ItemStack result, ItemStack source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> recipeMatch) {
-        return new FunctionalFurnaceRecipeImpl(toMC(key), "", new ExtendedRecipeChoiceImpl(itemStack -> false, source).toNMS(), CraftItemStack.asNMSCopy(result), experience, cookingTime, recipeMatch);
+    public FunctionalFurnaceRecipe furnaceRecipe(NamespacedKey key, ItemStack result, ItemStack source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> matchRecipe) {
+        return new FunctionalFurnaceRecipeImpl(toMC(key), "", new ExtendedRecipeChoiceImpl(itemStack -> false, source).toNMS(), CraftItemStack.asNMSCopy(result), experience, cookingTime, matchRecipe);
     }
 
     @Override
-    public FunctionalCampfireRecipe campfireRecipe(NamespacedKey key, ItemStack result, ItemStack source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> recipeMatch) {
-        return new FunctionalCampfireRecipeImpl(toMC(key), "", new ExtendedRecipeChoiceImpl(itemStack -> false, source).toNMS(), CraftItemStack.asNMSCopy(result), experience, cookingTime, recipeMatch);
+    public FunctionalCampfireRecipe campfireRecipe(NamespacedKey key, ItemStack result, ItemStack source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> matchRecipe) {
+        return new FunctionalCampfireRecipeImpl(toMC(key), "", new ExtendedRecipeChoiceImpl(itemStack -> false, source).toNMS(), CraftItemStack.asNMSCopy(result), experience, cookingTime, matchRecipe);
     }
 
     @Override
