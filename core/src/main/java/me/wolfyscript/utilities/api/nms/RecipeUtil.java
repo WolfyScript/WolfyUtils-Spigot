@@ -18,11 +18,23 @@
 
 package me.wolfyscript.utilities.api.nms;
 
+import me.wolfyscript.utilities.api.nms.inventory.FunctionalBlastingRecipe;
+import me.wolfyscript.utilities.api.nms.inventory.FunctionalCampfireRecipe;
+import me.wolfyscript.utilities.api.nms.inventory.FunctionalCookingRecipe;
+import me.wolfyscript.utilities.api.nms.inventory.FunctionalFurnaceRecipe;
+import me.wolfyscript.utilities.api.nms.inventory.ExtendedRecipeChoice;
 import me.wolfyscript.utilities.api.nms.inventory.RecipeType;
+import me.wolfyscript.utilities.util.NamespacedKey;
+import org.bukkit.World;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public abstract class RecipeUtil extends UtilComponent {
 
@@ -38,5 +50,19 @@ public abstract class RecipeUtil extends UtilComponent {
      * @return The iterator of the recipe type.
      */
     public abstract @NotNull Iterator<Recipe> recipeIterator(RecipeType recipeType);
+
+    public abstract ExtendedRecipeChoice recipeChoice(Function<ItemStack, Boolean> sourceCheck, @NotNull List<ItemStack> choices);
+
+    public abstract ExtendedRecipeChoice recipeChoice(Function<ItemStack, Boolean> sourceCheck, @NotNull ItemStack choice);
+
+    public abstract ExtendedRecipeChoice recipeChoice(Function<ItemStack, Boolean> sourceCheck, @NotNull ItemStack... choices);
+
+    public abstract FunctionalFurnaceRecipe furnaceRecipe(NamespacedKey key, ItemStack result, ItemStack source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> recipeMatch);
+
+    public abstract FunctionalCampfireRecipe campfireRecipe(NamespacedKey key, ItemStack result, ItemStack source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> recipeMatch);
+
+    public abstract FunctionalBlastingRecipe blastingRecipe(NamespacedKey key, ItemStack result, ItemStack source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> recipeMatch);
+
+    public abstract void registerCookingRecipe(FunctionalCookingRecipe recipe);
 
 }
