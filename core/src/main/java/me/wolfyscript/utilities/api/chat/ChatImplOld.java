@@ -86,7 +86,7 @@ public abstract class ChatImplOld extends me.wolfyscript.utilities.api.chat.Chat
     @Override
     public void sendMessage(Player player, Component component) {
         if (player != null) {
-            player.spigot().sendMessage(BUNGEE_SERIALIZER.serialize(component));
+            sendMessage(player, true, component);
         }
     }
 
@@ -96,7 +96,7 @@ public abstract class ChatImplOld extends me.wolfyscript.utilities.api.chat.Chat
             if (prefix) {
                 component = getChatPrefix().append(Component.text(" ")).append(component);
             }
-            this.sendMessage(player, component);
+            player.spigot().sendMessage(BUNGEE_SERIALIZER.serialize(component));
         }
     }
 
