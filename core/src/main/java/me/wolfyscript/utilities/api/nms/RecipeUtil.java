@@ -18,23 +18,22 @@
 
 package me.wolfyscript.utilities.api.nms;
 
-import me.wolfyscript.utilities.api.nms.inventory.FunctionalBlastingRecipe;
-import me.wolfyscript.utilities.api.nms.inventory.FunctionalCampfireRecipe;
-import me.wolfyscript.utilities.api.nms.inventory.FunctionalCookingRecipe;
-import me.wolfyscript.utilities.api.nms.inventory.FunctionalFurnaceRecipe;
-import me.wolfyscript.utilities.api.nms.inventory.ExtendedRecipeChoice;
+import me.wolfyscript.utilities.api.nms.item.crafting.FunctionalBlastingRecipe;
+import me.wolfyscript.utilities.api.nms.item.crafting.FunctionalCampfireRecipe;
+import me.wolfyscript.utilities.api.nms.item.crafting.FunctionalFurnaceRecipe;
+import me.wolfyscript.utilities.api.nms.item.crafting.FunctionalRecipe;
 import me.wolfyscript.utilities.api.nms.inventory.RecipeType;
+import me.wolfyscript.utilities.api.nms.item.crafting.FunctionalSmokingRecipe;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.RecipeChoice;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public abstract class RecipeUtil extends UtilComponent {
 
@@ -51,18 +50,29 @@ public abstract class RecipeUtil extends UtilComponent {
      */
     public abstract @NotNull Iterator<Recipe> recipeIterator(RecipeType recipeType);
 
-    public abstract ExtendedRecipeChoice recipeChoice(Function<ItemStack, Boolean> sourceCheck, @NotNull List<ItemStack> choices);
+    /**
+     * Creates a functional Campfire Recipe.<br>
+     * The recipeMatch function is used to check if the recipe is valid (Careful! This is called each tick!)<br>
+     * Other functions like assembler and remaining items, can be set later on.<br>
+     *
+     *
+     * @param key The id of the recipe.
+     * @param group The group of the recipe.
+     * @param result The result of the recipe. When using a custom assembler it is used as the display item.
+     * @param source Used to display the source item/s.
+     * @param experience The experience of the recipe.
+     * @param cookingTime The cooking time of the recipe.
+     * @param recipeMatch The function that checks if the recipe is valid.
+     * @return A new instance of the functional campfire recipe.
+     */
+    public abstract FunctionalCampfireRecipe campfireRecipe(NamespacedKey key, String group, ItemStack result, RecipeChoice source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> recipeMatch);
 
-    public abstract ExtendedRecipeChoice recipeChoice(Function<ItemStack, Boolean> sourceCheck, @NotNull ItemStack choice);
+    public abstract FunctionalFurnaceRecipe furnaceRecipe(NamespacedKey key, String group, ItemStack result, RecipeChoice source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> recipeMatch);
 
-    public abstract ExtendedRecipeChoice recipeChoice(Function<ItemStack, Boolean> sourceCheck, @NotNull ItemStack... choices);
+    public abstract FunctionalBlastingRecipe blastingRecipe(NamespacedKey key, String group, ItemStack result, RecipeChoice source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> recipeMatch);
 
-    public abstract FunctionalFurnaceRecipe furnaceRecipe(NamespacedKey key, ItemStack result, ItemStack source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> recipeMatch);
+    public abstract FunctionalSmokingRecipe smokingRecipe(NamespacedKey key, String group, ItemStack result, RecipeChoice source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> recipeMatch);
 
-    public abstract FunctionalCampfireRecipe campfireRecipe(NamespacedKey key, ItemStack result, ItemStack source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> recipeMatch);
-
-    public abstract FunctionalBlastingRecipe blastingRecipe(NamespacedKey key, ItemStack result, ItemStack source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> recipeMatch);
-
-    public abstract void registerCookingRecipe(FunctionalCookingRecipe recipe);
+    public abstract void registerCookingRecipe(FunctionalRecipe recipe);
 
 }

@@ -19,31 +19,30 @@
 package me.wolfyscript.utilities.api.nms.v1_18_R2;
 
 import me.wolfyscript.utilities.api.nms.NMSUtil;
-import me.wolfyscript.utilities.api.nms.inventory.FunctionalBlastingRecipe;
-import me.wolfyscript.utilities.api.nms.inventory.FunctionalCampfireRecipe;
-import me.wolfyscript.utilities.api.nms.inventory.FunctionalCookingRecipe;
-import me.wolfyscript.utilities.api.nms.inventory.FunctionalFurnaceRecipe;
-import me.wolfyscript.utilities.api.nms.inventory.ExtendedRecipeChoice;
+import me.wolfyscript.utilities.api.nms.item.crafting.FunctionalBlastingRecipe;
+import me.wolfyscript.utilities.api.nms.item.crafting.FunctionalCampfireRecipe;
+import me.wolfyscript.utilities.api.nms.item.crafting.FunctionalFurnaceRecipe;
+import me.wolfyscript.utilities.api.nms.item.crafting.FunctionalRecipe;
 import me.wolfyscript.utilities.api.nms.inventory.RecipeType;
+import me.wolfyscript.utilities.api.nms.item.crafting.FunctionalSmokingRecipe;
+import me.wolfyscript.utilities.api.nms.v1_18_R2.item.crafting.FunctionalBlastingRecipeImpl;
 import me.wolfyscript.utilities.api.nms.v1_18_R2.item.crafting.FunctionalCampfireRecipeImpl;
 import me.wolfyscript.utilities.api.nms.v1_18_R2.item.crafting.FunctionalFurnaceRecipeImpl;
-import me.wolfyscript.utilities.api.nms.v1_18_R2.item.crafting.ExtendedRecipeChoiceImpl;
 import me.wolfyscript.utilities.api.nms.v1_18_R2.inventory.RecipeIterator;
+import me.wolfyscript.utilities.api.nms.v1_18_R2.item.crafting.FunctionalSmokingRecipeImpl;
 import me.wolfyscript.utilities.util.NamespacedKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.item.crafting.AbstractCookingRecipe;
+import net.minecraft.world.item.crafting.Ingredient;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.RecipeChoice;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class RecipeUtilImpl extends me.wolfyscript.utilities.api.nms.RecipeUtil {
 
@@ -57,45 +56,52 @@ public class RecipeUtilImpl extends me.wolfyscript.utilities.api.nms.RecipeUtil 
     }
 
     @Override
-    public ExtendedRecipeChoice recipeChoice(Function<ItemStack, Boolean> sourceCheck, @NotNull List<ItemStack> choices) {
-        return new ExtendedRecipeChoiceImpl(sourceCheck, choices);
+    public FunctionalFurnaceRecipe furnaceRecipe(NamespacedKey key, String group, ItemStack result, RecipeChoice source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> recipeMatch) {
+        return new FunctionalFurnaceRecipeImpl(key, group, toNMS(source, true), CraftItemStack.asNMSCopy(result), experience, cookingTime, recipeMatch);
     }
 
     @Override
-    public ExtendedRecipeChoice recipeChoice(Function<ItemStack, Boolean> sourceCheck, @NotNull ItemStack choice) {
-        return new ExtendedRecipeChoiceImpl(sourceCheck, choice);
+    public FunctionalCampfireRecipe campfireRecipe(NamespacedKey key, String group, ItemStack result, RecipeChoice source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> recipeMatch) {
+        return new FunctionalCampfireRecipeImpl(key, group, toNMS(source, true), CraftItemStack.asNMSCopy(result), experience, cookingTime, recipeMatch);
     }
 
     @Override
-    public ExtendedRecipeChoice recipeChoice(Function<ItemStack, Boolean> sourceCheck, @NotNull ItemStack... choices) {
-        return new ExtendedRecipeChoiceImpl(sourceCheck, choices);
+    public FunctionalBlastingRecipe blastingRecipe(NamespacedKey key, String group, ItemStack result, RecipeChoice source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> recipeMatch) {
+        return new FunctionalBlastingRecipeImpl(key, group, toNMS(source, true), CraftItemStack.asNMSCopy(result), experience, cookingTime, recipeMatch);
     }
 
     @Override
-    public FunctionalFurnaceRecipe furnaceRecipe(NamespacedKey key, ItemStack result, ItemStack source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> matchRecipe) {
-        return new FunctionalFurnaceRecipeImpl(toMC(key), "", new ExtendedRecipeChoiceImpl(itemStack -> false, source).toNMS(), CraftItemStack.asNMSCopy(result), experience, cookingTime, matchRecipe);
+    public FunctionalSmokingRecipe smokingRecipe(NamespacedKey key, String group, ItemStack result, RecipeChoice source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> recipeMatch) {
+        return new FunctionalSmokingRecipeImpl(key, group, toNMS(source, true), CraftItemStack.asNMSCopy(result), experience, cookingTime, recipeMatch);
     }
 
     @Override
-    public FunctionalCampfireRecipe campfireRecipe(NamespacedKey key, ItemStack result, ItemStack source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> matchRecipe) {
-        return new FunctionalCampfireRecipeImpl(toMC(key), "", new ExtendedRecipeChoiceImpl(itemStack -> false, source).toNMS(), CraftItemStack.asNMSCopy(result), experience, cookingTime, matchRecipe);
-    }
-
-    @Override
-    public FunctionalBlastingRecipe blastingRecipe(NamespacedKey key, ItemStack result, ItemStack source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> recipeMatch) {
-        return null;
-    }
-
-    @Override
-    public void registerCookingRecipe(FunctionalCookingRecipe recipe) {
-        if (recipe instanceof AbstractCookingRecipe mcRecipe) {
+    public void registerCookingRecipe(FunctionalRecipe recipe) {
+        if (recipe instanceof net.minecraft.world.item.crafting.Recipe<?> mcRecipe) {
             MinecraftServer.getServer().getRecipeManager().addRecipe(mcRecipe);
         }
     }
 
-    private ResourceLocation toMC(NamespacedKey key) {
-        return new ResourceLocation(key.getNamespace(), key.getKey());
-    }
+    public Ingredient toNMS(RecipeChoice bukkit, boolean requireNotEmpty) {
+        Ingredient stack;
+        if (bukkit == null) {
+            stack = Ingredient.EMPTY;
+        } else if (bukkit instanceof RecipeChoice.MaterialChoice) {
+            stack = new Ingredient(((RecipeChoice.MaterialChoice)bukkit).getChoices().stream().map((mat) -> new Ingredient.ItemValue(CraftItemStack.asNMSCopy(new ItemStack(mat)))));
+        } else {
+            if (!(bukkit instanceof RecipeChoice.ExactChoice)) {
+                throw new IllegalArgumentException("Unknown recipe stack instance " + bukkit);
+            }
+            stack = new Ingredient(((RecipeChoice.ExactChoice)bukkit).getChoices().stream().map((mat) -> new Ingredient.ItemValue(CraftItemStack.asNMSCopy(mat))));
+            stack.exact = true;
+        }
 
+        stack.dissolve();
+        if (requireNotEmpty && stack.itemStacks.length == 0) {
+            throw new IllegalArgumentException("Recipe requires at least one non-air choice!");
+        } else {
+            return stack;
+        }
+    }
 
 }

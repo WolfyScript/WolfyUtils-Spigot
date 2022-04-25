@@ -1,13 +1,13 @@
 package me.wolfyscript.utilities.api.nms.v1_18_R2.item.crafting;
 
-import me.wolfyscript.utilities.api.nms.item.crafting.FunctionalFurnaceRecipe;
+import me.wolfyscript.utilities.api.nms.item.crafting.FunctionalSmokingRecipe;
 import me.wolfyscript.utilities.api.nms.v1_18_R2.NamespacedKeyUtils;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.SmeltingRecipe;
+import net.minecraft.world.item.crafting.SmokingRecipe;
 import net.minecraft.world.level.Level;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftInventory;
@@ -18,14 +18,14 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class FunctionalFurnaceRecipeImpl extends SmeltingRecipe implements FunctionalFurnaceRecipe, FunctionalRecipeInternals {
+public class FunctionalSmokingRecipeImpl extends SmokingRecipe implements FunctionalSmokingRecipe, FunctionalRecipeInternals {
 
     private final NamespacedKey recipeID;
     private final BiFunction<Inventory, World, Boolean> matcher;
     private Function<Inventory, Optional<org.bukkit.inventory.ItemStack>> assembler;
     private Function<Inventory, Optional<List<org.bukkit.inventory.ItemStack>>> remainingItems;
 
-    public FunctionalFurnaceRecipeImpl(NamespacedKey recipeID, String group, Ingredient ingredient, ItemStack result, float experience, int cookTime, BiFunction<Inventory, World, Boolean> matcher) {
+    public FunctionalSmokingRecipeImpl(NamespacedKey recipeID, String group, Ingredient ingredient, ItemStack result, float experience, int cookTime, BiFunction<Inventory, World, Boolean> matcher) {
         super(NamespacedKeyUtils.toMC(recipeID), group, ingredient, result, experience, cookTime);
         this.recipeID = recipeID;
         this.matcher = matcher;

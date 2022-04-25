@@ -1,8 +1,9 @@
 package me.wolfyscript.utilities.api.nms.v1_18_R2.item.crafting;
 
-import me.wolfyscript.utilities.api.nms.inventory.FunctionalCampfireRecipe;
+import me.wolfyscript.utilities.api.nms.item.crafting.FunctionalCampfireRecipe;
+import me.wolfyscript.utilities.api.nms.v1_18_R2.NamespacedKeyUtils;
+import me.wolfyscript.utilities.util.NamespacedKey;
 import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CampfireCookingRecipe;
@@ -18,14 +19,16 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class FunctionalCampfireRecipeImpl extends CampfireCookingRecipe implements FunctionalCampfireRecipe {
+public class FunctionalCampfireRecipeImpl extends CampfireCookingRecipe implements FunctionalCampfireRecipe, FunctionalRecipeInternals {
 
+    private final NamespacedKey recipeID;
     private final BiFunction<Inventory, World, Boolean> matcher;
     private Function<Inventory, Optional<org.bukkit.inventory.ItemStack>> assembler;
     private Function<Inventory, Optional<List<org.bukkit.inventory.ItemStack>>> remainingItems;
 
-    public FunctionalCampfireRecipeImpl(ResourceLocation key, String group, Ingredient ingredient, ItemStack result, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> matcher) {
-        super(key, group, ingredient, result, experience, cookingTime);
+    public FunctionalCampfireRecipeImpl(NamespacedKey recipeID, String group, Ingredient ingredient, ItemStack result, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> matcher) {
+        super(NamespacedKeyUtils.toMC(recipeID), group, ingredient, result, experience, cookingTime);
+        this.recipeID = recipeID;
         this.matcher = matcher;
         this.assembler = inventory -> Optional.empty();
         this.remainingItems = inventory -> Optional.empty();
@@ -38,18 +41,12 @@ public class FunctionalCampfireRecipeImpl extends CampfireCookingRecipe implemen
 
     @Override
     public ItemStack assemble(Container container) {
-        return assemble(new CraftInventory(container)).map(CraftItemStack::asNMSCopy).orElseGet(() -> super.assemble(container));
+        return assembleResult(container).orElseGet(() -> super.assemble(container));
     }
 
     @Override
     public NonNullList<ItemStack> getRemainingItems(Container container) {
-        return getRemainingItems(new CraftInventory(container)).map(itemStacks -> {
-            NonNullList<ItemStack> items = NonNullList.createWithCapacity(itemStacks.size());
-            for (int i = 0; i < itemStacks.size(); i++) {
-                items.set(i, CraftItemStack.asNMSCopy(itemStacks.get(i)));
-            }
-            return items;
-        }).orElseGet(()-> super.getRemainingItems(container));
+        return calcRemainingItems(container).orElseGet(()-> super.getRemainingItems(container));
     }
 
     @Override
@@ -75,5 +72,10 @@ public class FunctionalCampfireRecipeImpl extends CampfireCookingRecipe implemen
     @Override
     public void setRemainingItemsFunction(Function<Inventory, Optional<List<org.bukkit.inventory.ItemStack>>> remainingItems) {
         this.remainingItems = remainingItems;
+    }
+
+    @Override
+    public NamespacedKey getNamespacedKey() {
+        return recipeID;
     }
 }
