@@ -130,8 +130,10 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
 
         //Check if the old title update method is used.
         try {
-            Class<?> declaringClass = getClass().getMethod("onUpdateTitle", String.class, GUIInventory.class, GuiHandler.class).getDeclaringClass();
-            if (!declaringClass.equals(getClass())) {
+            Class<?> newTitleMethodClass = getClass().getMethod("onUpdateTitle", Player.class, GUIInventory.class, GuiHandler.class).getDeclaringClass();
+            Class<?> oldTitleMethodClass = getClass().getMethod("onUpdateTitle", String.class, GUIInventory.class, GuiHandler.class).getDeclaringClass();
+            if (newTitleMethodClass.equals(getClass()) && !oldTitleMethodClass.equals(getClass())) {
+                wolfyUtilities.getConsole().getLogger().warning("GuiWindow " + namespacedKey + " is using deprecated title method!");
                 useLegacyTitleUpdate = true;
             }
         } catch (NoSuchMethodException e) {
@@ -267,10 +269,6 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
                 }
             });
         }
-    }
-
-    void setTitle() {
-
     }
 
     /**
