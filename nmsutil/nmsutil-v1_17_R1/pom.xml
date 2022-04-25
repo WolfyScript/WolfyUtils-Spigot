@@ -52,7 +52,7 @@
             <plugin>
                 <groupId>net.md-5</groupId>
                 <artifactId>specialsource-maven-plugin</artifactId>
-                <version>1.2.3</version>
+                <version>${plugin_version.specialsource}</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
