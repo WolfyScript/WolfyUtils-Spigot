@@ -22,8 +22,12 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.util.EncryptionUtils;
-import me.wolfyscript.utilities.util.chat.ChatColor;
+import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -48,12 +52,16 @@ public abstract class AbstractItemBuilder<T extends AbstractItemBuilder<?>> {
     private static final NamespacedKey CUSTOM_DURABILITY_DAMAGE = new NamespacedKey("wolfyutilities", "custom_durability.damage");
     private static final NamespacedKey CUSTOM_DURABILITY_INDEX = new NamespacedKey("wolfyutilities", "custom_durability.index");
     private static final NamespacedKey CUSTOM_DURABILITY_TAG = new NamespacedKey("wolfyutilities", "custom_durability.tag");
+    private static final NamespacedKey CUSTOM_DURABILITY_TAG_CONTENT = new NamespacedKey("wolfyutilities", "content");
+    private static final NamespacedKey CUSTOM_DURABILITY_TAG_MINIMSG = new NamespacedKey("wolfyutilities", "mini_msg");
 
     @JsonIgnore
     private final Class<T> typeClass;
+    private final MiniMessage miniMessage;
 
     protected AbstractItemBuilder(Class<T> typeClass) {
         this.typeClass = typeClass;
+        this.miniMessage = WolfyUtilCore.getInstance().getChat().getMiniMessage();
     }
 
     protected abstract ItemStack getItemStack();
@@ -228,24 +236,54 @@ public abstract class AbstractItemBuilder<T extends AbstractItemBuilder<?>> {
         var itemMeta = getItemMeta();
         if (itemMeta != null) {
             var dataContainer = itemMeta.getPersistentDataContainer();
-            dataContainer.set(CUSTOM_DURABILITY_TAG, PersistentDataType.STRING, tag);
+            var tagContainer = dataContainer.getAdapterContext().newPersistentDataContainer();
+            tagContainer.set(CUSTOM_DURABILITY_TAG_CONTENT, PersistentDataType.STRING, tag);
+            tagContainer.set(CUSTOM_DURABILITY_TAG_MINIMSG, PersistentDataType.BYTE, (byte) 1);
+            dataContainer.set(CUSTOM_DURABILITY_TAG, PersistentDataType.TAG_CONTAINER, tagContainer);
             updateCustomDurabilityTag();
         }
         return setItemMeta(itemMeta);
     }
 
+    /**
+     * Returns the raw tag content that is specified for this ItemMeta.<br>
+     *
+     * @return The raw content (text) of the durability tag.
+     */
     public String getCustomDurabilityTag() {
         return getCustomDurabilityTag(getItemMeta());
     }
 
+    /**
+     * Returns the raw tag content that is specified for this ItemMeta.<br>
+     *
+     * @param itemMeta The ItemMeta, from which to get the tag.
+     * @return The raw content (text) of the durability tag.
+     */
     public String getCustomDurabilityTag(ItemMeta itemMeta) {
         if (itemMeta != null) {
             var dataContainer = itemMeta.getPersistentDataContainer();
-            if (dataContainer.has(CUSTOM_DURABILITY_TAG, PersistentDataType.STRING)) {
-                return dataContainer.get(CUSTOM_DURABILITY_TAG, PersistentDataType.STRING);
+            var miniMsg = false;
+            var content = "";
+            if (dataContainer.has(CUSTOM_DURABILITY_TAG, PersistentDataType.TAG_CONTAINER)) {
+                var tagContainer = dataContainer.get(CUSTOM_DURABILITY_TAG, PersistentDataType.TAG_CONTAINER);
+                miniMsg = tagContainer.getOrDefault(CUSTOM_DURABILITY_TAG_MINIMSG, PersistentDataType.BYTE, (byte) 1) == 1;
+                content = tagContainer.getOrDefault(CUSTOM_DURABILITY_TAG_CONTENT, PersistentDataType.STRING, "");
+            } else if (dataContainer.has(CUSTOM_DURABILITY_TAG, PersistentDataType.STRING)) {
+                //Using old tag version
+                content = dataContainer.getOrDefault(CUSTOM_DURABILITY_TAG, PersistentDataType.STRING, "").replace("%dur%", "<dur>").replace("%max_dur%", "<max_dur>");
             }
+            return miniMsg ? content : miniMessage.serialize(BukkitComponentSerializer.legacy().deserialize(content));
         }
         return "";
+    }
+
+    public Component getCustomDurabilityTagComponent() {
+        return getCustomDurabilityTagComponent(getItemMeta());
+    }
+
+    public Component getCustomDurabilityTagComponent(ItemMeta itemMeta) {
+        return miniMessage.deserialize(getCustomDurabilityTag(itemMeta), Placeholder.parsed("dur", String.valueOf(getCustomDurability(itemMeta) - getCustomDamage(itemMeta))), Placeholder.parsed("max_dur", String.valueOf(getCustomDurability(itemMeta))));
     }
 
     public T updateCustomDurabilityTag() {
@@ -256,7 +294,7 @@ public abstract class AbstractItemBuilder<T extends AbstractItemBuilder<?>> {
 
     public void updateCustomDurabilityTag(ItemMeta itemMeta) {
         if (itemMeta != null) {
-            String tag = ChatColor.convert(getCustomDurabilityTag().replace("%dur%", String.valueOf(getCustomDurability(itemMeta) - getCustomDamage(itemMeta))).replace("%max_dur%", String.valueOf(getCustomDurability(itemMeta))));
+            String tag = BukkitComponentSerializer.legacy().serialize(getCustomDurabilityTagComponent(itemMeta));
             var dataContainer = itemMeta.getPersistentDataContainer();
             List<String> lore = itemMeta.getLore() != null ? itemMeta.getLore() : new ArrayList<>();
             if (dataContainer.has(CUSTOM_DURABILITY_INDEX, PersistentDataType.INTEGER)) {
