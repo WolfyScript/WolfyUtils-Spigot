@@ -158,19 +158,19 @@ public class LangAPISpigot extends LanguageAPI {
     }
 
     public String getButtonName(@NotNull NamespacedKey window, String buttonKey) {
-        return BukkitComponentSerializer.legacy().serialize(getComponent(String.format(ButtonState.BUTTON_WINDOW_KEY + ButtonState.NAME_KEY, window.getNamespace(), window.getKey(), buttonKey), true));
+        return BukkitComponentSerializer.legacy().serialize(getComponent(String.format(ButtonState.BUTTON_WINDOW_KEY + ButtonState.NAME_KEY, window.getNamespace(), window.getKey(), buttonKey)));
     }
 
     public String getButtonName(String clusterId, String buttonKey) {
-        return BukkitComponentSerializer.legacy().serialize(getComponent(String.format(ButtonState.BUTTON_CLUSTER_KEY + ButtonState.NAME_KEY, clusterId, buttonKey), true));
+        return BukkitComponentSerializer.legacy().serialize(getComponent(String.format(ButtonState.BUTTON_CLUSTER_KEY + ButtonState.NAME_KEY, clusterId, buttonKey)));
     }
 
     public List<String> getButtonLore(@NotNull NamespacedKey window, String buttonKey) {
-        return getComponents(String.format(ButtonState.BUTTON_WINDOW_KEY + ButtonState.NAME_KEY, window.getNamespace(), window.getKey(), buttonKey), true).stream().map(component -> BukkitComponentSerializer.legacy().serialize(component)).collect(Collectors.toList());
+        return getComponents(String.format(ButtonState.BUTTON_WINDOW_KEY + ButtonState.NAME_KEY, window.getNamespace(), window.getKey(), buttonKey)).stream().map(component -> BukkitComponentSerializer.legacy().serialize(component)).collect(Collectors.toList());
     }
 
     public List<String> getButtonLore(String clusterId, String buttonKey) {
-        return getComponents(String.format(ButtonState.BUTTON_CLUSTER_KEY + ButtonState.LORE_KEY, clusterId, buttonKey), true).stream().map(component -> BukkitComponentSerializer.legacy().serialize(component)).collect(Collectors.toList());
+        return getComponents(String.format(ButtonState.BUTTON_CLUSTER_KEY + ButtonState.LORE_KEY, clusterId, buttonKey)).stream().map(component -> BukkitComponentSerializer.legacy().serialize(component)).collect(Collectors.toList());
     }
 
 }
