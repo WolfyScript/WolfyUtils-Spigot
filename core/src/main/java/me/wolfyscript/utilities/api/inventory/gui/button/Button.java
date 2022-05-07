@@ -26,9 +26,9 @@ import me.wolfyscript.utilities.api.inventory.gui.GuiWindow;
 import me.wolfyscript.utilities.api.inventory.gui.InventoryAPI;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
-import me.wolfyscript.utilities.util.Pair;
 import me.wolfyscript.utilities.util.chat.ChatColor;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryInteractEvent;
@@ -39,9 +39,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -109,8 +109,12 @@ public abstract class Button<C extends CustomCache> {
         if (state.getRenderAction() instanceof CallbackButtonRender<C> renderTemplates) {
             //No longer set default templates, that should be purely managed by the plugin.
             CallbackButtonRender.UpdateResult updateResult = renderTemplates.render(guiHandler.getCustomCache(), guiHandler, player, guiInventory, item, slot);
-            //Replace names and lore in existing lore
-            inventory.setItem(slot, ItemUtils.replaceNameAndLore(guiHandler.getApi().getChat().getMiniMessage(), updateResult.getItemStack(), updateResult.getResolvers()));
+            Optional<ItemStack> customStack = updateResult.getCustomStack();
+            if (customStack.isPresent()) {
+                updateResult.getTagResolver().ifPresentOrElse(tagResolver -> inventory.setItem(slot, ItemUtils.replaceNameAndLore(MiniMessage.miniMessage(), customStack.get(), tagResolver)), () -> inventory.setItem(slot, customStack.get()));
+            } else {
+                inventory.setItem(slot, state.constructIcon(updateResult.getTagResolver().orElseGet(TagResolver::empty)));
+            }
         } else {
             //Using the legacy placeholder system, with backwards compatibility of the new system.
             HashMap<String, Object> values = new HashMap<>();
