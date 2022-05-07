@@ -132,7 +132,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
         try {
             Class<?> newTitleMethodClass = getClass().getMethod("onUpdateTitle", Player.class, GUIInventory.class, GuiHandler.class).getDeclaringClass();
             Class<?> oldTitleMethodClass = getClass().getMethod("onUpdateTitle", String.class, GUIInventory.class, GuiHandler.class).getDeclaringClass();
-            if (newTitleMethodClass.equals(getClass()) && !oldTitleMethodClass.equals(getClass())) {
+            if (!newTitleMethodClass.equals(getClass()) && oldTitleMethodClass.equals(getClass())) {
                 wolfyUtilities.getConsole().getLogger().warning("GuiWindow " + namespacedKey + " is using deprecated title method!");
                 useLegacyTitleUpdate = true;
             }
