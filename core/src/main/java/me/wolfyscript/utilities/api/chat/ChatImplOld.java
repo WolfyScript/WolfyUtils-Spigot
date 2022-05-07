@@ -338,7 +338,7 @@ public abstract class ChatImplOld extends me.wolfyscript.utilities.api.chat.Chat
                 char[] chars = placeholder.toCharArray();
                 boolean passedFirstGroup = false;
                 for (char currentChar : chars) {
-                    Matcher charMatch = ADVENTURE_PLACEHOLDER_PATTERN.matcher("" + currentChar);
+                    Matcher charMatch = ADVENTURE_PLACEHOLDER_PATTERN.matcher(String.valueOf(currentChar));
                     if (!charMatch.matches()) continue;
                     if (!passedFirstGroup) {
                         passedFirstGroup = true;
