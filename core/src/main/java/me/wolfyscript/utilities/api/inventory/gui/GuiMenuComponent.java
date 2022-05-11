@@ -138,9 +138,35 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
      * If it is not available it returns an empty component.
      *
      * @param key The key in the language.
-     * @param translateLegacyColor If it should translate legacy '&' color codes.
+     * @param resolver The placeholders and values in the message.
      * @return The component set for the key; empty component if not available.
      */
+    public abstract Component translatedMsgKey(String key, TagResolver resolver);
+
+    /**
+     * Creates a {@link Component} of the specified language key.<br>
+     * If the key exists in the language it will be translated and returns the according component.
+     * If it is not available it returns an empty component.
+     *
+     * @param key The key in the language.
+     * @param resolvers The placeholders and values in the message.
+     * @return The component set for the key; empty component if not available.
+     */
+    public Component translatedMsgKey(String key, TagResolver... resolvers) {
+        return translatedMsgKey(key, TagResolver.resolver(resolvers));
+    }
+
+    /**
+     * Creates a {@link Component} of the specified language key.<br>
+     * If the key exists in the language it will be translated and returns the according component.
+     * If it is not available it returns an empty component.
+     *
+     * @param key The key in the language.
+     * @param translateLegacyColor If it should translate legacy '&' color codes.
+     * @deprecated The translateLegacyColor param no longer affects the message! Replaced by {@link #translatedMsgKey(String)}
+     * @return The component set for the key; empty component if not available.
+     */
+    @Deprecated
     public Component translatedMsgKey(String key, boolean translateLegacyColor) {
         return translatedMsgKey(key, translateLegacyColor, List.of());
     }
@@ -150,10 +176,12 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
      * If the key exists in the language it will be translated and returns the according component.
      * If it is not available it returns an empty component.
      *
+     * @deprecated This method causes an inefficient conversion to an array. Replaced by {@link #translatedMsgKey(String, TagResolver...)}
      * @param key The key in the language.
      * @param templates The placeholders and values in the message.
      * @return The component set for the key; empty component if not available.
      */
+    @Deprecated
     public Component translatedMsgKey(String key, List<? extends TagResolver> templates) {
         return translatedMsgKey(key, false, templates);
     }
@@ -163,12 +191,17 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
      * If the key exists in the language it will be translated and returns the according component.
      * If it is not available it returns an empty component.
      *
+     * @deprecated The translateLegacyColor param no longer affects the message and this method causes an inefficient conversion to an array. Replaced by {@link #translatedMsgKey(String, TagResolver...)}
      * @param key The key in the language.
      * @param templates The placeholders and values in the message.
      * @param translateLegacyColor If it should translate legacy '&' color codes.
      * @return The component set for the key; empty component if not available.
      */
-    public abstract Component translatedMsgKey(String key, boolean translateLegacyColor, List<? extends TagResolver> templates);
+    @Deprecated
+    public Component translatedMsgKey(String key, boolean translateLegacyColor, List<? extends TagResolver> templates) {
+        return translatedMsgKey(key, templates.toArray(new TagResolver[0]));
+    }
+
 
     /**
      * Opens the chat, send the player the defined message and waits for the input of the player.

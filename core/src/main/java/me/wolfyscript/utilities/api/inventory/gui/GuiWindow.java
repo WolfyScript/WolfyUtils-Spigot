@@ -416,14 +416,17 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
     }
 
     /**
-     * Creates a new Component of the given language message key.
+     * Creates a {@link Component} of the specified language key.<br>
+     * If the key exists in the language it will be translated and returns the according component.
+     * If it is not available it returns an empty component.
      *
-     * @param key The key of the message in the language.
-     * @return The translated Component of that message; Or empty Component if non-existing.
+     * @param key The key in the language.
+     * @param resolver The placeholders and values in the message.
+     * @return The component set for the key; empty component if not available.
      */
     @Override
-    public Component translatedMsgKey(String key, boolean translateLegacyColor, List<? extends TagResolver> templates) {
-        return getChat().translated("inventories." + getNamespacedKey().getNamespace() + "." + getNamespacedKey().getKey() + ".messages." + key, translateLegacyColor, templates);
+    public Component translatedMsgKey(String key, TagResolver resolver) {
+        return getChat().translated("inventories." + getNamespacedKey().getNamespace() + "." + getNamespacedKey().getKey() + ".messages." + key, resolver);
     }
 
     /**
