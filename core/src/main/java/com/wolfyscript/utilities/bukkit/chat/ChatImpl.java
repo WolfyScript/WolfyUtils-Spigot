@@ -4,6 +4,7 @@ import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.bukkit.adapters.PlayerImpl;
 import me.wolfyscript.utilities.api.chat.ChatImplOld;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,6 +43,21 @@ public final class ChatImpl extends ChatImplOld {
     @Override
     public void sendMessages(com.wolfyscript.utilities.common.adapters.Player player, boolean legacyColor, Component... components) {
         checkAndExc(player, player1 -> sendMessages(player, legacyColor, components));
+    }
+
+    @Override
+    public Component translated(String key) {
+        return languageAPI.getComponent(key);
+    }
+
+    @Override
+    public Component translated(String key, TagResolver... tagResolvers) {
+        return languageAPI.getComponent(key, tagResolvers);
+    }
+
+    @Override
+    public Component translated(String key, TagResolver tagResolver) {
+        return languageAPI.getComponent(key, tagResolver);
     }
 
     /**
