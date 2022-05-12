@@ -89,23 +89,23 @@ public class LangAPISpigot extends LanguageAPI {
                 for (String key : keys) {
                     JsonNode node = getNodeAt(key.replace("$", ""));
                     if (node.isTextual()) {
-                        result.add(ChatColor.convert(s.replace(key, node.asText())));
+                        result.add(s.replace(key, node.asText()));
                     } else if (node.isArray()) {
                         StringBuilder sB = new StringBuilder();
                         node.elements().forEachRemaining(n -> sB.append(' ').append(n.asText()));
-                        result.add(ChatColor.convert(s.replace(key, sB.toString())));
+                        result.add(s.replace(key, sB.toString()));
                     }
                 }
             } else if (!keys.isEmpty()) {
                 String key = keys.get(0);
                 JsonNode node = getNodeAt(key.replace("$", ""));
                 if (node.isTextual()) {
-                    result.add(ChatColor.convert(s.replace(key, node.asText())));
+                    result.add(s.replace(key, node.asText()));
                 } else if (node.isArray()) {
                     node.elements().forEachRemaining(n -> result.add(n.asText()));
                 }
             } else {
-                result.add(ChatColor.convert(s));
+                result.add(s);
             }
         });
         return result;
