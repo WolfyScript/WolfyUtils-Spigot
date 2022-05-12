@@ -112,7 +112,7 @@ public class LangAPISpigot extends LanguageAPI {
     }
 
     @Override
-    protected String convertLegacyToMiniMessage(String legacyText) {
+    public String convertLegacyToMiniMessage(String legacyText) {
         String rawLegacy = ChatColor.convert(legacyText);
         Matcher matcher = LEGACY_PLACEHOLDER_PATTERN.matcher(rawLegacy);
         Map<String, String> foundPlaceholders = new HashMap<>();
