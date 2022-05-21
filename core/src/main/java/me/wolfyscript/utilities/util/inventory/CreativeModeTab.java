@@ -23,6 +23,8 @@ import me.wolfyscript.utilities.api.WolfyUtilities;
 import org.bukkit.Material;
 
 import java.util.HashSet;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -52,6 +54,14 @@ public enum CreativeModeTab {
 
     public static boolean isValid(Material material, CreativeModeTab creativeModeTab) {
         return creativeModeTab.isValid(material);
+    }
+
+    public static Optional<CreativeModeTab> of(String name) {
+        try {
+            return Optional.of(CreativeModeTab.valueOf(name.toUpperCase(Locale.ROOT)));
+        } catch (IllegalArgumentException ex) {
+            return Optional.empty();
+        }
     }
 
     public boolean isValid(Material material) {

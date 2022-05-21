@@ -48,8 +48,7 @@ public class InventoryUtilImpl extends InventoryUtil {
             if (item != null) {
                 var creativeModeTab = item.getItemCategory();
                 if (creativeModeTab != null) {
-                    var category = CreativeModeTab.valueOf(creativeModeTab.getRecipeFolderName().toUpperCase(Locale.ROOT));
-                    category.registerMaterial(material);
+                    CreativeModeTab.of(creativeModeTab.getRecipeFolderName()).ifPresent(tab-> tab.registerMaterial(material));
                 }
             }
         }
