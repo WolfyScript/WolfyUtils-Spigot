@@ -19,9 +19,13 @@
 package me.wolfyscript.utilities.compatibility.plugins;
 
 import me.wolfyscript.utilities.compatibility.PluginIntegration;
+import me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomBlock;
 import me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomStack;
+import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public interface ItemsAdderIntegration extends PluginIntegration {
 
@@ -32,4 +36,13 @@ public interface ItemsAdderIntegration extends PluginIntegration {
 
     @Nullable
     CustomStack getInstance(String namespacedID);
+
+    @Nullable
+    Optional<CustomBlock> getBlockByItemStack(ItemStack itemStack);
+
+    @Nullable
+    Optional<CustomBlock> getBlockPlaced(Block block);
+
+    @Nullable
+    Optional<CustomBlock> getBlockInstance(String namespacedID);
 }

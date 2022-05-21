@@ -23,14 +23,19 @@ import me.wolfyscript.utilities.annotations.WUPluginIntegration;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
+import me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomBlock;
 import me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomStack;
 import me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomStackWrapper;
 import me.wolfyscript.utilities.compatibility.plugins.itemsadder.ItemsAdderRefImpl;
 import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 @WUPluginIntegration(pluginName = ItemsAdderIntegration.KEY)
 public class ItemsAdderImpl extends PluginIntegrationAbstract implements ItemsAdderIntegration, Listener {
@@ -70,5 +75,20 @@ public class ItemsAdderImpl extends PluginIntegrationAbstract implements ItemsAd
     @Override
     public CustomStack getInstance(String namespacedID) {
         return CustomStackWrapper.wrapStack(dev.lone.itemsadder.api.CustomStack.getInstance(namespacedID));
+    }
+
+    @Override
+    public @Nullable Optional<CustomBlock> getBlockByItemStack(ItemStack itemStack) {
+        return Optional.empty();
+    }
+
+    @Override
+    public @Nullable Optional<CustomBlock> getBlockPlaced(Block block) {
+        return Optional.empty();
+    }
+
+    @Override
+    public @Nullable Optional<CustomBlock> getBlockInstance(String namespacedID) {
+        return Optional.empty();
     }
 }
