@@ -24,8 +24,10 @@ import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 /**
  * @param <C> The type of the {@link CustomCache}
@@ -60,19 +62,19 @@ public interface CallbackButtonRender<C extends CustomCache> extends ButtonRende
     class UpdateResult {
 
         private final ItemStack itemStack;
-        private final TagResolver[] resolvers;
+        private final TagResolver resolver;
 
-        private UpdateResult(ItemStack itemStack, TagResolver... resolvers) {
+        private UpdateResult(@Nullable ItemStack itemStack, @Nullable TagResolver resolver) {
             this.itemStack = itemStack;
-            this.resolvers = resolvers;
+            this.resolver = resolver;
         }
 
-        private UpdateResult(ItemStack itemStack, TagResolver resolver) {
-            this(itemStack, new TagResolver[] { resolver });
+        private UpdateResult(@Nullable ItemStack itemStack, TagResolver... resolvers) {
+            this(itemStack, resolvers == null || resolvers.length == 0 ? null : TagResolver.resolver(resolvers));
         }
 
-        private UpdateResult(ItemStack itemStack) {
-            this(itemStack, new TagResolver[0]);
+        private UpdateResult(@Nullable ItemStack itemStack) {
+            this(itemStack, (TagResolver) null);
         }
 
         /**
@@ -80,9 +82,13 @@ public interface CallbackButtonRender<C extends CustomCache> extends ButtonRende
          *
          * @param itemStack The ItemStack to render.
          * @param resolvers The TagResolvers to use to replace tags in display name and lore.
+         * @deprecated TagResolvers should <b>not be used</b> together with a custom ItemStack!
+         * They cause a very resource intensive conversion for each lore line and the display name of the item!
+         *
          * @return a new {@link UpdateResult} instance.
          */
-        public static UpdateResult of(ItemStack itemStack, TagResolver... resolvers) {
+        @Deprecated
+        public static UpdateResult of(@Nullable ItemStack itemStack, TagResolver... resolvers) {
             return new UpdateResult(itemStack, resolvers);
         }
 
@@ -91,9 +97,12 @@ public interface CallbackButtonRender<C extends CustomCache> extends ButtonRende
          *
          * @param itemStack The ItemStack to render.
          * @param resolver The TagResolver to use to replace tags in display name and lore.
+         * @deprecated TagResolvers should <b>not be used</b> together with a custom ItemStack!
+         * They cause a very resource intensive conversion for each lore line and the display name of the item!
          * @return a new {@link UpdateResult} instance.
          */
-        public static UpdateResult of(ItemStack itemStack, TagResolver resolver) {
+        @Deprecated
+        public static UpdateResult of(@Nullable ItemStack itemStack, TagResolver resolver) {
             return new UpdateResult(itemStack, resolver);
         }
 
@@ -103,8 +112,20 @@ public interface CallbackButtonRender<C extends CustomCache> extends ButtonRende
          * @param itemStack The ItemStack to render.
          * @return a new {@link UpdateResult} instance.
          */
-        public static UpdateResult of(ItemStack itemStack) {
+        public static UpdateResult of(@Nullable ItemStack itemStack) {
             return new UpdateResult(itemStack);
+        }
+
+        public static UpdateResult of() {
+            return new UpdateResult(null);
+        }
+
+        public static UpdateResult of(TagResolver resolver) {
+            return new UpdateResult(null, resolver);
+        }
+
+        public static UpdateResult of(TagResolver... resolvers) {
+            return new UpdateResult(null, resolvers);
         }
 
         /**
@@ -112,6 +133,26 @@ public interface CallbackButtonRender<C extends CustomCache> extends ButtonRende
          *
          * @return the ItemStack of this result.
          */
+        public Optional<ItemStack> getCustomStack() {
+            return Optional.ofNullable(itemStack);
+        }
+
+        /**
+         * The {@link TagResolver} to use to replace tags in the display name and lore of the item.
+         *
+         * @return An array of all the {@link TagResolver}s of this result.
+         */
+        public Optional<TagResolver> getTagResolver() {
+            return Optional.ofNullable(resolver);
+        }
+
+        /**
+         * The ItemStack of this result, that is rendered in the inventory.
+         *
+         * @return the ItemStack of this result.
+         */
+        @Deprecated
+        @Nullable
         public ItemStack getItemStack() {
             return itemStack;
         }
@@ -121,8 +162,9 @@ public interface CallbackButtonRender<C extends CustomCache> extends ButtonRende
          *
          * @return An array of all the {@link TagResolver}s of this result.
          */
+        @Deprecated
         public TagResolver[] getResolvers() {
-            return resolvers;
+            return new TagResolver[] { resolver };
         }
     }
 }

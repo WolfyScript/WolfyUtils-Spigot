@@ -198,26 +198,6 @@ public abstract class ChatImplOld extends me.wolfyscript.utilities.api.chat.Chat
     }
 
     @Override
-    public Component translated(String key) {
-        return languageAPI.getComponent(key);
-    }
-
-    @Override
-    public Component translated(String key, boolean translateLegacyColor) {
-        return languageAPI.getComponent(key, translateLegacyColor, List.of());
-    }
-
-    @Override
-    public Component translated(String key, List<? extends TagResolver> resolvers) {
-        return languageAPI.getComponent(key, resolvers);
-    }
-
-    @Override
-    public Component translated(String key, boolean translateLegacyColor, List<? extends TagResolver> resolvers) {
-        return languageAPI.getComponent(key, translateLegacyColor, resolvers);
-    }
-
-    @Override
     public net.kyori.adventure.text.event.ClickEvent executable(com.wolfyscript.utilities.common.adapters.Player player, boolean b, ClickActionCallback clickActionCallback) {
         return null;
     }
@@ -338,7 +318,7 @@ public abstract class ChatImplOld extends me.wolfyscript.utilities.api.chat.Chat
                 char[] chars = placeholder.toCharArray();
                 boolean passedFirstGroup = false;
                 for (char currentChar : chars) {
-                    Matcher charMatch = ADVENTURE_PLACEHOLDER_PATTERN.matcher("" + currentChar);
+                    Matcher charMatch = ADVENTURE_PLACEHOLDER_PATTERN.matcher(String.valueOf(currentChar));
                     if (!charMatch.matches()) continue;
                     if (!passedFirstGroup) {
                         passedFirstGroup = true;

@@ -127,14 +127,33 @@ public class ItemUtils {
         var itemMeta = itemBuilder.getItemMeta();
         if (itemMeta != null) {
             itemBuilder.setDisplayName(BukkitComponentSerializer.legacy().serialize(displayName));
-            itemBuilder.setLore(lore.stream().map(line -> BukkitComponentSerializer.legacy().serialize(line)).toList());
+            if (!lore.isEmpty()) {
+                itemBuilder.setLore(lore.stream().map(line -> BukkitComponentSerializer.legacy().serialize(line)).toList());
+            }
         }
         return itemBuilder.create();
     }
 
-    public static ItemStack replaceNameAndLore(MiniMessage miniMessage, ItemStack itemStack, @NotNull TagResolver... tagResolvers) {
+    @Deprecated
+    public static ItemStack replaceNameAndLore(MiniMessage miniMessage, ItemStack itemStack, @NotNull TagResolver tagResolver) {
         var itemMeta = itemStack.getItemMeta();
-        return itemMeta != null ? applyNameAndLore(itemStack, miniMessage.deserialize(itemMeta.getDisplayName(), tagResolvers), itemMeta.hasLore() ? itemMeta.getLore().stream().map(s -> miniMessage.deserialize(s, tagResolvers)).toList() : new LinkedList<>()) : itemStack;
+        if (itemMeta != null) {
+            Component name = convertLegacyTextWithTagResolversToComponent(miniMessage, itemMeta.getDisplayName(), tagResolver);
+            List<Component> legacyLore = itemMeta.hasLore() ? itemMeta.getLore().stream().map(s -> convertLegacyTextWithTagResolversToComponent(miniMessage, s, tagResolver)).toList() : new LinkedList<>();
+            return applyNameAndLore(itemStack, name, legacyLore);
+        }
+        return itemStack;
+    }
+
+    @Deprecated
+    public static ItemStack replaceNameAndLore(MiniMessage miniMessage, ItemStack itemStack, @NotNull TagResolver... tagResolvers) {
+        return replaceNameAndLore(miniMessage, itemStack, TagResolver.resolver(tagResolvers));
+    }
+
+    private static Component convertLegacyTextWithTagResolversToComponent(MiniMessage miniMessage, String value, TagResolver tagResolver) {
+        Component lore = miniMessage.deserialize(value.replace("§", "&"), tagResolver);
+        String converted = BukkitComponentSerializer.legacy().serialize(lore);
+        return BukkitComponentSerializer.legacy().deserialize(converted.replace("&", "§"));
     }
 
 }
