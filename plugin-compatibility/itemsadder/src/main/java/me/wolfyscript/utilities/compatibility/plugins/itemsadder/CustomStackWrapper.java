@@ -110,4 +110,9 @@ public class CustomStackWrapper implements me.wolfyscript.utilities.compatibilit
     public int getMaxDurability() {
         return item.getMaxDurability();
     }
+
+    @Override
+    public boolean isBlock() {
+        return item.isBlock();
+    }
 }
