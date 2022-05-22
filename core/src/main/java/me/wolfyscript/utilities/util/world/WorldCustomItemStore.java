@@ -123,23 +123,6 @@ public class WorldCustomItemStore {
         });
     }
 
-    public PersistentDataContainer write(NamespacedKey key, PersistentDataContainer container) {
-        var context = container.getAdapterContext();
-        PersistentDataContainer[] dataArray = new PersistentDataContainer[store.size()];
-        int index = 0;
-        for (var entry : store.entrySet()) {
-            var data = context.newPersistentDataContainer();
-            var loc = entry.getKey();
-            data.set(NamespacedKey.fromString("wolfyutils:location"), PersistentDataType.INTEGER_ARRAY, new int[] {loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()});
-            data.set(NamespacedKey.fromString("wolfyutils:block_data"), PersistentDataType.TAG_CONTAINER, null /*TODO: Write Block data*/);
-            dataArray[index] = data;
-            index++;
-        }
-        container.set(key, PersistentDataType.TAG_CONTAINER_ARRAY, dataArray);
-        return container;
-    }
-
-
     static class Serializer extends StdSerializer<WorldCustomItemStore> {
 
         public Serializer() {
