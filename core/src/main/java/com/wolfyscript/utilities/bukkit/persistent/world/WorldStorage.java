@@ -1,6 +1,6 @@
 package com.wolfyscript.utilities.bukkit.persistent.world;
 
-import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
+import com.wolfyscript.utilities.bukkit.persistent.LocationConverter;
 import me.wolfyscript.utilities.util.particles.ParticleLocation;
 import me.wolfyscript.utilities.util.particles.ParticleUtils;
 import me.wolfyscript.utilities.util.world.BlockCustomItemStore;
@@ -11,7 +11,6 @@ import org.bukkit.World;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,32 +19,39 @@ import java.util.UUID;
 
 public class WorldStorage {
 
+    private static final NamespacedKey DATA = new NamespacedKey("wolfyutils", "data");
     private static final NamespacedKey BLOCKS = new NamespacedKey("wolfyutils", "blocks");
     private static final NamespacedKey BLOCK_LOCATION = new NamespacedKey("wolfyutils", "location");
     private static final NamespacedKey BLOCK_DATA = new NamespacedKey("wolfyutils", "data");
 
-    private UUID worldUUID;
+    private Map<Location, BlockCustomItemStore> BLOCKS_MAP = new HashMap<>();
+    private final UUID worldUUID;
 
-    private WorldStorage(World world) {
-        this.worldUUID = world.getUID();
+    public WorldStorage(UUID world) {
+        this.worldUUID = world;
     }
 
-    public static WorldStorage wrap(World world) {
-        return new WorldStorage(world);
-    }
-
-    private Optional<World> getWrappedWorld() {
+    private Optional<World> getWorld() {
         return Optional.ofNullable(Bukkit.getWorld(worldUUID));
     }
 
-    public void store(Location location, CustomItem customItem) {
-        ParticleUtils.stopAnimation(getStoredEffect(location));
-        if (customItem.hasNamespacedKey()) {
-            setStore(location, new BlockCustomItemStore(customItem, null));
-            var animation = customItem.getParticleContent().getAnimation(ParticleLocation.BLOCK);
+    /**
+     * Stores the BlockCustomItemStore under the specified location.
+     *
+     * @param location The location to associate the data with.
+     * @param blockStore The data of the location.
+     */
+    public void storeBlock(Location location, BlockCustomItemStore blockStore) {
+        if (blockStore.getCustomItem().hasNamespacedKey()) {
+            var previousStore = BLOCKS_MAP.put(location, blockStore);
+            if (previousStore != null) {
+                ParticleUtils.stopAnimation(previousStore.getParticleUUID());
+            }
+            var animation = blockStore.getCustomItem().getParticleContent().getAnimation(ParticleLocation.BLOCK);
             if(animation != null) {
                 animation.spawn(location.getBlock());
             }
+            saveBlocksStore();
         }
     }
 
@@ -54,88 +60,69 @@ public class WorldStorage {
      *
      * @param location The target location of the block
      */
-    public void remove(Location location) {
-        ParticleUtils.stopAnimation(getStoredEffect(location));
-        store.remove(location);
+    public void removeBlock(Location location) {
+        var previousStore = BLOCKS_MAP.remove(location);
+        if (previousStore != null) {
+            ParticleUtils.stopAnimation(previousStore.getParticleUUID());
+        }
+        saveBlocksStore();
     }
 
-    public boolean isStored(Location location) {
-        return location != null && store.containsKey(location);
-    }
-
-    public CustomItem getCustomItem(Location location) {
-        BlockCustomItemStore blockStore = get(location);
-        return blockStore != null ? blockStore.getCustomItem() : null;
-    }
-
-    /**
-     * The current active particle effect on this Location.
-     *
-     * @param location The location to be checked.
-     * @return The uuid of the currently active particle effect.
-     */
-    @Nullable
-    public UUID getStoredEffect(@Nullable Location location) {
-        BlockCustomItemStore blockStore = get(location);
-        return blockStore != null ? blockStore.getParticleUUID() : null;
-    }
-
-    public boolean hasStoredEffect(Location location) {
-        return isStored(location) && getStoredEffect(location) != null;
-    }
-
-    void setStore(Location location, BlockCustomItemStore blockStore) {
-        store.put(location, blockStore);
+    public boolean isBlockStored(Location location) {
+        return BLOCKS_MAP.containsKey(location);
     }
 
     public Optional<BlockCustomItemStore> get(Location location) {
-        return Optional.ofNullable(getCustomBlockStores().get(location));
+        return Optional.ofNullable(BLOCKS_MAP.get(location));
     }
 
     private Optional<PersistentDataContainer> getWorldContainer() {
-        return getWrappedWorld().map(PersistentDataHolder::getPersistentDataContainer);
+        return getWorld().map(PersistentDataHolder::getPersistentDataContainer);
     }
 
     private Optional<PersistentDataContainer> getCustomStore() {
-        return getWorldContainer().map(container -> container.getOrDefault(BLOCK_DATA, PersistentDataType.TAG_CONTAINER, container.getAdapterContext().newPersistentDataContainer()));
+        return getWorldContainer().map(container -> container.get(DATA, PersistentDataType.TAG_CONTAINER));
     }
 
     private Optional<PersistentDataContainer[]> getBlocks() {
-        return getCustomStore().map(container -> container.getOrDefault(BLOCKS, PersistentDataType.TAG_CONTAINER_ARRAY, new PersistentDataContainer[0]));
+        return getCustomStore().map(container -> container.get(BLOCKS, PersistentDataType.TAG_CONTAINER_ARRAY));
     }
 
-    private void setBlocks(PersistentDataContainer[] blockDataArray) {
-        getCustomStore().ifPresent(container -> container.set(BLOCKS, PersistentDataType.TAG_CONTAINER_ARRAY, blockDataArray));
-    }
-
-    private Map<Location, BlockCustomItemStore> getCustomBlockStores() {
-        return getBlocks().map(dataArray -> {
+    /**
+     * Loads the state from the persistent storage.
+     */
+    public void loadBlocksStore() {
+        this.BLOCKS_MAP = getBlocks().map(dataArray -> {
             Map<Location, BlockCustomItemStore> blockData = new HashMap<>();
             for (PersistentDataContainer dataContainer : dataArray) {
-                LocationConverter.read(getWrappedWorld().get(), BLOCK_LOCATION, dataContainer).ifPresent(location -> {
-                    BlockCustomItemStore.read(BLOCK_DATA, dataContainer).ifPresent(blockCustomItemStore -> blockData.put(location, blockCustomItemStore));
-                });
+                Location location = dataContainer.get(BLOCK_LOCATION, new LocationConverter(getWorld().get()));
+                BlockCustomItemStore.read(BLOCK_DATA, dataContainer).ifPresent(blockCustomItemStore -> blockData.put(location, blockCustomItemStore));
             }
             return blockData;
         }).orElseGet(HashMap::new);
     }
 
-    public void setCustomBlockStores(Map<Location, BlockCustomItemStore> blockData) {
-        getCustomStore().ifPresent(container -> {
-            var context = container.getAdapterContext();
-            PersistentDataContainer[] dataArray = new PersistentDataContainer[blockData.size()];
+    /**
+     * Saves the current state of the store to the persistent storage.
+     */
+    public void saveBlocksStore() {
+        getWorldContainer().ifPresent(worldContainer -> {
+            var context = worldContainer.getAdapterContext();
+            var customStore = worldContainer.getOrDefault(DATA, PersistentDataType.TAG_CONTAINER, context.newPersistentDataContainer());
+
+            PersistentDataContainer[] dataArray = new PersistentDataContainer[BLOCKS_MAP.size()];
             int index = 0;
-            for (var entry : blockData.entrySet()) {
+            for (var entry : BLOCKS_MAP.entrySet()) {
                 var data = context.newPersistentDataContainer();
                 var loc = entry.getKey();
-                LocationConverter.write(loc, BLOCK_LOCATION, container);
+                data.set(BLOCK_LOCATION, new LocationConverter(null), loc);
                 entry.getValue().write(BLOCK_DATA, data);
                 dataArray[index] = data;
                 index++;
             }
-            container.set(new NamespacedKey("wolfyutils", "blocks"), PersistentDataType.TAG_CONTAINER_ARRAY, dataArray);
+            customStore.set(BLOCKS, PersistentDataType.TAG_CONTAINER_ARRAY, dataArray);
+            worldContainer.set(DATA, PersistentDataType.TAG_CONTAINER, customStore);
         });
-
     }
 
 }
