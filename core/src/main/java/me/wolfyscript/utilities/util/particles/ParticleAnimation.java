@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.util.Keyed;
 import me.wolfyscript.utilities.util.NamespacedKey;
@@ -32,8 +33,6 @@ import me.wolfyscript.utilities.util.particles.pos.ParticlePosBlock;
 import me.wolfyscript.utilities.util.particles.pos.ParticlePosEntity;
 import me.wolfyscript.utilities.util.particles.pos.ParticlePosLocation;
 import me.wolfyscript.utilities.util.particles.pos.ParticlePosPlayer;
-import me.wolfyscript.utilities.util.world.BlockCustomItemStore;
-import me.wolfyscript.utilities.util.world.WorldUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -173,10 +172,9 @@ public class ParticleAnimation implements Keyed {
      * @param block The block to spawn the animation on.
      */
     public void spawn(Block block) {
-        BlockCustomItemStore blockStore = WorldUtils.getWorldCustomItemStore().get(block.getLocation());
-        if (blockStore != null) {
-            blockStore.setParticleUUID(new Scheduler(block).start());
-        }
+        var worldStore = ((WolfyCoreBukkit)WolfyCoreBukkit.getInstance()).getPersistentStorage().getOrCreateWorldStorage(block.getWorld());
+        worldStore.get(block.getLocation()).ifPresent(store -> store.setParticleUUID(new Scheduler(block).start()));
+        worldStore.saveBlocksStore();
     }
 
     /**
