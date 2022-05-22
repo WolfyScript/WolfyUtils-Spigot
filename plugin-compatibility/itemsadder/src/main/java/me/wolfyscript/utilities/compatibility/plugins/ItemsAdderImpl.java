@@ -68,13 +68,13 @@ public class ItemsAdderImpl extends PluginIntegrationAbstract implements ItemsAd
     }
 
     @Override
-    public CustomStack getByItemStack(ItemStack itemStack) {
-        return CustomStackWrapper.wrapStack(dev.lone.itemsadder.api.CustomStack.byItemStack(itemStack));
+    public Optional<CustomStack> getStackByItemStack(ItemStack itemStack) {
+        return Optional.empty();
     }
 
     @Override
-    public CustomStack getInstance(String namespacedID) {
-        return CustomStackWrapper.wrapStack(dev.lone.itemsadder.api.CustomStack.getInstance(namespacedID));
+    public Optional<CustomStack> getStackInstance(String namespacedID) {
+        return Optional.empty();
     }
 
     @Override

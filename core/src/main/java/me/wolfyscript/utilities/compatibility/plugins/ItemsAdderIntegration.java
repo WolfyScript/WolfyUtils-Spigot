@@ -31,18 +31,25 @@ public interface ItemsAdderIntegration extends PluginIntegration {
 
     String KEY = "ItemsAdder";
 
+    @Deprecated
     @Nullable
-    CustomStack getByItemStack(ItemStack itemStack);
+    default CustomStack getByItemStack(ItemStack itemStack) {
+        return getStackByItemStack(itemStack).orElse(null);
+    }
 
+    @Deprecated
     @Nullable
-    CustomStack getInstance(String namespacedID);
+    default CustomStack getInstance(String namespacedID) {
+        return getStackInstance(namespacedID).orElse(null);
+    }
 
-    @Nullable
+    Optional<CustomStack> getStackByItemStack(ItemStack itemStack);
+
+    Optional<CustomStack> getStackInstance(String namespacedID);
+
     Optional<CustomBlock> getBlockByItemStack(ItemStack itemStack);
 
-    @Nullable
     Optional<CustomBlock> getBlockPlaced(Block block);
 
-    @Nullable
     Optional<CustomBlock> getBlockInstance(String namespacedID);
 }

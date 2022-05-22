@@ -23,6 +23,8 @@ import dev.lone.itemsadder.api.CustomStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 public class CustomStackWrapper implements me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomStack {
 
     private final CustomStack item;
@@ -31,8 +33,12 @@ public class CustomStackWrapper implements me.wolfyscript.utilities.compatibilit
         this.item = item;
     }
 
+    public static Optional<CustomStackWrapper> wrapStack(@Nullable CustomStack customStack) {
+        return Optional.ofNullable(wrapNullableStack(customStack));
+    }
+
     @Nullable
-    public static CustomStackWrapper wrapStack(@Nullable CustomStack customStack) {
+    private static CustomStackWrapper wrapNullableStack(@Nullable CustomStack customStack) {
         return customStack != null ? new CustomStackWrapper(customStack) : null;
     }
 
