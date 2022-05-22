@@ -13,6 +13,7 @@ import com.wolfyscript.utilities.bukkit.listeners.PlayerListener;
 import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomDurabilityListener;
 import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomItemPlayerListener;
 import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomParticleListener;
+import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
 import me.wolfyscript.utilities.api.console.Console;
@@ -134,6 +135,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
     private final MessageFactory messageFactory;
     private final CompatibilityManager compatibilityManager;
     private BukkitAudiences adventure;
+    private PersistentStorage persistentStorage;
 
     /**
      * Constructor invoked by Spigot when the plugin is loaded.
@@ -145,6 +147,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         this.messageHandler = new MessageHandler(this);
         this.messageFactory = new MessageFactory(this);
         this.compatibilityManager = new CompatibilityManagerBukkit(this);
+        this.persistentStorage = new PersistentStorage();
     }
 
     /**
@@ -366,7 +369,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         Bukkit.getPluginManager().registerEvents(new CustomDurabilityListener(this), this);
         Bukkit.getPluginManager().registerEvents(new CustomParticleListener(), this);
         Bukkit.getPluginManager().registerEvents(new CustomItemPlayerListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
+        Bukkit.getPluginManager().registerEvents(new BlockListener(this), this);
         Bukkit.getPluginManager().registerEvents(new EquipListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
         Bukkit.getPluginManager().registerEvents(new GUIInventoryListener(), this);
@@ -394,5 +397,9 @@ public final class WolfyCoreBukkit extends WUPlugin {
     @Override
     public com.wolfyscript.utilities.common.chat.Chat getChat() {
         return api.getChat();
+    }
+
+    public PersistentStorage getPersistentStorage() {
+        return persistentStorage;
     }
 }
