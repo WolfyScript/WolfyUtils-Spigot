@@ -38,8 +38,8 @@ public class CustomBlockWrapper implements me.wolfyscript.utilities.compatibilit
     }
 
     @Override
-    public BlockData generateBlockData() {
-        return iaBlock.generateBlockData();
+    public BlockData getBaseBlockData() {
+        return iaBlock.getBaseBlockData();
     }
 
     @Override
@@ -75,5 +75,25 @@ public class CustomBlockWrapper implements me.wolfyscript.utilities.compatibilit
     @Override
     public void setCurrentLightLevel(int level) {
         iaBlock.setCurrentLightLevel(level);
+    }
+
+    @Override
+    public boolean playBreakEffect() {
+        return iaBlock.playBreakEffect();
+    }
+
+    @Override
+    public boolean playBreakParticles() {
+        return iaBlock.playBreakParticles();
+    }
+
+    @Override
+    public boolean playBreakSound() {
+        return iaBlock.playBreakSound();
+    }
+
+    @Override
+    public boolean playPlaceSound() {
+        return iaBlock.playPlaceSound();
     }
 }

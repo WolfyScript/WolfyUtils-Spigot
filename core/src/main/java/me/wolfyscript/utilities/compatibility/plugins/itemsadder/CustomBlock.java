@@ -14,7 +14,7 @@ public interface CustomBlock {
 
     boolean remove();
 
-    BlockData generateBlockData();
+    BlockData getBaseBlockData();
 
     Block getBlock();
 
@@ -29,4 +29,12 @@ public interface CustomBlock {
     int getOriginalLightLevel();
 
     void setCurrentLightLevel(int level);
+
+    boolean playBreakEffect();
+
+    boolean playBreakParticles();
+
+    boolean playBreakSound();
+
+    boolean playPlaceSound();
 }
