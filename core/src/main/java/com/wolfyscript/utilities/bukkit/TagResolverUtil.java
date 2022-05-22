@@ -52,7 +52,11 @@ public class TagResolverUtil {
     }
 
     public static TagResolver entries(List<Component> descriptionComponents, Function<Integer, Tag> outBoundsTag, Supplier<Tag> emptyTag, int shift) {
-        return TagResolver.resolver("list_entry", (argumentQueue, context) -> {
+        return entries("list_entry", descriptionComponents, outBoundsTag, emptyTag, shift);
+    }
+
+    public static TagResolver entries(String tagName, List<Component> descriptionComponents, Function<Integer, Tag> outBoundsTag, Supplier<Tag> emptyTag, int shift) {
+        return TagResolver.resolver(tagName, (argumentQueue, context) -> {
             if (descriptionComponents.isEmpty()) return emptyTag.get();
             int index = argumentQueue.hasNext() ? argumentQueue.pop().asInt().orElse(0) : 0;
             if (index >= descriptionComponents.size()) return outBoundsTag.apply(index);
