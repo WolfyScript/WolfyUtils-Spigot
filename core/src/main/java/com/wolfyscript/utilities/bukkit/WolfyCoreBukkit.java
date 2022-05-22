@@ -32,6 +32,7 @@ import com.wolfyscript.utilities.bukkit.nbt.QueryNodeLong;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeCompound;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeShort;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeString;
+import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
 import me.wolfyscript.utilities.api.console.Console;
@@ -439,5 +440,9 @@ public final class WolfyCoreBukkit extends WUPlugin {
     @Override
     public com.wolfyscript.utilities.common.chat.Chat getChat() {
         return api.getChat();
+    }
+
+    public PersistentStorage getPersistentStorage() {
+        return persistentStorage;
     }
 }
