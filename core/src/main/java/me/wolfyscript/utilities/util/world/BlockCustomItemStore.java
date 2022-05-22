@@ -30,13 +30,18 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 
 @JsonSerialize(using = BlockCustomItemStore.Serializer.class)
 @JsonDeserialize(using = BlockCustomItemStore.Deserializer.class)
 public class BlockCustomItemStore {
+
+    private static final org.bukkit.NamespacedKey DATA = new org.bukkit.NamespacedKey("wolfyutils", "key");
 
     private final NamespacedKey customItemKey;
     private UUID particleUUID;
@@ -65,6 +70,24 @@ public class BlockCustomItemStore {
 
     public void setParticleUUID(UUID particleUUID) {
         this.particleUUID = particleUUID;
+    }
+
+    public static Optional<BlockCustomItemStore> read(org.bukkit.NamespacedKey key, PersistentDataContainer container) {
+        PersistentDataContainer data = container.getOrDefault(key, PersistentDataType.TAG_CONTAINER, container.getAdapterContext().newPersistentDataContainer());
+        String customItem = data.getOrDefault(DATA, PersistentDataType.STRING, "");
+        if (customItem.isBlank()) return Optional.empty();
+        var customItemKey = NamespacedKey.of(customItem);
+        if (customItemKey != null) {
+            return Optional.of(new BlockCustomItemStore(customItemKey, null));
+        }
+        return Optional.empty();
+    }
+
+    public PersistentDataContainer write(org.bukkit.NamespacedKey key, PersistentDataContainer container) {
+        PersistentDataContainer data = container.getAdapterContext().newPersistentDataContainer();
+        data.set(DATA, PersistentDataType.STRING, customItemKey.toString());
+        container.set(key, PersistentDataType.TAG_CONTAINER, data);
+        return container;
     }
 
 

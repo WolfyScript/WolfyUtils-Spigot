@@ -32,10 +32,17 @@ import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import me.wolfyscript.utilities.util.particles.ParticleLocation;
 import me.wolfyscript.utilities.util.particles.ParticleUtils;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
+import org.bukkit.persistence.PersistentDataAdapterContext;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataHolder;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -114,6 +121,22 @@ public class WorldCustomItemStore {
                 }
             }
         });
+    }
+
+    public PersistentDataContainer write(NamespacedKey key, PersistentDataContainer container) {
+        var context = container.getAdapterContext();
+        PersistentDataContainer[] dataArray = new PersistentDataContainer[store.size()];
+        int index = 0;
+        for (var entry : store.entrySet()) {
+            var data = context.newPersistentDataContainer();
+            var loc = entry.getKey();
+            data.set(NamespacedKey.fromString("wolfyutils:location"), PersistentDataType.INTEGER_ARRAY, new int[] {loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()});
+            data.set(NamespacedKey.fromString("wolfyutils:block_data"), PersistentDataType.TAG_CONTAINER, null /*TODO: Write Block data*/);
+            dataArray[index] = data;
+            index++;
+        }
+        container.set(key, PersistentDataType.TAG_CONTAINER_ARRAY, dataArray);
+        return container;
     }
 
 
