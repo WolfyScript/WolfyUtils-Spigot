@@ -49,8 +49,7 @@ public class InventoryUtilImpl extends InventoryUtil {
             if (item != null) {
                 net.minecraft.server.v1_15_R1.CreativeModeTab creativeModeTab = item.r();
                 if (creativeModeTab != null) {
-                    CreativeModeTab category = CreativeModeTab.valueOf(creativeModeTab.c().toUpperCase(Locale.ROOT));
-                    category.registerMaterial(material);
+                    CreativeModeTab.of(creativeModeTab.c()).ifPresent(tab-> tab.registerMaterial(material));
                 }
             }
 
