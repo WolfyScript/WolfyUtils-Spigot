@@ -24,6 +24,7 @@ import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomBlock;
+import me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomItemListener;
 import me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomStack;
 import me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomStackWrapper;
 import me.wolfyscript.utilities.compatibility.plugins.itemsadder.ItemsAdderRefImpl;
@@ -48,6 +49,7 @@ public class ItemsAdderImpl extends PluginIntegrationAbstract implements ItemsAd
     public void init(Plugin plugin) {
         core.registerAPIReference(new ItemsAdderRefImpl.Parser());
         Bukkit.getPluginManager().registerEvents(this, core);
+        Bukkit.getPluginManager().registerEvents(new CustomItemListener(this), core);
     }
 
     @Override
