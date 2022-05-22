@@ -18,10 +18,13 @@
 
 package com.wolfyscript.utilities.bukkit.listeners;
 
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.util.events.CustomItemBreakEvent;
 import me.wolfyscript.utilities.util.events.CustomItemPlaceEvent;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
+import me.wolfyscript.utilities.util.world.BlockCustomItemStore;
 import me.wolfyscript.utilities.util.world.WorldUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -58,24 +61,36 @@ import java.util.List;
 
 public class BlockListener implements Listener {
 
+    private WolfyCoreBukkit core;
+    private PersistentStorage persistentStorage;
+
+    public BlockListener(WolfyCoreBukkit core) {
+        this.core = core;
+        this.persistentStorage = this.core.getPersistentStorage();
+    }
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onBlockBreak(BlockBreakEvent event) {
         var block = event.getBlock();
-        var storedItem = WorldUtils.getWorldCustomItemStore().getCustomItem(block.getLocation());
-        if (!ItemUtils.isAirOrNull(storedItem)) {
-            event.setDropItems(false);
-            var event1 = new CustomItemBreakEvent(storedItem, event);
-            Bukkit.getPluginManager().callEvent(event1);
-            event.setCancelled(event1.isCancelled());
-            storedItem = event1.getCustomItem();
-            if (!event1.isCancelled() && !ItemUtils.isAirOrNull(storedItem)) {
-                ItemStack result = dropItems(block, storedItem);
-                if (!event.getPlayer().getGameMode().equals(GameMode.CREATIVE) && event1.isDropItems()) {
-                    block.getWorld().dropItemNaturally(block.getLocation(), result);
+        var worldStorage = persistentStorage.getOrCreateWorldStorage(block.getWorld());
+        worldStorage.get(block.getLocation()).ifPresent(store -> {
+            var storedItem = store.getCustomItem();
+            if (!ItemUtils.isAirOrNull(storedItem)) {
+                event.setDropItems(false);
+                var event1 = new CustomItemBreakEvent(storedItem, event);
+                Bukkit.getPluginManager().callEvent(event1);
+                event.setCancelled(event1.isCancelled());
+                storedItem = event1.getCustomItem();
+                if (!event1.isCancelled() && !ItemUtils.isAirOrNull(storedItem)) {
+                    ItemStack result = dropItems(block, storedItem);
+                    worldStorage.removeBlock(block.getLocation());
+                    if (!event.getPlayer().getGameMode().equals(GameMode.CREATIVE) && event1.isDropItems()) {
+                        block.getWorld().dropItemNaturally(block.getLocation(), result);
+                    }
+                    removeMultiBlockItems(block);
                 }
-                removeMultiBlockItems(block);
             }
-        }
+        });
     }
 
     @EventHandler
@@ -106,7 +121,6 @@ public class BlockListener implements Listener {
 
     private ItemStack dropItems(Block block, CustomItem storedItem) {
         ItemStack result = storedItem.create();
-        WorldUtils.getWorldCustomItemStore().remove(block.getLocation());
         if (block.getState() instanceof Container container) {
             var blockStateMeta = (BlockStateMeta) result.getItemMeta();
             if (container instanceof ShulkerBox) {
@@ -138,11 +152,14 @@ public class BlockListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onBlockFromTo(BlockFromToEvent event) {
         var block = event.getBlock();
-        var storedItem = WorldUtils.getWorldCustomItemStore().getCustomItem(block.getLocation());
-        if (!ItemUtils.isAirOrNull(storedItem)) {
-            WorldUtils.getWorldCustomItemStore().remove(block.getLocation());
-            WorldUtils.getWorldCustomItemStore().store(event.getToBlock().getLocation(), storedItem);
-        }
+        var worldStore = persistentStorage.getOrCreateWorldStorage(event.getBlock().getWorld());
+        worldStore.get(block.getLocation()).ifPresent(store -> {
+            var storedItem = store.getCustomItem();
+            if (!ItemUtils.isAirOrNull(storedItem)) {
+                worldStore.removeBlock(block.getLocation());
+                worldStore.storeBlock(event.getToBlock().getLocation(), new BlockCustomItemStore(storedItem, null));
+            }
+        });
     }
 
     /**
@@ -240,10 +257,10 @@ public class BlockListener implements Listener {
                 var event1 = new CustomItemPlaceEvent(customItem, event);
                 Bukkit.getPluginManager().callEvent(event1);
                 customItem = event1.getCustomItem();
-
                 if (!event1.isCancelled()) {
                     if (customItem != null) {
-                        WorldUtils.getWorldCustomItemStore().store(event.getBlockPlaced().getLocation(), customItem);
+                        persistentStorage.getOrCreateWorldStorage(event.getBlock().getWorld()).storeBlock(event.getBlockPlaced().getLocation(), new BlockCustomItemStore(customItem, null));
+                        System.out.println(event.getBlock().getWorld().getPersistentDataContainer().getKeys());
                     }
                 } else {
                     event.setCancelled(true);
