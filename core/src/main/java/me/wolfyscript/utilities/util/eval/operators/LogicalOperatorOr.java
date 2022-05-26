@@ -28,10 +28,10 @@ public class LogicalOperatorOr extends LogicalOperator {
     public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("or");
 
     @JsonProperty("that")
-    protected final me.wolfyscript.utilities.util.eval.operators.BoolOperator thatValue;
+    protected final BoolOperator thatValue;
 
     @JsonCreator
-    public LogicalOperatorOr(@JsonProperty("this") me.wolfyscript.utilities.util.eval.operators.BoolOperator thisValue, @JsonProperty("that") BoolOperator thatValue) {
+    public LogicalOperatorOr(@JsonProperty("this") BoolOperator thisValue, @JsonProperty("that") BoolOperator thatValue) {
         super(KEY, thisValue);
         this.thatValue = thatValue;
     }
