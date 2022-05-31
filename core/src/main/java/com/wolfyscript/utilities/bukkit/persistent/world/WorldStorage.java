@@ -1,6 +1,7 @@
 package com.wolfyscript.utilities.bukkit.persistent.world;
 
 import com.wolfyscript.utilities.bukkit.persistent.LocationConverter;
+import com.wolfyscript.utilities.math.Vec2i;
 import me.wolfyscript.utilities.util.particles.ParticleLocation;
 import me.wolfyscript.utilities.util.particles.ParticleUtils;
 import me.wolfyscript.utilities.util.world.BlockCustomItemStore;
@@ -11,6 +12,7 @@ import org.bukkit.World;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +25,8 @@ public class WorldStorage {
     private static final NamespacedKey BLOCKS = new NamespacedKey("wolfyutils", "blocks");
     private static final NamespacedKey BLOCK_LOCATION = new NamespacedKey("wolfyutils", "location");
     private static final NamespacedKey BLOCK_DATA = new NamespacedKey("wolfyutils", "data");
+
+    private Map<UUID, Map<Vec2i, Map<Vector, BlockCustomItemStore>>> CHUNK_DATA = new HashMap<>();
 
     private Map<Location, BlockCustomItemStore> BLOCKS_MAP = new HashMap<>();
     private final UUID worldUUID;
@@ -80,19 +84,14 @@ public class WorldStorage {
         return getWorld().map(PersistentDataHolder::getPersistentDataContainer);
     }
 
-    private Optional<PersistentDataContainer> getCustomStore() {
-        return getWorldContainer().map(container -> container.get(DATA, PersistentDataType.TAG_CONTAINER));
-    }
-
-    private Optional<PersistentDataContainer[]> getBlocks() {
-        return getCustomStore().map(container -> container.get(BLOCKS, PersistentDataType.TAG_CONTAINER_ARRAY));
-    }
-
     /**
      * Loads the state from the persistent storage.
      */
     public void loadBlocksStore() {
-        this.BLOCKS_MAP = getBlocks().map(dataArray -> {
+        this.BLOCKS_MAP = getWorldContainer().map(worldContainer -> {
+            var context = worldContainer.getAdapterContext();
+            var customStore = worldContainer.getOrDefault(DATA, PersistentDataType.TAG_CONTAINER, context.newPersistentDataContainer());
+            var dataArray = customStore.getOrDefault(BLOCKS, PersistentDataType.TAG_CONTAINER_ARRAY, new PersistentDataContainer[0]);
             Map<Location, BlockCustomItemStore> blockData = new HashMap<>();
             for (PersistentDataContainer dataContainer : dataArray) {
                 Location location = dataContainer.get(BLOCK_LOCATION, new LocationConverter(getWorld().get()));
@@ -109,7 +108,6 @@ public class WorldStorage {
         getWorldContainer().ifPresent(worldContainer -> {
             var context = worldContainer.getAdapterContext();
             var customStore = worldContainer.getOrDefault(DATA, PersistentDataType.TAG_CONTAINER, context.newPersistentDataContainer());
-
             PersistentDataContainer[] dataArray = new PersistentDataContainer[BLOCKS_MAP.size()];
             int index = 0;
             for (var entry : BLOCKS_MAP.entrySet()) {
