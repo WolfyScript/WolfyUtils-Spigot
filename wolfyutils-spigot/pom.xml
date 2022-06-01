@@ -193,6 +193,13 @@
             <version>${depend_version.bstats}</version>
             <scope>compile</scope>
         </dependency>
+        <!---->
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>${depend_version.guice}</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- Testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
