@@ -44,6 +44,7 @@
         <depend_version.adventure-api>4.10.1</depend_version.adventure-api>
         <depend_version.adventure-platform>4.1.0</depend_version.adventure-platform>
         <depend_version.adventure-minimessage>4.10.0</depend_version.adventure-minimessage>
+        <depend_version.nbt-api>2.9.2</depend_version.nbt-api>
     </properties>
 
     <build>
@@ -180,6 +181,25 @@
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-minimessage</artifactId>
             <version>${depend_version.adventure-minimessage}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- NBT -->
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>item-nbt-api-plugin</artifactId>
+            <version>${depend_version.nbt-api}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>nbt-data-api</artifactId>
+            <version>${depend_version.nbt-api}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>nbt-injector</artifactId>
+            <version>${depend_version.nbt-api}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
