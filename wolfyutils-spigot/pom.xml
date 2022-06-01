@@ -2,14 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>wolfyutils-spigot</artifactId>
     <parent>
         <artifactId>wolfyutils-parent</artifactId>
         <groupId>com.wolfyscript.wolfyutils.spigot</groupId>
         <version>4.16.2-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
-
-    <artifactId>wolfyutils-spigot</artifactId>
 
     <build>
         <resources>
@@ -30,6 +30,22 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${plugin_version.license}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>add-third-party</goal>
+                        </goals>
+                        <configuration>
+                            <excludeTransitiveDependencies>true</excludeTransitiveDependencies>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -54,12 +70,17 @@
                                     <include>org.reflections</include>
                                     <include>org.javassist</include>
                                     <include>net.kyori</include>
+                                    <include>de.tr7zw</include>
                                 </includes>
                             </artifactSet>
                             <relocations>
                                 <relocation>
+                                    <pattern>de.tr7zw</pattern>
+                                    <shadedPattern>com.wolfyscript.lib.nbt</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>org.bstats</pattern>
-                                    <shadedPattern>me.wolfyscript.utilities.main.metrics</shadedPattern>
+                                    <shadedPattern>com.wolfyscript.utilities.main.metrics</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.reflections</pattern>
@@ -83,6 +104,12 @@
                                     <artifact>*:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/*</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>de.tr7zw</artifact>
+                                    <excludes>
+                                        <exclude>LICENSE</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
@@ -177,6 +204,25 @@
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-minimessage</artifactId>
             <version>${depend_version.adventure-minimessage}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- NBT -->
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>item-nbt-api-plugin</artifactId>
+            <version>${depend_version.nbt-api}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>nbt-data-api</artifactId>
+            <version>${depend_version.nbt-api}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>nbt-injector</artifactId>
+            <version>${depend_version.nbt-api}</version>
             <scope>compile</scope>
         </dependency>
         <!-- PlaceholderAPI -->
