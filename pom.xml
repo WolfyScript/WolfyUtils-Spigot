@@ -32,6 +32,7 @@
         <plugin_version.compile>3.10.1</plugin_version.compile>
         <plugin_version.shade>3.3.0</plugin_version.shade>
         <plugin_version.specialsource>1.2.4</plugin_version.specialsource>
+        <plugin_version.license>2.0.0</plugin_version.license>
         <!-- The dependency versions -->
         <depend_version.spigotapi>1.18.1-R0.1-SNAPSHOT</depend_version.spigotapi>
         <depend_version.mojang-authlib>1.5.21</depend_version.mojang-authlib>

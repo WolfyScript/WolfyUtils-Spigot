@@ -31,6 +31,22 @@
         </resources>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${plugin_version.license}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>add-third-party</goal>
+                        </goals>
+                        <configuration>
+                            <excludeTransitiveDependencies>true</excludeTransitiveDependencies>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>${plugin_version.shade}</version>
@@ -59,7 +75,7 @@
                             </artifactSet>
                             <relocations>
                                 <relocation>
-                                    <pattern>de.tr7zw.changeme.nbtapi</pattern>
+                                    <pattern>de.tr7zw</pattern>
                                     <shadedPattern>com.wolfyscript.lib.nbt</shadedPattern>
                                 </relocation>
                                 <relocation>
@@ -88,6 +104,12 @@
                                     <artifact>*:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/*</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>de.tr7zw</artifact>
+                                    <excludes>
+                                        <exclude>LICENSE</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
