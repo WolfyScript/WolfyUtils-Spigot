@@ -30,6 +30,8 @@ softdepend:
   - PlaceholderAPI
   - eco
   - zAuctionHouseV3
+  - ExecutableItems
+  - SCore
 
 commands:
   wolfyutils:
