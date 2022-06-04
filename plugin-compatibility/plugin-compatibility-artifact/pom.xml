@@ -37,11 +37,20 @@
     </repositories>
 
     <dependencies>
+        <!-- ExecutableItems -->
         <dependency>
             <groupId>com.github.Ssomar-Developement</groupId>
             <artifactId>SCore</artifactId>
             <version>main-d90dd3b60e-1</version>
         </dependency>
+        <!-- PlaceholderAPI -->
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.11.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Other compatibility modules-->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>itemsadder</artifactId>
