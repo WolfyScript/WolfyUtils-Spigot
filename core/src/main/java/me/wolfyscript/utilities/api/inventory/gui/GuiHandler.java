@@ -332,7 +332,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
         }
         final GuiCluster<C> cluster = window.getCluster();
         Player player1 = getPlayer();
-        if (api.getPermissions().hasPermission(player1, (api.getPlugin().getName() + ".inv." + window.getNamespacedKey().toString(".")))) {
+        if (player1.hasPermission(window.getPermission())) {
             var currentWindow = getWindow(cluster);
             if (currentWindow == null || !currentWindow.getNamespacedKey().equals(window.getNamespacedKey())) {
                 getHistory(cluster).add(0, window);
@@ -342,7 +342,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
             window.create(this);
             return;
         }
-        api.getChat().sendMessage(player1, Component.text("You don't have the permission ", NamedTextColor.RED).append(Component.text(api.getPlugin().getName() + ".inv." + window.getNamespacedKey().toString("."), NamedTextColor.DARK_RED)));
+        window.getChat().sendMessage(player1, Component.text("You lack the permission ", NamedTextColor.RED).append(Component.text(window.getPermission().getName(), NamedTextColor.DARK_RED)));
     }
 
     /**
