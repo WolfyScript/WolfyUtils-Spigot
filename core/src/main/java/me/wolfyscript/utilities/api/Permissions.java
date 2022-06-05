@@ -28,11 +28,24 @@ import java.util.Locale;
 public class Permissions {
 
     private final WolfyUtils wolfyUtilities;
-    private String permissionKey;
+    private Permission rootPermission;
 
     public Permissions(WolfyUtils wolfyUtilities) {
         this.wolfyUtilities = wolfyUtilities;
-        this.permissionKey = wolfyUtilities.getName().toLowerCase(Locale.ROOT).replace(" ", "_");
+        this.rootPermission = null;
+    }
+
+    public void initRootPerm(String permName) {
+        var rootPerm = Bukkit.getPluginManager().getPermission(permName);
+        if (rootPerm == null) {
+            rootPerm = new Permission(permName);
+            Bukkit.getPluginManager().addPermission(rootPerm);
+        }
+        this.rootPermission = rootPerm;
+    }
+
+    public Permission getRootPermission() {
+        return rootPermission;
     }
 
     /**
@@ -41,27 +54,24 @@ public class Permissions {
      *
      * @return the first permission key
      */
+    @Deprecated
     public String getPermissionKey() {
-        return permissionKey;
+        return rootPermission.getName();
     }
 
     /**
      * @param permissionKey
      */
-    public void setPermissionKey(String permissionKey) {
-        this.permissionKey = permissionKey;
+    @Deprecated
+    public void setPermissionKey(String permName) {
+        initRootPerm(permName);
     }
 
+    /**
+     * @deprecated Just use {@link CommandSender#hasPermission(String)}
+     */
+    @Deprecated
     public boolean hasPermission(CommandSender sender, String permCode) {
-        if (sender.hasPermission("*")) return true;
-        StringBuilder permission = new StringBuilder();
-        for (String s : permCode.split("\\.")) {
-            permission.append(s);
-            if (sender.hasPermission(permission.toString()) || sender.hasPermission(permission + ".*")) {
-                return true;
-            }
-            permission.append(".");
-        }
-        return false;
+        return sender.hasPermission(permCode);
     }
 }
