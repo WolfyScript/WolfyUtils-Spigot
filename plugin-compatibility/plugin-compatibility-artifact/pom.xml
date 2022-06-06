@@ -42,6 +42,7 @@
             <groupId>com.github.Ssomar-Developement</groupId>
             <artifactId>SCore</artifactId>
             <version>main-d90dd3b60e-1</version>
+            <scope>provided</scope>
         </dependency>
         <!-- PlaceholderAPI -->
         <dependency>
