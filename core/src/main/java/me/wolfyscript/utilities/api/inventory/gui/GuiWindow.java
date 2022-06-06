@@ -127,8 +127,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
         this.inventoryType = inventoryType;
         this.size = size;
         this.forceSyncUpdate = forceSyncUpdate;
-        this.permission = new Permission(inventoryAPI.getPlugin().getName().toLowerCase(Locale.ROOT) + ".inv." + namespacedKey.toString("."));
-        loadPermission();
+        this.permission = loadPermission();
         Bukkit.getPluginManager().registerEvents(this, wolfyUtilities.getPlugin());
 
         //Check if the old title update method is used.
@@ -144,19 +143,25 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
         }
     }
 
-    private void loadPermission() {
-        var parentPermName = inventoryAPI.getPlugin().getName().toLowerCase(Locale.ROOT) + ".inv.*";
-        var parentPerm = Bukkit.getPluginManager().getPermission(parentPermName);
-        if (parentPerm == null) {
-            parentPerm = new Permission(parentPermName);
-            parentPerm.addParent(wolfyUtilities.getPermissions().getRootPermission(), true);
-            Bukkit.getPluginManager().addPermission(parentPerm);
+    private Permission loadPermission() {
+        var permName = inventoryAPI.getPlugin().getName().toLowerCase(Locale.ROOT) + ".inv." + namespacedKey.toString(".");
+        var perm = Bukkit.getPluginManager().getPermission(permName);
+        if (perm == null) {
+            var parentPermName = inventoryAPI.getPlugin().getName().toLowerCase(Locale.ROOT) + ".inv.*";
+            var parentPerm = Bukkit.getPluginManager().getPermission(parentPermName);
+            if (parentPerm == null) {
+                parentPerm = new Permission(parentPermName);
+                parentPerm.addParent(wolfyUtilities.getPermissions().getRootPermission(), true);
+                Bukkit.getPluginManager().addPermission(parentPerm);
+            }
+            var wildcardPermName = inventoryAPI.getPlugin().getName().toLowerCase(Locale.ROOT) + ".inv." + namespacedKey.getNamespace() + ".*";
+            var wildcardPerm = new Permission(wildcardPermName);
+            wildcardPerm.addParent(parentPerm, true);
+            perm = new Permission(permName);
+            perm.addParent(wildcardPerm, true);
+            Bukkit.getPluginManager().addPermission(perm);
         }
-        var wildcardPermName = inventoryAPI.getPlugin().getName().toLowerCase(Locale.ROOT) + ".inv." + namespacedKey.getNamespace() + ".*";
-        var wildcardPerm = new Permission(wildcardPermName);
-        wildcardPerm.addParent(parentPerm, true);
-        this.permission.addParent(wildcardPerm, true);
-        Bukkit.getPluginManager().addPermission(this.permission);
+        return perm;
     }
 
     /**
