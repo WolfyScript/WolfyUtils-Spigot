@@ -18,6 +18,7 @@
 
 package me.wolfyscript.utilities.api.nms.nbt;
 
+@Deprecated(since = "4.16.2.0")
 public interface NBTTagInt extends NBTNumber {
 
 }
