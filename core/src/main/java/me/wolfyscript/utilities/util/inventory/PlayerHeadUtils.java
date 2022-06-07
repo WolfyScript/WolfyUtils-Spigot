@@ -66,6 +66,7 @@ public class PlayerHeadUtils {
      * @param skullMeta the {@link SkullMeta} the texture value should be added to
      * @return the original skullMeta with the new texture value
      */
+    @Deprecated
     public static SkullMeta getSkullMeta(String value, SkullMeta skullMeta) {
         if (value != null && !value.isEmpty()) {
             String texture = value;
@@ -91,6 +92,7 @@ public class PlayerHeadUtils {
         return skullMeta;
     }
 
+    @Deprecated
     public static String getTextureValue(SkullMeta skullMeta) {
         GameProfile profile = null;
         Field profileField;
