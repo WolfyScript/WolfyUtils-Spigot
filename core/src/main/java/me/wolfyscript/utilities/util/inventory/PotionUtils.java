@@ -19,7 +19,7 @@
 package me.wolfyscript.utilities.util.inventory;
 
 import me.wolfyscript.utilities.util.chat.ChatColor;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 

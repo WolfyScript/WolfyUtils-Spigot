@@ -18,11 +18,11 @@
 
 package me.wolfyscript.utilities.api.nms.v1_18_R1.inventory.util;
 
+import com.google.common.base.Preconditions;
 import me.wolfyscript.utilities.api.inventory.gui.GuiHandler;
 import me.wolfyscript.utilities.api.inventory.gui.GuiWindow;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
-import org.apache.commons.lang.Validate;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryHolder;
 
@@ -62,12 +62,12 @@ public class GUIInventoryCreator {
     }
 
     public <C extends CustomCache> GUIInventory<C> createInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, InventoryHolder holder, InventoryType type) {
-        Validate.isTrue(this.converterMap.containsKey(type), "Cannot create GUI inventory of type ", type);
+        Preconditions.checkArgument(this.converterMap.containsKey(type), "Cannot create GUI inventory of type ", type);
         return this.converterMap.get(type).createInventory(guiHandler, window, holder, type);
     }
 
     public <C extends CustomCache> GUIInventory<C> createInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, InventoryHolder holder, InventoryType type, String title) {
-        Validate.isTrue(this.converterMap.containsKey(type), "Cannot create GUI inventory of type ", type);
+        Preconditions.checkArgument(this.converterMap.containsKey(type), "Cannot create GUI inventory of type ", type);
         return this.converterMap.get(type).createInventory(guiHandler, window, holder, type, title);
     }
 
