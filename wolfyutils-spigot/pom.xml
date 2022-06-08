@@ -227,12 +227,6 @@
             <version>${depend_version.nbt-api}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>de.tr7zw</groupId>
-            <artifactId>nbt-injector</artifactId>
-            <version>${depend_version.nbt-api}</version>
-            <scope>compile</scope>
-        </dependency>
         <!-- Bstats Metrics -->
         <dependency>
             <groupId>org.bstats</groupId>

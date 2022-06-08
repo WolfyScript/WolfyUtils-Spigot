@@ -197,11 +197,5 @@
             <version>${depend_version.nbt-api}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>de.tr7zw</groupId>
-            <artifactId>nbt-injector</artifactId>
-            <version>${depend_version.nbt-api}</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 </project>
