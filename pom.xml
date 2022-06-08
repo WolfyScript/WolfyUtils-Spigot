@@ -45,7 +45,7 @@
         <depend_version.adventure-api>4.10.1</depend_version.adventure-api>
         <depend_version.adventure-platform>4.1.0</depend_version.adventure-platform>
         <depend_version.adventure-minimessage>4.10.1</depend_version.adventure-minimessage>
-        <depend_version.nbt-api>2.9.2</depend_version.nbt-api>
+        <depend_version.nbt-api>2.10.0-SNAPSHOT</depend_version.nbt-api>
     </properties>
 
     <build>
