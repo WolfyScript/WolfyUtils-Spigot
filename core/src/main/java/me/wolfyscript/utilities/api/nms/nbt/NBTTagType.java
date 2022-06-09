@@ -20,6 +20,7 @@ package me.wolfyscript.utilities.api.nms.nbt;
 
 import org.jetbrains.annotations.Nullable;
 
+@Deprecated(since = "4.16.2.0")
 public interface NBTTagType<T extends NBTBase> {
 
     static NBTTagType<NBTTagEnd> invalidType(int typeId) {
