@@ -35,7 +35,7 @@ public class ExecutableItemsRef extends APIReference {
 
     @Override
     public boolean isValidItem(ItemStack itemStack) {
-        return manager.getExecutableItem(itemStack).isPresent();
+        return manager.getExecutableItem(itemStack).map(exeItem -> exeItem.getId().equals(id)).orElse(false);
     }
 
     @Override
