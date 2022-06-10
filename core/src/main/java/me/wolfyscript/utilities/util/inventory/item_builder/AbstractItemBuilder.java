@@ -59,6 +59,7 @@ public abstract class AbstractItemBuilder<T extends AbstractItemBuilder<?>> {
 
     @JsonIgnore
     private final Class<T> typeClass;
+    @JsonIgnore
     private final MiniMessage miniMessage;
 
     protected AbstractItemBuilder(Class<T> typeClass) {
