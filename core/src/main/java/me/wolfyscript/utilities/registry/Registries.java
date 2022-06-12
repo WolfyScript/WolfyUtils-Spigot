@@ -19,6 +19,7 @@
 package me.wolfyscript.utilities.registry;
 
 import com.google.common.base.Preconditions;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomData;
@@ -86,6 +87,8 @@ public class Registries {
     private final TypeRegistry<ValueProvider<?>> valueProviders;
     private final TypeRegistry<Operator> operators;
 
+    private final TypeRegistry<QueryNode> nbtQueryNodes;
+
     public Registries(WolfyUtilCore core) {
         this.core = core;
 
@@ -106,6 +109,8 @@ public class Registries {
         customItemEvents = new TypeRegistrySimple<>(ITEM_EVENT_TYPES, this);
         valueProviders = new TypeRegistrySimple<>(new NamespacedKey(core, "value_providers"), this);
         operators = new TypeRegistrySimple<>(new NamespacedKey(core, "operators"), this);
+
+        this.nbtQueryNodes = new TypeRegistrySimple<>(new NamespacedKey(core, "nbt/query/nodes"), this);
     }
 
     void indexTypedRegistry(IRegistry<?> registry) {
