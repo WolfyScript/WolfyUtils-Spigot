@@ -29,14 +29,14 @@ import de.tr7zw.changeme.nbtapi.NBTIntArrayList;
 import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
-import java.util.List;
-
-public class QueryNodeArray extends QueryNode {
+public class QueryNodeList extends QueryNode {
 
     public static final NamespacedKey ID = NamespacedKey.wolfyutilties("array");
 
+    private int index;
+
     @JsonCreator
-    public QueryNodeArray(NBTIntArrayList node, @JacksonInject("key") String key, @JacksonInject("") String path, NBTType type) {
+    public QueryNodeList(NBTIntArrayList node, @JacksonInject("key") String key, @JacksonInject("") String path, NBTType type) {
         super(ID, key, path);
         this.type = type;
     }

@@ -34,7 +34,7 @@ import me.wolfyscript.utilities.util.NamespacedKey;
 
 import java.util.Objects;
 
-public class QueryNodePrimitive extends QueryNode {
+public abstract class QueryNodePrimitive extends QueryNode {
 
     public static final NamespacedKey ID = NamespacedKey.wolfyutilties("primitive");
     private Object value = null;

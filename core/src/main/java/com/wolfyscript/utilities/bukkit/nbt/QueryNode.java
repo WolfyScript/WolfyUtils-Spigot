@@ -102,17 +102,11 @@ public abstract class QueryNode implements Keyed {
             if (typeSpecifier.isBlank()) {
                 //Primitive
                 ObjectNode objNode = new ObjectNode(context.getNodeFactory());
+                objNode.put("id", "primitive");
                 objNode.set("value", node);
                 return context.readTreeAsValue(objNode, QueryNodePrimitive.class);
-            } else {
-                //Object, Array, or Object Array
-                return switch (typeSpecifier) {
-                    case "{}" -> context.readTreeAsValue(node, QueryNodeObject.class); //Object
-                    case "[]" -> context.readTreeAsValue(node, QueryNodeArray.class); //Array (Primitive)
-                    case "[{}]" -> null; //Object Array
-                    default -> null;
-                };
             }
+            return null;
         }
     }
 

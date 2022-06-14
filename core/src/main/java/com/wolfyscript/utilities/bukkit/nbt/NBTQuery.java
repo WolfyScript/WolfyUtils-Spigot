@@ -22,12 +22,12 @@
 
 package com.wolfyscript.utilities.bukkit.nbt;
 
-import com.wolfyscript.lib.nbt.nbtapi.NBTCompound;
-import com.wolfyscript.lib.nbt.nbtapi.NBTContainer;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import de.tr7zw.changeme.nbtapi.NBTCompound;
+import de.tr7zw.changeme.nbtapi.NBTContainer;
 import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 
 import java.io.IOException;
