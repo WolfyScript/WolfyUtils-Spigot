@@ -29,10 +29,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -333,6 +331,8 @@ public class GuiHandler<C extends CustomCache> implements Listener {
         final GuiCluster<C> cluster = window.getCluster();
         Player player1 = getPlayer();
         if (player1.hasPermission(window.getPermission())) {
+            // Cancels the chat input when a new window is opened to prevent
+            cancelChatInput();
             var currentWindow = getWindow(cluster);
             if (currentWindow == null || !currentWindow.getNamespacedKey().equals(window.getNamespacedKey())) {
                 getHistory(cluster).add(0, window);
@@ -525,13 +525,6 @@ public class GuiHandler<C extends CustomCache> implements Listener {
             } else {
                 this.isWindowOpen = false;
             }
-        }
-    }
-
-    @EventHandler
-    private void onCommand(PlayerCommandPreprocessEvent event) {
-        if (!event.getMessage().startsWith("/wua") && !event.getMessage().startsWith("/wui") && event.getPlayer().getUniqueId().equals(uuid) && isChatEventActive()) {
-            cancelChatInput();
         }
     }
 }
