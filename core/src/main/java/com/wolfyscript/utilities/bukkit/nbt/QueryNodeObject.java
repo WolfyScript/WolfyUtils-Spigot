@@ -94,17 +94,19 @@ public class QueryNodeObject extends QueryNode<NBTCompound> {
     @Override
     public NBTCompound visit(String path, String key, NBTCompound value) {
         Set<String> keys;
+        String newPath = path + "." + key;
         if (!include && includes.isEmpty()) {
             keys = value.getKeys().stream().filter(s -> includes.get(s)).collect(Collectors.toSet());
             //Nothing to include proceed to children
-
-            return null;
         } else {
             keys = value.getKeys();
         }
+        //Process child nodes with the specified settings.
         for (String childKey : keys) {
-            NBTType nbtType = value.getType(childKey);
-
+            QueryNode<?> subQueryNode = getSubNodes().get(childKey);
+            if (subQueryNode != null) {
+                subQueryNode.visit(newPath, childKey, value);
+            }
 
 
         }
