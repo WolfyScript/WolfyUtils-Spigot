@@ -45,6 +45,8 @@ import me.wolfyscript.utilities.util.json.jackson.ValueDeserializer;
 import me.wolfyscript.utilities.util.json.jackson.annotations.OptionalValueDeserializer;
 
 import java.io.IOException;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 @JsonTypeResolver(KeyedTypeResolver.class)
@@ -53,37 +55,57 @@ import java.util.regex.Pattern;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, property = "id")
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonPropertyOrder(value = {"id"})
-public abstract class QueryNode implements Keyed {
+public abstract class QueryNode<VAL> implements Keyed {
 
-    private static final Pattern KEY_PATTERN = Pattern.compile("\\{}$|\\[]$|\\[\\{}]$");
+    private static final String ERROR_MISMATCH = "Mismatched NBT types! Requested type: %s but found type %s, at node %s.%s";
 
-    protected final NamespacedKey id;
+    protected final NamespacedKey type;
     @JsonIgnore
     protected final String parentPath;
     @JsonIgnore
     protected final String key;
     @JsonIgnore
-    protected NBTType type = NBTType.NBTTagEnd;
+    protected NBTType nbtType = NBTType.NBTTagEnd;
 
-    protected QueryNode(NamespacedKey id, @JacksonInject("key") String key, @JacksonInject("path") String parentPath) {
-        this.id = id;
+    protected QueryNode(NamespacedKey type, @JacksonInject("key") String key, @JacksonInject("path") String parentPath) {
+        this.type = type;
         this.parentPath = parentPath;
         this.key = key;
     }
 
     public abstract boolean check(String key, NBTType type, NBTCompound parent);
 
+    protected abstract Optional<VAL> readValue(String key, NBTCompound parent);
+
+    protected abstract NBTCompound visit(String path, String key, VAL value);
+
+    public NBTCompound visit(String path, String key, NBTCompound parent) {
+        NBTType nbtType = parent.getType(key);
+        if (Objects.equals(nbtType, getNbtType())) {
+            Optional<VAL> value = readValue(key, parent);
+            if (value.isPresent()) {
+                return visit(path, key, value.get());
+            }
+        }
+        throw new RuntimeException(String.format(ERROR_MISMATCH, getNbtType(), nbtType, path, key));
+    }
+
     @JsonGetter("id")
-    public NamespacedKey getId() {
-        return id;
+    public NamespacedKey getType() {
+        return type;
+    }
+
+    public NBTType getNbtType() {
+        return nbtType;
     }
 
     @JsonIgnore
     @Override
     public NamespacedKey getNamespacedKey() {
-        return id;
+        return type;
     }
 
+    //TODO
     static class OptionalValueDeserializer extends ValueDeserializer<QueryNode> {
 
         protected OptionalValueDeserializer() {
@@ -93,20 +115,12 @@ public abstract class QueryNode implements Keyed {
         @Override
         public QueryNode deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException, JsonProcessingException {
             JsonNode node = jsonParser.readValueAsTree();
-            var nodeKey = context.getParser().getCurrentName();
-            var keyMatcher = KEY_PATTERN.matcher(nodeKey);
-            String typeSpecifier = "";
-            if (keyMatcher.matches()) {
-                typeSpecifier = keyMatcher.group();
-            }
-            if (typeSpecifier.isBlank()) {
-                //Primitive
-                ObjectNode objNode = new ObjectNode(context.getNodeFactory());
-                objNode.put("id", "primitive");
-                objNode.set("value", node);
-                return context.readTreeAsValue(objNode, QueryNodePrimitive.class);
-            }
-            return null;
+            //Primitive
+            ObjectNode objNode = new ObjectNode(context.getNodeFactory());
+            objNode.put("id", "primitive");
+            objNode.set("value", node);
+            return context.readTreeAsValue(objNode, QueryNodePrimitive.class);
+
         }
     }
 

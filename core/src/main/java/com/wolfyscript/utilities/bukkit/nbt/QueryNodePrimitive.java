@@ -50,47 +50,47 @@ public abstract class QueryNodePrimitive extends QueryNode {
                 switch (identifier) {
                     case 'b', 'B' -> {
                         this.value = Byte.parseByte(value);
-                        this.type = NBTType.NBTTagByte;
+                        this.nbtType = NBTType.NBTTagByte;
                     }
                     case 's', 'S' -> {
                         this.value = Short.parseShort(value);
-                        this.type = NBTType.NBTTagShort;
+                        this.nbtType = NBTType.NBTTagShort;
                     }
                     case 'i', 'I' -> {
                         this.value = Integer.parseInt(value);
-                        this.type = NBTType.NBTTagInt;
+                        this.nbtType = NBTType.NBTTagInt;
                     }
                     case 'l', 'L' -> {
                         this.value = Long.parseLong(value);
-                        this.type = NBTType.NBTTagLong;
+                        this.nbtType = NBTType.NBTTagLong;
                     }
                     case 'f', 'F' -> {
                         this.value = Float.parseFloat(value);
-                        this.type = NBTType.NBTTagFloat;
+                        this.nbtType = NBTType.NBTTagFloat;
                     }
                     case 'd', 'D' -> {
                         this.value = Double.parseDouble(value);
-                        this.type = NBTType.NBTTagDouble;
+                        this.nbtType = NBTType.NBTTagDouble;
                     }
                     default -> {
                         this.value = value;
-                        this.type = NBTType.NBTTagString;
+                        this.nbtType = NBTType.NBTTagString;
                     }
                 }
             }
         } else if (valueNode.isInt()) {
             this.value = valueNode.asInt(0);
-            this.type = NBTType.NBTTagInt;
+            this.nbtType = NBTType.NBTTagInt;
         } else if (valueNode.isDouble()) {
             this.value = valueNode.asDouble(0d);
-            this.type = NBTType.NBTTagDouble;
+            this.nbtType = NBTType.NBTTagDouble;
         }
-        Preconditions.checkArgument(!this.type.equals(NBTType.NBTTagEnd), "Error parsing primitive query node!");
+        Preconditions.checkArgument(!this.nbtType.equals(NBTType.NBTTagEnd), "Error parsing primitive query node!");
     }
 
     @Override
     public boolean check(String key, NBTType type, NBTCompound parent) {
-        if (this.key.equals(key) && this.type.equals(type)) {
+        if (this.key.equals(key) && this.nbtType.equals(type)) {
             return Objects.equals(this.value, parent.getObject(key, value.getClass()));
         }
         return false;

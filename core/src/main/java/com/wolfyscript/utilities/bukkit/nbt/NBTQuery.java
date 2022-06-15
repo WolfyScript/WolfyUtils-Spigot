@@ -28,14 +28,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
+import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 public class NBTQuery {
 
-    private Map<String, QueryNode> nodes;
+    private Map<String, QueryNode<?>> nodes;
 
     @JsonCreator
     public NBTQuery(ObjectNode node) {
@@ -47,7 +49,7 @@ public class NBTQuery {
             injectVars.addValue("path", "");
             var subNode = entry.getValue();
             try {
-                QueryNode queryNode = objMapper.reader(injectVars).readValue(subNode, QueryNode.class);
+                QueryNode<?> queryNode = objMapper.reader(injectVars).readValue(subNode, QueryNode.class);
                 if (queryNode != null) {
                     nodes.put(key, queryNode);
                 }
@@ -58,16 +60,18 @@ public class NBTQuery {
 
     }
 
+    NBTCompound visitNode(NBTCompound parent, String path, String key, QueryNode<?> queryNode) {
+        NBTType nbtType = parent.getType(key);
+        if (Objects.equals(nbtType, queryNode.getNbtType())) {
+            queryNode.visit(path, key, parent);
+            return null;
+        }
+        throw new RuntimeException("Mismatched NBT types! Requested type: " + queryNode.getNbtType() + " but found type " + nbtType + " at node " + path + "." + key);
+    }
 
 
     public NBTCompound find() {
         NBTContainer container = new NBTContainer();
-
-
-
-
-
-
         return (NBTCompound) new NBTContainer();
     }
 

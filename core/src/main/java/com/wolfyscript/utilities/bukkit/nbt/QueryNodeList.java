@@ -31,18 +31,27 @@ import me.wolfyscript.utilities.util.NamespacedKey;
 
 public class QueryNodeList extends QueryNode {
 
-    public static final NamespacedKey ID = NamespacedKey.wolfyutilties("array");
+    public static final NamespacedKey ID = NamespacedKey.wolfyutilties("list");
 
     private int index;
+    private QueryNode value;
 
     @JsonCreator
-    public QueryNodeList(NBTIntArrayList node, @JacksonInject("key") String key, @JacksonInject("") String path, NBTType type) {
+    public QueryNodeList(NBTIntArrayList node, @JacksonInject("key") String key, @JacksonInject("path") String path, NBTType type) {
         super(ID, key, path);
-        this.type = type;
+        this.nbtType = type;
     }
 
     @Override
     public boolean check(String key, NBTType type, NBTCompound parent) {
         return false;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public QueryNode getValue() {
+        return value;
     }
 }
