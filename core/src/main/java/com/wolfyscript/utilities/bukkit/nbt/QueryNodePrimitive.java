@@ -25,74 +25,22 @@ package com.wolfyscript.utilities.bukkit.nbt;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Preconditions;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
-import java.util.Objects;
+public abstract class QueryNodePrimitive<VAL> extends QueryNode<VAL> {
 
-public abstract class QueryNodePrimitive extends QueryNode {
-
-    public static final NamespacedKey ID = NamespacedKey.wolfyutilties("primitive");
-    private Object value = null;
+    protected final VAL value;
 
     @JsonCreator
-    public QueryNodePrimitive(@JsonProperty("value") JsonNode valueNode, @JacksonInject("key") String key, @JacksonInject("path") String parentPath) {
-        super(ID, key, parentPath);
-        if (valueNode.isTextual()) {
-            var text = valueNode.asText();
-            if (!text.isBlank()) {
-                char identifier = text.charAt(text.length() - 1);
-                String value = text.substring(0, text.length() - 1);
-                switch (identifier) {
-                    case 'b', 'B' -> {
-                        this.value = Byte.parseByte(value);
-                        this.nbtType = NBTType.NBTTagByte;
-                    }
-                    case 's', 'S' -> {
-                        this.value = Short.parseShort(value);
-                        this.nbtType = NBTType.NBTTagShort;
-                    }
-                    case 'i', 'I' -> {
-                        this.value = Integer.parseInt(value);
-                        this.nbtType = NBTType.NBTTagInt;
-                    }
-                    case 'l', 'L' -> {
-                        this.value = Long.parseLong(value);
-                        this.nbtType = NBTType.NBTTagLong;
-                    }
-                    case 'f', 'F' -> {
-                        this.value = Float.parseFloat(value);
-                        this.nbtType = NBTType.NBTTagFloat;
-                    }
-                    case 'd', 'D' -> {
-                        this.value = Double.parseDouble(value);
-                        this.nbtType = NBTType.NBTTagDouble;
-                    }
-                    default -> {
-                        this.value = value;
-                        this.nbtType = NBTType.NBTTagString;
-                    }
-                }
-            }
-        } else if (valueNode.isInt()) {
-            this.value = valueNode.asInt(0);
-            this.nbtType = NBTType.NBTTagInt;
-        } else if (valueNode.isDouble()) {
-            this.value = valueNode.asDouble(0d);
-            this.nbtType = NBTType.NBTTagDouble;
-        }
-        Preconditions.checkArgument(!this.nbtType.equals(NBTType.NBTTagEnd), "Error parsing primitive query node!");
+    protected QueryNodePrimitive(NamespacedKey type, VAL value, @JacksonInject("key") String key, @JacksonInject("path") String parentPath) {
+        super(type, key, parentPath);
+        this.value = value;
     }
 
     @Override
     public boolean check(String key, NBTType type, NBTCompound parent) {
-        if (this.key.equals(key) && this.nbtType.equals(type)) {
-            return Objects.equals(this.value, parent.getObject(key, value.getClass()));
-        }
-        return false;
+        return this.key.equals(key) && this.nbtType.equals(type);
     }
 }

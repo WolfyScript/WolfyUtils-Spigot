@@ -24,20 +24,23 @@ package com.wolfyscript.utilities.bukkit.nbt;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.databind.JsonNode;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
-import de.tr7zw.changeme.nbtapi.NBTIntArrayList;
 import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
-public class QueryNodeList extends QueryNode {
+import java.util.List;
+import java.util.Optional;
+
+public class QueryNodeList<VAL> extends QueryNode<List<VAL>> {
 
     public static final NamespacedKey ID = NamespacedKey.wolfyutilties("list");
 
     private int index;
-    private QueryNode value;
+    private List<QueryNode<VAL>> values;
 
     @JsonCreator
-    public QueryNodeList(NBTIntArrayList node, @JacksonInject("key") String key, @JacksonInject("path") String path, NBTType type) {
+    public QueryNodeList(JsonNode node, @JacksonInject("key") String key, @JacksonInject("path") String path, NBTType type) {
         super(ID, key, path);
         this.nbtType = type;
     }
@@ -47,11 +50,19 @@ public class QueryNodeList extends QueryNode {
         return false;
     }
 
+    @Override
+    protected Optional<List<VAL>> readValue(String path, String key, NBTCompound parent) {
+        return Optional.empty();
+    }
+
+    @Override
+    protected void applyValue(String path, String key, List<VAL> value, NBTCompound resultContainer) {
+
+    }
+
     public int getIndex() {
         return index;
     }
 
-    public QueryNode getValue() {
-        return value;
-    }
+
 }

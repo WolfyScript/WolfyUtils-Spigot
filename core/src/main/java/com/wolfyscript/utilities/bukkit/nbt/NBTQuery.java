@@ -23,56 +23,46 @@
 package com.wolfyscript.utilities.bukkit.nbt;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.databind.InjectableValues;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
-import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 
 public class NBTQuery {
 
-    private Map<String, QueryNode<?>> nodes;
+    private final Map<String, QueryNode<?>> nodes = new HashMap<>();
 
     @JsonCreator
     public NBTQuery(ObjectNode node) {
-        ObjectMapper objMapper = JacksonUtil.getObjectMapper();
         node.fields().forEachRemaining(entry -> {
             var key = entry.getKey();
-            var injectVars = new InjectableValues.Std();
-            injectVars.addValue("key", key);
-            injectVars.addValue("path", "");
             var subNode = entry.getValue();
-            try {
-                QueryNode<?> queryNode = objMapper.reader(injectVars).readValue(subNode, QueryNode.class);
-                if (queryNode != null) {
-                    nodes.put(key, queryNode);
-                }
-            } catch (IOException e) {
-
-            }
+            QueryNode.loadFrom(subNode, "", key).ifPresent(queryNode -> {
+                nodes.put(key, queryNode);
+            });
         });
 
     }
 
-    NBTCompound visitNode(NBTCompound parent, String path, String key, QueryNode<?> queryNode) {
-        NBTType nbtType = parent.getType(key);
-        if (Objects.equals(nbtType, queryNode.getNbtType())) {
-            queryNode.visit(path, key, parent);
-            return null;
+    public static Optional<NBTQuery> of(File file) {
+        try {
+            return Optional.ofNullable(JacksonUtil.getObjectMapper().readValue(file, NBTQuery.class));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Optional.empty();
         }
-        throw new RuntimeException("Mismatched NBT types! Requested type: " + queryNode.getNbtType() + " but found type " + nbtType + " at node " + path + "." + key);
     }
 
-
-    public NBTCompound find() {
+    public NBTCompound computeOn(NBTCompound input) {
         NBTContainer container = new NBTContainer();
-        return (NBTCompound) new NBTContainer();
+        nodes.forEach((key, queryNode) -> queryNode.visit("", key, input, container));
+        return container;
     }
 
 

@@ -29,12 +29,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -55,9 +54,11 @@ public class QueryNodeObject extends QueryNode<NBTCompound> {
     private Map<String, QueryNode<?>> subNodes;
 
     @JsonCreator
-    public QueryNodeObject(JsonNode jsonNode, @JacksonInject("key") String key, @JacksonInject("path") String parentPath) {
+    public QueryNodeObject(ObjectNode node, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
         super(ID, key, parentPath);
         this.nbtType = NBTType.NBTTagCompound;
+
+
 
     }
 
@@ -87,30 +88,30 @@ public class QueryNodeObject extends QueryNode<NBTCompound> {
     }
 
     @Override
-    protected Optional<NBTCompound> readValue(String key, NBTCompound parent) {
+    protected Optional<NBTCompound> readValue(String path, String key, NBTCompound parent) {
         return Optional.ofNullable(parent.getCompound(key));
     }
 
     @Override
-    public NBTCompound visit(String path, String key, NBTCompound value) {
+    public void applyValue(String path, String key, NBTCompound value, NBTCompound resultContainer) {
         Set<String> keys;
         String newPath = path + "." + key;
+        NBTCompound container = resultContainer;
         if (!include && includes.isEmpty()) {
             keys = value.getKeys().stream().filter(s -> includes.get(s)).collect(Collectors.toSet());
             //Nothing to include proceed to children
         } else {
+            //Add this container to the result if included
+            container = resultContainer.addCompound(key);
             keys = value.getKeys();
         }
         //Process child nodes with the specified settings.
         for (String childKey : keys) {
             QueryNode<?> subQueryNode = getSubNodes().get(childKey);
             if (subQueryNode != null) {
-                subQueryNode.visit(newPath, childKey, value);
+                subQueryNode.visit(newPath, childKey, value, container);
             }
-
-
         }
-        return null;
     }
 
 }

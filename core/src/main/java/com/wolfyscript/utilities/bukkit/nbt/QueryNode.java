@@ -22,6 +22,7 @@
 
 package com.wolfyscript.utilities.bukkit.nbt;
 
+import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTType;
@@ -39,6 +40,7 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import me.wolfyscript.utilities.util.Keyed;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import me.wolfyscript.utilities.util.json.jackson.KeyedTypeIdResolver;
 import me.wolfyscript.utilities.util.json.jackson.KeyedTypeResolver;
 import me.wolfyscript.utilities.util.json.jackson.ValueDeserializer;
@@ -47,7 +49,6 @@ import me.wolfyscript.utilities.util.json.jackson.annotations.OptionalValueDeser
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 @JsonTypeResolver(KeyedTypeResolver.class)
 @JsonTypeIdResolver(KeyedTypeIdResolver.class)
@@ -75,22 +76,20 @@ public abstract class QueryNode<VAL> implements Keyed {
 
     public abstract boolean check(String key, NBTType type, NBTCompound parent);
 
-    protected abstract Optional<VAL> readValue(String key, NBTCompound parent);
+    protected abstract Optional<VAL> readValue(String path, String key, NBTCompound parent);
 
-    protected abstract NBTCompound visit(String path, String key, VAL value);
+    protected abstract void applyValue(String path, String key, VAL value, NBTCompound resultContainer);
 
-    public NBTCompound visit(String path, String key, NBTCompound parent) {
+    public final NBTCompound visit(String path, String key, NBTCompound parent, NBTCompound resultContainer) {
         NBTType nbtType = parent.getType(key);
         if (Objects.equals(nbtType, getNbtType())) {
-            Optional<VAL> value = readValue(key, parent);
-            if (value.isPresent()) {
-                return visit(path, key, value.get());
-            }
+            readValue(path, key, parent).ifPresent(val -> applyValue(path, key, val, resultContainer));
+            return null;
         }
         throw new RuntimeException(String.format(ERROR_MISMATCH, getNbtType(), nbtType, path, key));
     }
 
-    @JsonGetter("id")
+    @JsonGetter("type")
     public NamespacedKey getType() {
         return type;
     }
@@ -105,22 +104,52 @@ public abstract class QueryNode<VAL> implements Keyed {
         return type;
     }
 
-    //TODO
-    static class OptionalValueDeserializer extends ValueDeserializer<QueryNode> {
+    public static Optional<QueryNode<?>> loadFrom(JsonNode node, String parentPath, String key) {
+        var injectVars = new InjectableValues.Std();
+        injectVars.addValue("key", key);
+        injectVars.addValue("parent_path", parentPath);
+        try {
+            QueryNode<?> queryNode = JacksonUtil.getObjectMapper().reader(injectVars).readValue(node, QueryNode.class);
+            return Optional.ofNullable(queryNode);
+        } catch (IOException e) {
+            return Optional.empty();
+        }
+    }
+
+    static class OptionalValueDeserializer extends ValueDeserializer<QueryNode<?>> {
 
         protected OptionalValueDeserializer() {
-            super(QueryNode.class);
+            super((Class<QueryNode<?>>) (Object) QueryNode.class);
         }
 
         @Override
-        public QueryNode deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException, JsonProcessingException {
+        public QueryNode<?> deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException, JsonProcessingException {
             JsonNode node = jsonParser.readValueAsTree();
-            //Primitive
+            if (node.isObject()) {
+                return null;
+            }
             ObjectNode objNode = new ObjectNode(context.getNodeFactory());
-            objNode.put("id", "primitive");
+            NamespacedKey type;
+            if (node.isTextual()) {
+                var text = node.asText();
+                type = switch (!text.isBlank() ? text.charAt(text.length() - 1) : 'S') {
+                    case 'b', 'B' -> QueryNodeByte.TYPE;
+                    case 's', 'S' -> QueryNodeShort.TYPE;
+                    case 'i', 'I' -> QueryNodeInt.TYPE;
+                    case 'l', 'L' -> QueryNodeLong.TYPE;
+                    case 'f', 'F' -> QueryNodeFloat.TYPE;
+                    case 'd', 'D' -> QueryNodeDouble.TYPE;
+                    default -> QueryNodeString.TYPE;
+                };
+            } else if (node.isInt()) {
+                type = QueryNodeInt.TYPE;
+            } else if (node.isDouble()) {
+                type = QueryNodeDouble.TYPE;
+            } else return null;
+            //Primitive
+            objNode.put("type", type.toString());
             objNode.set("value", node);
             return context.readTreeAsValue(objNode, QueryNodePrimitive.class);
-
         }
     }
 

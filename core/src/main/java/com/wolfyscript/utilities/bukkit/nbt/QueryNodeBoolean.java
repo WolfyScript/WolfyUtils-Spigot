@@ -28,7 +28,9 @@ import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
-public class QueryNodeBoolean extends QueryNode {
+import java.util.Optional;
+
+public class QueryNodeBoolean extends QueryNode<Boolean> {
 
     public static final NamespacedKey ID = NamespacedKey.wolfyutilties("boolean");
 
@@ -43,5 +45,16 @@ public class QueryNodeBoolean extends QueryNode {
     @Override
     public boolean check(String key, NBTType type, NBTCompound parent) {
         return this.key.equals(key) && value;
+    }
+
+    //TODO: Make this work for all types of values and apply the values accordingly
+    @Override
+    protected Optional<Boolean> readValue(String path, String key, NBTCompound parent) {
+        return Optional.ofNullable(parent.getBoolean(key));
+    }
+
+    @Override
+    protected void applyValue(String path, String key, Boolean value, NBTCompound resultContainer) {
+
     }
 }
