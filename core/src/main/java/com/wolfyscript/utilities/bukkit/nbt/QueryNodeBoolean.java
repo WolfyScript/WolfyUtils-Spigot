@@ -24,21 +24,22 @@ package com.wolfyscript.utilities.bukkit.nbt;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
 import java.util.Optional;
 
-public class QueryNodeBoolean extends QueryNode<Boolean> {
+public class QueryNodeBoolean extends QueryNode<Object> {
 
-    public static final NamespacedKey ID = NamespacedKey.wolfyutilties("boolean");
+    public static final NamespacedKey TYPE = NamespacedKey.wolfyutilties("boolean");
 
     private final boolean value;
 
     @JsonCreator
-    public QueryNodeBoolean(boolean value, @JacksonInject("key") String key, @JacksonInject("path") String parentPath) {
-        super(ID, key, parentPath);
+    public QueryNodeBoolean(@JsonProperty("value") boolean value, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
+        super(TYPE, key, parentPath);
         this.value = value;
     }
 
@@ -49,12 +50,19 @@ public class QueryNodeBoolean extends QueryNode<Boolean> {
 
     //TODO: Make this work for all types of values and apply the values accordingly
     @Override
-    protected Optional<Boolean> readValue(String path, String key, NBTCompound parent) {
-        return Optional.ofNullable(parent.getBoolean(key));
+    protected Optional<Object> readValue(String path, String key, NBTCompound parent) {
+        var type = parent.getType(key);
+        return Optional.ofNullable(switch (type) {
+            case NBTTagInt -> parent.getInteger(key);
+            default -> parent.getString(key);
+        });
     }
 
     @Override
-    protected void applyValue(String path, String key, Boolean value, NBTCompound resultContainer) {
-
+    protected void applyValue(String path, String key, Object value, NBTCompound resultContainer) {
+        switch (value.getClass().getSimpleName()) {
+            case "Integer" -> resultContainer.setInteger(key, (int) value);
+            default -> resultContainer.setString(key, (String) value);
+        }
     }
 }
