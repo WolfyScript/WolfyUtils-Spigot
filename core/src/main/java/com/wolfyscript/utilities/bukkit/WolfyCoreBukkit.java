@@ -15,6 +15,7 @@ import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomDurabilityLi
 import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomItemPlayerListener;
 import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomParticleListener;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeBoolean;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeByte;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeDouble;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeFloat;
@@ -301,6 +302,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         nbtQueryNodes.register(QueryNodeFloat.TYPE, QueryNodeFloat.class);
         nbtQueryNodes.register(QueryNodeString.TYPE, QueryNodeString.class);
         nbtQueryNodes.register(QueryNodeObject.TYPE, QueryNodeObject.class);
+        nbtQueryNodes.register(QueryNodeBoolean.TYPE, QueryNodeBoolean.class);
 
         KeyedTypeIdResolver.registerTypeRegistry(Meta.class, nbtChecks);
         KeyedTypeIdResolver.registerTypeRegistry(Animator.class, particleAnimators);
