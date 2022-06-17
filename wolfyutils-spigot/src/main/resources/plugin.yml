@@ -49,3 +49,5 @@ commands:
   particle_effect:
     usage: "/particle_effect spawn"
     description: "DEBUG! Spawns a test particle effect on the target block."
+  query_item:
+    usage: "/query_item"

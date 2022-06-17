@@ -19,13 +19,20 @@
 package com.wolfyscript.utilities.bukkit.commands;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.nbt.NBTQuery;
+import de.tr7zw.changeme.nbtapi.NBTCompound;
+import de.tr7zw.changeme.nbtapi.NBTItem;
+import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.List;
 
 public class QueryDebugCommand implements TabExecutor {
@@ -38,8 +45,19 @@ public class QueryDebugCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!(sender instanceof Player)) return true;
+        if (!(sender instanceof Player player)) return true;
 
+        ItemStack stack = player.getEquipment().getItem(EquipmentSlot.HAND);
+        if (!ItemUtils.isAirOrNull(stack)) {
+            File file = new File(plugin.getDataFolder(), "query_debug.json");
+            if (file.exists()) {
+                NBTQuery.of(file).ifPresent(nbtQuery -> {
+                    NBTItem nbtItem = new NBTItem(stack);
+                    NBTCompound result = nbtQuery.computeOn(nbtItem);
+                    System.out.println(result.toString());
+                });
+            }
+        }
         return true;
     }
 
