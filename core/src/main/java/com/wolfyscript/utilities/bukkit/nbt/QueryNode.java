@@ -129,35 +129,35 @@ public abstract class QueryNode<VAL> implements Keyed {
             if (jsonParser.isExpectedStartObjectToken()) {
                 return null;
             }
-            JsonNode node = jsonParser.readValueAsTree();
-            ObjectNode objNode = new ObjectNode(context.getNodeFactory());
-            NamespacedKey type;
             var token = jsonParser.currentToken();
-
-            if (token.equals(JsonToken.VALUE_STRING)) {
-                var text = node.asText();
-                type = switch (!text.isBlank() ? text.charAt(text.length() - 1) : 'S') {
-                    case 'b', 'B' -> QueryNodeByte.TYPE;
-                    case 's', 'S' -> QueryNodeShort.TYPE;
-                    case 'i', 'I' -> QueryNodeInt.TYPE;
-                    case 'l', 'L' -> QueryNodeLong.TYPE;
-                    case 'f', 'F' -> QueryNodeFloat.TYPE;
-                    case 'd', 'D' -> QueryNodeDouble.TYPE;
-                    default -> QueryNodeString.TYPE;
-                };
-            } else if (token.equals(JsonToken.VALUE_NUMBER_INT)) {
-                type = QueryNodeInt.TYPE;
-            } else if (token.equals(JsonToken.VALUE_NUMBER_FLOAT)) {
-                type = QueryNodeDouble.TYPE;
-            } else {
-                return null;
+            JsonNode node = null;
+            NamespacedKey type = switch (token) {
+                case VALUE_STRING -> {
+                    node = jsonParser.readValueAsTree();
+                    var text = node.asText();
+                    yield switch (!text.isBlank() ? text.charAt(text.length() - 1) : 'S') {
+                        case 'b', 'B' -> QueryNodeByte.TYPE;
+                        case 's', 'S' -> QueryNodeShort.TYPE;
+                        case 'i', 'I' -> QueryNodeInt.TYPE;
+                        case 'l', 'L' -> QueryNodeLong.TYPE;
+                        case 'f', 'F' -> QueryNodeFloat.TYPE;
+                        case 'd', 'D' -> QueryNodeDouble.TYPE;
+                        default -> QueryNodeString.TYPE;
+                    };
+                }
+                case VALUE_NUMBER_INT -> QueryNodeInt.TYPE;
+                case VALUE_NUMBER_FLOAT -> QueryNodeDouble.TYPE;
+                case VALUE_FALSE, VALUE_TRUE -> QueryNodeBoolean.TYPE;
+                default -> null;
+            };
+            if (type == null) return null;
+            if (node == null) {
+                node = jsonParser.readValueAsTree();
             }
-            //Primitive
+            ObjectNode objNode = new ObjectNode(context.getNodeFactory());
             objNode.put("type", type.toString());
             objNode.set("value", node);
-            return context.readTreeAsValue(objNode, QueryNodePrimitive.class);
-
-
+            return context.readTreeAsValue(objNode, QueryNode.class);
         }
     }
 
