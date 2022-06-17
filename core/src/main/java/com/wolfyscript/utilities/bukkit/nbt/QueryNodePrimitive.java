@@ -28,7 +28,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import me.wolfyscript.utilities.util.json.jackson.annotations.KeyedBaseType;
 
+@KeyedBaseType(baseType = QueryNode.class)
 public abstract class QueryNodePrimitive<VAL> extends QueryNode<VAL> {
 
     protected final VAL value;
