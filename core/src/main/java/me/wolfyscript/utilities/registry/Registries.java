@@ -87,7 +87,7 @@ public class Registries {
     private final TypeRegistry<ValueProvider<?>> valueProviders;
     private final TypeRegistry<Operator> operators;
 
-    private final TypeRegistry<QueryNode> nbtQueryNodes;
+    private final TypeRegistry<QueryNode<?>> nbtQueryNodes;
 
     public Registries(WolfyUtilCore core) {
         this.core = core;
@@ -248,5 +248,9 @@ public class Registries {
 
     public TypeRegistry<Operator> getOperators() {
         return operators;
+    }
+
+    public TypeRegistry<QueryNode<?>> getNbtQueryNodes() {
+        return nbtQueryNodes;
     }
 }
