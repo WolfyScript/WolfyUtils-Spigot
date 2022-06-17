@@ -29,11 +29,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -41,12 +43,12 @@ import java.util.stream.Collectors;
 
 public class QueryNodeObject extends QueryNode<NBTCompound> {
 
-    public static final NamespacedKey ID = NamespacedKey.wolfyutilties("object");
+    public static final NamespacedKey TYPE = NamespacedKey.wolfyutilties("object");
 
     //If include is true it includes this node with each and every child node.
-    private boolean include = false;
+    private final boolean fullyInclude;
     //If includes has values it includes this node with the specified child nodes.
-    private Map<String, Boolean> includes;
+    private final Map<String, Boolean> includes;
     //Checks and verifies the child nodes. This node is only included if all the child nodes are valid.
     private Map<String, QueryNode<?>> requiredChildNodes;
     //Child nodes to proceed to next. This is useful for further child compound tag settings.
@@ -55,11 +57,15 @@ public class QueryNodeObject extends QueryNode<NBTCompound> {
 
     @JsonCreator
     public QueryNodeObject(ObjectNode node, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
-        super(ID, key, parentPath);
+        super(TYPE, key, parentPath);
         this.nbtType = NBTType.NBTTagCompound;
-
-
-
+        this.fullyInclude = node.get("include").asBoolean(false);
+        this.includes = new HashMap<>();
+        node.get("includes").fields().forEachRemaining(entry -> {
+            includes.put(entry.getKey(), entry.getValue().asBoolean(false));
+        });
+        this.requiredChildNodes = new HashMap<>();
+        this.subNodes = new HashMap<>();
     }
 
     @JsonAnySetter
@@ -97,8 +103,8 @@ public class QueryNodeObject extends QueryNode<NBTCompound> {
         Set<String> keys;
         String newPath = path + "." + key;
         NBTCompound container = resultContainer;
-        if (!include && includes.isEmpty()) {
-            keys = value.getKeys().stream().filter(s -> includes.get(s)).collect(Collectors.toSet());
+        if (!fullyInclude && includes.isEmpty()) {
+            keys = value.getKeys().stream().filter(includes::get).collect(Collectors.toSet());
             //Nothing to include proceed to children
         } else {
             //Add this container to the result if included
