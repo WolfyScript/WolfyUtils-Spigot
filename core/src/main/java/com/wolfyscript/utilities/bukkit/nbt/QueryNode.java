@@ -22,6 +22,7 @@
 
 package com.wolfyscript.utilities.bukkit.nbt;
 
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
@@ -47,15 +48,14 @@ import me.wolfyscript.utilities.util.json.jackson.ValueDeserializer;
 import me.wolfyscript.utilities.util.json.jackson.annotations.OptionalValueDeserializer;
 
 import java.io.IOException;
-import java.util.Objects;
 import java.util.Optional;
 
 @JsonTypeResolver(KeyedTypeResolver.class)
 @JsonTypeIdResolver(KeyedTypeIdResolver.class)
 @OptionalValueDeserializer(deserializer = QueryNode.OptionalValueDeserializer.class, delegateObjectDeserializer = true)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, property = "id")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, property = "type")
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-@JsonPropertyOrder(value = {"id"})
+@JsonPropertyOrder(value = {"type"})
 public abstract class QueryNode<VAL> implements Keyed {
 
     private static final String ERROR_MISMATCH = "Mismatched NBT types! Requested type: %s but found type %s, at node %s.%s";
@@ -80,13 +80,14 @@ public abstract class QueryNode<VAL> implements Keyed {
 
     protected abstract void applyValue(String path, String key, VAL value, NBTCompound resultContainer);
 
-    public final NBTCompound visit(String path, String key, NBTCompound parent, NBTCompound resultContainer) {
+    public final void visit(String path, String key, NBTCompound parent, NBTCompound resultContainer) {
         NBTType nbtType = parent.getType(key);
-        if (Objects.equals(nbtType, getNbtType())) {
-            readValue(path, key, parent).ifPresent(val -> applyValue(path, key, val, resultContainer));
-            return null;
-        }
-        throw new RuntimeException(String.format(ERROR_MISMATCH, getNbtType(), nbtType, path, key));
+        applyValue(
+                path,
+                key,
+                readValue(path, key, parent).orElseThrow(() -> new RuntimeException(String.format(ERROR_MISMATCH, getNbtType(), nbtType, path, key))),
+                resultContainer
+        );
     }
 
     @JsonGetter("type")
@@ -112,6 +113,7 @@ public abstract class QueryNode<VAL> implements Keyed {
             QueryNode<?> queryNode = JacksonUtil.getObjectMapper().reader(injectVars).readValue(node, QueryNode.class);
             return Optional.ofNullable(queryNode);
         } catch (IOException e) {
+            e.printStackTrace();
             return Optional.empty();
         }
     }
