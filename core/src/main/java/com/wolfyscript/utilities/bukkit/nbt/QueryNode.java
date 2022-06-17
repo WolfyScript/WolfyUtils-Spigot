@@ -116,21 +116,23 @@ public abstract class QueryNode<VAL> implements Keyed {
         }
     }
 
-    static class OptionalValueDeserializer extends ValueDeserializer<QueryNode<?>> {
+    public static class OptionalValueDeserializer extends ValueDeserializer<QueryNode<?>> {
 
-        protected OptionalValueDeserializer() {
+        public OptionalValueDeserializer() {
             super((Class<QueryNode<?>>) (Object) QueryNode.class);
         }
 
         @Override
         public QueryNode<?> deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException, JsonProcessingException {
-            JsonNode node = jsonParser.readValueAsTree();
-            if (node.isObject()) {
+            if (jsonParser.isExpectedStartObjectToken()) {
                 return null;
             }
+            JsonNode node = jsonParser.readValueAsTree();
             ObjectNode objNode = new ObjectNode(context.getNodeFactory());
             NamespacedKey type;
-            if (node.isTextual()) {
+            var token = jsonParser.currentToken();
+
+            if (token.equals(JsonToken.VALUE_STRING)) {
                 var text = node.asText();
                 type = switch (!text.isBlank() ? text.charAt(text.length() - 1) : 'S') {
                     case 'b', 'B' -> QueryNodeByte.TYPE;
@@ -141,15 +143,19 @@ public abstract class QueryNode<VAL> implements Keyed {
                     case 'd', 'D' -> QueryNodeDouble.TYPE;
                     default -> QueryNodeString.TYPE;
                 };
-            } else if (node.isInt()) {
+            } else if (token.equals(JsonToken.VALUE_NUMBER_INT)) {
                 type = QueryNodeInt.TYPE;
-            } else if (node.isDouble()) {
+            } else if (token.equals(JsonToken.VALUE_NUMBER_FLOAT)) {
                 type = QueryNodeDouble.TYPE;
-            } else return null;
+            } else {
+                return null;
+            }
             //Primitive
             objNode.put("type", type.toString());
             objNode.set("value", node);
             return context.readTreeAsValue(objNode, QueryNodePrimitive.class);
+
+
         }
     }
 
