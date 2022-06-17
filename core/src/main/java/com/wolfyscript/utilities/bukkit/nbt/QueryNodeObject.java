@@ -23,20 +23,18 @@
 package com.wolfyscript.utilities.bukkit.nbt;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,46 +44,66 @@ public class QueryNodeObject extends QueryNode<NBTCompound> {
     public static final NamespacedKey TYPE = NamespacedKey.wolfyutilties("object");
 
     //If include is true it includes this node with each and every child node.
-    private final boolean fullyInclude;
+    private boolean fullyInclude;
     //If includes has values it includes this node with the specified child nodes.
-    private final Map<String, Boolean> includes;
+    private Map<String, Boolean> includes;
     //Checks and verifies the child nodes. This node is only included if all the child nodes are valid.
-    private Map<String, QueryNode<?>> requiredChildNodes;
+    private Map<String, QueryNode<?>> required;
     //Child nodes to proceed to next. This is useful for further child compound tag settings.
     @JsonIgnore
-    private Map<String, QueryNode<?>> subNodes;
+    private Map<String, QueryNode<?>> children;
 
-    @JsonCreator
-    public QueryNodeObject(ObjectNode node, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
+    public QueryNodeObject(@JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
         super(TYPE, key, parentPath);
         this.nbtType = NBTType.NBTTagCompound;
-        this.fullyInclude = node.get("include").asBoolean(false);
         this.includes = new HashMap<>();
-        node.get("includes").fields().forEachRemaining(entry -> {
-            includes.put(entry.getKey(), entry.getValue().asBoolean(false));
-        });
-        this.requiredChildNodes = new HashMap<>();
-        this.subNodes = new HashMap<>();
+        this.required = new HashMap<>();
+        this.children = new HashMap<>();
     }
 
     @JsonAnySetter
-    public void setSubNodes(Map<String, QueryNode<?>> subNodes) {
-        this.subNodes = subNodes;
+    public void loadNonNestedChildren(String key, JsonNode node) {
+        //Sets the children that are specified in the root of the object without the "children" node!
+        //That is supported behaviour!
+        QueryNode.loadFrom(node, parentPath + "." + this.key, key).ifPresent(queryNode -> children.putIfAbsent(key, queryNode));
     }
 
-    @JsonAnyGetter
-    public Map<String, QueryNode<?>> getSubNodes() {
-        return subNodes;
+    public void setInclude(boolean fullyInclude) {
+        this.fullyInclude = fullyInclude;
     }
 
-    @JsonSetter("required")
-    public void setRequiredChildNodes(Map<String, QueryNode<?>> requiredChildNodes) {
-        this.requiredChildNodes = requiredChildNodes;
+    public boolean isInclude() {
+        return fullyInclude;
     }
 
-    @JsonGetter("required")
-    public Map<String, QueryNode<?>> getRequiredChildNodes() {
-        return requiredChildNodes;
+    @JsonSetter
+    public void setIncludes(Map<String, Boolean> includes) {
+        this.includes = includes;
+    }
+
+    @JsonGetter
+    public Map<String, Boolean> getIncludes() {
+        return includes;
+    }
+
+    @JsonSetter
+    public void setRequired(Map<String, QueryNode<?>> required) {
+        this.required = required;
+    }
+
+    @JsonGetter
+    public Map<String, QueryNode<?>> getRequired() {
+        return required;
+    }
+
+    @JsonSetter("children")
+    public void setChildren(Map<String, JsonNode> children) {
+        this.children = children.entrySet().stream().map(entry -> QueryNode.loadFrom(entry.getValue(), parentPath + "." + this.key, entry.getKey()).map(queryNode -> Map.entry(entry.getKey(), queryNode)).orElse(null)).filter(Objects::nonNull).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    @JsonGetter
+    public Map<String, QueryNode<?>> getChildren() {
+        return children;
     }
 
     @Override
@@ -100,22 +118,25 @@ public class QueryNodeObject extends QueryNode<NBTCompound> {
 
     @Override
     public void applyValue(String path, String key, NBTCompound value, NBTCompound resultContainer) {
-        Set<String> keys;
         String newPath = path + "." + key;
         NBTCompound container = resultContainer;
-        if (!fullyInclude && includes.isEmpty()) {
-            keys = value.getKeys().stream().filter(includes::get).collect(Collectors.toSet());
-            //Nothing to include proceed to children
-        } else {
-            //Add this container to the result if included
+        if (fullyInclude || !includes.isEmpty()) {
             container = resultContainer.addCompound(key);
+        }
+        Set<String> keys;
+        if (!fullyInclude && !includes.isEmpty()) {
+            keys = value.getKeys().stream().filter(s -> includes.getOrDefault(s, true)).collect(Collectors.toSet());
+        } else {
             keys = value.getKeys();
         }
         //Process child nodes with the specified settings.
         for (String childKey : keys) {
-            QueryNode<?> subQueryNode = getSubNodes().get(childKey);
+            QueryNode<?> subQueryNode = getChildren().get(childKey);
             if (subQueryNode != null) {
                 subQueryNode.visit(newPath, childKey, value, container);
+            } else {
+                var childType = value.getType(childKey);
+                System.out.println("Type: " + childType);
             }
         }
     }
