@@ -61,7 +61,11 @@ public class NBTQuery {
 
     public NBTCompound computeOn(NBTCompound input) {
         NBTContainer container = new NBTContainer();
-        nodes.forEach((key, queryNode) -> queryNode.visit("", key, input, container));
+        nodes.forEach((key, queryNode) -> {
+            if (input.hasKey(key)) {
+                queryNode.visit("", key, input, container);
+            }
+        });
         return container;
     }
 
