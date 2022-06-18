@@ -39,9 +39,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class QueryNodeObject extends QueryNode<NBTCompound> {
+public class QueryNodeCompound extends QueryNode<NBTCompound> {
 
-    public static final NamespacedKey TYPE = NamespacedKey.wolfyutilties("object");
+    public static final NamespacedKey TYPE = NamespacedKey.wolfyutilties("compound");
 
     //If include is true it includes this node with each and every child node.
     private boolean fullyInclude;
@@ -53,7 +53,7 @@ public class QueryNodeObject extends QueryNode<NBTCompound> {
     @JsonIgnore
     private Map<String, QueryNode<?>> children;
 
-    public QueryNodeObject(@JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
+    public QueryNodeCompound(@JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
         super(TYPE, key, parentPath);
         this.nbtType = NBTType.NBTTagCompound;
         this.includes = new HashMap<>();
