@@ -54,7 +54,16 @@ public class QueryDebugCommand implements TabExecutor {
                 NBTQuery.of(file).ifPresent(nbtQuery -> {
                     NBTItem nbtItem = new NBTItem(stack);
                     NBTCompound result = nbtQuery.computeOn(nbtItem);
+
                     System.out.println(result.toString());
+                    if (args.length > 0) {
+                        if (args[0].equalsIgnoreCase("true")) {
+                            ItemStack stackToMergeIn = player.getEquipment().getItem(EquipmentSlot.OFF_HAND);
+                            NBTItem nbtItem1 = new NBTItem(stackToMergeIn);
+                            nbtItem1.mergeCompound(result);
+                            nbtItem1.applyNBT(stackToMergeIn);
+                        }
+                    }
                 });
             }
         }
