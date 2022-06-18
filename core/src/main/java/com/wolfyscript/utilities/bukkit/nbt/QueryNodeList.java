@@ -24,25 +24,34 @@ package com.wolfyscript.utilities.bukkit.nbt;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
+import de.tr7zw.changeme.nbtapi.NBTList;
 import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
 import java.util.List;
 import java.util.Optional;
 
-public class QueryNodeList<VAL> extends QueryNode<List<VAL>> {
+public abstract class QueryNodeList<VAL> extends QueryNode<NBTList<VAL>> {
 
-    public static final NamespacedKey ID = NamespacedKey.wolfyutilties("list");
-
-    private int index;
-    private List<QueryNode<VAL>> values;
+    @JsonIgnore
+    private final Class<VAL> elementType;
+    private final List<Element<VAL>> elements;
 
     @JsonCreator
-    public QueryNodeList(JsonNode node, @JacksonInject("key") String key, @JacksonInject("path") String path, NBTType type) {
-        super(ID, key, path);
-        this.nbtType = type;
+    public QueryNodeList(NamespacedKey type, @JsonProperty("elements") List<Element<VAL>> elements, @JacksonInject("key") String key, @JacksonInject("parent_path") String path, NBTType elementType, Class<VAL> elementClass) {
+        super(type, key, path);
+        this.elementType = elementClass;
+        this.nbtType = elementType;
+        this.elements = elements;
+    }
+
+    public List<Element<VAL>> getElements() {
+        return elements;
     }
 
     @Override
@@ -51,18 +60,87 @@ public class QueryNodeList<VAL> extends QueryNode<List<VAL>> {
     }
 
     @Override
-    protected Optional<List<VAL>> readValue(String path, String key, NBTCompound parent) {
-        return Optional.empty();
+    protected Optional<NBTList<VAL>> readValue(String path, String key, NBTCompound parent) {
+        return Optional.ofNullable(readList(key, parent));
     }
 
     @Override
-    protected void applyValue(String path, String key, List<VAL> value, NBTCompound resultContainer) {
+    protected void applyValue(String path, String key, NBTList<VAL> value, NBTCompound resultContainer) {
+        NBTList<VAL> list = readList(key, resultContainer);
+        if (list != null && !value.isEmpty()) {
+            for (Element<VAL> element : elements) {
+                element.index().ifPresentOrElse(index -> {
+                    if (index < 0) {
+                        index = value.size() + (index % value.size()); //Convert the negative index to a positive reverted index, that starts from the end.
+                    }
+                    index = index % value.size();
+                    if (value.size() > index) {
+                        VAL elemVal = value.get(index);
+                        //TODO: Compute Optional value settings
+                        list.add(elemVal);
+                    }
+                }, () -> {
+                    element.value().ifPresent(valQueryNode -> {
+                        //TODO: Compute value settings. Requires the QueryNode to be able to be visited from a parent list!
 
+                    });
+                });
+            }
+        }
     }
 
-    public int getIndex() {
-        return index;
+    protected NBTList<VAL> readList(String key, NBTCompound container) {
+        if (elementType == Integer.class) {
+            return (NBTList<VAL>) container.getIntegerList(key);
+        } else if (elementType == Long.class) {
+            return (NBTList<VAL>) container.getLongList(key);
+        } else if (elementType == Double.class) {
+            return (NBTList<VAL>) container.getDoubleList(key);
+        } else if (elementType == Float.class) {
+            return (NBTList<VAL>) container.getFloatList(key);
+        } else if (elementType == String.class) {
+            return (NBTList<VAL>) container.getStringList(key);
+        } else if (elementType == NBTCompound.class) {
+            return (NBTList<VAL>) container.getCompoundList(key);
+        }
+        return null;
     }
 
+    public static class Element<VAL> {
 
+        private Integer index;
+        private QueryNode<VAL> value;
+
+        public Element() {
+            this.index = null;
+            this.value = null;
+        }
+
+        private Optional<Integer> index() {
+            return Optional.ofNullable(index);
+        }
+
+        private Optional<QueryNode<VAL>> value() {
+            return Optional.ofNullable(value);
+        }
+
+        @JsonSetter
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        @JsonGetter
+        private int getIndex() {
+            return index;
+        }
+
+        public void setValue(QueryNode<VAL> value) {
+            this.value = value;
+        }
+
+        @JsonGetter
+        public QueryNode<VAL> getValue() {
+            return value;
+        }
+    }
 }
