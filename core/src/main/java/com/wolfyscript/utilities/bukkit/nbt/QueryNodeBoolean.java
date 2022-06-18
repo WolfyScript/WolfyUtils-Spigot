@@ -54,7 +54,14 @@ public class QueryNodeBoolean extends QueryNode<Object> {
         var type = parent.getType(key);
         return Optional.ofNullable(switch (type) {
             case NBTTagInt -> parent.getInteger(key);
-            default -> parent.getString(key);
+            case NBTTagByte -> parent.getByte(key);
+            case NBTTagShort -> parent.getShort(key);
+            case NBTTagLong -> parent.getLong(key);
+            case NBTTagDouble -> parent.getDouble(key);
+            case NBTTagFloat -> parent.getFloat(key);
+            case NBTTagString -> parent.getString(key);
+            case NBTTagCompound -> parent.getCompound(key);
+            default -> null;
         });
     }
 
