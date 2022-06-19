@@ -26,6 +26,7 @@ import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
+import de.tr7zw.changeme.nbtapi.NBTList;
 import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
@@ -48,28 +49,66 @@ public class QueryNodeBoolean extends QueryNode<Object> {
         return this.key.equals(key) && value;
     }
 
-    //TODO: Make this work for all types of values and apply the values accordingly
     @Override
     protected Optional<Object> readValue(String path, String key, NBTCompound parent) {
         var type = parent.getType(key);
         return Optional.ofNullable(switch (type) {
             case NBTTagInt -> parent.getInteger(key);
+            case NBTTagIntArray -> parent.getIntArray(key);
             case NBTTagByte -> parent.getByte(key);
+            case NBTTagByteArray -> parent.getByteArray(key);
             case NBTTagShort -> parent.getShort(key);
             case NBTTagLong -> parent.getLong(key);
             case NBTTagDouble -> parent.getDouble(key);
             case NBTTagFloat -> parent.getFloat(key);
             case NBTTagString -> parent.getString(key);
             case NBTTagCompound -> parent.getCompound(key);
+            case NBTTagList -> getListOfType(parent.getListType(key), key, parent);
             default -> null;
         });
     }
 
+    private NBTList<?> getListOfType(NBTType nbtType, String key, NBTCompound container) {
+        return switch (nbtType) {
+            case NBTTagInt -> container.getIntegerList(key);
+            case NBTTagIntArray -> container.getIntArrayList(key);
+            case NBTTagLong -> container.getLongList(key);
+            case NBTTagDouble -> container.getDoubleList(key);
+            case NBTTagFloat -> container.getFloatList(key);
+            case NBTTagString -> container.getStringList(key);
+            case NBTTagCompound -> container.getCompoundList(key);
+            default -> null;
+        };
+    }
+
     @Override
     protected void applyValue(String path, String key, Object value, NBTCompound resultContainer) {
-        switch (value.getClass().getSimpleName()) {
-            case "Integer" -> resultContainer.setInteger(key, (int) value);
-            default -> resultContainer.setString(key, (String) value);
+        if (value instanceof Integer integer) {
+            resultContainer.setInteger(key, integer);
+        } else if (value instanceof Byte cVal) {
+            resultContainer.setByte(key, cVal);
+        } else if (value instanceof Short cVal) {
+            resultContainer.setShort(key, cVal);
+        } else if (value instanceof Long cVal) {
+            resultContainer.setLong(key, cVal);
+        } else if (value instanceof Double cVal) {
+            resultContainer.setDouble(key, cVal);
+        } else if (value instanceof Float cVal) {
+            resultContainer.setFloat(key, cVal);
+        } else if (value instanceof String cVal) {
+            resultContainer.setString(key, cVal);
+        } else if (value instanceof int[] cVal) {
+            resultContainer.setIntArray(key, cVal);
+        } else if (value instanceof byte[] cVal) {
+            resultContainer.setByteArray(key, cVal);
+        }else if (value instanceof NBTCompound cVal) {
+            resultContainer.getOrCreateCompound(key).mergeCompound(cVal);
+        } else if (value instanceof NBTList list) {
+            NBTList<?> nbtList = getListOfType(list.getType(), key, resultContainer);
+            if(nbtList != null) {
+                nbtList.clear();
+                nbtList.addAll(list);
+            }
         }
     }
 }
