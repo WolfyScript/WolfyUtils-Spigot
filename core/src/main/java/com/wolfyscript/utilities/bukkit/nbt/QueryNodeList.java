@@ -55,8 +55,8 @@ public abstract class QueryNodeList<VAL> extends QueryNode<NBTList<VAL>> {
     }
 
     @Override
-    public boolean check(String key, NBTType type, NBTCompound parent) {
-        return false;
+    public boolean check(String key, NBTType nbtType, NBTList<VAL> value) {
+        return !value.isEmpty();
     }
 
     @Override
@@ -76,24 +76,15 @@ public abstract class QueryNodeList<VAL> extends QueryNode<NBTList<VAL>> {
                     index = index % value.size();
                     if (value.size() > index) {
                         int fIndex = index;
-                        element.value().ifPresentOrElse(queryNode -> computeElement(path, fIndex, queryNode, value, list), () -> list.add(value.get(fIndex)));
+                        element.value().ifPresentOrElse(queryNode -> queryNode.visit(path, fIndex, value, list), () -> list.add(value.get(fIndex)));
                     }
                 }, () -> element.value().ifPresent(valQueryNode -> {
-                    for (int i = 0; i < list.size(); i++) {
-                        computeElement(path, i, valQueryNode, value, list);
+                    for (int i = 0; i < value.size(); i++) {
+                        valQueryNode.visit(path, i, value, list);
                     }
                 }));
             }
         }
-    }
-
-    private void computeElement(String path, int index, QueryNode<VAL> queryNode, NBTList<VAL> value, NBTList<VAL> list) {
-        queryNode.readValue(path, index, value).ifPresent(val -> {
-            if (val instanceof NBTCompound nbtCompound && nbtCompound.getKeys().isEmpty()) {
-                return;
-            }
-            list.add(val);
-        });
     }
 
     protected NBTList<VAL> readList(String key, NBTCompound container) {

@@ -45,8 +45,8 @@ public class QueryNodeBoolean extends QueryNode<Object> {
     }
 
     @Override
-    public boolean check(String key, NBTType type, NBTCompound parent) {
-        return this.key.equals(key) && value;
+    public boolean check(String key, NBTType nbtType, Object value) {
+        return this.key.equals(key) && this.value;
     }
 
     @Override

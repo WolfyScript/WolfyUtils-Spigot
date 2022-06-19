@@ -74,13 +74,11 @@ public abstract class QueryNode<VAL> implements Keyed {
         this.key = key;
     }
 
-    public abstract boolean check(String key, NBTType type, NBTCompound parent);
-
     /**
      * Reads the targeted value at the specified key of a parent NBTCompound.<br>
      *
-     * @param path The path of the <b>parent</b> NBTCompound.
-     * @param key The key of child to read.
+     * @param path   The path of the <b>parent</b> NBTCompound.
+     * @param key    The key of child to read.
      * @param parent The parent NBTCompound to read the child from.
      * @return Optional value that is read from the parent.
      */
@@ -89,8 +87,8 @@ public abstract class QueryNode<VAL> implements Keyed {
     /**
      * Reads the targeted value at the specified index of a parent NBTList.<br>
      *
-     * @param path The path of the <b>parent</b> NBTList.
-     * @param index The index of child to read.
+     * @param path   The path of the <b>parent</b> NBTList.
+     * @param index  The index of child to read.
      * @param parent The parent NBTList to read the child from.
      * @return Optional value that is read from the parent.
      */
@@ -101,12 +99,14 @@ public abstract class QueryNode<VAL> implements Keyed {
         return Optional.empty();
     }
 
+    public abstract boolean check(String key, NBTType nbtType, VAL value);
+
     /**
      * Applies the value to the specified key in the result NBTCompound.
      *
-     * @param path The path of the <b>parent</b> NBTCompound.
-     * @param key The key of child to apply the value for.
-     * @param value The available value read from the parent. (Read via {@link #readValue(String, String, NBTCompound)})
+     * @param path            The path of the <b>parent</b> NBTCompound.
+     * @param key             The key of child to apply the value for.
+     * @param value           The available value read from the parent. (Read via {@link #readValue(String, String, NBTCompound)})
      * @param resultContainer The result NBTCompound to apply the value to. This compound is part of the container that will be returned once the query is completed.
      */
     protected abstract void applyValue(String path, String key, VAL value, NBTCompound resultContainer);
@@ -114,9 +114,9 @@ public abstract class QueryNode<VAL> implements Keyed {
     /**
      * Applies the value to result NBTList.
      *
-     * @param path The path of the <b>parent</b> NBTList.
-     * @param index The index of child to apply the value for.
-     * @param value The available value read from the parent. (Read via {@link #readValue(String, int, NBTList)})
+     * @param path       The path of the <b>parent</b> NBTList.
+     * @param index      The index of child to apply the value for.
+     * @param value      The available value read from the parent. (Read via {@link #readValue(String, int, NBTList)})
      * @param resultList The result NBTList to apply the value to. This list is part of the container that will be returned once the query is completed.
      */
     protected void applyValue(String path, int index, VAL value, NBTList<VAL> resultList) {
@@ -124,23 +124,11 @@ public abstract class QueryNode<VAL> implements Keyed {
     }
 
     public final void visit(String path, String key, NBTCompound parent, NBTCompound resultContainer) {
-        NBTType nbtType = parent.getType(key);
-        applyValue(
-                path,
-                key,
-                readValue(path, key, parent).orElseThrow(() -> new RuntimeException(String.format(ERROR_MISMATCH, getNbtType(), nbtType, path, key))),
-                resultContainer
-        );
+        readValue(path, key, parent).filter(val -> check(key, parent.getType(key), val)).ifPresent(val -> applyValue(path, key, val, resultContainer));
     }
 
-    public final void visit(String path, int index, NBTList<VAL> parentList, NBTList<VAL> resultList) {
-        NBTType elemType = parentList.getType();
-        applyValue(
-                path,
-                index,
-                readValue(path, index, parentList).orElseThrow(() -> new RuntimeException(String.format(ERROR_MISMATCH, getNbtType(), elemType, path, key))),
-                resultList
-        );
+    public void visit(String path, int index, NBTList<VAL> parentList, NBTList<VAL> resultList) {
+        readValue(path, index, parentList).filter(val -> check(key, parentList.getType(), val)).ifPresent(val -> applyValue(path, index, val, resultList));
     }
 
     @JsonGetter("type")

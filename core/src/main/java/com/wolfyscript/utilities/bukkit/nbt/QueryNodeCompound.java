@@ -107,8 +107,8 @@ public class QueryNodeCompound extends QueryNode<NBTCompound> {
     }
 
     @Override
-    public boolean check(String key, NBTType type, NBTCompound parent) {
-        return false;
+    public boolean check(String key, NBTType nbtType, NBTCompound value) {
+        return !value.getKeys().isEmpty();
     }
 
     @Override

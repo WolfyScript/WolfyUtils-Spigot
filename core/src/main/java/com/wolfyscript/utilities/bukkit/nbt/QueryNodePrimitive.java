@@ -25,10 +25,11 @@ package com.wolfyscript.utilities.bukkit.nbt;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.json.jackson.annotations.KeyedBaseType;
+
+import java.util.Objects;
 
 @KeyedBaseType(baseType = QueryNode.class)
 public abstract class QueryNodePrimitive<VAL> extends QueryNode<VAL> {
@@ -42,7 +43,7 @@ public abstract class QueryNodePrimitive<VAL> extends QueryNode<VAL> {
     }
 
     @Override
-    public boolean check(String key, NBTType type, NBTCompound parent) {
-        return this.key.equals(key) && this.nbtType.equals(type);
+    public boolean check(String key, NBTType nbtType, VAL value) {
+        return Objects.equals(this.value, value);
     }
 }
