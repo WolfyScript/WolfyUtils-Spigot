@@ -26,11 +26,9 @@ softdepend:
   - mcMMO
   - Oraxen
   - ItemsAdder
-  - ExecutableItems
   - PlaceholderAPI
   - eco
   - zAuctionHouseV3
-  - ExecutableItems
   - SCore
 
 commands:

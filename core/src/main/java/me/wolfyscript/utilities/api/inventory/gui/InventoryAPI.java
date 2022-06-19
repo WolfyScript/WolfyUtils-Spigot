@@ -293,6 +293,7 @@ public class InventoryAPI<C extends CustomCache> implements Listener {
      * It cancels the event and passes the message into the /wui command.
      * <strong>It is recommended to use the /wui command instead of typing directly into the chat.</strong>
      */
+    @Deprecated(forRemoval = true)
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPreChat(AsyncPlayerChatEvent event) {
         if (hasGuiHandler(event.getPlayer())) {
