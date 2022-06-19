@@ -89,7 +89,7 @@ final class PluginsBukkit implements Plugins, Listener {
         if (!pluginIntegrationClasses.isEmpty()) {
             core.getLogger().info("Create & Init Plugin integrations: ");
             //Initialize the plugin integrations for that the plugin is already enabled.
-            pluginIntegrationClasses.forEach(this::createPluginIntegration);
+            pluginIntegrationClasses.forEach(this::createOrInitPluginIntegration);
             if (pluginIntegrations.isEmpty()) {
                 core.getLogger().info(" - No integrations created.");
             }
@@ -99,26 +99,26 @@ final class PluginsBukkit implements Plugins, Listener {
         }
     }
 
-    private void createPluginIntegration(String pluginName, Class<? extends PluginIntegrationAbstract> integrationClass) {
-        if (integrationClass != null && !pluginIntegrations.containsKey(pluginName)) {
-            try {
-                Constructor<? extends PluginIntegrationAbstract> integrationConstructor = integrationClass.getDeclaredConstructor(WolfyUtilCore.class);
-                integrationConstructor.setAccessible(true);
-                var integration = integrationConstructor.newInstance(core);
-                pluginIntegrations.put(pluginName, integration);
-                if (isPluginEnabled(pluginName)) { //Only init the integration if the plugin has already been enabled!
-                    integration.init(Bukkit.getPluginManager().getPlugin(pluginName));
-                    if (!integration.hasAsyncLoading()) {
-                        integration.setEnabled(true);
-                    }
-                    core.getLogger().info(" - " + pluginName + (integration.hasAsyncLoading() ? " [async]" : ""));
-                } else {
-                    core.getLogger().info(" - " + pluginName);
+    private void createOrInitPluginIntegration(String pluginName, Class<? extends PluginIntegrationAbstract> integrationClass) {
+        if (integrationClass != null) {
+            var integration = pluginIntegrations.computeIfAbsent(pluginName, (key) -> {
+                try {
+                    Constructor<? extends PluginIntegrationAbstract> integrationConstructor = integrationClass.getDeclaredConstructor(WolfyUtilCore.class);
+                    integrationConstructor.setAccessible(true);
+                    return integrationConstructor.newInstance(core);
+                } catch (InstantiationException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                    core.getLogger().warning("     Failed to initialise integration for " + pluginName + "! Cause: " + e.getMessage());
+                    return null;
+                }
+            });
+            if (integration == null) return;
+            var plugin = Bukkit.getPluginManager().getPlugin(pluginName);
+            if (plugin != null && plugin.isEnabled() && !integration.isDoneLoading()) {
+                integration.init(plugin);
+                if (!integration.hasAsyncLoading()) {
+                    integration.setEnabled(true);
                 }
                 checkDependencies();
-            } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException | RuntimeException e) {
-                core.getLogger().warning("     Failed to initialise integration for " + pluginName + "! Cause: " + e.getMessage());
-                pluginIntegrations.remove(pluginName);
             }
         }
     }
@@ -147,7 +147,7 @@ final class PluginsBukkit implements Plugins, Listener {
         String pluginName = event.getPlugin().getName();
         Class<? extends PluginIntegrationAbstract> integrationClass = pluginIntegrationClasses.get(pluginName);
         if (integrationClass != null) {
-            createPluginIntegration(pluginName, integrationClass);
+            createOrInitPluginIntegration(pluginName, integrationClass);
             if (!hasIntegration(event.getPlugin().getName())) {
                 core.getLogger().warning("Failed to initiate PluginIntegration for " + pluginName);
             }
