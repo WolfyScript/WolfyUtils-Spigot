@@ -75,18 +75,25 @@ public abstract class QueryNodeList<VAL> extends QueryNode<NBTList<VAL>> {
                     }
                     index = index % value.size();
                     if (value.size() > index) {
-                        VAL elemVal = value.get(index);
-                        //TODO: Compute Optional value settings
-                        list.add(elemVal);
+                        int fIndex = index;
+                        element.value().ifPresentOrElse(queryNode -> computeElement(path, fIndex, queryNode, value, list), () -> list.add(value.get(fIndex)));
                     }
-                }, () -> {
-                    element.value().ifPresent(valQueryNode -> {
-                        //TODO: Compute value settings. Requires the QueryNode to be able to be visited from a parent list!
-
-                    });
-                });
+                }, () -> element.value().ifPresent(valQueryNode -> {
+                    for (int i = 0; i < list.size(); i++) {
+                        computeElement(path, i, valQueryNode, value, list);
+                    }
+                }));
             }
         }
+    }
+
+    private void computeElement(String path, int index, QueryNode<VAL> queryNode, NBTList<VAL> value, NBTList<VAL> list) {
+        queryNode.readValue(path, index, value).ifPresent(val -> {
+            if (val instanceof NBTCompound nbtCompound && nbtCompound.getKeys().isEmpty()) {
+                return;
+            }
+            list.add(val);
+        });
     }
 
     protected NBTList<VAL> readList(String key, NBTCompound container) {
@@ -134,6 +141,7 @@ public abstract class QueryNodeList<VAL> extends QueryNode<NBTList<VAL>> {
             return index;
         }
 
+        @JsonSetter
         public void setValue(QueryNode<VAL> value) {
             this.value = value;
         }
