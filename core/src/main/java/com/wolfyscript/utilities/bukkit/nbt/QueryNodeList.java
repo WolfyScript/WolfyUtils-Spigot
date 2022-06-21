@@ -107,6 +107,8 @@ public abstract class QueryNodeList<VAL> extends QueryNode<NBTList<VAL>> {
             return (NBTList<VAL>) container.getStringList(key);
         } else if (elementType == NBTCompound.class) {
             return (NBTList<VAL>) container.getCompoundList(key);
+        } else if (elementType == int[].class) {
+            return (NBTList<VAL>) container.getIntArrayList(key);
         }
         return null;
     }
