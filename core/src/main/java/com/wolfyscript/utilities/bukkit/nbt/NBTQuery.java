@@ -59,7 +59,7 @@ public class NBTQuery {
         }
     }
 
-    public NBTCompound computeOn(NBTCompound input) {
+    public NBTCompound run(NBTCompound input) {
         NBTContainer container = new NBTContainer();
         nodes.forEach((key, queryNode) -> {
             if (input.hasKey(key)) {

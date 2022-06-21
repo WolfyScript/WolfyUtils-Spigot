@@ -53,7 +53,7 @@ public class QueryDebugCommand implements TabExecutor {
             if (file.exists()) {
                 NBTQuery.of(file).ifPresent(nbtQuery -> {
                     NBTItem nbtItem = new NBTItem(stack);
-                    NBTCompound result = nbtQuery.computeOn(nbtItem);
+                    NBTCompound result = nbtQuery.run(nbtItem);
 
                     System.out.println(result.toString());
                     if (args.length > 0) {
