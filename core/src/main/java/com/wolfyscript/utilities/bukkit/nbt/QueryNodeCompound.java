@@ -61,6 +61,14 @@ public class QueryNodeCompound extends QueryNode<NBTCompound> {
         this.children = new HashMap<>();
     }
 
+    private QueryNodeCompound(QueryNodeCompound other) {
+        super(TYPE, other.key, other.parentPath);
+        this.nbtType = NBTType.NBTTagCompound;
+        this.includes = new HashMap<>(other.includes);
+        this.required = other.required.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().copy()));
+        this.children = other.children.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().copy()));
+    }
+
     @JsonAnySetter
     public void loadNonNestedChildren(String key, JsonNode node) {
         //Sets the children that are specified in the root of the object without the "children" node!
@@ -139,6 +147,11 @@ public class QueryNodeCompound extends QueryNode<NBTCompound> {
                 System.out.println("Type: " + childType);
             }
         }
+    }
+
+    @Override
+    public QueryNodeCompound copy() {
+        return new QueryNodeCompound(this);
     }
 
 }

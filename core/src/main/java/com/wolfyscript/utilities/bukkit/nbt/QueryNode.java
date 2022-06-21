@@ -159,6 +159,8 @@ public abstract class QueryNode<VAL> implements Keyed {
         }
     }
 
+    public abstract QueryNode<VAL> copy();
+
     public static class OptionalValueDeserializer extends ValueDeserializer<QueryNode<?>> {
 
         public OptionalValueDeserializer() {

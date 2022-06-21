@@ -20,6 +20,10 @@ public class QueryNodeShort extends QueryNodePrimitive<Short> {
         this.nbtType = NBTType.NBTTagShort;
     }
 
+    public QueryNodeShort(QueryNodePrimitive<Short> other) {
+        super(other);
+    }
+
     @Override
     protected Optional<Short> readValue(String path, String key, NBTCompound parent) {
         return Optional.ofNullable(parent.getShort(key));
@@ -28,6 +32,11 @@ public class QueryNodeShort extends QueryNodePrimitive<Short> {
     @Override
     protected void applyValue(String path, String key, Short value, NBTCompound resultContainer) {
         resultContainer.setShort(key, value);
+    }
+
+    @Override
+    public QueryNodeShort copy() {
+        return new QueryNodeShort(this);
     }
 
 }

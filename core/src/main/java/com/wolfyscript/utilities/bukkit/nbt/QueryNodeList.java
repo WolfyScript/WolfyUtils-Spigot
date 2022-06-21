@@ -50,6 +50,13 @@ public abstract class QueryNodeList<VAL> extends QueryNode<NBTList<VAL>> {
         this.elements = elements;
     }
 
+    protected QueryNodeList(QueryNodeList<VAL> other) {
+        super(other.type, other.key, other.parentPath);
+        this.nbtType = other.nbtType;
+        this.elementType = other.elementType;
+        this.elements = other.elements.stream().map(Element::copy).toList();
+    }
+
     public List<Element<VAL>> getElements() {
         return elements;
     }
@@ -73,7 +80,7 @@ public abstract class QueryNodeList<VAL> extends QueryNode<NBTList<VAL>> {
                     if (index < 0) {
                         index = value.size() + (index % value.size()); //Convert the negative index to a positive reverted index, that starts from the end.
                     }
-                    index = index % value.size();
+                    index = index % value.size(); //Prevent out of bounds
                     if (value.size() > index) {
                         int fIndex = index;
                         element.value().ifPresentOrElse(queryNode -> queryNode.visit(path, fIndex, value, list), () -> list.add(value.get(fIndex)));
@@ -114,6 +121,11 @@ public abstract class QueryNodeList<VAL> extends QueryNode<NBTList<VAL>> {
             this.value = null;
         }
 
+        private Element(Element<VAL> other) {
+            this.index = other.index;
+            this.value = other.value.copy();
+        }
+
         private Optional<Integer> index() {
             return Optional.ofNullable(index);
         }
@@ -140,6 +152,10 @@ public abstract class QueryNodeList<VAL> extends QueryNode<NBTList<VAL>> {
         @JsonGetter
         public QueryNode<VAL> getValue() {
             return value;
+        }
+
+        public Element<VAL> copy() {
+            return new Element<>(this);
         }
     }
 }

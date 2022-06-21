@@ -20,6 +20,10 @@ public class QueryNodeDouble extends QueryNodePrimitive<Double> {
         this.nbtType = NBTType.NBTTagDouble;
     }
 
+    private QueryNodeDouble(QueryNodeDouble other) {
+        super(other);
+    }
+
     @Override
     protected Optional<Double> readValue(String path, String key, NBTCompound parent) {
         return Optional.ofNullable(parent.getDouble(key));
@@ -28,6 +32,11 @@ public class QueryNodeDouble extends QueryNodePrimitive<Double> {
     @Override
     protected void applyValue(String path, String key, Double value, NBTCompound resultContainer) {
         resultContainer.setDouble(key, value);
+    }
+
+    @Override
+    public QueryNodeDouble copy() {
+        return new QueryNodeDouble(this);
     }
 
 }

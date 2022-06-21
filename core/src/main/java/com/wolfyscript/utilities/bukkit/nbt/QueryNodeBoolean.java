@@ -44,6 +44,11 @@ public class QueryNodeBoolean extends QueryNode<Object> {
         this.value = value;
     }
 
+    private QueryNodeBoolean(QueryNodeBoolean other) {
+        super(TYPE, other.key, other.parentPath);
+        this.value = other.value;
+    }
+
     @Override
     public boolean check(String key, NBTType nbtType, Object value) {
         return this.key.equals(key) && this.value;
@@ -110,5 +115,10 @@ public class QueryNodeBoolean extends QueryNode<Object> {
                 nbtList.addAll(list);
             }
         }
+    }
+
+    @Override
+    public QueryNodeBoolean copy() {
+        return new QueryNodeBoolean(this);
     }
 }

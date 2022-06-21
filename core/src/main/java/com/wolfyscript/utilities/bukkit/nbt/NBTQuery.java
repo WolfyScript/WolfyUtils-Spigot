@@ -33,13 +33,15 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class NBTQuery {
 
-    private final Map<String, QueryNode<?>> nodes = new HashMap<>();
+    private final Map<String, QueryNode<?>> nodes;
 
     @JsonCreator
     public NBTQuery(ObjectNode node) {
+        nodes = new HashMap<>();
         node.fields().forEachRemaining(entry -> {
             var key = entry.getKey();
             var subNode = entry.getValue();
@@ -47,7 +49,10 @@ public class NBTQuery {
                 nodes.put(key, queryNode);
             });
         });
+    }
 
+    private NBTQuery(NBTQuery other) {
+        this.nodes = other.nodes.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().copy()));
     }
 
     public static Optional<NBTQuery> of(File file) {

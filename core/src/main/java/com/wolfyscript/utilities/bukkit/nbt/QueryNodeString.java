@@ -20,6 +20,10 @@ public class QueryNodeString extends QueryNodePrimitive<String> {
         this.nbtType = NBTType.NBTTagString;
     }
 
+    public QueryNodeString(QueryNodePrimitive<String> other) {
+        super(other);
+    }
+
     @Override
     protected Optional<String> readValue(String path, String key, NBTCompound parent) {
         return Optional.ofNullable(parent.getString(key));
@@ -28,6 +32,11 @@ public class QueryNodeString extends QueryNodePrimitive<String> {
     @Override
     protected void applyValue(String path, String key, String value, NBTCompound resultContainer) {
         resultContainer.setString(key, value);
+    }
+
+    @Override
+    public QueryNodeString copy() {
+        return new QueryNodeString(this);
     }
 
 }

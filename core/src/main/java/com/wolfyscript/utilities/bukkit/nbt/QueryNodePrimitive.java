@@ -42,6 +42,12 @@ public abstract class QueryNodePrimitive<VAL> extends QueryNode<VAL> {
         this.value = value;
     }
 
+    protected QueryNodePrimitive(QueryNodePrimitive<VAL> other) {
+        super(other.type, other.key, other.parentPath);
+        this.nbtType = other.nbtType;
+        this.value = other.value;
+    }
+
     @Override
     public boolean check(String key, NBTType nbtType, VAL value) {
         return Objects.equals(this.value, value);

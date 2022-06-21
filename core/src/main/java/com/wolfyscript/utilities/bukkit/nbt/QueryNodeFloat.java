@@ -20,6 +20,10 @@ public class QueryNodeFloat extends QueryNodePrimitive<Float> {
         this.nbtType = NBTType.NBTTagFloat;
     }
 
+    private QueryNodeFloat(QueryNodeFloat other) {
+        super(other);
+    }
+
     @Override
     protected Optional<Float> readValue(String path, String key, NBTCompound parent) {
         return Optional.ofNullable(parent.getFloat(key));
@@ -28,6 +32,11 @@ public class QueryNodeFloat extends QueryNodePrimitive<Float> {
     @Override
     protected void applyValue(String path, String key, Float value, NBTCompound resultContainer) {
         resultContainer.setFloat(key, value);
+    }
+
+    @Override
+    public QueryNodeFloat copy() {
+        return new QueryNodeFloat(this);
     }
 
 }

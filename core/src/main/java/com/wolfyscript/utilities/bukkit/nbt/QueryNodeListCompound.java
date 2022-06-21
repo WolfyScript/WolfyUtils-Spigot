@@ -16,4 +16,12 @@ public class QueryNodeListCompound extends QueryNodeList<NBTCompound> {
         super(TYPE, elements, key, path, NBTType.NBTTagCompound, NBTCompound.class);
     }
 
+    private QueryNodeListCompound(QueryNodeListCompound other) {
+        super(other);
+    }
+
+    @Override
+    public QueryNodeListCompound copy() {
+        return new QueryNodeListCompound(this);
+    }
 }

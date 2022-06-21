@@ -20,6 +20,10 @@ public class QueryNodeInt extends QueryNodePrimitive<Integer> {
         this.nbtType = NBTType.NBTTagInt;
     }
 
+    public QueryNodeInt(QueryNodePrimitive<Integer> other) {
+        super(other);
+    }
+
     @Override
     protected Optional<Integer> readValue(String path, String key, NBTCompound parent) {
         return Optional.ofNullable(parent.getInteger(key));
@@ -28,6 +32,11 @@ public class QueryNodeInt extends QueryNodePrimitive<Integer> {
     @Override
     protected void applyValue(String path, String key, Integer value, NBTCompound resultContainer) {
         resultContainer.setInteger(key, value);
+    }
+
+    @Override
+    public QueryNode<Integer> copy() {
+        return new QueryNodeInt(this);
     }
 
 }

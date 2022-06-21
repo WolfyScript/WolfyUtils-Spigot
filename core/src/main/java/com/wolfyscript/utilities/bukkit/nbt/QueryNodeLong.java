@@ -20,6 +20,10 @@ public class QueryNodeLong extends QueryNodePrimitive<Long> {
         this.nbtType = NBTType.NBTTagLong;
     }
 
+    public QueryNodeLong(QueryNodePrimitive<Long> other) {
+        super(other);
+    }
+
     @Override
     protected Optional<Long> readValue(String path, String key, NBTCompound parent) {
         return Optional.ofNullable(parent.getLong(key));
@@ -28,6 +32,11 @@ public class QueryNodeLong extends QueryNodePrimitive<Long> {
     @Override
     protected void applyValue(String path, String key, Long value, NBTCompound resultContainer) {
         resultContainer.setLong(key, value);
+    }
+
+    @Override
+    public QueryNodeLong copy() {
+        return new QueryNodeLong(this);
     }
 
 }

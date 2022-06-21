@@ -19,6 +19,10 @@ public class QueryNodeIntArray extends QueryNodePrimitive<int[]> {
         this.nbtType = NBTType.NBTTagByteArray;
     }
 
+    public QueryNodeIntArray(QueryNodeIntArray other) {
+        super(TYPE, other.value.clone(), other.key, other.parentPath);
+    }
+
     @Override
     protected Optional<int[]> readValue(String path, String key, NBTCompound parent) {
         return Optional.ofNullable(parent.getIntArray(key));
@@ -27,6 +31,11 @@ public class QueryNodeIntArray extends QueryNodePrimitive<int[]> {
     @Override
     protected void applyValue(String path, String key, int[] value, NBTCompound resultContainer) {
         resultContainer.setIntArray(key, value);
+    }
+
+    @Override
+    public QueryNodeIntArray copy() {
+        return new QueryNodeIntArray(this);
     }
 
 }

@@ -2,6 +2,7 @@ package com.wolfyscript.utilities.bukkit.nbt;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.tr7zw.changeme.nbtapi.NBTList;
 import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
@@ -15,4 +16,12 @@ public class QueryNodeListString extends QueryNodeList<String> {
         super(TYPE, elements, key, path, NBTType.NBTTagByte, String.class);
     }
 
+    public QueryNodeListString(QueryNodeList<String> other) {
+        super(other);
+    }
+
+    @Override
+    public QueryNodeListString copy() {
+        return new QueryNodeListString(this);
+    }
 }
