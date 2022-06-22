@@ -74,5 +74,9 @@ public class NBTQuery {
         return container;
     }
 
+    public NBTQuery copy() {
+        return new NBTQuery(this);
+    }
+
 
 }
