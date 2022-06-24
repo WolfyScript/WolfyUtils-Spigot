@@ -43,8 +43,9 @@ public class QueryNodeCompound extends QueryNode<NBTCompound> {
 
     public static final NamespacedKey TYPE = NamespacedKey.wolfyutilties("compound");
 
+    private boolean preservePath = true;
     //If include is true it includes this node with each and every child node.
-    private boolean fullyInclude;
+    private boolean includeAll = false;
     //If includes has values it includes this node with the specified child nodes.
     private Map<String, Boolean> includes;
     //Checks and verifies the child nodes. This node is only included if all the child nodes are valid.
@@ -76,12 +77,22 @@ public class QueryNodeCompound extends QueryNode<NBTCompound> {
         QueryNode.loadFrom(node, parentPath + "." + this.key, key).ifPresent(queryNode -> children.putIfAbsent(key, queryNode));
     }
 
-    public void setInclude(boolean fullyInclude) {
-        this.fullyInclude = fullyInclude;
+    public void setIncludeAll(boolean fullyInclude) {
+        this.includeAll = fullyInclude;
     }
 
-    public boolean isInclude() {
-        return fullyInclude;
+    public boolean isIncludeAll() {
+        return includeAll;
+    }
+
+    @JsonSetter("preservePath")
+    public void setPreservePath(boolean preservePath) {
+        this.preservePath = preservePath;
+    }
+
+    @JsonGetter("preservePath")
+    public boolean isPreservePath() {
+        return preservePath;
     }
 
     @JsonSetter
@@ -127,15 +138,12 @@ public class QueryNodeCompound extends QueryNode<NBTCompound> {
     @Override
     public void applyValue(String path, String key, NBTCompound value, NBTCompound resultContainer) {
         String newPath = path + "." + key;
-        NBTCompound container = resultContainer;
-        if (fullyInclude || !includes.isEmpty()) {
-            container = resultContainer.addCompound(key);
-        }
+        NBTCompound container = preservePath ? resultContainer.addCompound(key) : resultContainer;
         Set<String> keys;
-        if (!fullyInclude && !includes.isEmpty()) {
-            keys = value.getKeys().stream().filter(s -> includes.getOrDefault(s, true)).collect(Collectors.toSet());
+        if (!includes.isEmpty()) {
+            keys = value.getKeys().stream().filter(s -> includes.getOrDefault(s, includeAll)).collect(Collectors.toSet());
         } else {
-            keys = value.getKeys();
+            keys = value.getKeys().stream().filter(s -> getChildren().containsKey(s)).collect(Collectors.toSet());
         }
         //Process child nodes with the specified settings.
         for (String childKey : keys) {
@@ -143,8 +151,8 @@ public class QueryNodeCompound extends QueryNode<NBTCompound> {
             if (subQueryNode != null) {
                 subQueryNode.visit(newPath, childKey, value, container);
             } else {
-                var childType = value.getType(childKey);
-                System.out.println("Type: " + childType);
+                QueryNodeBoolean node = new QueryNodeBoolean(true, childKey, newPath);
+                node.visit(newPath, key, value, container);
             }
         }
     }
