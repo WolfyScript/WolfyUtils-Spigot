@@ -20,6 +20,7 @@ package me.wolfyscript.utilities.util.inventory.item_builder;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.base.Preconditions;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTCompoundList;
 import de.tr7zw.changeme.nbtapi.NBTItem;
@@ -339,6 +340,13 @@ public abstract class AbstractItemBuilder<T extends AbstractItemBuilder<?>> {
         return setPlayerHeadValue("http://textures.minecraft.net/texture/" + value);
     }
 
+    public T setPlayerHeadURL(String value, String name, UUID uuid) {
+        if (value.startsWith("http://textures.minecraft.net/texture/")) {
+            return setPlayerHeadValue(value, name, uuid);
+        }
+        return setPlayerHeadValue("http://textures.minecraft.net/texture/" + value, name, uuid);
+    }
+
     public String getPlayerHeadValue() {
         if (getItemMeta() instanceof SkullMeta) {
             NBTItem nbtItem = new NBTItem(getItemStack());
@@ -360,20 +368,25 @@ public abstract class AbstractItemBuilder<T extends AbstractItemBuilder<?>> {
         return "";
     }
 
-    public T setPlayerHeadValue(String value) {
+    public T setPlayerHeadValue(String value, String name, UUID uuid) {
+        Preconditions.checkArgument(name.isEmpty(), "Name of Skull cannot be empty!");
         String textureValue = value;
         if (value.startsWith("https://") || value.startsWith("http://")) {
             textureValue = EncryptionUtils.getBase64EncodedString(String.format("{textures:{SKIN:{url:\"%s\"}}}", value));
         }
         NBTItem nbtItem = new NBTItem(getItemStack(), true);
         NBTCompound skull = nbtItem.addCompound("SkullOwner");
-        skull.setString("Name", "");
-        skull.setString("Id", UUID.randomUUID().toString());
+        skull.setString("Name", name);
+        skull.setString("Id", uuid.toString());
         // The UUID, note that skulls with the same UUID but different textures will misbehave and only one texture will load
         // (They'll share it), if skulls have different UUIDs and same textures they won't stack. See UUID.randomUUID();
         NBTListCompound texture = skull.addCompound("Properties").getCompoundList("textures").addCompound();
         texture.setString("Value",  textureValue);
         return get();
+    }
+
+    public T setPlayerHeadValue(String value) {
+        return setPlayerHeadValue(value, "none", UUID.randomUUID());
     }
 
 

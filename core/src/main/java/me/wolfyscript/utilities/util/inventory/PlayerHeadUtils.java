@@ -46,6 +46,20 @@ public class PlayerHeadUtils {
     }
 
     /**
+     * Gets the Player Head ItemStack via a URL or Base64 encoded string.
+     * <p>This method uses the {@link ItemBuilder}!
+     *
+     * @see ItemBuilder#setPlayerHeadValue(String)
+     * @param value Skin URL or Base64 encoded value of textures object
+     * @param name The name of the skull owner
+     * @param uuid The uuid of the skull owner
+     * @return the Player Head ItemStack with the corresponding Texture
+     */
+    public static ItemStack getViaValue(String value, String name, UUID uuid) {
+        return new ItemBuilder(Material.PLAYER_HEAD).setPlayerHeadValue(value, name, uuid).create();
+    }
+
+    /**
      * Get the Player Head via URL value
      * <p>This method uses the {@link ItemBuilder}!
      *
@@ -56,6 +70,22 @@ public class PlayerHeadUtils {
      */
     public static ItemStack getViaURL(String value) {
         return new ItemBuilder(Material.PLAYER_HEAD).setPlayerHeadURL(value).create();
+    }
+
+    /**
+     * Get the Player Head via URL value
+     * <p>This method uses the {@link ItemBuilder}!
+     *
+     * @see ItemBuilder#setPlayerHeadURL(String)
+     * @param value the Base64 value at the end of the textures url.
+     *              <p>e.g. http://textures.minecraft.net/texture/{value}
+     * @param name The name of the skull owner
+     * @param uuid The uuid of the skull owner
+     *
+     * @return the Player Head ItemStack with the corresponding Texture
+     */
+    public static ItemStack getViaURL(String value, String name, UUID uuid) {
+        return new ItemBuilder(Material.PLAYER_HEAD).setPlayerHeadURL(value, name, uuid).create();
     }
 
     /**
