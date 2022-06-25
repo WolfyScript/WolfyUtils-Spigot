@@ -369,7 +369,7 @@ public abstract class AbstractItemBuilder<T extends AbstractItemBuilder<?>> {
     }
 
     public T setPlayerHeadValue(String value, String name, UUID uuid) {
-        Preconditions.checkArgument(name.isEmpty(), "Name of Skull cannot be empty!");
+        Preconditions.checkArgument(!name.isEmpty(), "Name of Skull cannot be empty!");
         String textureValue = value;
         if (value.startsWith("https://") || value.startsWith("http://")) {
             textureValue = EncryptionUtils.getBase64EncodedString(String.format("{textures:{SKIN:{url:\"%s\"}}}", value));
