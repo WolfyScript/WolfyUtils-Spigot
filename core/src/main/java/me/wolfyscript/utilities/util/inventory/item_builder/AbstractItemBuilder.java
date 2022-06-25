@@ -340,6 +340,13 @@ public abstract class AbstractItemBuilder<T extends AbstractItemBuilder<?>> {
         return setPlayerHeadValue("http://textures.minecraft.net/texture/" + value);
     }
 
+    public T setPlayerHeadURL(String value, String name, UUID uuid) {
+        if (value.startsWith("http://textures.minecraft.net/texture/")) {
+            return setPlayerHeadValue(value, name, uuid);
+        }
+        return setPlayerHeadValue("http://textures.minecraft.net/texture/" + value, name, uuid);
+    }
+
     public String getPlayerHeadValue() {
         if (getItemMeta() instanceof SkullMeta) {
             NBTItem nbtItem = new NBTItem(getItemStack());
