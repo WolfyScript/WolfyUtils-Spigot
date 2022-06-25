@@ -49,3 +49,7 @@ commands:
     description: "DEBUG! Spawns a test particle effect on the target block."
   query_item:
     usage: "/query_item"
+permissions: 
+  wolfyutilities.command.query_debug:
+    default: op
+    description: "Command to debug NBT querries on the item in the hand"

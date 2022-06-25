@@ -46,7 +46,7 @@ public class QueryDebugCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) return true;
-
+        if (!player.hasPermission("wolfyutilities.command.query_debug")) return true;
         ItemStack stack = player.getEquipment().getItem(EquipmentSlot.HAND);
         if (!ItemUtils.isAirOrNull(stack)) {
             File file = new File(plugin.getDataFolder(), "query_debug.json");
