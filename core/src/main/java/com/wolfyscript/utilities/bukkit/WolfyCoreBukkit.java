@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.wolfyscript.utilities.bukkit.commands.ChatActionCommand;
 import com.wolfyscript.utilities.bukkit.commands.InfoCommand;
 import com.wolfyscript.utilities.bukkit.commands.InputCommand;
+import com.wolfyscript.utilities.bukkit.commands.QueryDebugCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleAnimationCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleEffectCommand;
 import com.wolfyscript.utilities.bukkit.listeners.BlockListener;
@@ -13,6 +14,24 @@ import com.wolfyscript.utilities.bukkit.listeners.PlayerListener;
 import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomDurabilityListener;
 import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomItemPlayerListener;
 import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomParticleListener;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeBoolean;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeByte;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeByteArray;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeDouble;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeFloat;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeInt;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeIntArray;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListCompound;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListDouble;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListFloat;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListInt;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListLong;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListString;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeLong;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeCompound;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeShort;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeString;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
 import me.wolfyscript.utilities.api.console.Console;
@@ -282,6 +301,29 @@ public final class WolfyCoreBukkit extends WUPlugin {
         valueProviders.register(ValueProviderStringConst.KEY, ValueProviderStringConst.class);
         valueProviders.register(ValueProviderStringVar.KEY, ValueProviderStringVar.class);
 
+        var nbtQueryNodes = getRegistries().getNbtQueryNodes();
+        nbtQueryNodes.register(QueryNodeCompound.TYPE, QueryNodeCompound.class);
+        nbtQueryNodes.register(QueryNodeBoolean.TYPE, QueryNodeBoolean.class);
+        //Primitives
+        nbtQueryNodes.register(QueryNodeByte.TYPE, QueryNodeByte.class);
+        nbtQueryNodes.register(QueryNodeShort.TYPE, QueryNodeShort.class);
+        nbtQueryNodes.register(QueryNodeInt.TYPE, QueryNodeInt.class);
+        nbtQueryNodes.register(QueryNodeLong.TYPE, QueryNodeLong.class);
+        nbtQueryNodes.register(QueryNodeDouble.TYPE, QueryNodeDouble.class);
+        nbtQueryNodes.register(QueryNodeFloat.TYPE, QueryNodeFloat.class);
+        nbtQueryNodes.register(QueryNodeString.TYPE, QueryNodeString.class);
+        //Arrays
+        nbtQueryNodes.register(QueryNodeByteArray.TYPE, QueryNodeByteArray.class);
+        nbtQueryNodes.register(QueryNodeIntArray.TYPE, QueryNodeIntArray.class);
+
+        //Lists
+        nbtQueryNodes.register(QueryNodeListInt.TYPE, QueryNodeListInt.class);
+        nbtQueryNodes.register(QueryNodeListLong.TYPE, QueryNodeListLong.class);
+        nbtQueryNodes.register(QueryNodeListDouble.TYPE, QueryNodeListDouble.class);
+        nbtQueryNodes.register(QueryNodeListFloat.TYPE, QueryNodeListFloat.class);
+        nbtQueryNodes.register(QueryNodeListString.TYPE, QueryNodeListString.class);
+        nbtQueryNodes.register(QueryNodeListCompound.TYPE, QueryNodeListCompound.class);
+
         KeyedTypeIdResolver.registerTypeRegistry(Meta.class, nbtChecks);
         KeyedTypeIdResolver.registerTypeRegistry(Animator.class, particleAnimators);
         KeyedTypeIdResolver.registerTypeRegistry(Shape.class, particleShapes);
@@ -290,6 +332,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         KeyedTypeIdResolver.registerTypeRegistry((Class<Event<?>>)(Object) Event.class, customItemEvents);
         KeyedTypeIdResolver.registerTypeRegistry(Operator.class, operators);
         KeyedTypeIdResolver.registerTypeRegistry((Class<ValueProvider<?>>) (Object)ValueProvider.class, valueProviders);
+        KeyedTypeIdResolver.registerTypeRegistry((Class<QueryNode<?>>) (Object)QueryNode.class, nbtQueryNodes);
     }
 
     @Override
@@ -379,6 +422,8 @@ public final class WolfyCoreBukkit extends WUPlugin {
         Bukkit.getServer().getPluginCommand("wui").setExecutor(new InputCommand(this));
         Bukkit.getServer().getPluginCommand("wui").setTabCompleter(new InputCommand(this));
         Bukkit.getServer().getPluginCommand("wua").setExecutor(new ChatActionCommand());
+
+        Bukkit.getServer().getPluginCommand("query_item").setExecutor(new QueryDebugCommand(this));
     }
 
     @Override
