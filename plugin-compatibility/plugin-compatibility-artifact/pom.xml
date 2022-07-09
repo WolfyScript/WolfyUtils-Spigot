@@ -51,6 +51,12 @@
             <version>2.11.1</version>
             <scope>provided</scope>
         </dependency>
+        <!-- FancyBags -->
+        <dependency>
+            <groupId>com.github.AlessioGr</groupId>
+            <artifactId>FancyBags</artifactId>
+            <version>2.7.0</version>
+        </dependency>
         <!-- Other compatibility modules-->
         <dependency>
             <groupId>${project.groupId}</groupId>
