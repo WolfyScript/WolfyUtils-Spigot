@@ -30,30 +30,32 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.io.IOException;
-import java.util.Optional;
 import java.util.UUID;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @JsonSerialize(using = BlockCustomItemStore.Serializer.class)
 @JsonDeserialize(using = BlockCustomItemStore.Deserializer.class)
 public class BlockCustomItemStore {
 
-    private static final org.bukkit.NamespacedKey DATA = new org.bukkit.NamespacedKey("wolfyutils", "key");
+    private static final org.bukkit.NamespacedKey ITEM_ID_KEY = new org.bukkit.NamespacedKey("wolfyutils", "itemId");
 
     private final NamespacedKey customItemKey;
-    private UUID particleUUID;
+    private UUID particleAnimationID;
 
-    public BlockCustomItemStore(CustomItem customItem, UUID particleUUID) {
+    public BlockCustomItemStore(@NotNull CustomItem customItem, UUID particleAnimationID) {
         this.customItemKey = customItem.getNamespacedKey();
-        this.particleUUID = particleUUID;
+        this.particleAnimationID = particleAnimationID;
     }
 
-    public BlockCustomItemStore(NamespacedKey customItemKey, UUID particleUUID) {
+    public BlockCustomItemStore(NamespacedKey customItemKey, UUID particleAnimationID) {
         this.customItemKey = customItemKey;
-        this.particleUUID = particleUUID;
+        this.particleAnimationID = particleAnimationID;
     }
 
     public NamespacedKey getCustomItemKey() {
@@ -65,29 +67,46 @@ public class BlockCustomItemStore {
     }
 
     public UUID getParticleUUID() {
-        return particleUUID;
+        return particleAnimationID;
     }
 
-    public void setParticleUUID(UUID particleUUID) {
-        this.particleUUID = particleUUID;
+    public void setParticleUUID(@Nullable UUID particleUUID) {
+        this.particleAnimationID = particleUUID;
     }
 
-    public static Optional<BlockCustomItemStore> read(org.bukkit.NamespacedKey key, PersistentDataContainer container) {
-        PersistentDataContainer data = container.getOrDefault(key, PersistentDataType.TAG_CONTAINER, container.getAdapterContext().newPersistentDataContainer());
-        String customItem = data.getOrDefault(DATA, PersistentDataType.STRING, "");
-        if (customItem.isBlank()) return Optional.empty();
-        var customItemKey = NamespacedKey.of(customItem);
-        if (customItemKey != null) {
-            return Optional.of(new BlockCustomItemStore(customItemKey, null));
+    public static class PersistentType implements PersistentDataType<PersistentDataContainer, BlockCustomItemStore> {
+
+        @NotNull
+        @Override
+        public Class<PersistentDataContainer> getPrimitiveType() {
+            return PersistentDataContainer.class;
         }
-        return Optional.empty();
-    }
 
-    public PersistentDataContainer write(org.bukkit.NamespacedKey key, PersistentDataContainer container) {
-        PersistentDataContainer data = container.getAdapterContext().newPersistentDataContainer();
-        data.set(DATA, PersistentDataType.STRING, customItemKey.toString());
-        container.set(key, PersistentDataType.TAG_CONTAINER, data);
-        return container;
+        @NotNull
+        @Override
+        public Class<BlockCustomItemStore> getComplexType() {
+            return BlockCustomItemStore.class;
+        }
+
+        @NotNull
+        @Override
+        public PersistentDataContainer toPrimitive(@NotNull BlockCustomItemStore complex, @NotNull PersistentDataAdapterContext context) {
+            PersistentDataContainer data = context.newPersistentDataContainer();
+            data.set(ITEM_ID_KEY, PersistentDataType.STRING, complex.customItemKey != null ? complex.customItemKey.toString() : "");
+            return data;
+        }
+
+        @NotNull
+        @Override
+        public BlockCustomItemStore fromPrimitive(@NotNull PersistentDataContainer data, @NotNull PersistentDataAdapterContext context) {
+            String customItem = data.getOrDefault(ITEM_ID_KEY, PersistentDataType.STRING, "");
+            if (customItem.isBlank()) return new BlockCustomItemStore((NamespacedKey) null, null);
+            var customItemKey = NamespacedKey.of(customItem);
+            if (customItemKey != null) {
+                return new BlockCustomItemStore(customItemKey, null);
+            }
+            return new BlockCustomItemStore((NamespacedKey) null, null);
+        }
     }
 
 

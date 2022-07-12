@@ -2,6 +2,7 @@ package com.wolfyscript.utilities.bukkit.persistent.world;
 
 import com.wolfyscript.utilities.bukkit.persistent.LocationConverter;
 import com.wolfyscript.utilities.math.Vec2i;
+import de.tr7zw.changeme.nbtapi.NBTChunk;
 import me.wolfyscript.utilities.util.particles.ParticleLocation;
 import me.wolfyscript.utilities.util.particles.ParticleUtils;
 import me.wolfyscript.utilities.util.world.BlockCustomItemStore;
@@ -26,7 +27,7 @@ public class WorldStorage {
     private static final NamespacedKey BLOCK_LOCATION = new NamespacedKey("wolfyutils", "location");
     private static final NamespacedKey BLOCK_DATA = new NamespacedKey("wolfyutils", "data");
 
-    private Map<UUID, Map<Vec2i, Map<Vector, BlockCustomItemStore>>> CHUNK_DATA = new HashMap<>();
+    private final Map<Vec2i, ChunkStorage> CHUNK_DATA = new HashMap<>();
 
     private Map<Location, BlockCustomItemStore> BLOCKS_MAP = new HashMap<>();
     private final UUID worldUUID;
@@ -47,6 +48,10 @@ public class WorldStorage {
      */
     public void storeBlock(Location location, BlockCustomItemStore blockStore) {
         if (blockStore.getCustomItem().hasNamespacedKey()) {
+            ChunkStorage chunkStorage = CHUNK_DATA.computeIfAbsent(new Vec2i(location.getBlockX() >> 4, location.getBlockZ() >> 4), vec2i -> new ChunkStorage(vec2i));
+
+
+
             var previousStore = BLOCKS_MAP.put(location, blockStore);
             if (previousStore != null) {
                 ParticleUtils.stopAnimation(previousStore.getParticleUUID());
@@ -95,7 +100,10 @@ public class WorldStorage {
             Map<Location, BlockCustomItemStore> blockData = new HashMap<>();
             for (PersistentDataContainer dataContainer : dataArray) {
                 Location location = dataContainer.get(BLOCK_LOCATION, new LocationConverter(getWorld().get()));
-                BlockCustomItemStore.read(BLOCK_DATA, dataContainer).ifPresent(blockCustomItemStore -> blockData.put(location, blockCustomItemStore));
+                BlockCustomItemStore store = dataContainer.getOrDefault(BLOCK_DATA, new BlockCustomItemStore.PersistentType(), new BlockCustomItemStore((me.wolfyscript.utilities.util.NamespacedKey) null, null));
+                if (store.getCustomItem() != null) {
+                    blockData.put(location, store);
+                }
             }
             return blockData;
         }).orElseGet(HashMap::new);
@@ -112,9 +120,8 @@ public class WorldStorage {
             int index = 0;
             for (var entry : BLOCKS_MAP.entrySet()) {
                 var data = context.newPersistentDataContainer();
-                var loc = entry.getKey();
-                data.set(BLOCK_LOCATION, new LocationConverter(null), loc);
-                entry.getValue().write(BLOCK_DATA, data);
+                data.set(BLOCK_LOCATION, new LocationConverter(null), entry.getKey());
+                data.set(BLOCK_DATA, new BlockCustomItemStore.PersistentType(), entry.getValue());
                 dataArray[index] = data;
                 index++;
             }
