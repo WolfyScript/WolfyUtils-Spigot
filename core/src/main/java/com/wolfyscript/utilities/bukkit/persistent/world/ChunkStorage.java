@@ -4,25 +4,50 @@ import com.wolfyscript.utilities.math.Vec2i;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import me.wolfyscript.utilities.util.particles.ParticleLocation;
 import me.wolfyscript.utilities.util.particles.ParticleUtils;
 import me.wolfyscript.utilities.util.world.BlockCustomItemStore;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
-import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.event.world.ChunkPopulateEvent;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
 public class ChunkStorage {
 
     private static final NamespacedKey BLOCKS_KEY = new NamespacedKey("wolfyutils", "blocks");
 
+    private static final String BLOCK_POS_KEY = "%s_%s_%s"; //x, y, z
+    private static final String BLOCK_POS_NAMESPACE = "wolfyutils"; //-> "wolfyutils:x_y_z"
+
     private final Map<Vector, BlockCustomItemStore> BLOCKS = new HashMap<>();
 
     private final Vec2i coords;
+    private final WorldStorage worldStorage;
 
-    public ChunkStorage(Vec2i coords) {
+    public ChunkStorage(WorldStorage worldStorage, Vec2i coords) {
         this.coords = coords;
+        this.worldStorage = worldStorage;
+    }
+
+    public Optional<Chunk> getChunk() {
+        return worldStorage.getWorld().map(world -> world.getChunkAt(coords.getX(), coords.getY()));
+    }
+
+    protected Optional<PersistentDataContainer> getPersistentContainer() {
+        return worldStorage.getWorld().map(world -> world.getChunkAt(coords.getX(), coords.getY()).getPersistentDataContainer());
+    }
+
+    private Optional<PersistentDataContainer> getPersistentBlocksContainer() {
+        return getPersistentContainer().map(container -> {
+            var context = container.getAdapterContext();
+            if (!container.has(BLOCKS_KEY, PersistentDataType.TAG_CONTAINER)) {
+                container.set(BLOCKS_KEY, PersistentDataType.TAG_CONTAINER, context.newPersistentDataContainer());
+            }
+            return container.get(BLOCKS_KEY, PersistentDataType.TAG_CONTAINER);
+        });
     }
 
     /**
@@ -31,18 +56,23 @@ public class ChunkStorage {
      * @param location The location to associate the data with.
      * @param blockStore The data of the location.
      */
-    public void storeBlock(Location location, BlockCustomItemStore blockStore) {
+    public Optional<BlockCustomItemStore> storeBlock(Location location, BlockCustomItemStore blockStore) {
         if (blockStore.getCustomItem().hasNamespacedKey()) {
-            var previousStore = BLOCKS.put(location.toVector(), blockStore);
+            var pos = location.toVector();
+            var previousStore = BLOCKS.put(pos, blockStore);
             if (previousStore != null) {
+                //TODO: Find a more generalised modular system, like running CustomItem actions on removal
                 ParticleUtils.stopAnimation(previousStore.getParticleUUID());
             }
             var animation = blockStore.getCustomItem().getParticleContent().getAnimation(ParticleLocation.BLOCK);
             if(animation != null) {
+                //TODO: Find a more generalised modular system, like running CustomItem actions on placement
                 animation.spawn(location.getBlock());
             }
-            //TODO: Update persistent container to reflect changes
+            updateBlock(pos);
+            return Optional.ofNullable(previousStore);
         }
+        return Optional.empty();
     }
 
     /**
@@ -51,11 +81,40 @@ public class ChunkStorage {
      * @param location The target location of the block
      */
     public void removeBlock(Location location) {
-        var previousStore = BLOCKS.remove(location.toVector());
+        var pos = location.toVector();
+        var previousStore = BLOCKS.remove(pos);
         if (previousStore != null) {
+            //TODO: Find a more generalised modular system, like running CustomItem actions on removal
             ParticleUtils.stopAnimation(previousStore.getParticleUUID());
         }
-        //TODO: Update persistent container to reflect changes
+        updateBlock(pos);
+    }
+
+    /**
+     * Gets the stored block at the specified location.
+     *
+     * @param location The location of the block.
+     * @return The stored block if stored; otherwise empty Optional.
+     */
+    public Optional<BlockCustomItemStore> getBlock(Location location) {
+        return Optional.ofNullable(BLOCKS.computeIfAbsent(location.toVector(), pos -> getPersistentBlocksContainer().map(blocks -> blocks.get(createKeyForBlock(pos), new BlockCustomItemStore.PersistentType())).orElse(null)));
+    }
+
+    /**
+     * Gets the stored blocks in the chunk.
+     *
+     * @return The stored blocks in the chunk.
+     */
+    public Map<Vector, BlockCustomItemStore> getStoredBlocks() {
+        return BLOCKS.entrySet().stream().filter(entry -> entry.getValue() != null).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    private void updateBlock(Vector blockPos) {
+        getPersistentBlocksContainer().ifPresent(blocks -> blocks.set(createKeyForBlock(blockPos), new BlockCustomItemStore.PersistentType(), BLOCKS.get(blockPos)));
+    }
+
+    private NamespacedKey createKeyForBlock(Vector blockPos) {
+        return new NamespacedKey(BLOCK_POS_NAMESPACE, BLOCK_POS_KEY.formatted(blockPos.getBlockX(), blockPos.getBlockY(), blockPos.getBlockZ()));
     }
 
     public boolean isBlockStored(Location location) {

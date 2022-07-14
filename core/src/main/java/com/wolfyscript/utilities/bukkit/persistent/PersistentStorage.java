@@ -16,11 +16,7 @@ public class PersistentStorage {
     }
 
     public WorldStorage getOrCreateWorldStorage(World world) {
-        return WORLD_STORAGE.computeIfAbsent(world.getUID(), uuid -> {
-            var storage = new WorldStorage(uuid);
-            storage.loadBlocksStore();
-            return storage;
-        });
+        return WORLD_STORAGE.computeIfAbsent(world.getUID(), WorldStorage::new);
     }
 
 }
