@@ -368,7 +368,6 @@ public final class WolfyCoreBukkit extends WUPlugin {
             registerCommands();
 
             CreativeModeTab.init();
-            loadParticleEffects();
         } else {
             onJUnitTests();
         }
@@ -401,12 +400,6 @@ public final class WolfyCoreBukkit extends WUPlugin {
         PlayerUtils.saveStores();
         console.info("Save stored Custom Items");
         WorldUtils.save();
-    }
-
-    @Override
-    public void loadParticleEffects() {
-        console.info("Initiating Particles");
-        WorldUtils.getWorldCustomItemStore().initiateMissingBlockEffects();
     }
 
     private void registerListeners() {

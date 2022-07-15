@@ -1,19 +1,12 @@
 package com.wolfyscript.utilities.bukkit.persistent.world;
 
-import com.wolfyscript.utilities.bukkit.persistent.LocationConverter;
 import com.wolfyscript.utilities.math.Vec2i;
-import de.tr7zw.changeme.nbtapi.NBTChunk;
-import me.wolfyscript.utilities.util.particles.ParticleLocation;
-import me.wolfyscript.utilities.util.particles.ParticleUtils;
 import me.wolfyscript.utilities.util.world.BlockCustomItemStore;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataHolder;
-import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -68,10 +61,10 @@ public class WorldStorage {
     }
 
     public boolean isBlockStored(Location location) {
-        return get(location).isPresent();
+        return getBlock(location).isPresent();
     }
 
-    public Optional<BlockCustomItemStore> get(Location location) {
+    public Optional<BlockCustomItemStore> getBlock(Location location) {
         return getOrCreateChunkStorage(location).getBlock(location);
     }
 

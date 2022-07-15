@@ -173,7 +173,7 @@ public class ParticleAnimation implements Keyed {
      */
     public void spawn(Block block) {
         var worldStore = ((WolfyCoreBukkit)WolfyCoreBukkit.getInstance()).getPersistentStorage().getOrCreateWorldStorage(block.getWorld());
-        worldStore.get(block.getLocation()).ifPresent(store -> store.setParticleUUID(new Scheduler(block).start()));
+        worldStore.getBlock(block.getLocation()).ifPresent(store -> store.setParticleUUID(new Scheduler(block).start()));
     }
 
     /**

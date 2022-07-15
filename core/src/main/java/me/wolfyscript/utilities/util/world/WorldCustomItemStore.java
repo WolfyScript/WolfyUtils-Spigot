@@ -27,43 +27,26 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
-import me.wolfyscript.utilities.util.particles.ParticleLocation;
-import me.wolfyscript.utilities.util.particles.ParticleUtils;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
-import org.bukkit.persistence.PersistentDataAdapterContext;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataHolder;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @JsonSerialize(using = WorldCustomItemStore.Serializer.class)
 @JsonDeserialize(using = WorldCustomItemStore.Deserializer.class)
 public class WorldCustomItemStore {
 
-    private final Map<Location, BlockCustomItemStore> store = new HashMap<>();
-
+    @Deprecated
     public WorldCustomItemStore() {
     }
 
+    @Deprecated
     public void store(Location location, CustomItem customItem) {
-        ParticleUtils.stopAnimation(getStoredEffect(location));
-        if (customItem.hasNamespacedKey()) {
-            setStore(location, new BlockCustomItemStore(customItem, null));
-            var animation = customItem.getParticleContent().getAnimation(ParticleLocation.BLOCK);
-            if(animation != null) {
-                animation.spawn(location.getBlock());
-            }
-        }
+        setStore(location, new BlockCustomItemStore(customItem, null));
     }
 
     /**
@@ -71,20 +54,26 @@ public class WorldCustomItemStore {
      *
      * @param location The target location of the block
      */
+    @Deprecated
     public void remove(Location location) {
-        ParticleUtils.stopAnimation(getStoredEffect(location));
-        store.remove(location);
+        if (location == null || location.getWorld() == null) return;
+        ((WolfyCoreBukkit) WolfyCoreBukkit.getInstance()).getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).removeBlock(location);
     }
 
+    @Deprecated
     public boolean isStored(Location location) {
-        return location != null && store.containsKey(location);
+        if (location == null || location.getWorld() == null) return false;
+        return ((WolfyCoreBukkit) WolfyCoreBukkit.getInstance()).getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).getBlock(location).isPresent();
     }
 
+    @Deprecated
     @Nullable
     public BlockCustomItemStore get(Location location) {
-        return location == null ? null : store.get(location);
+        if (location == null || location.getWorld() == null) return null;
+        return ((WolfyCoreBukkit) WolfyCoreBukkit.getInstance()).getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).getBlock(location).orElse(null);
     }
 
+    @Deprecated
     public CustomItem getCustomItem(Location location) {
         BlockCustomItemStore blockStore = get(location);
         return blockStore != null ? blockStore.getCustomItem() : null;
@@ -97,30 +86,26 @@ public class WorldCustomItemStore {
      * @return The uuid of the currently active particle effect.
      */
     @Nullable
+    @Deprecated
     public UUID getStoredEffect(@Nullable Location location) {
         BlockCustomItemStore blockStore = get(location);
         return blockStore != null ? blockStore.getParticleUUID() : null;
     }
 
+    @Deprecated
     public boolean hasStoredEffect(Location location) {
         return isStored(location) && getStoredEffect(location) != null;
     }
 
+    @Deprecated
     void setStore(Location location, BlockCustomItemStore blockStore) {
-        store.put(location, blockStore);
+        if (location == null || location.getWorld() == null) return;
+        ((WolfyCoreBukkit) WolfyCoreBukkit.getInstance()).getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).storeBlock(location, blockStore);
     }
 
+    @Deprecated
     public void initiateMissingBlockEffects() {
-        store.entrySet().stream().filter(entry -> !hasStoredEffect(entry.getKey())).forEach(entry -> {
-            var customItem = entry.getValue().getCustomItem();
-            if (customItem != null && entry.getKey() != null) {
-                setStore(entry.getKey(), new BlockCustomItemStore(customItem, null));
-                var animation = customItem.getParticleContent().getAnimation(ParticleLocation.BLOCK);
-                if(animation != null) {
-                    animation.spawn(entry.getKey().getBlock());
-                }
-            }
-        });
+        //This is not doing anything anymore!
     }
 
     static class Serializer extends StdSerializer<WorldCustomItemStore> {
@@ -136,12 +121,6 @@ public class WorldCustomItemStore {
         @Override
         public void serialize(WorldCustomItemStore customItem, JsonGenerator gen, SerializerProvider provider) throws IOException {
             gen.writeStartArray();
-            for (Map.Entry<Location, BlockCustomItemStore> entry : customItem.store.entrySet()) {
-                gen.writeStartObject();
-                gen.writeObjectField("loc", entry.getKey());
-                gen.writeObjectField("store", entry.getValue());
-                gen.writeEndObject();
-            }
             gen.writeEndArray();
         }
 
