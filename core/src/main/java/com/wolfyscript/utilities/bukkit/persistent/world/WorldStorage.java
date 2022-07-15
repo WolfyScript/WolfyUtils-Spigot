@@ -47,7 +47,7 @@ public class WorldStorage {
     }
 
     public ChunkStorage getOrCreateChunkStorage(Vec2i chunkCoords) {
-        return CHUNK_DATA.computeIfAbsent(chunkCoords, vec2i -> new ChunkStorage(this, vec2i));
+        return CHUNK_DATA.computeIfAbsent(chunkCoords, vec2i -> ChunkStorage.create(this, vec2i));
     }
 
     public ChunkStorage getOrCreateChunkStorage(int chunkX, int chunkZ) {

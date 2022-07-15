@@ -27,9 +27,26 @@ public class ChunkStorage {
     private final Vec2i coords;
     private final WorldStorage worldStorage;
 
-    public ChunkStorage(WorldStorage worldStorage, Vec2i coords) {
+    private ChunkStorage(WorldStorage worldStorage, Vec2i coords) {
         this.coords = coords;
         this.worldStorage = worldStorage;
+    }
+
+    public static ChunkStorage create(WorldStorage worldStorage, Vec2i coords) {
+        return new ChunkStorage(worldStorage, coords);
+    }
+
+    public void loadBlocksIntoCache() {
+        getPersistentBlocksContainer().ifPresent(blocks -> {
+            blocks.getKeys().forEach(key -> {
+                String[] coordsStrings = key.getKey().split("_");
+                int[] coords = new int[3];
+                for (int i = 0; i < coordsStrings.length; i++) {
+                    coords[i] = Integer.parseInt(coordsStrings[i]);
+                }
+                BLOCKS.put(new Vector(coords[0], coords[1], coords[2]), blocks.get(key, new BlockCustomItemStore.PersistentType()));
+            });
+        });
     }
 
     public Optional<Chunk> getChunk() {

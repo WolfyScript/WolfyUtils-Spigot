@@ -23,7 +23,7 @@ public class PersistentStorageListener implements Listener {
     private void onChunkLoad(ChunkLoadEvent event) {
         Chunk chunk = event.getChunk();
         ChunkStorage chunkStorage = persistentStorage.getOrCreateWorldStorage(event.getWorld()).getOrCreateChunkStorage(chunk.getX(), chunk.getZ());
-
+        chunkStorage.loadBlocksIntoCache();
 
         //TODO: Start Particle Effects
 
