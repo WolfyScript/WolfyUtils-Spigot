@@ -163,7 +163,16 @@ public class ChunkStorage {
      * @param blockPos The block position to update.
      */
     private void updateBlock(Vector blockPos) {
-        getPersistentBlocksContainer().ifPresent(blocks -> blocks.set(createKeyForBlock(blockPos), new BlockCustomItemStore.PersistentType(), BLOCKS.get(blockPos)));
+        getPersistentBlocksContainer().ifPresent(blocks -> {
+            var value = BLOCKS.get(blockPos);
+            var key = createKeyForBlock(blockPos);
+            if (value != null) {
+                blocks.set(key, new BlockCustomItemStore.PersistentType(), value);
+            } else {
+                blocks.remove(key);
+            }
+            getPersistentContainer().ifPresent(container -> container.set(BLOCKS_KEY, PersistentDataType.TAG_CONTAINER, blocks));
+        });
     }
 
     /**
