@@ -1,5 +1,6 @@
 package com.wolfyscript.utilities.math;
 
+import com.google.common.base.Objects;
 import com.google.common.primitives.Doubles;
 import org.jetbrains.annotations.NotNull;
 
@@ -259,5 +260,18 @@ public class Vec2i {
         if (x == -0.0D) x = 0;
         if (y == -0.0D) y = 0;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Vec2i vec2i = (Vec2i) o;
+        return x == vec2i.x && y == vec2i.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(x, y);
     }
 }
