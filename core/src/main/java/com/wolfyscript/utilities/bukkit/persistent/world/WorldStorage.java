@@ -56,8 +56,8 @@ public class WorldStorage {
      *
      * @param location The target location of the block
      */
-    public void removeBlock(Location location) {
-        getOrCreateChunkStorage(location).removeBlock(location);
+    public Optional<BlockCustomItemStore> removeBlock(Location location) {
+        return getOrCreateChunkStorage(location).removeBlock(location);
     }
 
     public boolean isBlockStored(Location location) {

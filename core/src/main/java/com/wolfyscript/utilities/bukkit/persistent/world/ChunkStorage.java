@@ -96,15 +96,18 @@ public class ChunkStorage {
      * Removes the stored block at this location and stops every active particle effect.
      *
      * @param location The target location of the block
+     * @return Optional of the previously stored data; otherwise empty Optional.
      */
-    public void removeBlock(Location location) {
+    public Optional<BlockCustomItemStore> removeBlock(Location location) {
         var pos = location.toVector();
         var previousStore = BLOCKS.remove(pos);
+        updateBlock(pos);
         if (previousStore != null) {
             //TODO: Find a more generalised modular system, like running CustomItem actions on removal
             ParticleUtils.stopAnimation(previousStore.getParticleUUID());
+            return Optional.of(previousStore);
         }
-        updateBlock(pos);
+        return Optional.empty();
     }
 
     /**
