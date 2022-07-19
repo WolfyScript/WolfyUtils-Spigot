@@ -43,7 +43,7 @@ import org.jetbrains.annotations.Nullable;
 @JsonDeserialize(using = BlockCustomItemStore.Deserializer.class)
 public class BlockCustomItemStore {
 
-    private static final org.bukkit.NamespacedKey ITEM_ID_KEY = new org.bukkit.NamespacedKey("wolfyutils", "itemId");
+    private static final org.bukkit.NamespacedKey ITEM_ID_KEY = new org.bukkit.NamespacedKey("wolfyutils", "item_id");
 
     private final NamespacedKey customItemKey;
     private UUID particleAnimationID;
