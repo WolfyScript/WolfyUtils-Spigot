@@ -27,18 +27,6 @@ public class WorldStorage {
         return Optional.ofNullable(Bukkit.getWorld(worldUUID));
     }
 
-    /**
-     * Stores the BlockCustomItemStore under the specified location.
-     *
-     * @param location The location to associate the data with.
-     * @param blockStore The data of the location.
-     */
-    public void storeBlock(Location location, BlockCustomItemStore blockStore) {
-        if (blockStore.getCustomItem().hasNamespacedKey()) {
-            getOrCreateChunkStorage(location).storeBlock(location, blockStore);
-        }
-    }
-
     public ChunkStorage getOrCreateChunkStorage(Vec2i chunkCoords) {
         return CHUNK_DATA.computeIfAbsent(chunkCoords, vec2i -> ChunkStorage.create(this, vec2i));
     }
@@ -49,6 +37,16 @@ public class WorldStorage {
 
     public ChunkStorage getOrCreateChunkStorage(Location location) {
         return getOrCreateChunkStorage(new Vec2i(location.getBlockX() >> 4, location.getBlockZ() >> 4));
+    }
+
+    /**
+     * Stores the BlockCustomItemStore under the specified location.
+     *
+     * @param location The location to associate the data with.
+     * @param blockStore The data of the location.
+     */
+    public Optional<BlockCustomItemStore> storeBlock(Location location, BlockCustomItemStore blockStore) {
+        return getOrCreateChunkStorage(location).storeBlock(location, blockStore);
     }
 
     /**
