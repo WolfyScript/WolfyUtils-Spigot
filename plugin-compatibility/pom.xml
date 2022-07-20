@@ -13,7 +13,6 @@
     <artifactId>plugin-compatibility</artifactId>
 
     <modules>
-        <module>itemsadder</module>
         <module>mmoitems</module>
         <module>oraxen</module>
         <module>magic</module>

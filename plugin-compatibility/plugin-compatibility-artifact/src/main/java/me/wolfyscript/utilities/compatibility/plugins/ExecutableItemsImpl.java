@@ -24,7 +24,7 @@ public class ExecutableItemsImpl extends PluginIntegrationAbstract implements Ex
 
     @Override
     public boolean isAPIReferenceIncluded(APIReference reference) {
-        return super.isAPIReferenceIncluded(reference);
+        return reference instanceof ExecutableItemsRef;
     }
 
     @Override

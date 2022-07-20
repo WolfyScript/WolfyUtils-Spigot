@@ -69,13 +69,14 @@
             <version>6.13.0</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Other compatibility modules-->
+        <!-- ItemsAdder -->
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>itemsadder</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
+            <groupId>com.github.LoneDev6</groupId>
+            <artifactId>api-itemsadder</artifactId>
+            <version>3.1.5</version>
+            <scope>provided</scope>
         </dependency>
+        <!-- Other compatibility modules-->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>oraxen</artifactId>
