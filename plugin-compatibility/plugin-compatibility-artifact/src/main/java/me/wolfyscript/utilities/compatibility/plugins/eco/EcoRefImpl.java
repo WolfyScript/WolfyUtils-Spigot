@@ -22,14 +22,12 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.willfp.eco.core.items.Items;
+import java.io.IOException;
+import java.util.Objects;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
-import me.wolfyscript.utilities.compatibility.plugins.eco.EcoRef;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.util.Objects;
 
 public class EcoRefImpl extends APIReference implements EcoRef {
 

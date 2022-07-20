@@ -51,6 +51,13 @@
             <version>2.11.1</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Eco -->
+        <dependency>
+            <groupId>com.willfp</groupId>
+            <artifactId>eco</artifactId>
+            <version>6.13.0</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- Other compatibility modules-->
         <dependency>
             <groupId>${project.groupId}</groupId>

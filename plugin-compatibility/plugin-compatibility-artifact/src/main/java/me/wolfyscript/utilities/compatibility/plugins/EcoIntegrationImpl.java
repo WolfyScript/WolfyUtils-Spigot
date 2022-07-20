@@ -24,7 +24,6 @@ import me.wolfyscript.utilities.annotations.WUPluginIntegration;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
-import me.wolfyscript.utilities.compatibility.plugins.EcoIntegration;
 import me.wolfyscript.utilities.compatibility.plugins.eco.EcoRefImpl;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -50,7 +49,7 @@ public class EcoIntegrationImpl extends PluginIntegrationAbstract implements Eco
 
     @Override
     public boolean isAPIReferenceIncluded(APIReference reference) {
-        return true;
+        return reference instanceof EcoRefImpl;
     }
 
     @Override
