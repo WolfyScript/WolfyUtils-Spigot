@@ -32,11 +32,6 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>nmsutil-v1_15_R1</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>nmsutil-v1_16_R1</artifactId>
             <version>${project.version}</version>
         </dependency>

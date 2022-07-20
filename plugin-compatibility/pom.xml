@@ -13,12 +13,6 @@
     <artifactId>plugin-compatibility</artifactId>
 
     <modules>
-        <module>itemsadder</module>
-        <module>eco</module>
-        <module>mmoitems</module>
-        <module>oraxen</module>
-        <module>magic</module>
-        <module>mythicmobs</module>
         <module>plugin-compatibility-artifact</module>
     </modules>
 
