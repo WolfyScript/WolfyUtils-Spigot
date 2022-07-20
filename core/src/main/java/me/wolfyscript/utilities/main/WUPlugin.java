@@ -35,7 +35,8 @@ public abstract class WUPlugin extends WolfyUtilCore {
         return instance;
     }
 
-    public abstract void loadParticleEffects();
+    @Deprecated
+    public void loadParticleEffects(){ }
 
     public abstract MessageHandler getMessageHandler();
 

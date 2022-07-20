@@ -10,6 +10,7 @@ import com.wolfyscript.utilities.bukkit.commands.SpawnParticleEffectCommand;
 import com.wolfyscript.utilities.bukkit.listeners.BlockListener;
 import com.wolfyscript.utilities.bukkit.listeners.EquipListener;
 import com.wolfyscript.utilities.bukkit.listeners.GUIInventoryListener;
+import com.wolfyscript.utilities.bukkit.listeners.PersistentStorageListener;
 import com.wolfyscript.utilities.bukkit.listeners.PlayerListener;
 import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomDurabilityListener;
 import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomItemPlayerListener;
@@ -32,6 +33,8 @@ import com.wolfyscript.utilities.bukkit.nbt.QueryNodeLong;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeCompound;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeShort;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeString;
+import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
+import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
 import me.wolfyscript.utilities.api.console.Console;
@@ -153,6 +156,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
     private final MessageFactory messageFactory;
     private final CompatibilityManager compatibilityManager;
     private BukkitAudiences adventure;
+    private PersistentStorage persistentStorage;
 
     /**
      * Constructor invoked by Spigot when the plugin is loaded.
@@ -164,6 +168,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         this.messageHandler = new MessageHandler(this);
         this.messageFactory = new MessageFactory(this);
         this.compatibilityManager = new CompatibilityManagerBukkit(this);
+        this.persistentStorage = new PersistentStorage();
     }
 
     /**
@@ -363,7 +368,6 @@ public final class WolfyCoreBukkit extends WUPlugin {
             registerCommands();
 
             CreativeModeTab.init();
-            loadParticleEffects();
         } else {
             onJUnitTests();
         }
@@ -398,21 +402,16 @@ public final class WolfyCoreBukkit extends WUPlugin {
         WorldUtils.save();
     }
 
-    @Override
-    public void loadParticleEffects() {
-        console.info("Initiating Particles");
-        WorldUtils.getWorldCustomItemStore().initiateMissingBlockEffects();
-    }
-
     private void registerListeners() {
         Bukkit.getPluginManager().registerEvents(new ChatImpl.ChatListener(), this);
         Bukkit.getPluginManager().registerEvents(new CustomDurabilityListener(this), this);
         Bukkit.getPluginManager().registerEvents(new CustomParticleListener(), this);
         Bukkit.getPluginManager().registerEvents(new CustomItemPlayerListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
+        Bukkit.getPluginManager().registerEvents(new BlockListener(this), this);
         Bukkit.getPluginManager().registerEvents(new EquipListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
         Bukkit.getPluginManager().registerEvents(new GUIInventoryListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PersistentStorageListener(this), this);
     }
 
     private void registerCommands() {
@@ -439,5 +438,9 @@ public final class WolfyCoreBukkit extends WUPlugin {
     @Override
     public com.wolfyscript.utilities.common.chat.Chat getChat() {
         return api.getChat();
+    }
+
+    public PersistentStorage getPersistentStorage() {
+        return persistentStorage;
     }
 }
