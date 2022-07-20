@@ -22,13 +22,12 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import io.th0rgal.oraxen.items.OraxenItems;
+import java.io.IOException;
+import java.util.Objects;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Links to Oraxen and saves the specified id of the item.
@@ -97,7 +96,7 @@ public class OraxenRefImpl extends APIReference implements OraxenRef {
         return new OraxenRefImpl(this);
     }
 
-    public static class Parser extends APIReference.PluginParser<OraxenRefImpl> {
+    public static class Parser extends PluginParser<OraxenRefImpl> {
 
         public Parser() {
             super("Oraxen", "oraxen");

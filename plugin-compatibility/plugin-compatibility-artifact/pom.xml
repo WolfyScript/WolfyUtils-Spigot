@@ -89,6 +89,14 @@
             <artifactId>FancyBags</artifactId>
             <version>2.7.0</version>
         </dependency>
+        <!-- Oraxen -->
+        <dependency>
+            <groupId>io.th0rgal</groupId>
+            <artifactId>oraxen</artifactId>
+            <version>1.66.2</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
         <!-- Other compatibility modules-->
         <dependency>
             <groupId>${project.groupId}</groupId>
