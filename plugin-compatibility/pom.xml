@@ -13,8 +13,6 @@
     <artifactId>plugin-compatibility</artifactId>
 
     <modules>
-        <module>mmoitems</module>
-        <module>mythicmobs</module>
         <module>plugin-compatibility-artifact</module>
     </modules>
 
