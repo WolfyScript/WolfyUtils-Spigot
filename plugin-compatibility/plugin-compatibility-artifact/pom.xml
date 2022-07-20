@@ -34,6 +34,10 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>citizen</id>
+            <url>https://repo.citizensnpcs.co</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -43,6 +47,13 @@
             <artifactId>SCore</artifactId>
             <version>main-d90dd3b60e-1</version>
             <scope>provided</scope>
+        </dependency>
+        <!-- Denizen -->
+        <dependency>
+            <groupId>com.denizenscript</groupId>
+            <artifactId>denizen</artifactId>
+            <version>1.2.5-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
         <!-- PlaceholderAPI -->
         <dependency>
