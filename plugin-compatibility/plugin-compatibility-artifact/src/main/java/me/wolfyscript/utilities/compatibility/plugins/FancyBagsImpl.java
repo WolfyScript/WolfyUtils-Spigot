@@ -3,6 +3,7 @@ package me.wolfyscript.utilities.compatibility.plugins;
 import me.wolfyscript.utilities.annotations.WUPluginIntegration;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
+import me.wolfyscript.utilities.compatibility.plugins.fancybags.FancyBagsItemsRef;
 import org.bukkit.plugin.Plugin;
 
 @WUPluginIntegration(pluginName = FancyBagsImpl.KEY)
@@ -21,7 +22,7 @@ public class FancyBagsImpl extends PluginIntegrationAbstract {
 
     @Override
     public void init(Plugin plugin) {
-
+        core.registerAPIReference(new FancyBagsItemsRef.Parser());
     }
 
     @Override
