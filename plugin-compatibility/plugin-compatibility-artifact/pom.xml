@@ -76,6 +76,13 @@
             <version>3.1.5</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Magic -->
+        <dependency>
+            <groupId>com.elmakers.mine.bukkit</groupId>
+            <artifactId>MagicAPI</artifactId>
+            <version>10.2</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- Other compatibility modules-->
         <dependency>
             <groupId>${project.groupId}</groupId>
