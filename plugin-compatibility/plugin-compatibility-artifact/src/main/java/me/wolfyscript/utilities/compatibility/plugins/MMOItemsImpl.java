@@ -18,33 +18,25 @@
 
 package me.wolfyscript.utilities.compatibility.plugins;
 
-import io.lumine.xikage.mythicmobs.MythicMobs;
-import io.lumine.xikage.mythicmobs.adapters.bukkit.BukkitAdapter;
-import io.lumine.xikage.mythicmobs.mobs.MythicMob;
 import me.wolfyscript.utilities.annotations.WUPluginIntegration;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
-import me.wolfyscript.utilities.compatibility.plugins.mythicmobs.MythicMobs5RefImpl;
-import me.wolfyscript.utilities.compatibility.plugins.mythicmobs.MythicMobsRefImpl;
 import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
-import org.bukkit.Location;
+import me.wolfyscript.utilities.compatibility.plugins.mmoitems.MMOItemsRefImpl;
 import org.bukkit.plugin.Plugin;
 
-@WUPluginIntegration(pluginName = MythicMobsIntegration.KEY)
-public class MythicMobsImpl extends PluginIntegrationAbstract implements MythicMobsIntegration {
+@WUPluginIntegration(pluginName = MMOItemsImpl.PLUGIN_NAME)
+public class MMOItemsImpl extends PluginIntegrationAbstract {
 
-    protected MythicMobsImpl(WolfyUtilCore core) {
-        super(core, MythicMobsIntegration.KEY);
+    static final String PLUGIN_NAME = "MMOItems";
+
+    protected MMOItemsImpl(WolfyUtilCore core) {
+        super(core, PLUGIN_NAME);
     }
 
     @Override
     public void init(Plugin plugin) {
-        if (WolfyUtilities.hasClass("io.lumine.mythic.bukkit.MythicBukkit")) {
-            core.registerAPIReference(new MythicMobs5RefImpl.Parser());
-        } else {
-            core.registerAPIReference(new MythicMobsRefImpl.Parser());
-        }
+        core.registerAPIReference(new MMOItemsRefImpl.Parser());
     }
 
     @Override
@@ -54,14 +46,6 @@ public class MythicMobsImpl extends PluginIntegrationAbstract implements MythicM
 
     @Override
     public boolean isAPIReferenceIncluded(APIReference reference) {
-        return reference instanceof MythicMobsRefImpl;
-    }
-
-    @Override
-    public void spawnMob(String mobName, Location location, int mobLevel) {
-        MythicMob mythicMob = MythicMobs.inst().getMobManager().getMythicMob(mobName);
-        if(mythicMob != null) {
-            mythicMob.spawn(BukkitAdapter.adapt(location), mobLevel);
-        }
+        return reference instanceof MMOItemsRefImpl;
     }
 }

@@ -97,19 +97,45 @@
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
+        <!-- Mythic Plugins -->
+        <dependency>
+            <groupId>io.lumine</groupId>
+            <artifactId>MythicLib</artifactId>
+            <version>1.1.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.Indyuce</groupId>
+            <artifactId>mmoitems</artifactId>
+            <version>6.6.2</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.lumine.xikage</groupId>
+            <artifactId>MythicMobs</artifactId>
+            <version>4.12.0</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.comphenix.protocol</groupId>
+                    <artifactId>ProtocolLib</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.lumine.mythic.mythicmobs</groupId>
+            <artifactId>MythicMobs-Bukkit</artifactId>
+            <version>5.0.1</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.comphenix.protocol</groupId>
+                    <artifactId>ProtocolLib</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <!-- Other compatibility modules-->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>oraxen</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>magic</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>mythicmobs</artifactId>
@@ -119,12 +145,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>mmoitems</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>eco</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
