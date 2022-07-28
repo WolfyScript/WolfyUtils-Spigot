@@ -27,6 +27,7 @@ import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReferen
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import dev.lone.itemsadder.api.CustomStack;
 
 /**
  * Links to an ItemsAdder item and saves the item key accordingly.

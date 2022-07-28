@@ -135,19 +135,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- Other compatibility modules-->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>mythicmobs</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>mmoitems</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 
 </project>

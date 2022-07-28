@@ -8,10 +8,11 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import dev.lone.itemsadder.api.CustomBlock;
 
-public class CustomBlockWrapper implements CustomBlock {
+public class CustomBlockWrapper implements me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomBlock {
 
-    private final CustomBlock iaBlock;
+    private final dev.lone.itemsadder.api.CustomBlock iaBlock;
 
     private CustomBlockWrapper(@NotNull CustomBlock iaBlock) {
         this.iaBlock = iaBlock;
@@ -26,7 +27,7 @@ public class CustomBlockWrapper implements CustomBlock {
     }
 
     @Override
-    public Optional<CustomBlock> place(Location location) {
+    public Optional<me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomBlock> place(Location location) {
         return Optional.ofNullable(wrapNullableBlock(iaBlock.place(location)));
     }
 
