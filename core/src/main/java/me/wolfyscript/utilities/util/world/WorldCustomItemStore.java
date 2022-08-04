@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import org.bukkit.Location;
@@ -70,7 +71,8 @@ public class WorldCustomItemStore {
     @Nullable
     public BlockCustomItemStore get(Location location) {
         if (location == null || location.getWorld() == null) return null;
-        return ((WolfyCoreBukkit) WolfyCoreBukkit.getInstance()).getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).getBlock(location).orElse(null);
+        //TODO: return ((WolfyCoreBukkit) WolfyCoreBukkit.getInstance()).getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).getBlock(location).orElse(null);
+        return null;
     }
 
     @Deprecated
@@ -100,7 +102,7 @@ public class WorldCustomItemStore {
     @Deprecated
     void setStore(Location location, BlockCustomItemStore blockStore) {
         if (location == null || location.getWorld() == null) return;
-        ((WolfyCoreBukkit) WolfyCoreBukkit.getInstance()).getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).storeBlock(location, blockStore);
+        //TODO: ((WolfyCoreBukkit) WolfyCoreBukkit.getInstance()).getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).storeBlock(location, n);
     }
 
     @Deprecated

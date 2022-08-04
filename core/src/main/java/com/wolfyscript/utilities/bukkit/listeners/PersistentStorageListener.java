@@ -3,11 +3,8 @@ package com.wolfyscript.utilities.bukkit.listeners;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.ChunkStorage;
-import me.wolfyscript.utilities.util.particles.ParticleLocation;
-import me.wolfyscript.utilities.util.particles.ParticleUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,6 +13,8 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
 public class PersistentStorageListener implements Listener {
+
+    private static final String PREVIOUS_BROKEN_STORE = "previous_store";
 
     private final WolfyCoreBukkit core;
     private final PersistentStorage persistentStorage;
@@ -38,10 +37,8 @@ public class PersistentStorageListener implements Listener {
         ChunkStorage chunkStorage = persistentStorage.getOrCreateWorldStorage(event.getWorld()).getOrCreateChunkStorage(chunk.getX(), chunk.getZ());
 
         //TODO: Find a more modular system to stop particles, like running CustomItem actions on unload
-        chunkStorage.getStoredBlocks().forEach((vector, customItemStore) -> {
-            if (customItemStore != null) {
-                ParticleUtils.stopAnimation(customItemStore.getParticleUUID());
-            }
+        chunkStorage.getStoredBlocks().forEach((vector, store) -> {
+            //TODO: onUnLoad
         });
     }
 
@@ -49,7 +46,7 @@ public class PersistentStorageListener implements Listener {
     private void onServerLoad(ServerLoadEvent event) {
         for (World world : Bukkit.getWorlds()) {
             for (Chunk chunk : world.getLoadedChunks()) {
-                startParticles(initOrUpdateChunk(chunk));
+                initOrUpdateChunk(chunk);
             }
         }
     }
@@ -58,10 +55,13 @@ public class PersistentStorageListener implements Listener {
         //TODO: Find a more generalised modular system, like running CustomItem actions on load
         chunkStorage.getChunk().ifPresent(chunk -> {
             chunkStorage.getStoredBlocks().forEach((vector, blockStore) -> {
+
+                /*
                 var animation = blockStore.getCustomItem().getParticleContent().getAnimation(ParticleLocation.BLOCK);
                 if(animation != null) {
                     animation.spawn(new Location(chunk.getWorld(), vector.getX(),vector.getY(),vector.getZ()).getBlock());
                 }
+                 */
             });
         });
     }

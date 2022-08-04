@@ -7,6 +7,7 @@ import com.wolfyscript.utilities.bukkit.commands.InputCommand;
 import com.wolfyscript.utilities.bukkit.commands.QueryDebugCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleAnimationCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleEffectCommand;
+import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
 import com.wolfyscript.utilities.bukkit.listeners.BlockListener;
 import com.wolfyscript.utilities.bukkit.listeners.EquipListener;
 import com.wolfyscript.utilities.bukkit.listeners.GUIInventoryListener;
@@ -168,7 +169,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         this.messageHandler = new MessageHandler(this);
         this.messageFactory = new MessageFactory(this);
         this.compatibilityManager = new CompatibilityManagerBukkit(this);
-        this.persistentStorage = new PersistentStorage();
+        this.persistentStorage = new PersistentStorage(this);
     }
 
     /**
@@ -328,6 +329,9 @@ public final class WolfyCoreBukkit extends WUPlugin {
         nbtQueryNodes.register(QueryNodeListFloat.TYPE, QueryNodeListFloat.class);
         nbtQueryNodes.register(QueryNodeListString.TYPE, QueryNodeListString.class);
         nbtQueryNodes.register(QueryNodeListCompound.TYPE, QueryNodeListCompound.class);
+
+        var customBlockData = getRegistries().getCustomBlockData();
+        customBlockData.register(CustomItemBlockData.ID, CustomItemBlockData.class);
 
         KeyedTypeIdResolver.registerTypeRegistry(Meta.class, nbtChecks);
         KeyedTypeIdResolver.registerTypeRegistry(Animator.class, particleAnimators);

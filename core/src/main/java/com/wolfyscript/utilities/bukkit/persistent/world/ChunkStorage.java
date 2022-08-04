@@ -5,9 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import me.wolfyscript.utilities.util.particles.ParticleLocation;
-import me.wolfyscript.utilities.util.particles.ParticleUtils;
-import me.wolfyscript.utilities.util.world.BlockCustomItemStore;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -22,21 +20,31 @@ public class ChunkStorage {
     private static final String BLOCK_POS_KEY = "%s_%s_%s"; //x, y, z
     private static final String BLOCK_POS_NAMESPACE = "wolfyutils"; //-> "wolfyutils:x_y_z"
 
-    private final Map<Vector, BlockCustomItemStore> BLOCKS = new HashMap<>();
+    private final Map<Vector, BlockStorage> BLOCKS = new HashMap<>();
 
     private final Vec2i coords;
     private final WorldStorage worldStorage;
+    private final WolfyUtilCore core;
 
     private ChunkStorage(WorldStorage worldStorage, Vec2i coords) {
         this.coords = coords;
         this.worldStorage = worldStorage;
+        this.core = worldStorage.getCore();
+    }
+
+    public WorldStorage getWorldStorage() {
+        return worldStorage;
+    }
+
+    public WolfyUtilCore getCore() {
+        return core;
     }
 
     /**
      * Creates a new ChunkStorage for the specified chunk coords and WorldStorage.
      *
      * @param worldStorage The parent WorldStorage.
-     * @param coords The chunk coords.
+     * @param coords       The chunk coords.
      * @return The newly created ChunkStorage instance.
      */
     public static ChunkStorage create(WorldStorage worldStorage, Vec2i coords) {
@@ -48,7 +56,6 @@ public class ChunkStorage {
      * From this point on the cache and PersistentDataContainer is kept in sync whenever adding/removing blocks.<br>
      * <br>
      * <b>If for whatever reason the PersistentDataContainer was modified, this method should be called to update the cache!</b>
-     *
      */
     public void loadBlocksIntoCache() {
         getPersistentBlocksContainer().ifPresent(blocks -> {
@@ -58,7 +65,8 @@ public class ChunkStorage {
                 for (int i = 0; i < coordsStrings.length; i++) {
                     coords[i] = Integer.parseInt(coordsStrings[i]);
                 }
-                BLOCKS.put(new Vector(coords[0], coords[1], coords[2]), blocks.get(key, new BlockCustomItemStore.PersistentType()));
+                var coordsVec = new Vector(coords[0], coords[1], coords[2]);
+                BLOCKS.put(coordsVec, blocks.get(key, new BlockStorage.PersistentType(this, coordsVec)));
             });
         });
     }
@@ -96,28 +104,18 @@ public class ChunkStorage {
     /**
      * Stores the BlockCustomItemStore under the specified location.
      *
-     * @param location The location to associate the data with.
+     * @param location   The location to associate the data with.
      * @param blockStore The data of the location.
-     *
      * @return Optional of the previously stored data; otherwise empty Optional.
      */
-    public Optional<BlockCustomItemStore> storeBlock(Location location, BlockCustomItemStore blockStore) {
-        if (blockStore.getCustomItem().hasNamespacedKey()) {
-            var pos = location.toVector();
-            var previousStore = BLOCKS.put(pos, blockStore);
-            if (previousStore != null) {
-                //TODO: Find a more generalised modular system, like running CustomItem actions on removal
-                ParticleUtils.stopAnimation(previousStore.getParticleUUID());
-            }
-            updateBlock(pos);
-            var animation = blockStore.getCustomItem().getParticleContent().getAnimation(ParticleLocation.BLOCK);
-            if(animation != null) {
-                //TODO: Find a more generalised modular system, like running CustomItem actions on placement
-                animation.spawn(location.getBlock());
-            }
-            return Optional.ofNullable(previousStore);
+    public Optional<BlockStorage> storeBlock(Location location, BlockStorage blockStore) {
+        var pos = location.toVector();
+        var previousStore = BLOCKS.put(pos, blockStore);
+        if (previousStore != null) {
+            //TODO: previousStore.onBreak(location);
         }
-        return Optional.empty();
+        updateBlock(pos);
+        return Optional.ofNullable(previousStore);
     }
 
     /**
@@ -126,16 +124,23 @@ public class ChunkStorage {
      * @param location The target location of the block
      * @return Optional of the previously stored data; otherwise empty Optional.
      */
-    public Optional<BlockCustomItemStore> removeBlock(Location location) {
+    public Optional<BlockStorage> removeBlock(Location location) {
         var pos = location.toVector();
         var previousStore = BLOCKS.remove(pos);
         updateBlock(pos);
         if (previousStore != null) {
-            //TODO: Find a more generalised modular system, like running CustomItem actions on removal
-            ParticleUtils.stopAnimation(previousStore.getParticleUUID());
+            //previousStore.onBreak(location);
             return Optional.of(previousStore);
         }
         return Optional.empty();
+    }
+
+    public BlockStorage getOrCreateBlockStorage(Location location) {
+        var pos = location.toVector();
+        return BLOCKS.computeIfAbsent(pos, vector -> {
+           var persistentBlockContainer = getPersistentContainer().map(container -> container.getAdapterContext().newPersistentDataContainer()).orElseThrow(() -> new RuntimeException("Failed to create PersistentDataContainer!"));
+           return new BlockStorage(this, vector, persistentBlockContainer);
+        });
     }
 
     /**
@@ -144,8 +149,8 @@ public class ChunkStorage {
      * @param location The location of the block.
      * @return The stored block if stored; otherwise empty Optional.
      */
-    public Optional<BlockCustomItemStore> getBlock(Location location) {
-        return Optional.ofNullable(BLOCKS.computeIfAbsent(location.toVector(), pos -> getPersistentBlocksContainer().map(blocks -> blocks.get(createKeyForBlock(pos), new BlockCustomItemStore.PersistentType())).orElse(null)));
+    public Optional<BlockStorage> getBlock(Location location) {
+        return Optional.ofNullable(BLOCKS.get(location.toVector()));
     }
 
     /**
@@ -153,7 +158,7 @@ public class ChunkStorage {
      *
      * @return The stored blocks in the chunk.
      */
-    public Map<Vector, BlockCustomItemStore> getStoredBlocks() {
+    public Map<Vector, BlockStorage> getStoredBlocks() {
         return BLOCKS.entrySet().stream().filter(entry -> entry.getValue() != null).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
@@ -166,8 +171,8 @@ public class ChunkStorage {
         getPersistentBlocksContainer().ifPresent(blocks -> {
             var value = BLOCKS.get(blockPos);
             var key = createKeyForBlock(blockPos);
-            if (value != null) {
-                blocks.set(key, new BlockCustomItemStore.PersistentType(), value);
+            if (value != null && !value.isEmpty()) { //Do not store empty storage in NBT, but keep them in cache.
+                blocks.set(key, new BlockStorage.PersistentType(this, blockPos), value);
             } else {
                 blocks.remove(key);
             }

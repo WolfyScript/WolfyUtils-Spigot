@@ -1,6 +1,7 @@
 package com.wolfyscript.utilities.bukkit.persistent.world;
 
 import com.wolfyscript.utilities.math.Vec2i;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.util.world.BlockCustomItemStore;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -17,10 +18,16 @@ public class WorldStorage {
 
     private final Map<Vec2i, ChunkStorage> CHUNK_DATA = new HashMap<>();
 
+    private final WolfyUtilCore core;
     private final UUID worldUUID;
 
-    public WorldStorage(UUID world) {
+    public WorldStorage(WolfyUtilCore core, UUID world) {
         this.worldUUID = world;
+        this.core = core;
+    }
+
+    public WolfyUtilCore getCore() {
+        return core;
     }
 
     protected Optional<World> getWorld() {
@@ -39,14 +46,8 @@ public class WorldStorage {
         return getOrCreateChunkStorage(new Vec2i(location.getBlockX() >> 4, location.getBlockZ() >> 4));
     }
 
-    /**
-     * Stores the BlockCustomItemStore under the specified location.
-     *
-     * @param location The location to associate the data with.
-     * @param blockStore The data of the location.
-     */
-    public Optional<BlockCustomItemStore> storeBlock(Location location, BlockCustomItemStore blockStore) {
-        return getOrCreateChunkStorage(location).storeBlock(location, blockStore);
+    public BlockStorage getOrCreateBlockStorage(Location location) {
+        return getOrCreateChunkStorage(location).getOrCreateBlockStorage(location);
     }
 
     /**
@@ -54,7 +55,7 @@ public class WorldStorage {
      *
      * @param location The target location of the block
      */
-    public Optional<BlockCustomItemStore> removeBlock(Location location) {
+    public Optional<BlockStorage> removeBlock(Location location) {
         return getOrCreateChunkStorage(location).removeBlock(location);
     }
 
@@ -62,7 +63,7 @@ public class WorldStorage {
         return getBlock(location).isPresent();
     }
 
-    public Optional<BlockCustomItemStore> getBlock(Location location) {
+    public Optional<BlockStorage> getBlock(Location location) {
         return getOrCreateChunkStorage(location).getBlock(location);
     }
 

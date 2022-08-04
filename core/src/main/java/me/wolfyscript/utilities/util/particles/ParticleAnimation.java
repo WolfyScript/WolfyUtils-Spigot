@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.util.Keyed;
 import me.wolfyscript.utilities.util.NamespacedKey;
@@ -173,7 +174,7 @@ public class ParticleAnimation implements Keyed {
      */
     public void spawn(Block block) {
         var worldStore = ((WolfyCoreBukkit)WolfyCoreBukkit.getInstance()).getPersistentStorage().getOrCreateWorldStorage(block.getWorld());
-        worldStore.getBlock(block.getLocation()).ifPresent(store -> store.setParticleUUID(new Scheduler(block).start()));
+        worldStore.getBlock(block.getLocation()).flatMap(store -> store.getData(CustomItemBlockData.ID, CustomItemBlockData.class)).ifPresent(data -> data.setParticleAnimationID(new Scheduler(block).start()));
     }
 
     /**
