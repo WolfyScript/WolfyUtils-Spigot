@@ -112,7 +112,7 @@ public class ChunkStorage {
         var pos = location.toVector();
         var previousStore = BLOCKS.put(pos, blockStore);
         if (previousStore != null) {
-            //TODO: previousStore.onBreak(location);
+            previousStore.onUnload();
         }
         updateBlock(pos);
         return Optional.ofNullable(previousStore);
@@ -125,11 +125,14 @@ public class ChunkStorage {
      * @return Optional of the previously stored data; otherwise empty Optional.
      */
     public Optional<BlockStorage> removeBlock(Location location) {
-        var pos = location.toVector();
+        return removeBlock(location.toVector());
+    }
+
+    public Optional<BlockStorage> removeBlock(Vector pos) {
         var previousStore = BLOCKS.remove(pos);
         updateBlock(pos);
         if (previousStore != null) {
-            //previousStore.onBreak(location);
+            previousStore.onUnload();
             return Optional.of(previousStore);
         }
         return Optional.empty();

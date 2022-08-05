@@ -8,12 +8,12 @@ import com.wolfyscript.utilities.bukkit.commands.QueryDebugCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleAnimationCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleEffectCommand;
 import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
-import com.wolfyscript.utilities.bukkit.listeners.BlockListener;
 import com.wolfyscript.utilities.bukkit.listeners.EquipListener;
 import com.wolfyscript.utilities.bukkit.listeners.GUIInventoryListener;
 import com.wolfyscript.utilities.bukkit.listeners.PersistentStorageListener;
 import com.wolfyscript.utilities.bukkit.listeners.PlayerListener;
 import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomDurabilityListener;
+import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomItemDataListener;
 import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomItemPlayerListener;
 import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomParticleListener;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
@@ -34,7 +34,6 @@ import com.wolfyscript.utilities.bukkit.nbt.QueryNodeLong;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeCompound;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeShort;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeString;
-import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
 import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
@@ -411,11 +410,11 @@ public final class WolfyCoreBukkit extends WUPlugin {
         Bukkit.getPluginManager().registerEvents(new CustomDurabilityListener(this), this);
         Bukkit.getPluginManager().registerEvents(new CustomParticleListener(), this);
         Bukkit.getPluginManager().registerEvents(new CustomItemPlayerListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new BlockListener(this), this);
         Bukkit.getPluginManager().registerEvents(new EquipListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
         Bukkit.getPluginManager().registerEvents(new GUIInventoryListener(), this);
         Bukkit.getPluginManager().registerEvents(new PersistentStorageListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new CustomItemDataListener(this), this);
     }
 
     private void registerCommands() {

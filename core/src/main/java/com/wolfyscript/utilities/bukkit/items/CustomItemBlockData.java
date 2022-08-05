@@ -14,7 +14,6 @@ import me.wolfyscript.utilities.util.events.CustomItemBreakEvent;
 import me.wolfyscript.utilities.util.particles.ParticleLocation;
 import me.wolfyscript.utilities.util.particles.ParticleUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.jetbrains.annotations.Nullable;
@@ -62,23 +61,26 @@ public class CustomItemBlockData extends CustomBlockData {
         this.particleAnimationID = particleAnimationID;
     }
 
-    @Override
     public void onPlace(BlockPlaceEvent event) {
         getCustomItem().ifPresent(customItem -> {
             var animation = customItem.getParticleContent().getAnimation(ParticleLocation.BLOCK);
-            if(animation != null) {
+            if (animation != null) {
                 animation.spawn(event.getBlock());
             }
         });
     }
 
-    @Override
     public void onBreak(BlockBreakEvent event) {
         getCustomItem().ifPresent(customItem -> {
             var event1 = new CustomItemBreakEvent(customItem, event);
             Bukkit.getPluginManager().callEvent(event1);
             event.setCancelled(event1.isCancelled());
         });
+        ParticleUtils.stopAnimation(particleAnimationID);
+    }
+
+    @Override
+    public void onUnload() {
         ParticleUtils.stopAnimation(particleAnimationID);
     }
 

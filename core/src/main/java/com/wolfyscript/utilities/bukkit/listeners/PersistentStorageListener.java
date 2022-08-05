@@ -1,16 +1,47 @@
 package com.wolfyscript.utilities.bukkit.listeners;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoreBreakEvent;
+import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoreDropItemsEvent;
+import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoreMultiPlaceEvent;
+import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorePlaceEvent;
+import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
 import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
+import com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.ChunkStorage;
+import com.wolfyscript.utilities.bukkit.persistent.world.WorldStorage;
+import java.util.List;
+import java.util.Objects;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.data.Bisected;
+import org.bukkit.block.data.type.Bed;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockMultiPlaceEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.LeavesDecayEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.metadata.FixedMetadataValue;
 
 public class PersistentStorageListener implements Listener {
 
@@ -70,6 +101,200 @@ public class PersistentStorageListener implements Listener {
         ChunkStorage chunkStorage = persistentStorage.getOrCreateWorldStorage(chunk.getWorld()).getOrCreateChunkStorage(chunk.getX(), chunk.getZ());
         chunkStorage.loadBlocksIntoCache();
         return chunkStorage;
+    }
+
+    /* ******************** *
+     * Block Storage events *
+     * ******************** */
+
+    /**
+     * Handles the BlockStorages that are placed together with blocks.
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onBlockStoragePlace(BlockPlaceEvent event) {
+        if (event.canBuild()) {
+            Block block = event.getBlock();
+            WorldStorage worldStorage = persistentStorage.getOrCreateWorldStorage(block.getWorld());
+            BlockStorage blockStorage = worldStorage.getOrCreateBlockStorage(block.getLocation());
+            var blockStorePlaceEvent = new BlockStorePlaceEvent(block, blockStorage, event.getBlockReplacedState(), event.getBlockAgainst(), event.getItemInHand(), event.getPlayer(), event.canBuild(), event.getHand());
+            Bukkit.getPluginManager().callEvent(blockStorePlaceEvent);
+            event.setCancelled(blockStorePlaceEvent.isCancelled());
+
+            if (blockStorage.isEmpty() || blockStorePlaceEvent.isCancelled()) {
+                worldStorage.removeBlock(block.getLocation());
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onBlockPlaceMulti(BlockMultiPlaceEvent event) {
+        WorldStorage worldStorage = persistentStorage.getOrCreateWorldStorage(event.getBlock().getWorld());
+        List<BlockStorage> storages = event.getReplacedBlockStates().stream().map(state -> worldStorage.getOrCreateBlockStorage(state.getLocation())).toList();
+        var blockStorageMultiPlaceEvent = new BlockStoreMultiPlaceEvent(event.getReplacedBlockStates(), storages, event.getBlockAgainst(), event.getItemInHand(), event.getPlayer(), event.canBuild());
+        event.setCancelled(blockStorageMultiPlaceEvent.isCancelled());
+        if (blockStorageMultiPlaceEvent.isCancelled()) {
+            event.getReplacedBlockStates().forEach(state -> worldStorage.removeBlock(state.getLocation()));
+        } else {
+            World world = event.getBlock().getWorld();
+            List<BlockState> states = event.getReplacedBlockStates();
+            for (int i = 0; i < blockStorageMultiPlaceEvent.getBlockStorages().size(); i++) {
+                BlockStorage blockStorage = blockStorageMultiPlaceEvent.getBlockStorages().get(i);
+                if (blockStorage.isEmpty()) {
+                    blockStorage.remove();
+                } else {
+                    world.getBlockAt(states.get(i).getLocation()).setMetadata(PREVIOUS_BROKEN_STORE, new FixedMetadataValue(core, blockStorage));
+                }
+            }
+        }
+    }
+
+    /**
+     * Called when liquid flows or when a Dragon Egg teleports.
+     * This Listener only listens for the Dragon Egg.
+     * The BlockStorage is copied from the original position to the new postion.
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onBlockFromTo(BlockFromToEvent event) {
+        var block = event.getBlock();
+        var worldStore = persistentStorage.getOrCreateWorldStorage(event.getBlock().getWorld());
+        worldStore.getBlock(block.getLocation()).ifPresent(store -> {
+            Location loc = event.getToBlock().getLocation();
+            worldStore.removeBlock(block.getLocation());
+            store.copyToOtherBlockStorage(worldStore.getOrCreateBlockStorage(loc));
+        });
+    }
+
+    /**
+     * Makes sure that the positions of BlockStorages are updated correctly when pushed by a piston.
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onPistonExtend(BlockPistonExtendEvent event) {
+        updatePistonBlocks(event.getBlock().getWorld(), event.getBlocks(), event.getDirection());
+    }
+
+    /**
+     * Makes sure that the positions of BlockStorages are updated correctly when pulled by a piston.
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onPistonRetract(BlockPistonRetractEvent event) {
+        updatePistonBlocks(event.getBlock().getWorld(), event.getBlocks(), event.getDirection());
+    }
+
+    private void updatePistonBlocks(World world, List<Block> blocks, BlockFace direction) {
+        var worldStorage = persistentStorage.getOrCreateWorldStorage(world);
+        blocks.forEach(block -> {
+            worldStorage.getBlock(block.getLocation()).flatMap(store -> store.getData(CustomItemBlockData.ID, CustomItemBlockData.class)).ifPresent(data -> {
+                var storedItem = data.getCustomItem();
+                storedItem.ifPresent(customItem -> {
+                    worldStorage.removeBlock(block.getLocation());
+                    worldStorage.getOrCreateBlockStorage(block.getRelative(direction).getLocation()).addOrSetData(new CustomItemBlockData(core, customItem.getNamespacedKey()));
+                });
+            });
+        });
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onBlockStorageBreak(BlockBreakEvent event) {
+        var block = event.getBlock();
+        var worldStorage = persistentStorage.getOrCreateWorldStorage(block.getWorld());
+        worldStorage.getBlock(block.getLocation()).ifPresent(store -> {
+            if (!store.isEmpty()) {
+                var blockStorageBreakEvent = new BlockStoreBreakEvent(event.getBlock(), store, event.getPlayer());
+                Bukkit.getPluginManager().callEvent(blockStorageBreakEvent);
+                if (blockStorageBreakEvent.isCancelled()) return;
+                worldStorage.removeBlock(block.getLocation()).ifPresent(storage -> {
+                    if (event.isDropItems()) {
+                        event.getBlock().setMetadata(PREVIOUS_BROKEN_STORE, new FixedMetadataValue(core, storage));
+                    }
+                });
+            }
+        });
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onEntityExplodeBlockStorages(EntityExplodeEvent event) {
+        handleExplodedBlockStorages(persistentStorage.getOrCreateWorldStorage(event.getEntity().getWorld()), event.blockList());
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onBlockExplodeStorages(BlockExplodeEvent event) {
+        var worldStorage = persistentStorage.getOrCreateWorldStorage(event.getBlock().getWorld());
+        worldStorage.removeBlock(event.getBlock().getLocation()); // Remove the block that exploded, since that might have had custom data.
+        //event.setYield(0f);
+        handleExplodedBlockStorages(worldStorage, event.blockList());
+    }
+
+    private void handleExplodedBlockStorages(WorldStorage worldStorage, List<Block> blocks) {
+        //Temporarily save the BlockStorage in the blocks metadata container, so the items are dropped correctly.
+        for (Block block : blocks) {
+            worldStorage.removeBlock(block.getLocation()).ifPresent(storage -> {
+                if (!storage.isEmpty()) {
+                    block.setMetadata(PREVIOUS_BROKEN_STORE, new FixedMetadataValue(core, storage));
+                }
+            });
+        }
+    }
+
+    private void removeMultiBlockItems(Block block) {
+        var worldStorage = persistentStorage.getOrCreateWorldStorage(block.getWorld());
+        if (block.getBlockData() instanceof Bisected bisected) {
+            worldStorage.removeBlock(bisected.getHalf().equals(Bisected.Half.BOTTOM) ? block.getLocation().add(0, 1, 0) : block.getLocation().subtract(0, 1, 0));
+        } else if (block.getBlockData() instanceof Bed bed) {
+            worldStorage.removeBlock(block.getLocation().add(bed.getFacing().getDirection()));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockStorageItemDrop(BlockDropItemEvent event) {
+        var state = event.getBlockState(); // Get previous state with old metadata.
+        state.getMetadata(PREVIOUS_BROKEN_STORE).stream().filter(metadataValue -> Objects.equals(metadataValue.getOwningPlugin(), core)).findFirst().ifPresent(metadataValue -> {
+            event.getBlock().removeMetadata(PREVIOUS_BROKEN_STORE, core); //Remove old metadata from block!
+            if (metadataValue.value() instanceof BlockStorage store) {
+                var blockStoreDropItemsEvent = new BlockStoreDropItemsEvent(event.getBlock(), state, store, event.getPlayer(), event.getItems());
+                Bukkit.getPluginManager().callEvent(blockStoreDropItemsEvent);
+                event.setCancelled(blockStoreDropItemsEvent.isCancelled());
+            }
+        });
+    }
+
+    /**
+     * Removes the BlockStorage if the block is burned.
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onBlockBurn(BlockBurnEvent event) {
+        removeIfAvailable(event.getBlock());
+    }
+
+    /**
+     * Removes the BlockStorage if the block is a leave and decays.
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onLeavesDecay(LeavesDecayEvent event) {
+        removeIfAvailable(event.getBlock());
+    }
+
+    /**
+     * Removes the BlockStorage if the block disappears because of world conditions.
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onBlockFade(BlockFadeEvent event) {
+        if (event.getNewState().getType().equals(Material.AIR)) {
+            removeIfAvailable(event.getBlock());
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onBlockPhysics(BlockPhysicsEvent event) {
+        if (event.getChangedType().equals(Material.AIR)) {
+            removeIfAvailable(event.getBlock());
+        }
+    }
+
+    private void removeIfAvailable(Block block) {
+        var worldStorage = persistentStorage.getOrCreateWorldStorage(block.getWorld());
+        worldStorage.getBlock(block.getLocation()).ifPresent(customItemStore -> {
+            worldStorage.removeBlock(block.getLocation());
+        });
     }
 
 

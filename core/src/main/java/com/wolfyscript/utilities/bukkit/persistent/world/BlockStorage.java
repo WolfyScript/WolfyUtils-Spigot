@@ -53,12 +53,12 @@ public class BlockStorage {
         return data.isEmpty();
     }
 
-    public void onPlace(BlockPlaceEvent location) {
-        data.values().forEach(customBlockData -> customBlockData.onPlace(location));
+    public void remove() {
+        getChunkStorage().removeBlock(getPos());
     }
 
-    public void onBreak(BlockBreakEvent event) {
-        data.values().forEach(customBlockData -> customBlockData.onBreak(event));
+    public void onUnload() {
+        data.values().forEach(customBlockData -> customBlockData.onUnload());
     }
 
     public List<ItemStack> dropItems(Location location) {
