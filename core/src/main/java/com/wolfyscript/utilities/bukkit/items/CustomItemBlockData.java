@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoreEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorePlaceEvent;
+import com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.ChunkStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import java.util.Optional;
@@ -52,7 +53,7 @@ public class CustomItemBlockData extends CustomBlockData {
         this.core = other.core;
         this.chunkStorage = other.chunkStorage;
         this.pos = other.pos;
-        this.item = NamespacedKey.of(other.getNamespacedKey().toString());
+        this.item = new NamespacedKey(other.getNamespacedKey().getNamespace(), other.getNamespacedKey().getKey());
         this.particleAnimationID = null;
     }
 
@@ -110,5 +111,10 @@ public class CustomItemBlockData extends CustomBlockData {
     @Override
     public CustomItemBlockData copy() {
         return new CustomItemBlockData(this);
+    }
+
+    @Override
+    public CustomItemBlockData copyTo(BlockStorage storage) {
+        return new CustomItemBlockData(core, storage.getChunkStorage(), storage.getPos(), item);
     }
 }

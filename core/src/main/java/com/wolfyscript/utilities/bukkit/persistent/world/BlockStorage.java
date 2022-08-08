@@ -142,15 +142,10 @@ public class BlockStorage {
 
     public void copyToOtherBlockStorage(BlockStorage storage) {
         data.values().forEach(customBlockData -> {
-            CustomBlockData copy = customBlockData.copy();
+            CustomBlockData copy = customBlockData.copyTo(storage);
             storage.addOrSetData(copy);
-            copy.onLoad();
         });
-    }
-
-    public BlockCustomItemStore store(BlockCustomItemStore customItemStore) {
-
-        return null; //TODO: Return previous stored value
+        storage.onLoad();
     }
 
     public static class PersistentType implements PersistentDataType<PersistentDataContainer, BlockStorage> {
@@ -178,7 +173,6 @@ public class BlockStorage {
         @NotNull
         @Override
         public PersistentDataContainer toPrimitive(@NotNull BlockStorage complex, @NotNull PersistentDataAdapterContext context) {
-            PersistentDataContainer data = context.newPersistentDataContainer();
             complex.saveToPersistent();
             return complex.persistentContainer;
         }

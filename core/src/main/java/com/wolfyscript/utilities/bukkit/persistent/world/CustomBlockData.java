@@ -30,6 +30,8 @@ public abstract class CustomBlockData implements Keyed {
 
     public abstract CustomBlockData copy();
 
+    public abstract CustomBlockData copyTo(BlockStorage storage);
+
     @JsonIgnore
     @Override
     public NamespacedKey getNamespacedKey() {
