@@ -1,5 +1,6 @@
 package com.wolfyscript.utilities.bukkit.persistent.world;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.wolfyscript.utilities.math.Vec2i;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
+@JsonIncludeProperties
 public class ChunkStorage {
 
     public static final NamespacedKey BLOCKS_KEY = new NamespacedKey("wolfyutils", "blocks");
@@ -66,7 +68,7 @@ public class ChunkStorage {
                     coords[i] = Integer.parseInt(coordsStrings[i]);
                 }
                 var coordsVec = new Vector(coords[0], coords[1], coords[2]);
-                BLOCKS.put(coordsVec, blocks.get(key, new BlockStorage.PersistentType(this, coordsVec)));
+                setBlockStorageIfAbsent(blocks.get(key, new BlockStorage.PersistentType(this, coordsVec)));
             });
         });
     }
@@ -102,23 +104,6 @@ public class ChunkStorage {
     }
 
     /**
-     * Stores the BlockCustomItemStore under the specified location.
-     *
-     * @param location   The location to associate the data with.
-     * @param blockStore The data of the location.
-     * @return Optional of the previously stored data; otherwise empty Optional.
-     */
-    public Optional<BlockStorage> storeBlock(Location location, BlockStorage blockStore) {
-        var pos = location.toVector();
-        var previousStore = BLOCKS.put(pos, blockStore);
-        if (previousStore != null) {
-            previousStore.onUnload();
-        }
-        updateBlock(pos);
-        return Optional.ofNullable(previousStore);
-    }
-
-    /**
      * Removes the stored block at this location and stops every active particle effect.
      *
      * @param location The target location of the block
@@ -138,12 +123,55 @@ public class ChunkStorage {
         return Optional.empty();
     }
 
+    /**
+     * Gets the BlockStorage if it exists; otherwise creates a new instance via {@link #createBlockStorage(Location)}.<br>
+     *
+     * In case the BlockStorage doesn't exist yet, then the new BlockStorage instance is directly applied to the ChunkStorage.<br>
+     *
+     * If that is not required or desired, then {@link #getOrCreateBlockStorage(Location)} and {@link #setBlockStorageIfAbsent(BlockStorage)} provide the same functionality together.
+     *
+     * @param location The location of the Block.
+     * @return The existing BlockStorage; otherwise a new BlockStorage Instance.
+     */
+    public BlockStorage getOrCreateAndSetBlockStorage(Location location) {
+        var pos = location.toVector();
+        BlockStorage blockStorage = BLOCKS.computeIfAbsent(pos, vector -> createBlockStorage(location));
+        updateBlock(blockStorage.getPos());
+        return blockStorage;
+    }
+
+    /**
+     * Gets the BlockStorage if it exists; otherwise creates a new instance via {@link #createBlockStorage(Location)}
+     *
+     * @param location The location of the block.
+     * @return The BlockStorage of the block if it exists; otherwise a new BlockStorage instance for the block.
+     */
     public BlockStorage getOrCreateBlockStorage(Location location) {
         var pos = location.toVector();
-        return BLOCKS.computeIfAbsent(pos, vector -> {
-           var persistentBlockContainer = getPersistentContainer().map(container -> container.getAdapterContext().newPersistentDataContainer()).orElseThrow(() -> new RuntimeException("Failed to create PersistentDataContainer!"));
-           return new BlockStorage(this, vector, persistentBlockContainer);
-        });
+        return BLOCKS.getOrDefault(pos, createBlockStorage(location));
+    }
+
+    /**
+     * Creates a new BlockStorage for the specified location.<br>
+     * The BlockStorage can then be applied to the block using {@link #setBlockStorageIfAbsent(BlockStorage)}
+     *
+     * @param location The location of the block.
+     * @return The new instance of the BlockStorage.
+     */
+    public BlockStorage createBlockStorage(Location location) {
+        var pos = location.toVector();
+        var persistentBlockContainer = getPersistentContainer().map(container -> container.getAdapterContext().newPersistentDataContainer()).orElseThrow(() -> new RuntimeException("Failed to create PersistentDataContainer!"));
+        return new BlockStorage(this, pos, persistentBlockContainer);
+    }
+
+    /**
+     * Applies the specified BlockStorage to the ChunkStorage if it isn't occupied by another storage yet.
+     *
+     * @param blockStorage The BlockStorage to apply.
+     */
+    public void setBlockStorageIfAbsent(BlockStorage blockStorage) {
+        BLOCKS.putIfAbsent(blockStorage.getPos(), blockStorage);
+        updateBlock(blockStorage.getPos());
     }
 
     /**
@@ -170,7 +198,7 @@ public class ChunkStorage {
      *
      * @param blockPos The block position to update.
      */
-    private void updateBlock(Vector blockPos) {
+    public void updateBlock(Vector blockPos) {
         getPersistentBlocksContainer().ifPresent(blocks -> {
             var value = BLOCKS.get(blockPos);
             var key = createKeyForBlock(blockPos);
