@@ -1,15 +1,17 @@
 package com.wolfyscript.utilities.bukkit.listeners.custom_item;
 
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoreBreakEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoreDropItemsEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoreMultiPlaceEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorePlaceEvent;
 import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
-import me.wolfyscript.utilities.api.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.persistent.world.ChunkStorage;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.util.events.CustomItemPlaceEvent;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.Container;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.event.EventHandler;
@@ -19,9 +21,9 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 
 public class CustomItemDataListener implements Listener {
 
-    private final WolfyUtilCore core;
+    private final WolfyCoreBukkit core;
 
-    public CustomItemDataListener(WolfyUtilCore core) {
+    public CustomItemDataListener(WolfyCoreBukkit core) {
         this.core = core;
     }
 
@@ -62,7 +64,9 @@ public class CustomItemDataListener implements Listener {
             customItem = event1.getCustomItem();
             if (!event1.isCancelled()) {
                 if (customItem != null) {
-                    var customItemData = new CustomItemBlockData(core, customItem.getNamespacedKey());
+                    Location blockLoc = event.getBlockPlaced().getLocation();
+                    ChunkStorage chunkStorage = core.getPersistentStorage().getOrCreateWorldStorage(blockLoc.getWorld()).getOrCreateChunkStorage(blockLoc);
+                    var customItemData = new CustomItemBlockData(core, chunkStorage, blockLoc.toVector(), customItem.getNamespacedKey());
                     event.getStore().addOrSetData(customItemData);
                     customItemData.onPlace(event);
                 }
@@ -81,7 +85,9 @@ public class CustomItemDataListener implements Listener {
                 return;
             }
             event.getBlockStorages().forEach(blockStorage -> {
-                var customItemData = new CustomItemBlockData(core, customItem.getNamespacedKey());
+                Location blockLoc = event.getBlockPlaced().getLocation();
+                ChunkStorage chunkStorage = core.getPersistentStorage().getOrCreateWorldStorage(blockLoc.getWorld()).getOrCreateChunkStorage(blockLoc);
+                var customItemData = new CustomItemBlockData(core, chunkStorage, blockLoc.toVector(), customItem.getNamespacedKey());
                 blockStorage.addOrSetData(customItemData);
                 customItemData.onPlace(event);
             });

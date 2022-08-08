@@ -5,7 +5,6 @@ import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoreBreakEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoreDropItemsEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoreMultiPlaceEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorePlaceEvent;
-import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
 import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.ChunkStorage;
@@ -19,7 +18,6 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.event.EventHandler;
@@ -41,6 +39,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 
 public class PersistentStorageListener implements Listener {
@@ -58,21 +57,29 @@ public class PersistentStorageListener implements Listener {
     @EventHandler
     private void onChunkLoad(ChunkLoadEvent event) {
         Chunk chunk = event.getChunk();
-        var chunkStorage = initOrUpdateChunk(chunk);
-        startParticles(chunkStorage);
+        initOrUpdateChunk(chunk);
     }
 
     @EventHandler
     private void onChunkUnload(ChunkUnloadEvent event) {
         Chunk chunk = event.getChunk();
-        ChunkStorage chunkStorage = persistentStorage.getOrCreateWorldStorage(event.getWorld()).getOrCreateChunkStorage(chunk.getX(), chunk.getZ());
-
-        //TODO: Find a more modular system to stop particles, like running CustomItem actions on unload
+        WorldStorage worldStorage = persistentStorage.getOrCreateWorldStorage(event.getWorld());
+        ChunkStorage chunkStorage = worldStorage.getOrCreateChunkStorage(chunk.getX(), chunk.getZ());
         chunkStorage.getStoredBlocks().forEach((vector, store) -> {
-            //TODO: onUnLoad
+            store.onUnload();
         });
+
     }
 
+    @EventHandler
+    private void onSave(WorldSaveEvent event) {
+        World world = event.getWorld();
+    }
+
+    /**
+     * This is required since the world was loaded before the plugin was enabled, therefor the spawn-chunks are already loaded.
+     * So this makes sure to initialize the existing chunks.
+     */
     @EventHandler
     private void onServerLoad(ServerLoadEvent event) {
         for (World world : Bukkit.getWorlds()) {
@@ -82,25 +89,10 @@ public class PersistentStorageListener implements Listener {
         }
     }
 
-    private void startParticles(ChunkStorage chunkStorage) {
-        //TODO: Find a more generalised modular system, like running CustomItem actions on load
-        chunkStorage.getChunk().ifPresent(chunk -> {
-            chunkStorage.getStoredBlocks().forEach((vector, blockStore) -> {
-
-                /*
-                var animation = blockStore.getCustomItem().getParticleContent().getAnimation(ParticleLocation.BLOCK);
-                if(animation != null) {
-                    animation.spawn(new Location(chunk.getWorld(), vector.getX(),vector.getY(),vector.getZ()).getBlock());
-                }
-                 */
-            });
-        });
-    }
-
-    private ChunkStorage initOrUpdateChunk(Chunk chunk) {
+    private void initOrUpdateChunk(Chunk chunk) {
         ChunkStorage chunkStorage = persistentStorage.getOrCreateWorldStorage(chunk.getWorld()).getOrCreateChunkStorage(chunk.getX(), chunk.getZ());
         chunkStorage.loadBlocksIntoCache();
-        return chunkStorage;
+        chunkStorage.getStoredBlocks().forEach((vector, blockStorage) -> blockStorage.onLoad());
     }
 
     /* ******************** *
@@ -115,13 +107,13 @@ public class PersistentStorageListener implements Listener {
         if (event.canBuild()) {
             Block block = event.getBlock();
             WorldStorage worldStorage = persistentStorage.getOrCreateWorldStorage(block.getWorld());
-            BlockStorage blockStorage = worldStorage.getOrCreateBlockStorage(block.getLocation());
+            BlockStorage blockStorage = worldStorage.createBlockStorage(block.getLocation());
             var blockStorePlaceEvent = new BlockStorePlaceEvent(block, blockStorage, event.getBlockReplacedState(), event.getBlockAgainst(), event.getItemInHand(), event.getPlayer(), event.canBuild(), event.getHand());
             Bukkit.getPluginManager().callEvent(blockStorePlaceEvent);
             event.setCancelled(blockStorePlaceEvent.isCancelled());
 
-            if (blockStorage.isEmpty() || blockStorePlaceEvent.isCancelled()) {
-                worldStorage.removeBlock(block.getLocation());
+            if (!blockStorage.isEmpty() && !blockStorePlaceEvent.isCancelled()) {
+                worldStorage.setBlockStorageIfAbsent(blockStorage);
             }
         }
     }
@@ -129,21 +121,16 @@ public class PersistentStorageListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onBlockPlaceMulti(BlockMultiPlaceEvent event) {
         WorldStorage worldStorage = persistentStorage.getOrCreateWorldStorage(event.getBlock().getWorld());
-        List<BlockStorage> storages = event.getReplacedBlockStates().stream().map(state -> worldStorage.getOrCreateBlockStorage(state.getLocation())).toList();
+        List<BlockStorage> storages = event.getReplacedBlockStates().stream().map(state -> worldStorage.createBlockStorage(state.getLocation())).toList();
         var blockStorageMultiPlaceEvent = new BlockStoreMultiPlaceEvent(event.getReplacedBlockStates(), storages, event.getBlockAgainst(), event.getItemInHand(), event.getPlayer(), event.canBuild());
         event.setCancelled(blockStorageMultiPlaceEvent.isCancelled());
-        if (blockStorageMultiPlaceEvent.isCancelled()) {
-            event.getReplacedBlockStates().forEach(state -> worldStorage.removeBlock(state.getLocation()));
-        } else {
-            World world = event.getBlock().getWorld();
-            List<BlockState> states = event.getReplacedBlockStates();
-            for (int i = 0; i < blockStorageMultiPlaceEvent.getBlockStorages().size(); i++) {
-                BlockStorage blockStorage = blockStorageMultiPlaceEvent.getBlockStorages().get(i);
-                if (blockStorage.isEmpty()) {
-                    blockStorage.remove();
-                } else {
-                    world.getBlockAt(states.get(i).getLocation()).setMetadata(PREVIOUS_BROKEN_STORE, new FixedMetadataValue(core, blockStorage));
-                }
+
+        if (blockStorageMultiPlaceEvent.isCancelled()) return;
+
+        for (int i = 0; i < blockStorageMultiPlaceEvent.getBlockStorages().size(); i++) {
+            BlockStorage blockStorage = blockStorageMultiPlaceEvent.getBlockStorages().get(i);
+            if (!blockStorage.isEmpty()) {
+                worldStorage.setBlockStorageIfAbsent(blockStorage);
             }
         }
     }
@@ -160,7 +147,7 @@ public class PersistentStorageListener implements Listener {
         worldStore.getBlock(block.getLocation()).ifPresent(store -> {
             Location loc = event.getToBlock().getLocation();
             worldStore.removeBlock(block.getLocation());
-            store.copyToOtherBlockStorage(worldStore.getOrCreateBlockStorage(loc));
+            store.copyToOtherBlockStorage(worldStore.getOrCreateAndSetBlockStorage(loc));
         });
     }
 
@@ -182,15 +169,11 @@ public class PersistentStorageListener implements Listener {
 
     private void updatePistonBlocks(World world, List<Block> blocks, BlockFace direction) {
         var worldStorage = persistentStorage.getOrCreateWorldStorage(world);
-        blocks.forEach(block -> {
-            worldStorage.getBlock(block.getLocation()).flatMap(store -> store.getData(CustomItemBlockData.ID, CustomItemBlockData.class)).ifPresent(data -> {
-                var storedItem = data.getCustomItem();
-                storedItem.ifPresent(customItem -> {
-                    worldStorage.removeBlock(block.getLocation());
-                    worldStorage.getOrCreateBlockStorage(block.getRelative(direction).getLocation()).addOrSetData(new CustomItemBlockData(core, customItem.getNamespacedKey()));
-                });
-            });
-        });
+        blocks.forEach(block -> worldStorage.getBlock(block.getLocation()).ifPresent(store -> {
+            Location moveTo = block.getRelative(direction).getLocation();
+            worldStorage.removeBlock(block.getLocation());
+            store.copyToOtherBlockStorage(worldStorage.getOrCreateAndSetBlockStorage(moveTo));
+        }));
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)

@@ -20,6 +20,10 @@ public abstract class CustomBlockData implements Keyed {
         return Optional.empty();
     }
 
+    public void onLoad() {
+
+    }
+
     public void onUnload() {
 
     }

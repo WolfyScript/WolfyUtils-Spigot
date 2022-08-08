@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoreEvent;
+import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorePlaceEvent;
+import com.wolfyscript.utilities.bukkit.persistent.world.ChunkStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,6 +19,7 @@ import me.wolfyscript.utilities.util.particles.ParticleUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 public class CustomItemBlockData extends CustomBlockData {
@@ -25,14 +29,20 @@ public class CustomItemBlockData extends CustomBlockData {
     @JsonIgnore
     private final WolfyUtilCore core;
     @JsonIgnore
+    private final ChunkStorage chunkStorage;
+    @JsonIgnore
+    private final Vector pos;
+    @JsonIgnore
     private UUID particleAnimationID;
 
     private final NamespacedKey item;
 
     @JsonCreator
-    public CustomItemBlockData(@JacksonInject("core") WolfyUtilCore core, @JsonProperty("item") NamespacedKey item) {
+    public CustomItemBlockData(@JacksonInject WolfyUtilCore core, @JacksonInject ChunkStorage chunkStorage, @JacksonInject Vector pos, @JsonProperty("item") NamespacedKey item) {
         super(ID);
         this.core = core;
+        this.chunkStorage = chunkStorage;
+        this.pos = pos;
         this.item = item;
         this.particleAnimationID = null;
     }
@@ -40,6 +50,8 @@ public class CustomItemBlockData extends CustomBlockData {
     private CustomItemBlockData(CustomItemBlockData other) {
         super(ID);
         this.core = other.core;
+        this.chunkStorage = other.chunkStorage;
+        this.pos = other.pos;
         this.item = NamespacedKey.of(other.getNamespacedKey().toString());
         this.particleAnimationID = null;
     }
@@ -48,6 +60,7 @@ public class CustomItemBlockData extends CustomBlockData {
         return item;
     }
 
+    @JsonIgnore
     public Optional<CustomItem> getCustomItem() {
         return Optional.ofNullable(core.getRegistries().getCustomItems().get(getItem()));
     }
@@ -65,7 +78,7 @@ public class CustomItemBlockData extends CustomBlockData {
         getCustomItem().ifPresent(customItem -> {
             var animation = customItem.getParticleContent().getAnimation(ParticleLocation.BLOCK);
             if (animation != null) {
-                animation.spawn(event.getBlock());
+                setParticleAnimationID(animation.spawn(event.getBlockPlaced()));
             }
         });
     }
@@ -77,6 +90,16 @@ public class CustomItemBlockData extends CustomBlockData {
             event.setCancelled(event1.isCancelled());
         });
         ParticleUtils.stopAnimation(particleAnimationID);
+    }
+
+    @Override
+    public void onLoad() {
+        getCustomItem().ifPresent(customItem -> {
+            var animation = customItem.getParticleContent().getAnimation(ParticleLocation.BLOCK);
+            if (animation != null) {
+                chunkStorage.getChunk().ifPresent(chunk -> setParticleAnimationID(animation.spawn(chunk.getWorld().getBlockAt(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ()))));
+            }
+        });
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.wolfyscript.utilities.bukkit.persistent.world;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.InjectableValues;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -14,8 +13,6 @@ import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import me.wolfyscript.utilities.util.world.BlockCustomItemStore;
 import org.bukkit.Location;
 import me.wolfyscript.utilities.util.NamespacedKey;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -58,7 +55,11 @@ public class BlockStorage {
     }
 
     public void onUnload() {
-        data.values().forEach(customBlockData -> customBlockData.onUnload());
+        data.values().forEach(CustomBlockData::onUnload);
+    }
+
+    public void onLoad() {
+        data.values().forEach(CustomBlockData::onLoad);
     }
 
     public List<ItemStack> dropItems(Location location) {
@@ -76,7 +77,6 @@ public class BlockStorage {
                 data.put(blockData.getNamespacedKey(), blockData);
             }
         }
-
     }
 
     public <D extends CustomBlockData> Optional<D> getData(NamespacedKey key, Class<D> dataType) {
@@ -110,9 +110,10 @@ public class BlockStorage {
                 throw new RuntimeException(e);
             }
         }
+        persistentContainer.set(DATA_KEY, PersistentDataType.TAG_CONTAINER, dataPersistent);
     }
 
-    private void loadFromPersistent() {
+    private void loadFromPersistent(ChunkStorage chunkStorage) {
         var dataTypeRegistry = core.getRegistries().getCustomBlockData();
         var objectMapper = JacksonUtil.getObjectMapper();
         var dataPersistent = getPersistentData();
@@ -123,8 +124,11 @@ public class BlockStorage {
             if (type != null) {
                 CustomBlockData blockData = null;
                 try {
-                    //TODO: Inject more optional objects, that the data might use, like the pos, chunk, world, etc.
-                    blockData = objectMapper.reader(new InjectableValues.Std().addValue("core", core)).readValue(customDataString);
+                    blockData = objectMapper.reader(new InjectableValues.Std()
+                            .addValue(WolfyUtilCore.class, core)
+                            .addValue(ChunkStorage.class, chunkStorage)
+                            .addValue(Vector.class, pos)
+                    ).forType(type).readValue(customDataString);
                 } catch (JsonProcessingException e) {
                     core.getLogger().severe("Failed to load custom block data \"" + key + "\" at pos " + pos);
                     e.printStackTrace();
@@ -137,7 +141,11 @@ public class BlockStorage {
     }
 
     public void copyToOtherBlockStorage(BlockStorage storage) {
-        data.values().forEach(customBlockData -> storage.addOrSetData(customBlockData.copy()));
+        data.values().forEach(customBlockData -> {
+            CustomBlockData copy = customBlockData.copy();
+            storage.addOrSetData(copy);
+            copy.onLoad();
+        });
     }
 
     public BlockCustomItemStore store(BlockCustomItemStore customItemStore) {
@@ -171,6 +179,7 @@ public class BlockStorage {
         @Override
         public PersistentDataContainer toPrimitive(@NotNull BlockStorage complex, @NotNull PersistentDataAdapterContext context) {
             PersistentDataContainer data = context.newPersistentDataContainer();
+            complex.saveToPersistent();
             return complex.persistentContainer;
         }
 
@@ -178,7 +187,7 @@ public class BlockStorage {
         @Override
         public BlockStorage fromPrimitive(@NotNull PersistentDataContainer data, @NotNull PersistentDataAdapterContext context) {
             var blockStorage = new BlockStorage(chunkStorage, pos.clone(), data);
-            blockStorage.loadFromPersistent();
+            blockStorage.loadFromPersistent(chunkStorage);
             return blockStorage;
         }
     }
