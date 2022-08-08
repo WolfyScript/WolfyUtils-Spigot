@@ -163,8 +163,8 @@ public class ParticleAnimation implements Keyed {
      *
      * @param location The location to spawn the animation at.
      */
-    public void spawn(Location location) {
-        new Scheduler(location).start();
+    public UUID spawn(Location location) {
+        return new Scheduler(location).start();
     }
 
     /**
@@ -172,9 +172,8 @@ public class ParticleAnimation implements Keyed {
      *
      * @param block The block to spawn the animation on.
      */
-    public void spawn(Block block) {
-        var worldStore = ((WolfyCoreBukkit)WolfyCoreBukkit.getInstance()).getPersistentStorage().getOrCreateWorldStorage(block.getWorld());
-        worldStore.getBlock(block.getLocation()).flatMap(store -> store.getData(CustomItemBlockData.ID, CustomItemBlockData.class)).ifPresent(data -> data.setParticleAnimationID(new Scheduler(block).start()));
+    public UUID spawn(Block block) {
+        return new Scheduler(block).start();
     }
 
     /**
@@ -182,8 +181,8 @@ public class ParticleAnimation implements Keyed {
      *
      * @param entity The entity to spawn the animation on.
      */
-    public void spawn(Entity entity) {
-        new Scheduler(entity).start();
+    public UUID spawn(Entity entity) {
+        return new Scheduler(entity).start();
     }
 
     /**
