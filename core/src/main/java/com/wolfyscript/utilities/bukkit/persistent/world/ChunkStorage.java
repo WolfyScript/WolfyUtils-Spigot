@@ -34,12 +34,17 @@ public class ChunkStorage {
         this.core = worldStorage.getCore();
     }
 
-    public WorldStorage getWorldStorage() {
-        return worldStorage;
-    }
-
     public WolfyUtilCore getCore() {
         return core;
+    }
+
+    /**
+     * Gets the parent WorldStorage of this ChunkStorage.
+     *
+     * @return The parent WorldStorage.
+     */
+    public WorldStorage getWorldStorage() {
+        return worldStorage;
     }
 
     /**
@@ -104,15 +109,24 @@ public class ChunkStorage {
     }
 
     /**
-     * Removes the stored block at this location and stops every active particle effect.
+     * Removes the stored block at this location and stops every active particle effect.<br>
+     * <i>This converts the location to a Vector and uses {@link #removeBlock(Vector)}</i>
      *
      * @param location The target location of the block
      * @return Optional of the previously stored data; otherwise empty Optional.
+     * @see #removeBlock(Vector)
      */
     public Optional<BlockStorage> removeBlock(Location location) {
         return removeBlock(location.toVector());
     }
 
+    /**
+     * Removes the BlockStorage at the specified position.
+     *
+     * @param pos The position vector of the BlockStorage
+     * @return Optional of the previously stored data; otherwise empty Optional.
+     * @see #removeBlock(Location)
+     */
     public Optional<BlockStorage> removeBlock(Vector pos) {
         var previousStore = BLOCKS.remove(pos);
         updateBlock(pos);
@@ -175,6 +189,16 @@ public class ChunkStorage {
     }
 
     /**
+     * Checks if there is an existing BlockStorage at the specified Location.
+     *
+     * @param location The location to check for a BlockStorage.
+     * @return True if there exists a BlockStorage at the location; otherwise false.
+     */
+    public boolean isBlockStored(Location location) {
+        return BLOCKS.containsKey(location.toVector());
+    }
+
+    /**
      * Gets the stored block at the specified location.
      *
      * @param location The location of the block.
@@ -222,10 +246,6 @@ public class ChunkStorage {
      */
     private NamespacedKey createKeyForBlock(Vector blockPos) {
         return new NamespacedKey(BLOCK_POS_NAMESPACE, BLOCK_POS_KEY.formatted(blockPos.getBlockX(), blockPos.getBlockY(), blockPos.getBlockZ()));
-    }
-
-    public boolean isBlockStored(Location location) {
-        return BLOCKS.containsKey(location.toVector());
     }
 
 }
