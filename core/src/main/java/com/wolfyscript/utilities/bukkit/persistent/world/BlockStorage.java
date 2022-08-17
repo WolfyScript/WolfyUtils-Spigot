@@ -4,15 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.InjectableValues;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
-import org.bukkit.Location;
 import me.wolfyscript.utilities.util.NamespacedKey;
-import org.bukkit.inventory.ItemStack;
+import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -111,22 +107,19 @@ public class BlockStorage {
         for (org.bukkit.NamespacedKey key : dataPersistent.getKeys()) {
             NamespacedKey wuKey = NamespacedKey.fromBukkit(key);
             String customDataString = dataPersistent.get(key, PersistentDataType.STRING);
-            Class<? extends CustomBlockData> type = dataTypeRegistry.get(wuKey);
-            if (type != null) {
-                CustomBlockData blockData = null;
-                try {
-                    blockData = objectMapper.reader(new InjectableValues.Std()
-                            .addValue(WolfyUtilCore.class, core)
-                            .addValue(ChunkStorage.class, chunkStorage)
-                            .addValue(Vector.class, pos)
-                    ).forType(type).readValue(customDataString);
-                } catch (JsonProcessingException e) {
-                    core.getLogger().severe("Failed to load custom block data \"" + key + "\" at pos " + pos);
-                    e.printStackTrace();
-                }
-                if (blockData != null) {
-                    data.put(wuKey, blockData);
-                }
+            CustomBlockData blockData = null;
+            try {
+                blockData = objectMapper.reader(new InjectableValues.Std()
+                        .addValue(WolfyUtilCore.class, core)
+                        .addValue(ChunkStorage.class, chunkStorage)
+                        .addValue(Vector.class, pos)
+                ).forType(CustomBlockData.class).readValue(customDataString);
+            } catch (JsonProcessingException e) {
+                core.getLogger().severe("Failed to load custom block data \"" + key + "\" at pos " + pos);
+                e.printStackTrace();
+            }
+            if (blockData != null) {
+                data.put(wuKey, blockData);
             }
         }
     }

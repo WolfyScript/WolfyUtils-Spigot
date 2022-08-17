@@ -1,19 +1,24 @@
 package com.wolfyscript.utilities.bukkit.persistent.world;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.List;
-import java.util.Optional;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
+import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import me.wolfyscript.utilities.registry.Registries;
 import me.wolfyscript.utilities.util.Keyed;
 import me.wolfyscript.utilities.util.NamespacedKey;
-import org.bukkit.Location;
-import org.bukkit.inventory.ItemStack;
+import me.wolfyscript.utilities.util.json.jackson.KeyedTypeIdResolver;
+import me.wolfyscript.utilities.util.json.jackson.KeyedTypeResolver;
 
 /**
  * This data is used to store persistent data on Blocks.<br>
  * The data is saved directly inside the Chunks' {@link org.bukkit.persistence.PersistentDataContainer}, so it persists across server restarts.<br>
  * In order to save it the {@link CustomBlockData} is serialized into a JsonString using Jackson.<br>
  * The String is then saved into the {@link org.bukkit.persistence.PersistentDataContainer} with the id ({@link org.bukkit.NamespacedKey}) as the key.<br>
+ * <br>
+ * <strong>To make use of the implementation it must be registered via {@link Registries#getCustomBlockData()}!</strong>
  * <br>
  * On Deserialization the key is used to find the registered data type (See {@link Registries#getCustomBlockData()})<br>
  * The String content is then deserialized to that type using Jackson.<br>
@@ -27,8 +32,13 @@ import org.bukkit.inventory.ItemStack;
  * <br>
  * One of the default data, that stores the CustomItems on blocks is {@link com.wolfyscript.utilities.bukkit.items.CustomItemBlockData}
  */
+@JsonTypeResolver(KeyedTypeResolver.class)
+@JsonTypeIdResolver(KeyedTypeIdResolver.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "id")
+@JsonPropertyOrder(value = {"id"})
 public abstract class CustomBlockData implements Keyed {
 
+    @JsonProperty("id")
     private final NamespacedKey id;
 
     protected CustomBlockData(NamespacedKey id) {
