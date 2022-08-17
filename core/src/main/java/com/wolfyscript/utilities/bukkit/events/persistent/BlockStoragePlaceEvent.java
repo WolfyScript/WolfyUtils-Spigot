@@ -11,13 +11,13 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class BlockStorePlaceEvent extends BlockPlaceEvent implements BlockStoreEvent, Cancellable {
+public class BlockStoragePlaceEvent extends BlockPlaceEvent implements BlockStorageEvent, Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
 
     private final BlockStorage blockStorage;
 
-    public BlockStorePlaceEvent(@NotNull Block placedBlock, BlockStorage placedBlockStorage, @NotNull BlockState replacedBlockState, @NotNull Block placedAgainst, @NotNull ItemStack itemInHand, @NotNull Player thePlayer, boolean canBuild, @NotNull EquipmentSlot hand) {
+    public BlockStoragePlaceEvent(@NotNull Block placedBlock, BlockStorage placedBlockStorage, @NotNull BlockState replacedBlockState, @NotNull Block placedAgainst, @NotNull ItemStack itemInHand, @NotNull Player thePlayer, boolean canBuild, @NotNull EquipmentSlot hand) {
         super(placedBlock, replacedBlockState, placedAgainst, itemInHand, thePlayer, canBuild, hand);
         this.blockStorage = placedBlockStorage;
     }
@@ -33,7 +33,7 @@ public class BlockStorePlaceEvent extends BlockPlaceEvent implements BlockStoreE
     }
 
     @Override
-    public BlockStorage getStore() {
+    public BlockStorage getStorage() {
         return blockStorage;
     }
 }

@@ -18,7 +18,7 @@
 
 package me.wolfyscript.utilities.util.events;
 
-import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorePlaceEvent;
+import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoragePlaceEvent;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -57,7 +57,7 @@ public class CustomItemPlaceEvent extends Event {
         this.customItem = customItem;
     }
 
-    public CustomItemPlaceEvent(CustomItem customItem, BlockStorePlaceEvent event) {
+    public CustomItemPlaceEvent(CustomItem customItem, BlockStoragePlaceEvent event) {
         this.block = event.getBlockPlaced();
         this.placedAgainst = event.getBlockAgainst();
         this.itemInHand = event.getItemInHand();

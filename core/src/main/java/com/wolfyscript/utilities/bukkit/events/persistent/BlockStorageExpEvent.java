@@ -6,13 +6,13 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.BlockExpEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class BlockStoreExpEvent extends BlockExpEvent implements BlockStoreEvent {
+public class BlockStorageExpEvent extends BlockExpEvent implements BlockStorageEvent {
 
     private static final HandlerList handlers = new HandlerList();
 
     protected BlockStorage blockStorage;
 
-    public BlockStoreExpEvent(@NotNull Block block, BlockStorage blockStorage, int exp) {
+    public BlockStorageExpEvent(@NotNull Block block, BlockStorage blockStorage, int exp) {
         super(block, exp);
         this.blockStorage = blockStorage;
     }
@@ -29,7 +29,7 @@ public class BlockStoreExpEvent extends BlockExpEvent implements BlockStoreEvent
     }
 
     @Override
-    public BlockStorage getStore() {
+    public BlockStorage getStorage() {
         return blockStorage;
     }
 }

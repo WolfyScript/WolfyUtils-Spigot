@@ -35,10 +35,6 @@ public abstract class CustomBlockData implements Keyed {
         this.id = id;
     }
 
-    public Optional<List<ItemStack>> dropItems(Location location) {
-        return Optional.empty();
-    }
-
     /**
      * Called when the BlockStorage is initialising its data.
      * Usually right after the data was constructed.

@@ -1,10 +1,10 @@
 package com.wolfyscript.utilities.bukkit.listeners.custom_item;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoreBreakEvent;
-import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoreDropItemsEvent;
-import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoreMultiPlaceEvent;
-import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorePlaceEvent;
+import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageDropItemsEvent;
+import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageBreakEvent;
+import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageMultiPlaceEvent;
+import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoragePlaceEvent;
 import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
 import com.wolfyscript.utilities.bukkit.persistent.world.ChunkStorage;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
@@ -28,11 +28,12 @@ public class CustomItemDataListener implements Listener {
     }
 
     @EventHandler
-    public void onDropItems(BlockStoreDropItemsEvent event) {
-        event.getStore().getData(CustomItemBlockData.ID, CustomItemBlockData.class).ifPresent(data -> {
+    public void onDropItems(BlockStorageDropItemsEvent event) {
+        event.getStorage().getData(CustomItemBlockData.ID, CustomItemBlockData.class).ifPresent(data -> {
             var blockState = event.getBlockState();
             data.getCustomItem().ifPresent(customItem -> {
                 //TODO for future: Let people customize this!
+                event.getItems().clear();
                 ItemStack result = customItem.create();
                 if (blockState instanceof Container container) {
                     var blockStateMeta = (BlockStateMeta) result.getItemMeta();
@@ -53,7 +54,7 @@ public class CustomItemDataListener implements Listener {
     }
 
     @EventHandler
-    public void onPlaceBlock(BlockStorePlaceEvent event) {
+    public void onPlaceBlock(BlockStoragePlaceEvent event) {
         var customItem = CustomItem.getByItemStack(event.getItemInHand());
         if (!ItemUtils.isAirOrNull(customItem) && customItem.getItemStack().getType().isBlock()) {
             if (customItem.isBlockPlacement()) {
@@ -67,7 +68,7 @@ public class CustomItemDataListener implements Listener {
                     Location blockLoc = event.getBlockPlaced().getLocation();
                     ChunkStorage chunkStorage = core.getPersistentStorage().getOrCreateWorldStorage(blockLoc.getWorld()).getOrCreateChunkStorage(blockLoc);
                     var customItemData = new CustomItemBlockData(core, chunkStorage, blockLoc.toVector(), customItem.getNamespacedKey());
-                    event.getStore().addOrSetData(customItemData);
+                    event.getStorage().addOrSetData(customItemData);
                     customItemData.onPlace(event);
                 }
             } else {
@@ -77,7 +78,7 @@ public class CustomItemDataListener implements Listener {
     }
 
     @EventHandler
-    public void onMultiPlaceBlock(BlockStoreMultiPlaceEvent event) {
+    public void onMultiPlaceBlock(BlockStorageMultiPlaceEvent event) {
         var customItem = CustomItem.getByItemStack(event.getItemInHand());
         if (!ItemUtils.isAirOrNull(customItem)) {
             if (customItem.isBlockPlacement()) {
@@ -95,8 +96,8 @@ public class CustomItemDataListener implements Listener {
     }
 
     @EventHandler
-    public void onBreakBlock(BlockStoreBreakEvent event) {
-        event.getStore().getData(CustomItemBlockData.ID, CustomItemBlockData.class).ifPresent(data -> {
+    public void onBreakBlock(BlockStorageBreakEvent event) {
+        event.getStorage().getData(CustomItemBlockData.ID, CustomItemBlockData.class).ifPresent(data -> {
             data.onBreak(event);
         });
     }

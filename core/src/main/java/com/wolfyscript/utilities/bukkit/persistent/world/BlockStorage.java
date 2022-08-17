@@ -61,14 +61,6 @@ public class BlockStorage {
         data.values().forEach(CustomBlockData::onLoad);
     }
 
-    public List<ItemStack> dropItems(Location location) {
-        List<ItemStack> items = new LinkedList<>();
-        for (CustomBlockData value : data.values()) {
-            value.dropItems(location).ifPresent(items::addAll);
-        }
-        return items;
-    }
-
     public void addOrSetData(CustomBlockData blockData) {
         if (blockData != null) {
             var dataTypeRegistry = core.getRegistries().getCustomBlockData();

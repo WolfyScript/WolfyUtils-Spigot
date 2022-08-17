@@ -7,13 +7,13 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class BlockStoreBreakEvent extends BlockBreakEvent implements BlockStoreEvent {
+public class BlockStorageBreakEvent extends BlockBreakEvent implements BlockStorageEvent {
 
     private static final HandlerList handlers = new HandlerList();
 
     protected BlockStorage blockStorage;
 
-    public BlockStoreBreakEvent(@NotNull Block theBlock, BlockStorage blockStorage, @NotNull Player player) {
+    public BlockStorageBreakEvent(@NotNull Block theBlock, BlockStorage blockStorage, @NotNull Player player) {
         super(theBlock, player);
         this.blockStorage = blockStorage;
     }
@@ -29,7 +29,7 @@ public class BlockStoreBreakEvent extends BlockBreakEvent implements BlockStoreE
     }
 
     @Override
-    public BlockStorage getStore() {
+    public BlockStorage getStorage() {
         return blockStorage;
     }
 }

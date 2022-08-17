@@ -9,12 +9,12 @@ import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class BlockStoreMultiPlaceEvent extends BlockMultiPlaceEvent implements BlockStoreEvent {
+public class BlockStorageMultiPlaceEvent extends BlockMultiPlaceEvent implements BlockStorageEvent {
 
     private final BlockStorage blockStorage;
     private final List<BlockStorage> blockStorages;
 
-    public BlockStoreMultiPlaceEvent(@NotNull List<BlockState> states, List<BlockStorage> blockStorages, @NotNull Block clicked, @NotNull ItemStack itemInHand, @NotNull Player thePlayer, boolean canBuild) {
+    public BlockStorageMultiPlaceEvent(@NotNull List<BlockState> states, List<BlockStorage> blockStorages, @NotNull Block clicked, @NotNull ItemStack itemInHand, @NotNull Player thePlayer, boolean canBuild) {
         super(states, clicked, itemInHand, thePlayer, canBuild);
         this.blockStorage = blockStorages.get(0);
         this.blockStorages = blockStorages;
@@ -25,7 +25,7 @@ public class BlockStoreMultiPlaceEvent extends BlockMultiPlaceEvent implements B
     }
 
     @Override
-    public BlockStorage getStore() {
+    public BlockStorage getStorage() {
         return blockStorage;
     }
 }
