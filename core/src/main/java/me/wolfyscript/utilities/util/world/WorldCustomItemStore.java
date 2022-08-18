@@ -18,27 +18,32 @@
 
 package me.wolfyscript.utilities.util.world;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
 import com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage;
+import com.wolfyscript.utilities.bukkit.persistent.world.ChunkStorage;
+import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
+import java.io.IOException;
+import java.util.UUID;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.util.UUID;
-
-@JsonSerialize(using = WorldCustomItemStore.Serializer.class)
+/**
+ * Replaced by {@link com.wolfyscript.utilities.bukkit.persistent.world.WorldStorage}, that is
+ * available using {@link com.wolfyscript.utilities.bukkit.persistent.PersistentStorage#getOrCreateWorldStorage(World)}.
+ * @deprecated Replace by {@link com.wolfyscript.utilities.bukkit.persistent.world.WorldStorage}
+ * @see com.wolfyscript.utilities.bukkit.persistent.world.WorldStorage
+ */
 @JsonDeserialize(using = WorldCustomItemStore.Deserializer.class)
+@Deprecated
 public class WorldCustomItemStore {
 
     @Deprecated
@@ -71,8 +76,8 @@ public class WorldCustomItemStore {
     @Nullable
     public BlockCustomItemStore get(Location location) {
         if (location == null || location.getWorld() == null) return null;
-        //TODO: return ((WolfyCoreBukkit) WolfyCoreBukkit.getInstance()).getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).getBlock(location).orElse(null);
-        return null;
+        return ((WolfyCoreBukkit) WolfyCoreBukkit.getInstance()).getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).getBlock(location)
+                .flatMap(storage -> storage.getData(CustomItemBlockData.ID, CustomItemBlockData.class)).map(data -> new BlockCustomItemStore(data.getItem(), null)).orElse(null);
     }
 
     @Deprecated
@@ -102,30 +107,14 @@ public class WorldCustomItemStore {
     @Deprecated
     void setStore(Location location, BlockCustomItemStore blockStore) {
         if (location == null || location.getWorld() == null) return;
-        //TODO: ((WolfyCoreBukkit) WolfyCoreBukkit.getInstance()).getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).storeBlock(location, n);
+        ChunkStorage chunkStorage = ((WolfyCoreBukkit) WolfyCoreBukkit.getInstance()).getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).getOrCreateChunkStorage(location);
+        BlockStorage blockStorage = chunkStorage.createBlockStorage(location);
+        blockStorage.addOrSetData(new CustomItemBlockData(WolfyCoreBukkit.getInstance(), chunkStorage, blockStorage.getPos(), blockStore.getCustomItemKey()));
     }
 
     @Deprecated
     public void initiateMissingBlockEffects() {
         //This is not doing anything anymore!
-    }
-
-    static class Serializer extends StdSerializer<WorldCustomItemStore> {
-
-        public Serializer() {
-            this(WorldCustomItemStore.class);
-        }
-
-        protected Serializer(Class<WorldCustomItemStore> t) {
-            super(t);
-        }
-
-        @Override
-        public void serialize(WorldCustomItemStore customItem, JsonGenerator gen, SerializerProvider provider) throws IOException {
-            gen.writeStartArray();
-            gen.writeEndArray();
-        }
-
     }
 
     static class Deserializer extends StdDeserializer<WorldCustomItemStore> {

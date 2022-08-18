@@ -18,6 +18,7 @@
 
 package me.wolfyscript.utilities.util.world;
 
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
@@ -34,6 +35,12 @@ import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+/**
+ * Replaced by the {@link com.wolfyscript.utilities.bukkit.persistent.PersistentStorage}, that is
+ * available using {@link WolfyCoreBukkit#getPersistentStorage()}.
+ * @see com.wolfyscript.utilities.bukkit.persistent.PersistentStorage
+ */
+@Deprecated
 public class WorldUtils {
 
     private WorldUtils() {
@@ -46,22 +53,9 @@ public class WorldUtils {
     }
 
     /**
-     * Save the stored Custom Item into a file.
-     */
-    public static void save() {
-        try (var fos = new FileOutputStream(WolfyUtilities.getWUPlugin().getDataFolder() + File.separator + "world_custom_item.store")) {
-            var gzip = new GZIPOutputStream(fos);
-            JacksonUtil.getObjectWriter(false).writeValue(gzip, worldCustomItemStore);
-            gzip.flush();
-            gzip.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Loads the store from the file.
      */
+    @Deprecated
     public static void load() {
         WolfyUtilities.getWUPlugin().getLogger().info("Loading stored Custom Items");
         var file = new File(WolfyUtilities.getWUPlugin().getDataFolder() + File.separator + "world_custom_item.store");
@@ -81,8 +75,6 @@ public class WorldUtils {
         } else {
             //Load from the old file if the new one doesn't exist!
             loadOld();
-            //And save it to make sure that it is saved in the new format.
-            save();
         }
     }
 

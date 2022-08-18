@@ -368,7 +368,6 @@ public final class WolfyCoreBukkit extends WUPlugin {
 
             WorldUtils.load();
             PlayerUtils.loadStores();
-            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, WorldUtils::save, 6000, 6000);
             registerListeners();
             registerCommands();
 
@@ -404,7 +403,6 @@ public final class WolfyCoreBukkit extends WUPlugin {
         api.getConfigAPI().saveConfigs();
         PlayerUtils.saveStores();
         console.info("Save stored Custom Items");
-        WorldUtils.save();
     }
 
     private void registerListeners() {
