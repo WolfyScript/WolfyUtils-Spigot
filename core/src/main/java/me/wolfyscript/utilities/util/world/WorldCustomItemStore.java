@@ -108,8 +108,9 @@ public class WorldCustomItemStore {
     void setStore(Location location, BlockCustomItemStore blockStore) {
         if (location == null || location.getWorld() == null) return;
         ChunkStorage chunkStorage = ((WolfyCoreBukkit) WolfyCoreBukkit.getInstance()).getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).getOrCreateChunkStorage(location);
-        BlockStorage blockStorage = chunkStorage.createBlockStorage(location);
+        BlockStorage blockStorage = chunkStorage.getOrCreateBlockStorage(location);
         blockStorage.addOrSetData(new CustomItemBlockData(WolfyCoreBukkit.getInstance(), chunkStorage, blockStorage.getPos(), blockStore.getCustomItemKey()));
+        chunkStorage.setBlockStorageIfAbsent(blockStorage);
     }
 
     @Deprecated
