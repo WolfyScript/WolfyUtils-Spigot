@@ -22,6 +22,8 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.util.Keyed;
 import me.wolfyscript.utilities.util.NamespacedKey;
@@ -32,8 +34,6 @@ import me.wolfyscript.utilities.util.particles.pos.ParticlePosBlock;
 import me.wolfyscript.utilities.util.particles.pos.ParticlePosEntity;
 import me.wolfyscript.utilities.util.particles.pos.ParticlePosLocation;
 import me.wolfyscript.utilities.util.particles.pos.ParticlePosPlayer;
-import me.wolfyscript.utilities.util.world.BlockCustomItemStore;
-import me.wolfyscript.utilities.util.world.WorldUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -163,8 +163,8 @@ public class ParticleAnimation implements Keyed {
      *
      * @param location The location to spawn the animation at.
      */
-    public void spawn(Location location) {
-        new Scheduler(location).start();
+    public UUID spawn(Location location) {
+        return new Scheduler(location).start();
     }
 
     /**
@@ -172,11 +172,8 @@ public class ParticleAnimation implements Keyed {
      *
      * @param block The block to spawn the animation on.
      */
-    public void spawn(Block block) {
-        BlockCustomItemStore blockStore = WorldUtils.getWorldCustomItemStore().get(block.getLocation());
-        if (blockStore != null) {
-            blockStore.setParticleUUID(new Scheduler(block).start());
-        }
+    public UUID spawn(Block block) {
+        return new Scheduler(block).start();
     }
 
     /**
@@ -184,8 +181,8 @@ public class ParticleAnimation implements Keyed {
      *
      * @param entity The entity to spawn the animation on.
      */
-    public void spawn(Entity entity) {
-        new Scheduler(entity).start();
+    public UUID spawn(Entity entity) {
+        return new Scheduler(entity).start();
     }
 
     /**

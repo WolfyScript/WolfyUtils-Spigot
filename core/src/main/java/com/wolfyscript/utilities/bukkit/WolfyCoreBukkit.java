@@ -7,11 +7,13 @@ import com.wolfyscript.utilities.bukkit.commands.InputCommand;
 import com.wolfyscript.utilities.bukkit.commands.QueryDebugCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleAnimationCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleEffectCommand;
-import com.wolfyscript.utilities.bukkit.listeners.BlockListener;
+import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
 import com.wolfyscript.utilities.bukkit.listeners.EquipListener;
 import com.wolfyscript.utilities.bukkit.listeners.GUIInventoryListener;
+import com.wolfyscript.utilities.bukkit.listeners.PersistentStorageListener;
 import com.wolfyscript.utilities.bukkit.listeners.PlayerListener;
 import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomDurabilityListener;
+import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomItemDataListener;
 import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomItemPlayerListener;
 import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomParticleListener;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
@@ -32,6 +34,8 @@ import com.wolfyscript.utilities.bukkit.nbt.QueryNodeLong;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeCompound;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeShort;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeString;
+import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
+import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
 import me.wolfyscript.utilities.api.console.Console;
@@ -153,6 +157,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
     private final MessageFactory messageFactory;
     private final CompatibilityManager compatibilityManager;
     private BukkitAudiences adventure;
+    private PersistentStorage persistentStorage;
 
     /**
      * Constructor invoked by Spigot when the plugin is loaded.
@@ -164,6 +169,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         this.messageHandler = new MessageHandler(this);
         this.messageFactory = new MessageFactory(this);
         this.compatibilityManager = new CompatibilityManagerBukkit(this);
+        this.persistentStorage = new PersistentStorage(this);
     }
 
     /**
@@ -324,6 +330,9 @@ public final class WolfyCoreBukkit extends WUPlugin {
         nbtQueryNodes.register(QueryNodeListString.TYPE, QueryNodeListString.class);
         nbtQueryNodes.register(QueryNodeListCompound.TYPE, QueryNodeListCompound.class);
 
+        var customBlockData = getRegistries().getCustomBlockData();
+        customBlockData.register(CustomItemBlockData.ID, CustomItemBlockData.class);
+
         KeyedTypeIdResolver.registerTypeRegistry(Meta.class, nbtChecks);
         KeyedTypeIdResolver.registerTypeRegistry(Animator.class, particleAnimators);
         KeyedTypeIdResolver.registerTypeRegistry(Shape.class, particleShapes);
@@ -333,6 +342,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         KeyedTypeIdResolver.registerTypeRegistry(Operator.class, operators);
         KeyedTypeIdResolver.registerTypeRegistry((Class<ValueProvider<?>>) (Object)ValueProvider.class, valueProviders);
         KeyedTypeIdResolver.registerTypeRegistry((Class<QueryNode<?>>) (Object)QueryNode.class, nbtQueryNodes);
+        KeyedTypeIdResolver.registerTypeRegistry(CustomBlockData.class, customBlockData);
     }
 
     @Override
@@ -358,12 +368,10 @@ public final class WolfyCoreBukkit extends WUPlugin {
 
             WorldUtils.load();
             PlayerUtils.loadStores();
-            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, WorldUtils::save, 6000, 6000);
             registerListeners();
             registerCommands();
 
             CreativeModeTab.init();
-            loadParticleEffects();
         } else {
             onJUnitTests();
         }
@@ -395,13 +403,6 @@ public final class WolfyCoreBukkit extends WUPlugin {
         api.getConfigAPI().saveConfigs();
         PlayerUtils.saveStores();
         console.info("Save stored Custom Items");
-        WorldUtils.save();
-    }
-
-    @Override
-    public void loadParticleEffects() {
-        console.info("Initiating Particles");
-        WorldUtils.getWorldCustomItemStore().initiateMissingBlockEffects();
     }
 
     private void registerListeners() {
@@ -409,10 +410,11 @@ public final class WolfyCoreBukkit extends WUPlugin {
         Bukkit.getPluginManager().registerEvents(new CustomDurabilityListener(this), this);
         Bukkit.getPluginManager().registerEvents(new CustomParticleListener(), this);
         Bukkit.getPluginManager().registerEvents(new CustomItemPlayerListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
         Bukkit.getPluginManager().registerEvents(new EquipListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
         Bukkit.getPluginManager().registerEvents(new GUIInventoryListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PersistentStorageListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new CustomItemDataListener(this), this);
     }
 
     private void registerCommands() {
@@ -439,5 +441,9 @@ public final class WolfyCoreBukkit extends WUPlugin {
     @Override
     public com.wolfyscript.utilities.common.chat.Chat getChat() {
         return api.getChat();
+    }
+
+    public PersistentStorage getPersistentStorage() {
+        return persistentStorage;
     }
 }

@@ -18,6 +18,9 @@
 
 package me.wolfyscript.utilities.util.world;
 
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import java.nio.file.Files;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
@@ -27,13 +30,17 @@ import org.bukkit.util.io.BukkitObjectInputStream;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
+/**
+ * Replaced by the {@link com.wolfyscript.utilities.bukkit.persistent.PersistentStorage}, that is
+ * available using {@link WolfyCoreBukkit#getPersistentStorage()}.
+ * @see com.wolfyscript.utilities.bukkit.persistent.PersistentStorage
+ */
+@Deprecated
 public class WorldUtils {
 
     private WorldUtils() {
@@ -46,43 +53,37 @@ public class WorldUtils {
     }
 
     /**
-     * Save the stored Custom Item into a file.
-     */
-    public static void save() {
-        try (var fos = new FileOutputStream(WolfyUtilities.getWUPlugin().getDataFolder() + File.separator + "world_custom_item.store")) {
-            var gzip = new GZIPOutputStream(fos);
-            JacksonUtil.getObjectWriter(false).writeValue(gzip, worldCustomItemStore);
-            gzip.flush();
-            gzip.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Loads the store from the file.
      */
+    @Deprecated
     public static void load() {
         WolfyUtilities.getWUPlugin().getLogger().info("Loading stored Custom Items");
         var file = new File(WolfyUtilities.getWUPlugin().getDataFolder() + File.separator + "world_custom_item.store");
         if (file.exists()) {
-            try (var fin = new FileInputStream(file)) {
-                var gzip = new GZIPInputStream(fin);
+            try (var fin = new FileInputStream(file); var gzip = new GZIPInputStream(fin)) {
                 worldCustomItemStore = JacksonUtil.getObjectMapper().readValue(gzip, WorldCustomItemStore.class);
                 if (worldCustomItemStore == null) {
                     WolfyUtilities.getWUPlugin().getLogger().severe("Couldn't load stored CustomItems! Resetting to default!");
                     worldCustomItemStore = new WorldCustomItemStore();
                 }
-                gzip.close();
             } catch (IOException e) {
                 WolfyUtilities.getWUPlugin().getLogger().severe("Couldn't load stored CustomItems! Resetting to default!");
                 worldCustomItemStore = new WorldCustomItemStore();
+            } finally {
+                // Delete the file as we no longer need it!
+                try {
+                    Files.delete(file.toPath());
+                } catch (IOException ex) {
+                    WolfyUtilCore.getInstance().getLogger().severe("Could not delete the `world_custom_item.store`, trying to rename it.");
+                    ex.printStackTrace();
+                    if (file.renameTo(new File(WolfyUtilities.getWUPlugin().getDataFolder() + File.separator + "world_custom_item.old.store"))) {
+                        WolfyUtilCore.getInstance().getLogger().severe("Could not rename `world_custom_item.store`! Please delete manually!");
+                    }
+                }
             }
         } else {
             //Load from the old file if the new one doesn't exist!
             loadOld();
-            //And save it to make sure that it is saved in the new format.
-            save();
         }
     }
 
@@ -102,6 +103,17 @@ public class WorldUtils {
                 });
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
+            } finally {
+                // Delete the file as we no longer need it!
+                try {
+                    Files.delete(file.toPath());
+                } catch (IOException ex) {
+                    WolfyUtilCore.getInstance().getLogger().severe("Could not delete the `stored_block_items.dat`, trying to rename it.");
+                    ex.printStackTrace();
+                    if (file.renameTo(new File(WolfyUtilities.getWUPlugin().getDataFolder() + File.separator + "stored_block_items.old.dat"))) {
+                        WolfyUtilCore.getInstance().getLogger().severe("Could not rename `stored_block_items.dat`! Please delete manually!");
+                    }
+                }
             }
         }
     }
