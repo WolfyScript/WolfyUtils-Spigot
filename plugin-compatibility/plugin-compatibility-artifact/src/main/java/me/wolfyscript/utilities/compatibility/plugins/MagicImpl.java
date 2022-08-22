@@ -56,6 +56,10 @@ public class MagicImpl extends PluginIntegrationAbstract implements Listener {
 
     @EventHandler
     public void onComplete(LoadEvent event) {
-        markAsDoneLoading();
+        if (event.getController() != null) { //Makes sure to only mark as done when Magic will actually be enabled!
+            markAsDoneLoading();
+        } else {
+            ignore();
+        }
     }
 }

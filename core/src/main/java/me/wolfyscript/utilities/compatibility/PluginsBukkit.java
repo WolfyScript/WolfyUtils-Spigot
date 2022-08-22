@@ -28,6 +28,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
@@ -72,17 +73,14 @@ final class PluginsBukkit implements Plugins, Listener {
     void init() {
         core.getLogger().info("Loading Plugin integrations: ");
         Bukkit.getPluginManager().registerEvents(this, core);
-        for (Class<?> integrationClass : core.getReflections().getTypesAnnotatedWith(WUPluginIntegration.class)) {
-            WUPluginIntegration annotation = integrationClass.getAnnotation(WUPluginIntegration.class);
-            if (annotation != null && PluginIntegrationAbstract.class.isAssignableFrom(integrationClass)) {
+        for (Class<?> integrationType : core.getReflections().getTypesAnnotatedWith(WUPluginIntegration.class)) {
+            WUPluginIntegration annotation = integrationType.getAnnotation(WUPluginIntegration.class);
+            if (annotation != null && PluginIntegrationAbstract.class.isAssignableFrom(integrationType)) {
                 String pluginName = annotation.pluginName();
                 if (Bukkit.getPluginManager().getPlugin(pluginName) != null) { //Only load for plugins that are loaded.
                     core.getLogger().info(" - " + pluginName);
-                    if (!pluginIntegrationClasses.containsKey(pluginName)) {
-                        pluginIntegrationClasses.put(pluginName, (Class<? extends PluginIntegrationAbstract>) integrationClass);
-                    } else {
-                        core.getLogger().severe("Failed to add Integration! A Plugin Integration for \"" + pluginName + "\" already exists!");
-                    }
+                    Preconditions.checkArgument(!pluginIntegrationClasses.containsKey(pluginName), "Failed to add Integration! A Plugin Integration for \"" + pluginName + "\" already exists!");
+                    pluginIntegrationClasses.put(pluginName, (Class<? extends PluginIntegrationAbstract>) integrationType);
                 }
             }
         }
@@ -123,23 +121,33 @@ final class PluginsBukkit implements Plugins, Listener {
         }
     }
 
+    private void ignoreIntegrationFor(Plugin plugin) {
+        runIfAvailable(plugin.getName(), PluginIntegrationAbstract.class, PluginIntegrationAbstract::ignore);
+        checkDependencies();
+    }
+
     void checkDependencies() {
+        pluginIntegrations.values().removeIf(pluginIntegrationAbstract -> {
+            if (pluginIntegrationAbstract.shouldBeIgnored()) {
+                pluginIntegrationClasses.remove(pluginIntegrationAbstract.getAssociatedPlugin());
+                return true;
+            }
+            return false;
+        });
         int availableIntegrations = pluginIntegrationClasses.size();
         long enabledIntegrations = pluginIntegrations.values().stream().filter(PluginIntegrationAbstract::isDoneLoading).count();
         if (availableIntegrations == enabledIntegrations) {
             doneLoading = true;
             Bukkit.getScheduler().runTaskLater(core, () -> {
-                core.getLogger().info("All dependencies are loaded. Calling the DependenciesLoadedEvent to notify other plugins!");
+                core.getLogger().info("Dependencies Loaded. Calling DependenciesLoadedEvent!");
                 Bukkit.getPluginManager().callEvent(new DependenciesLoadedEvent(core));
-            }, 10);
+            }, 2);
         }
     }
 
     @EventHandler
     private void onPluginDisable(PluginDisableEvent event) {
-        String pluginName = event.getPlugin().getName();
-        pluginIntegrationClasses.remove(pluginName);
-        pluginIntegrations.remove(pluginName);
+        ignoreIntegrationFor(event.getPlugin());
     }
 
     @EventHandler
@@ -150,6 +158,7 @@ final class PluginsBukkit implements Plugins, Listener {
             createOrInitPluginIntegration(pluginName, integrationClass);
             if (!hasIntegration(event.getPlugin().getName())) {
                 core.getLogger().warning("Failed to initiate PluginIntegration for " + pluginName);
+                ignoreIntegrationFor(event.getPlugin());
             }
         }
     }
