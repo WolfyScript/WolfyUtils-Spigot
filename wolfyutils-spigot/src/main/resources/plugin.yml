@@ -3,6 +3,7 @@ version: '${project.version}'
 main: com.wolfyscript.utilities.bukkit.WolfyCoreBukkit
 api-version: 1.16
 authors: [ WolfyScript ]
+load: STARTUP
 
 libraries:
   - "com.google.inject:guice:5.1.0"
