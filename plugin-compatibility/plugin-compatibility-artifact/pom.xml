@@ -88,6 +88,7 @@
             <groupId>com.github.AlessioGr</groupId>
             <artifactId>FancyBags</artifactId>
             <version>2.7.0</version>
+            <scope>provided</scope>
         </dependency>
         <!-- Oraxen -->
         <dependency>
