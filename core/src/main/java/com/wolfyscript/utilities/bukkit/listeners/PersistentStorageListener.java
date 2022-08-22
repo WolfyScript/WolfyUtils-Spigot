@@ -75,7 +75,7 @@ public class PersistentStorageListener implements Listener {
         chunkStorage.getStoredBlocks().forEach((vector, store) -> {
             store.onUnload();
         });
-
+        worldStorage.unloadChunk(chunkStorage);
     }
 
     @EventHandler

@@ -84,6 +84,10 @@ public class WorldStorage {
         getOrCreateChunkStorage(blockStorage.getPos()).setBlockStorageIfAbsent(blockStorage);
     }
 
+    public void unloadChunk(ChunkStorage chunkStorage) {
+        chunkStorage.getChunk().ifPresent(chunk -> CHUNK_DATA.remove(new Vec2i(chunk.getX(), chunk.getZ())));
+    }
+
     /**
      * Removes the stored block at this location and stops every active particle effect.
      *
