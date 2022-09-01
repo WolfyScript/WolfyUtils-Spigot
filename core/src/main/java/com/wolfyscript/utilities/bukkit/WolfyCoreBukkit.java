@@ -1,6 +1,8 @@
 package com.wolfyscript.utilities.bukkit;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.wolfyscript.jackson.dataformat.hocon.HoconMapper;
 import com.wolfyscript.utilities.bukkit.commands.ChatActionCommand;
 import com.wolfyscript.utilities.bukkit.commands.InfoCommand;
 import com.wolfyscript.utilities.bukkit.commands.InputCommand;
@@ -36,6 +38,8 @@ import com.wolfyscript.utilities.bukkit.nbt.QueryNodeShort;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeString;
 import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
+import java.util.ArrayList;
+import java.util.List;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
 import me.wolfyscript.utilities.api.console.Console;
@@ -158,6 +162,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
     private final CompatibilityManager compatibilityManager;
     private BukkitAudiences adventure;
     private PersistentStorage persistentStorage;
+    private final List<SimpleModule> jsonMapperModules = new ArrayList<>();
 
     /**
      * Constructor invoked by Spigot when the plugin is loaded.
@@ -198,6 +203,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         return this.adventure;
     }
 
+    @Deprecated
     @Override
     public WolfyUtilities getWolfyUtilities() {
         return api;
@@ -219,14 +225,22 @@ public final class WolfyCoreBukkit extends WUPlugin {
 
         //Reference Deserializer
         APIReferenceSerialization.create(module);
+        jsonMapperModules.add(module);
+
         JacksonUtil.registerModule(module);
 
         var keyReferenceModule = new SimpleModule();
         keyReferenceModule.setSerializerModifier(new OptionalKeyReference.SerializerModifier());
         keyReferenceModule.setDeserializerModifier(new OptionalKeyReference.DeserializerModifier());
+        jsonMapperModules.add(keyReferenceModule);
+
         var valueReferenceModule = new SimpleModule();
         valueReferenceModule.setSerializerModifier(new OptionalValueSerializer.SerializerModifier());
         valueReferenceModule.setDeserializerModifier(new OptionalValueDeserializer.DeserializerModifier());
+        jsonMapperModules.add(valueReferenceModule);
+
+        api.getJacksonMapperUtil().setGlobalMapper(applyWolfyUtilsJsonMapperModules(new HoconMapper()));
+
         JacksonUtil.registerModule(keyReferenceModule);
         JacksonUtil.registerModule(valueReferenceModule);
 
@@ -441,6 +455,12 @@ public final class WolfyCoreBukkit extends WUPlugin {
     @Override
     public com.wolfyscript.utilities.common.chat.Chat getChat() {
         return api.getChat();
+    }
+
+    @Override
+    public <M extends ObjectMapper> M applyWolfyUtilsJsonMapperModules(M mapper) {
+        mapper.registerModules(jsonMapperModules);
+        return mapper;
     }
 
     public PersistentStorage getPersistentStorage() {
