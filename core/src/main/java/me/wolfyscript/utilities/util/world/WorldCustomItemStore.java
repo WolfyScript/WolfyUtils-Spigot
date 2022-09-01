@@ -19,6 +19,7 @@
 package me.wolfyscript.utilities.util.world;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -27,11 +28,9 @@ import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
 import com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.ChunkStorage;
-import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import java.io.IOException;
 import java.util.UUID;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
-import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
@@ -39,8 +38,9 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Replaced by {@link com.wolfyscript.utilities.bukkit.persistent.world.WorldStorage}, that is
  * available using {@link com.wolfyscript.utilities.bukkit.persistent.PersistentStorage#getOrCreateWorldStorage(World)}.
- * @deprecated Replace by {@link com.wolfyscript.utilities.bukkit.persistent.world.WorldStorage}
+ *
  * @see com.wolfyscript.utilities.bukkit.persistent.world.WorldStorage
+ * @deprecated Replace by {@link com.wolfyscript.utilities.bukkit.persistent.world.WorldStorage}
  */
 @JsonDeserialize(using = WorldCustomItemStore.Deserializer.class)
 @Deprecated
@@ -132,10 +132,16 @@ public class WorldCustomItemStore {
         public WorldCustomItemStore deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
             var worldStore = new WorldCustomItemStore();
             JsonNode node = p.readValueAsTree();
-            var mapper = JacksonUtil.getObjectMapper();
+            var codec = p.getCodec();
             node.elements().forEachRemaining(jsonNode -> {
-                var location = mapper.convertValue(jsonNode.path("loc"), Location.class);
-                var blockCustomItemStore = mapper.convertValue(jsonNode.path("store"), BlockCustomItemStore.class);
+                BlockCustomItemStore blockCustomItemStore = null;
+                Location location = null;
+                try {
+                    location = codec.treeToValue(jsonNode.path("loc"), Location.class);
+                    blockCustomItemStore = codec.treeToValue(jsonNode.path("store"), BlockCustomItemStore.class);
+                } catch (JsonProcessingException e) {
+                    // Let's not throw an error here and try to deserialize the next elements.
+                }
                 if (location != null && blockCustomItemStore != null) {
                     worldStore.setStore(location, blockCustomItemStore);
                 }
