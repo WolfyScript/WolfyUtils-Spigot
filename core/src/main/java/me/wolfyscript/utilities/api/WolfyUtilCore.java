@@ -1,5 +1,6 @@
 package me.wolfyscript.utilities.api;
 
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.common.WolfyCore;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
@@ -86,6 +87,11 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
     @Deprecated
     public static WolfyUtilCore getInstance() {
         return instance;
+    }
+
+    @Override
+    public WolfyUtilsBukkit getWolfyUtils() {
+        return api;
     }
 
     /**

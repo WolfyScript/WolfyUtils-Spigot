@@ -28,6 +28,7 @@ public abstract class WUPlugin extends WolfyUtilCore {
         instance = this;
     }
 
+    @Deprecated
     public abstract WolfyUtilities getWolfyUtilities();
 
     @Deprecated
