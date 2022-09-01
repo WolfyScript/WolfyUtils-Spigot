@@ -6,7 +6,7 @@
 
     <groupId>com.wolfyscript.wolfyutils.spigot</groupId>
     <artifactId>wolfyutils-parent</artifactId>
-    <version>4.16.5.1</version>
+    <version>4.16.6-HOCON-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>WolfyUtils-Spigot</name>
 
@@ -27,7 +27,7 @@
         <java.version>16</java.version>
         <java.mc18.version>17</java.mc18.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <wolfyutils.api>4.16-SNAPSHOT</wolfyutils.api>
+        <wolfyutils.api>4.16.1-HOCON-SNAPSHOT</wolfyutils.api>
         <!-- Plugin versions -->
         <plugin_version.compile>3.10.1</plugin_version.compile>
         <plugin_version.shade>3.3.0</plugin_version.shade>
