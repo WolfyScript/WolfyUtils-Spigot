@@ -88,7 +88,7 @@ public class BlockStorage {
     }
 
     private void saveToPersistent() {
-        var objectMapper = JacksonUtil.getObjectMapper();
+        var objectMapper = core.getWolfyUtils().getJacksonMapperUtil().getGlobalMapper();
         var dataPersistent = getPersistentData();
         for (Map.Entry<NamespacedKey, CustomBlockData> entry : data.entrySet()) {
             try {
@@ -102,7 +102,7 @@ public class BlockStorage {
 
     private void loadFromPersistent(ChunkStorage chunkStorage) {
         var dataTypeRegistry = core.getRegistries().getCustomBlockData();
-        var objectMapper = JacksonUtil.getObjectMapper();
+        var objectMapper = core.getWolfyUtils().getJacksonMapperUtil().getGlobalMapper();
         var dataPersistent = getPersistentData();
         for (org.bukkit.NamespacedKey key : dataPersistent.getKeys()) {
             NamespacedKey wuKey = NamespacedKey.fromBukkit(key);

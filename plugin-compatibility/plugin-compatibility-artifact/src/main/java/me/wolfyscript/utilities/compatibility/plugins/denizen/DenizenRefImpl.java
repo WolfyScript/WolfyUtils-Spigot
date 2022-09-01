@@ -6,10 +6,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import java.util.Objects;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.plugins.DenizenIntegrationImpl;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
-import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,7 +69,7 @@ public class DenizenRefImpl extends APIReference {
         @Override
         public @Nullable DenizenRefImpl parse(JsonNode element) {
             if (element.isObject()) {
-                ItemStack item = JacksonUtil.getObjectMapper().convertValue(element.path("display_item"), ItemStack.class);
+                ItemStack item = WolfyUtilCore.getInstance().getWolfyUtils().getJacksonMapperUtil().getGlobalMapper().convertValue(element.path("display_item"), ItemStack.class);
                 if(!ItemUtils.isAirOrNull(item)) {
                     String script = element.path("script").asText("");
                     if (!script.isBlank()) {
