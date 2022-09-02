@@ -30,7 +30,7 @@ public class ExecutableItemsRef extends APIReference {
 
     @Override
     public ItemStack getLinkedItem() {
-        return manager.getExecutableItem(id).map(item -> item.buildItem(getAmount(), Optional.empty())).orElseGet(()-> new ItemStack(Material.AIR));
+        return manager.getExecutableItem(id).map(item -> item.buildItem(amount, Optional.empty())).orElseGet(()-> new ItemStack(Material.AIR));
     }
 
     @Override
