@@ -18,6 +18,7 @@
 
 package me.wolfyscript.utilities.api.inventory.gui.button.buttons;
 
+import java.util.ArrayList;
 import me.wolfyscript.utilities.api.inventory.gui.GuiCluster;
 import me.wolfyscript.utilities.api.inventory.gui.GuiHandler;
 import me.wolfyscript.utilities.api.inventory.gui.GuiWindow;
@@ -164,7 +165,7 @@ public class MultipleChoiceButton<C extends CustomCache> extends Button<C> {
 
         private final Supplier<ButtonState.Builder<C>> stateBuilderSupplier;
         protected StateFunction<C> stateFunction;
-        protected List<ButtonState.Builder<C>> stateBuilders;
+        protected List<ButtonState.Builder<C>> stateBuilders = new ArrayList<>();
 
         public Builder(GuiWindow<C> window, String id) {
             super(window, id, (Class<MultipleChoiceButton<C>>) (Object) MultipleChoiceButton.class);
