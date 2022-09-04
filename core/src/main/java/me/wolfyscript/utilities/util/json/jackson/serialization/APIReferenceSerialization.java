@@ -55,7 +55,7 @@ public class APIReferenceSerialization {
                     if (parser != null) {
                         JsonNode element = node.path(key);
                         if (element != null) {
-                            APIReference reference = parser.parse(element);
+                            APIReference reference = parser.parse(element); //TODO: Provide parser to the parse method
                             if (reference != null) {
                                 reference.setAmount(node.path(CUSTOM_AMOUNT).asInt(0));
                                 reference.setWeight(node.path(WEIGHT).asDouble(0));
@@ -66,7 +66,7 @@ public class APIReferenceSerialization {
                 }
             } else if (node.isTextual()) {
                 //Legacy items saved as string!
-                APIReference apiReference = JacksonUtil.getObjectMapper().treeToValue(node, VanillaRef.class);
+                APIReference apiReference = p.getCodec().treeToValue(node, VanillaRef.class);
                 if (apiReference != null) {
                     return apiReference;
                 }

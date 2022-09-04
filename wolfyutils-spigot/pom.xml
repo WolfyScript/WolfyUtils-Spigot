@@ -8,7 +8,7 @@
     <parent>
         <artifactId>wolfyutils-parent</artifactId>
         <groupId>com.wolfyscript.wolfyutils.spigot</groupId>
-        <version>4.16.5.1</version>
+        <version>4.16.6-SNAPSHOT</version>
     </parent>
 
     <build>
@@ -71,6 +71,8 @@
                                     <include>org.javassist</include>
                                     <include>net.kyori</include>
                                     <include>de.tr7zw</include>
+                                    <include>com.wolfyscript</include>
+                                    <include>com.typesafe</include>
                                 </includes>
                             </artifactSet>
                             <relocations>
@@ -89,6 +91,10 @@
                                 <relocation>
                                     <pattern>org.bstats</pattern>
                                     <shadedPattern>com.wolfyscript.utilities.main.metrics</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.typesafe</pattern>
+                                    <shadedPattern>com.wolfyscript.lib.com.typesafe</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.reflections</pattern>

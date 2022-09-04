@@ -24,6 +24,7 @@ package com.wolfyscript.utilities.bukkit.nbt;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
 import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
@@ -58,6 +59,15 @@ public class NBTQuery {
     public static Optional<NBTQuery> of(File file) {
         try {
             return Optional.ofNullable(JacksonUtil.getObjectMapper().readValue(file, NBTQuery.class));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    public static Optional<NBTQuery> of(File file, WolfyUtils wolfyUtils) {
+        try {
+            return Optional.ofNullable(wolfyUtils.getJacksonMapperUtil().getGlobalMapper().readValue(file, NBTQuery.class));
         } catch (IOException e) {
             e.printStackTrace();
             return Optional.empty();

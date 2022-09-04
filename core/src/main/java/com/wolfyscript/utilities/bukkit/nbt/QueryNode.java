@@ -24,6 +24,7 @@ package com.wolfyscript.utilities.bukkit.nbt;
 
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTList;
 import de.tr7zw.changeme.nbtapi.NBTType;
@@ -41,7 +42,6 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import me.wolfyscript.utilities.util.Keyed;
 import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import me.wolfyscript.utilities.util.json.jackson.KeyedTypeIdResolver;
 import me.wolfyscript.utilities.util.json.jackson.KeyedTypeResolver;
 import me.wolfyscript.utilities.util.json.jackson.ValueDeserializer;
@@ -151,7 +151,7 @@ public abstract class QueryNode<VAL> implements Keyed {
         injectVars.addValue("key", key);
         injectVars.addValue("parent_path", parentPath);
         try {
-            QueryNode<?> queryNode = JacksonUtil.getObjectMapper().reader(injectVars).readValue(node, QueryNode.class);
+            QueryNode<?> queryNode = WolfyCoreBukkit.getInstance().getWolfyUtils().getJacksonMapperUtil().getGlobalMapper().reader(injectVars).readValue(node, QueryNode.class);
             return Optional.ofNullable(queryNode);
         } catch (IOException e) {
             e.printStackTrace();
