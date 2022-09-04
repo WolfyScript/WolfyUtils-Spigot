@@ -206,7 +206,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
     @Deprecated
     @Override
     public WolfyUtilities getWolfyUtilities() {
-        return api;
+        return (WolfyUtilities) getWolfyUtils();
     }
 
     @Override
