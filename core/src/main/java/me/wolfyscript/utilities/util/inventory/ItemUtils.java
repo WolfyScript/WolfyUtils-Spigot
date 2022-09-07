@@ -39,9 +39,6 @@ public class ItemUtils {
 
     public final static ItemStack AIR = new ItemStack(Material.AIR);
 
-    @Deprecated(since = "4.16.0.0", forRemoval = true)
-    public ItemUtils() { }
-
     public static boolean isEquipable(Material material) {
         return switch (material.name()) {
             case "ELYTRA", "CARVED_PUMPKIN" -> true;
