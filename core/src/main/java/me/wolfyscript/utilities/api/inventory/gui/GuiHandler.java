@@ -18,6 +18,8 @@
 
 package me.wolfyscript.utilities.api.inventory.gui;
 
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.gui.button.Button;
 import me.wolfyscript.utilities.api.inventory.gui.button.ButtonAction;
@@ -93,10 +95,31 @@ public class GuiHandler<C extends CustomCache> implements Listener {
         this.switchWindow = switchWindow;
     }
 
+    /**
+     * Gets the WolfyUtilities instance that belongs to this GuiHandler.
+     *
+     * @return The WolfyUtilities instance.
+     * @deprecated Use {@link #getWolfyUtils()} instead.
+     */
+    @Deprecated
     public WolfyUtilities getApi() {
         return api;
     }
 
+    /**
+     * Gets the WolfyUtils instance that this GuiHandler belongs to.
+     *
+     * @return The WolfyUtilities instance.
+     */
+    public WolfyUtilsBukkit getWolfyUtils() {
+        return api;
+    }
+
+    /**
+     * Gets the InventoryAPI instance that this GuiHandler belongs to.
+     *
+     * @return The InventoryAPI instance.
+     */
     public InventoryAPI<C> getInvAPI() {
         return invAPI;
     }
@@ -277,11 +300,21 @@ public class GuiHandler<C extends CustomCache> implements Listener {
         }
     }
 
+    /**
+     * Gets the complete history of all clusters.
+     *
+     * @return The complete history of all clusters.
+     * @deprecated This method will be removed in future versions. Use {@link #getHistory(GuiCluster)} instead.
+     */
+    @Deprecated(since = "4.16.6.1", forRemoval = true)
     public Map<GuiCluster<C>, List<GuiWindow<C>>> getClusterHistory() {
         return clusterHistory;
     }
 
     /**
+     * Gets the history of the specified cluster.<br>
+     * <b>It is not guaranteed that changes are reflected in the original List!</b>
+     *
      * @param cluster The {@link GuiCluster} to get the history for.
      * @return A list of the {@link GuiCluster} history, or an empty list if non-existing.
      */
