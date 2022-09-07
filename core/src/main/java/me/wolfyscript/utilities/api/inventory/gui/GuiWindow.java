@@ -56,13 +56,18 @@ import java.util.Locale;
 /**
  * The GuiWindow represents an Inventory GUI in-game.
  * <p>
- * The {@link #onInit()} method is used for initialization of the buttons and other data required for the GUI.
+ *     The {@link #onInit()} method is used for initialization of the buttons and other data required for the GUI.<br>
+ *     To register Buttons you should use the {@link #getButtonBuilder()} and its methods.<br>
+ *     The {@link Button.Builder} provides the {@link Button.Builder#register()} to directly register each Button.
  * </p>
  * <p>
- * The methods {@link #onUpdateSync(GuiUpdate)} and {@link #onUpdateAsync(GuiUpdate)} are used to render the window for specific players.
+ * The methods {@link #onUpdateSync(GuiUpdate)} and {@link #onUpdateAsync(GuiUpdate)} are used to render the window for specific players.<br>
  * {@link GuiUpdate} contains all the required data, like which player it is, the cache of that player and more.
  * This way you can make the GUI contain the specific data.
  * See {@link GuiUpdate} for more information on how to render buttons etc.
+ * </p>
+ * <p>
+ *     To register Buttons
  * </p>
  *
  * @param <C> The type of the {@link CustomCache}.
@@ -308,6 +313,8 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
     }
 
     /**
+     * Gets the {@link GuiCluster} of this GUI window.
+     *
      * @return The parent {@link GuiCluster} of this window.
      */
     public final GuiCluster<C> getCluster() {
@@ -325,6 +332,11 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
         buttons.put(button.getId(), button);
     }
 
+    /**
+     * Gets the permission required to view this GUI window.
+     *
+     * @return The permission of this GUI window
+     */
     public final Permission getPermission() {
         return permission;
     }
