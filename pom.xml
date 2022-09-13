@@ -46,6 +46,7 @@
         <depend_version.adventure-platform>4.1.0</depend_version.adventure-platform>
         <depend_version.adventure-minimessage>4.10.1</depend_version.adventure-minimessage>
         <depend_version.nbt-api>2.10.0</depend_version.nbt-api>
+        <depend_version.javassist>3.29.1-GA</depend_version.javassist>
     </properties>
 
     <build>
@@ -143,6 +144,12 @@
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>${depend_version.reflections}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>${depend_version.javassist}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
