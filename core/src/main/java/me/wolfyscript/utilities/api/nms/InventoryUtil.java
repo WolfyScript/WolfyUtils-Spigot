@@ -18,12 +18,22 @@
 
 package me.wolfyscript.utilities.api.nms;
 
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import javassist.CannotCompileException;
+import javassist.ClassPool;
+import javassist.NotFoundException;
 import me.wolfyscript.utilities.api.inventory.gui.GuiHandler;
 import me.wolfyscript.utilities.api.inventory.gui.GuiWindow;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
+import me.wolfyscript.utilities.api.nms.inventory.InjectGUIInventory;
 import me.wolfyscript.utilities.util.inventory.CreativeModeTab;
+import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 
 public abstract class InventoryUtil extends UtilComponent {
 
@@ -35,9 +45,29 @@ public abstract class InventoryUtil extends UtilComponent {
 
     public abstract <C extends CustomCache> GUIInventory<C> createGUIInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, InventoryType type, String title);
 
-    public abstract <C extends CustomCache> GUIInventory<C> createGUIInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, int size);
+    public <C extends CustomCache> GUIInventory<C> createGUIInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, int size) {
+        Inventory inventory = Bukkit.createInventory(null, size);
+        try {
+            Class<? extends GUIInventory<C>> modifiedClass = (Class<? extends GUIInventory<C>>) InjectGUIInventory.inject(ClassPool.getDefault(), inventory.getClass());
+            Constructor<? extends GUIInventory<C>> constructor = modifiedClass.getConstructor(GuiHandler.class, GuiWindow.class, InventoryHolder.class, int.class);
 
-    public abstract <C extends CustomCache> GUIInventory<C> createGUIInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, int size, String title);
+            return constructor.newInstance(guiHandler, window, null, size);
+        } catch (NotFoundException | CannotCompileException | IOException | NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public <C extends CustomCache> GUIInventory<C> createGUIInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, int size, String title) {
+        Inventory inventory = Bukkit.createInventory(null, size, title);
+        try {
+            Class<? extends GUIInventory<C>> modifiedClass = (Class<? extends GUIInventory<C>>) InjectGUIInventory.inject(ClassPool.getDefault(), inventory.getClass());
+            Constructor<? extends GUIInventory<C>> constructor = modifiedClass.getConstructor(GuiHandler.class, GuiWindow.class, InventoryHolder.class, int.class, String.class);
+
+            return constructor.newInstance(guiHandler, window, null, size, title);
+        } catch (NotFoundException | CannotCompileException | IOException | NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * This is used for internal initialization of the {@link CreativeModeTab} registry.
