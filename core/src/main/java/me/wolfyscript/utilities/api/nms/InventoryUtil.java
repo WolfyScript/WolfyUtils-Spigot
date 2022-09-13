@@ -43,36 +43,22 @@ public abstract class InventoryUtil extends UtilComponent {
 
     public <C extends CustomCache> GUIInventory<C> createGUIInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, InventoryType type) {
         Inventory inventory = Bukkit.createInventory(null, type);
-        return InjectGUIInventory.patchInventory(guiHandler, window, inventory);
+        return InjectGUIInventory.patchInventory(guiHandler, window, inventory, null);
     }
 
     public <C extends CustomCache> GUIInventory<C> createGUIInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, InventoryType type, String title) {
-        Inventory inventory = Bukkit.createInventory(null, type);
-        return InjectGUIInventory.patchInventory(guiHandler, window, inventory);
+        Inventory inventory = Bukkit.createInventory(null, type, title);
+        return InjectGUIInventory.patchInventory(guiHandler, window, inventory, title);
     }
 
     public <C extends CustomCache> GUIInventory<C> createGUIInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, int size) {
         Inventory inventory = Bukkit.createInventory(null, size);
-        try {
-            Class<? extends GUIInventory<C>> modifiedClass = (Class<? extends GUIInventory<C>>) InjectGUIInventory.inject(ClassPool.getDefault(), inventory.getClass());
-            Constructor<? extends GUIInventory<C>> constructor = modifiedClass.getConstructor(GuiHandler.class, GuiWindow.class, InventoryHolder.class, int.class);
-
-            return constructor.newInstance(guiHandler, window, null, size);
-        } catch (NotFoundException | CannotCompileException | IOException | NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        return InjectGUIInventory.patchInventory(guiHandler, window, inventory, null);
     }
 
     public <C extends CustomCache> GUIInventory<C> createGUIInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, int size, String title) {
         Inventory inventory = Bukkit.createInventory(null, size, title);
-        try {
-            Class<? extends GUIInventory<C>> modifiedClass = (Class<? extends GUIInventory<C>>) InjectGUIInventory.inject(ClassPool.getDefault(), inventory.getClass());
-            Constructor<? extends GUIInventory<C>> constructor = modifiedClass.getConstructor(GuiHandler.class, GuiWindow.class, InventoryHolder.class, int.class, String.class);
-
-            return constructor.newInstance(guiHandler, window, null, size, title);
-        } catch (NotFoundException | CannotCompileException | IOException | NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        return InjectGUIInventory.patchInventory(guiHandler, window, inventory, title);
     }
 
     /**

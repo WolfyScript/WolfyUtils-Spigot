@@ -1,5 +1,6 @@
 package me.wolfyscript.utilities.api.nms.inventory;
 
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -27,6 +28,7 @@ import me.wolfyscript.utilities.util.Reflection;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.jetbrains.annotations.Nullable;
 
 public class InjectGUIInventory {
 
@@ -42,7 +44,7 @@ public class InjectGUIInventory {
         CONTAINER_CLASS = Reflection.getNMS("world", "IInventory");
     }
 
-    public static <C extends CustomCache, T extends GUIInventory<C> & Inventory> T patchInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, Inventory inventory) {
+    public static <C extends CustomCache, T extends GUIInventory<C> & Inventory> T patchInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, Inventory inventory, @Nullable String originalTitle) {
         Class<? extends Inventory> inventoryClass = inventory.getClass();
 
         if (!(inventory instanceof GUIInventory<?>)) {
@@ -57,38 +59,32 @@ public class InjectGUIInventory {
             Constructor<?> constructor;
             try {
                 // Special inventory type
-                constructor = modifiedClass.getConstructors()[0];//.getConstructor(GuiHandler.class, GuiWindow.class, CONTAINER_CLASS);
+                constructor = modifiedClass.getConstructor(GuiHandler.class, GuiWindow.class, CONTAINER_CLASS);
                 return (T) constructor.newInstance(guiHandler, window, inventoryClass.getMethod("getInventory").invoke(inventory));
             } catch (NoSuchMethodException e) {
                 // Custom inventory - need to check which constructor to use
                 try {
                     InventoryType type = inventory.getType();
-                    String title;
-                    try {
-                        title = (String) CONTAINER_CLASS.getMethod("getTitle").invoke(inventoryClass.getMethod("getInventory").invoke(inventory));
-                    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
-                        title = null;
-                    }
 
                     if (type != InventoryType.CHEST) {
                         // Using custom inventory type
-                        if (Objects.equals(title, type.getDefaultTitle())) {
+                        if (originalTitle == null || Objects.equals(originalTitle, type.getDefaultTitle())) {
                             // using the (InventoryHolder owner, InventoryType type) constructor
                             constructor = modifiedClass.getConstructor(GuiHandler.class, GuiWindow.class, InventoryHolder.class, InventoryType.class);
                             return (T) constructor.newInstance(guiHandler, window, inventory.getHolder(), type);
                         } else {
                             // using the (InventoryHolder owner, InventoryType type, String title) constructor
                             constructor = modifiedClass.getConstructor(GuiHandler.class, GuiWindow.class, InventoryHolder.class, InventoryType.class, String.class);
-                            return (T) constructor.newInstance(guiHandler, window, inventory.getHolder(), type, title);
+                            return (T) constructor.newInstance(guiHandler, window, inventory.getHolder(), type, originalTitle);
                         }
-                    } else if (Objects.equals(title, type.getDefaultTitle())) {
+                    } else if (originalTitle == null || Objects.equals(originalTitle, type.getDefaultTitle())) {
                         // using the (InventoryHolder owner, int size) constructor
                         constructor = modifiedClass.getConstructor(GuiHandler.class, GuiWindow.class, InventoryHolder.class, int.class);
                         return (T) constructor.newInstance(guiHandler, window, inventory.getHolder(), inventory.getSize());
                     } else {
                         // using the (InventoryHolder owner, int size, String title) constructor
                         constructor = modifiedClass.getConstructor(GuiHandler.class, GuiWindow.class, InventoryHolder.class, int.class, String.class);
-                        return (T) constructor.newInstance(guiHandler, window, inventory.getHolder(), inventory.getSize(), title);
+                        return (T) constructor.newInstance(guiHandler, window, inventory.getHolder(), inventory.getSize(), originalTitle);
                     }
                 } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException ex) {
                     throw new RuntimeException(ex);
