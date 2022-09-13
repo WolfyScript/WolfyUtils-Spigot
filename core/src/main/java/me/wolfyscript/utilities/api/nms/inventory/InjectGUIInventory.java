@@ -111,7 +111,8 @@ public class InjectGUIInventory {
     public static Class<?> inject(ClassPool classPool, Class<?> originalClass) throws NotFoundException, CannotCompileException, IOException {
         classPool.insertClassPath(new LoaderClassPath(InjectGUIInventory.class.getClassLoader()));
 
-        CtClass wrappedInventory = classPool.makeClass(GENERATOR_PACKAGE + "." + originalClass.getSimpleName());
+        final String guiClassName = "GUI" + originalClass.getSimpleName();
+        final CtClass wrappedInventory = classPool.makeClass(GENERATOR_PACKAGE + "." + guiClassName);
 
         classPool.importPackage("net.minecraft.server." + Reflection.getVersion());
         classPool.importPackage("me.wolfyscript.utilities.api.inventory.gui");
@@ -178,21 +179,36 @@ public class InjectGUIInventory {
 
         for (Constructor<?> constructor : originalClass.getConstructors()) {
             Class<?>[] parameters = constructor.getParameterTypes();
+            StringBuilder bodyBuilder = new StringBuilder("{\n    super(");
+            StringBuilder signatureBuilder = new StringBuilder("public ");
+            signatureBuilder.append(guiClassName).append('(');
 
-            CtClass[] modifiedParameters = new CtClass[2 + parameters.length];
-            modifiedParameters[0] = guiHandlerClass;
-            modifiedParameters[1] = guiWindowClass;
+            // GuiHandler var0,
+            signatureBuilder.append(guiHandlerClass.getName()).append(" var0").append(", ");
+            // GuiWindow var1
+            signatureBuilder.append(guiWindowClass.getName()).append(" var1");
+
             for (int i = 0; i < parameters.length; i++) {
-                modifiedParameters[2 + i] = classPool.get(parameters[i].getName());
+                String name = "var" + (i+2);
+                if (i != 0) {
+                    bodyBuilder.append(", ");
+                }
+                bodyBuilder.append(name);
+                // <Class Name> var<i>
+                signatureBuilder.append(", ");
+                signatureBuilder.append(parameters[i].getName()).append(' ').append(name);
             }
+            signatureBuilder.append(") ");
+            bodyBuilder.append(");\n");
+            bodyBuilder.append("    this.wolfyutils$guiHandler = var0;\n");
+            bodyBuilder.append("    this.wolfyutils$window = var1;\n");
+            bodyBuilder.append('}');
 
-            CtConstructor ctConstructor = CtNewConstructor.make(modifiedParameters, null, wrappedInventory);
-
-            //TODO: Properly create the super(); call
-            wrappedInventory.addConstructor(ctConstructor);
+            CtConstructor generatedConstructor = CtNewConstructor.make(signatureBuilder.toString() + bodyBuilder.toString(), wrappedInventory);
+            wrappedInventory.addConstructor(generatedConstructor);
         }
 
-        wrappedInventory.writeFile("wolfyutils_generated");
+        wrappedInventory.writeFile(WolfyCoreBukkit.getInstance().getDataFolder().getPath() + "/generated_classes");
         return wrappedInventory.toClass(PermissionReference.class);
     }
 
