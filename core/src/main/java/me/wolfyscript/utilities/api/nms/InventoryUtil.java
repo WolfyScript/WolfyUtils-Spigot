@@ -41,9 +41,15 @@ public abstract class InventoryUtil extends UtilComponent {
         super(nmsUtil);
     }
 
-    public abstract <C extends CustomCache> GUIInventory<C> createGUIInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, InventoryType type);
+    public <C extends CustomCache> GUIInventory<C> createGUIInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, InventoryType type) {
+        Inventory inventory = Bukkit.createInventory(null, type);
+        return InjectGUIInventory.patchInventory(guiHandler, window, inventory);
+    }
 
-    public abstract <C extends CustomCache> GUIInventory<C> createGUIInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, InventoryType type, String title);
+    public <C extends CustomCache> GUIInventory<C> createGUIInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, InventoryType type, String title) {
+        Inventory inventory = Bukkit.createInventory(null, type);
+        return InjectGUIInventory.patchInventory(guiHandler, window, inventory);
+    }
 
     public <C extends CustomCache> GUIInventory<C> createGUIInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, int size) {
         Inventory inventory = Bukkit.createInventory(null, size);
