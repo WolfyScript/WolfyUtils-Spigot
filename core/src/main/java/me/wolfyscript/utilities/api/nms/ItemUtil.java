@@ -20,6 +20,7 @@ package me.wolfyscript.utilities.api.nms;
 
 import java.io.IOException;
 
+@Deprecated(since = "4.16.2.0")
 public abstract class ItemUtil extends UtilComponent {
 
     protected ItemUtil(NMSUtil nmsUtil) {

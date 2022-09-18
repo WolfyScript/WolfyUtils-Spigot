@@ -28,6 +28,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
@@ -72,24 +73,21 @@ final class PluginsBukkit implements Plugins, Listener {
     void init() {
         core.getLogger().info("Loading Plugin integrations: ");
         Bukkit.getPluginManager().registerEvents(this, core);
-        for (Class<?> integrationClass : core.getReflections().getTypesAnnotatedWith(WUPluginIntegration.class)) {
-            WUPluginIntegration annotation = integrationClass.getAnnotation(WUPluginIntegration.class);
-            if (annotation != null && PluginIntegrationAbstract.class.isAssignableFrom(integrationClass)) {
+        for (Class<?> integrationType : core.getReflections().getTypesAnnotatedWith(WUPluginIntegration.class)) {
+            WUPluginIntegration annotation = integrationType.getAnnotation(WUPluginIntegration.class);
+            if (annotation != null && PluginIntegrationAbstract.class.isAssignableFrom(integrationType)) {
                 String pluginName = annotation.pluginName();
                 if (Bukkit.getPluginManager().getPlugin(pluginName) != null) { //Only load for plugins that are loaded.
                     core.getLogger().info(" - " + pluginName);
-                    if (!pluginIntegrationClasses.containsKey(pluginName)) {
-                        pluginIntegrationClasses.put(pluginName, (Class<? extends PluginIntegrationAbstract>) integrationClass);
-                    } else {
-                        core.getLogger().severe("Failed to add Integration! A Plugin Integration for \"" + pluginName + "\" already exists!");
-                    }
+                    Preconditions.checkArgument(!pluginIntegrationClasses.containsKey(pluginName), "Failed to add Integration! A Plugin Integration for \"" + pluginName + "\" already exists!");
+                    pluginIntegrationClasses.put(pluginName, (Class<? extends PluginIntegrationAbstract>) integrationType);
                 }
             }
         }
         if (!pluginIntegrationClasses.isEmpty()) {
             core.getLogger().info("Create & Init Plugin integrations: ");
             //Initialize the plugin integrations for that the plugin is already enabled.
-            pluginIntegrationClasses.forEach(this::createPluginIntegration);
+            pluginIntegrationClasses.forEach(this::createOrInitPluginIntegration);
             if (pluginIntegrations.isEmpty()) {
                 core.getLogger().info(" - No integrations created.");
             }
@@ -99,47 +97,57 @@ final class PluginsBukkit implements Plugins, Listener {
         }
     }
 
-    private void createPluginIntegration(String pluginName, Class<? extends PluginIntegrationAbstract> integrationClass) {
-        if (integrationClass != null && !pluginIntegrations.containsKey(pluginName)) {
-            try {
-                Constructor<? extends PluginIntegrationAbstract> integrationConstructor = integrationClass.getDeclaredConstructor(WolfyUtilCore.class);
-                integrationConstructor.setAccessible(true);
-                var integration = integrationConstructor.newInstance(core);
-                pluginIntegrations.put(pluginName, integration);
-                if (isPluginEnabled(pluginName)) { //Only init the integration if the plugin has already been enabled!
-                    integration.init(Bukkit.getPluginManager().getPlugin(pluginName));
-                    if (!integration.hasAsyncLoading()) {
-                        integration.setEnabled(true);
-                    }
-                    core.getLogger().info(" - " + pluginName + (integration.hasAsyncLoading() ? " [async]" : ""));
-                } else {
-                    core.getLogger().info(" - " + pluginName);
+    private void createOrInitPluginIntegration(String pluginName, Class<? extends PluginIntegrationAbstract> integrationClass) {
+        if (integrationClass != null) {
+            var integration = pluginIntegrations.computeIfAbsent(pluginName, (key) -> {
+                try {
+                    Constructor<? extends PluginIntegrationAbstract> integrationConstructor = integrationClass.getDeclaredConstructor(WolfyUtilCore.class);
+                    integrationConstructor.setAccessible(true);
+                    return integrationConstructor.newInstance(core);
+                } catch (InstantiationException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                    core.getLogger().warning("     Failed to initialise integration for " + pluginName + "! Cause: " + e.getMessage());
+                    return null;
+                }
+            });
+            if (integration == null) return;
+            var plugin = Bukkit.getPluginManager().getPlugin(pluginName);
+            if (plugin != null && plugin.isEnabled() && !integration.isDoneLoading()) {
+                integration.init(plugin);
+                if (!integration.hasAsyncLoading()) {
+                    integration.setEnabled(true);
                 }
                 checkDependencies();
-            } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException | RuntimeException e) {
-                core.getLogger().warning("     Failed to initialise integration for " + pluginName + "! Cause: " + e.getMessage());
-                pluginIntegrations.remove(pluginName);
             }
         }
     }
 
+    private void ignoreIntegrationFor(Plugin plugin) {
+        runIfAvailable(plugin.getName(), PluginIntegrationAbstract.class, PluginIntegrationAbstract::ignore);
+        checkDependencies();
+    }
+
     void checkDependencies() {
+        pluginIntegrations.values().removeIf(pluginIntegrationAbstract -> {
+            if (pluginIntegrationAbstract.shouldBeIgnored()) {
+                pluginIntegrationClasses.remove(pluginIntegrationAbstract.getAssociatedPlugin());
+                return true;
+            }
+            return false;
+        });
         int availableIntegrations = pluginIntegrationClasses.size();
         long enabledIntegrations = pluginIntegrations.values().stream().filter(PluginIntegrationAbstract::isDoneLoading).count();
         if (availableIntegrations == enabledIntegrations) {
             doneLoading = true;
             Bukkit.getScheduler().runTaskLater(core, () -> {
-                core.getLogger().info("All dependencies are loaded. Calling the DependenciesLoadedEvent to notify other plugins!");
+                core.getLogger().info("Dependencies Loaded. Calling DependenciesLoadedEvent!");
                 Bukkit.getPluginManager().callEvent(new DependenciesLoadedEvent(core));
-            }, 10);
+            }, 2);
         }
     }
 
     @EventHandler
     private void onPluginDisable(PluginDisableEvent event) {
-        String pluginName = event.getPlugin().getName();
-        pluginIntegrationClasses.remove(pluginName);
-        pluginIntegrations.remove(pluginName);
+        ignoreIntegrationFor(event.getPlugin());
     }
 
     @EventHandler
@@ -147,9 +155,10 @@ final class PluginsBukkit implements Plugins, Listener {
         String pluginName = event.getPlugin().getName();
         Class<? extends PluginIntegrationAbstract> integrationClass = pluginIntegrationClasses.get(pluginName);
         if (integrationClass != null) {
-            createPluginIntegration(pluginName, integrationClass);
+            createOrInitPluginIntegration(pluginName, integrationClass);
             if (!hasIntegration(event.getPlugin().getName())) {
                 core.getLogger().warning("Failed to initiate PluginIntegration for " + pluginName);
+                ignoreIntegrationFor(event.getPlugin());
             }
         }
     }

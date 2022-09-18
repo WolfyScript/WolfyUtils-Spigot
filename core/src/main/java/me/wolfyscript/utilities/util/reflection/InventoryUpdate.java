@@ -21,11 +21,11 @@
  */
 package me.wolfyscript.utilities.util.reflection;
 
+import com.google.common.base.Preconditions;
 import me.wolfyscript.utilities.util.Reflection;
 import me.wolfyscript.utilities.util.version.ServerVersion;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -37,7 +37,6 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**
@@ -97,6 +96,7 @@ public final class InventoryUpdate {
                     case 0, 1 -> "bW";
                     default -> "bV";
                 };
+                case 19 -> "bU";
                 default -> "activeContainer";
             });
             windowIdField = (version > 16) ? CONTAINER_CLASS.getField("j") : CONTAINER_CLASS.getField("windowId");
@@ -115,12 +115,12 @@ public final class InventoryUpdate {
      * @param newTitle the new title for the inventory.
      */
     public static void updateInventory(JavaPlugin plugin, Player player, String newTitle) {
-        Validate.notNull(player, "Cannot update inventory to null player.");
+        Preconditions.checkNotNull(player, "Cannot update inventory to null player.");
         updateInventory(plugin, player, Component.text(newTitle == null ? "" : newTitle));
     }
 
     public static void updateInventory(JavaPlugin plugin, Player player, Component newTitle) {
-        Validate.notNull(player, "Cannot update inventory to null player.");
+        Preconditions.checkNotNull(player, "Cannot update inventory to null player.");
         try {
             // Get EntityPlayer from CraftPlayer.
             Object craftPlayer = CRAFT_PLAYER_CLASS.cast(player);

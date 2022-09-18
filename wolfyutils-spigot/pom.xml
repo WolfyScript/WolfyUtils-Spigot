@@ -2,22 +2,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>wolfyutils-parent</artifactId>
-        <groupId>com.wolfyscript.wolfyutils.spigot</groupId>
-        <version>4.16.1-func-cooking-SNAPSHOT</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>wolfyutils-spigot</artifactId>
+    <parent>
+        <artifactId>wolfyutils-parent</artifactId>
+        <groupId>com.wolfyscript.wolfyutils.spigot</groupId>
+        <version>4.16.6.1-func-cooking-SNAPSHOT</version>
+    </parent>
 
     <build>
         <resources>
             <resource>
                 <directory>${project.basedir}/src/main/java</directory>
-                <excludes>
-                    <exclude>**/*.java</exclude>
-                </excludes>
+                <includes>
+                    <include>**/*.java</include>
+                    <include>**/*.gwt.xml</include>
+                </includes>
             </resource>
             <resource>
                 <directory>${project.basedir}/src/main/resources</directory>
@@ -29,6 +30,22 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${plugin_version.license}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>add-third-party</goal>
+                        </goals>
+                        <configuration>
+                            <excludeTransitiveDependencies>true</excludeTransitiveDependencies>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -53,12 +70,31 @@
                                     <include>org.reflections</include>
                                     <include>org.javassist</include>
                                     <include>net.kyori</include>
+                                    <include>de.tr7zw</include>
+                                    <include>com.wolfyscript</include>
+                                    <include>com.typesafe</include>
                                 </includes>
                             </artifactSet>
                             <relocations>
                                 <relocation>
+                                    <pattern>de.tr7zw.changeme.nbtapi</pattern>
+                                    <shadedPattern>com.wolfyscript.lib.nbt.nbtapi</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>de.tr7zw.annotations</pattern>
+                                    <shadedPattern>com.wolfyscript.lib.de.tr7zw.annotations</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>de.tr7zw.nbtinjector</pattern>
+                                    <shadedPattern>com.wolfyscript.lib.nbt.nbtinjector</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>org.bstats</pattern>
-                                    <shadedPattern>me.wolfyscript.utilities.main.metrics</shadedPattern>
+                                    <shadedPattern>com.wolfyscript.utilities.main.metrics</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.typesafe</pattern>
+                                    <shadedPattern>com.wolfyscript.lib.com.typesafe</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.reflections</pattern>
@@ -84,10 +120,28 @@
                                         <exclude>META-INF/*</exclude>
                                     </excludes>
                                 </filter>
+                                <filter>
+                                    <artifact>de.tr7zw</artifact>
+                                    <excludes>
+                                        <exclude>LICENSE</exclude>
+                                    </excludes>
+                                </filter>
                             </filters>
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                        <version>9.2</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm-commons</artifactId>
+                        <version>9.1</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
@@ -140,6 +194,12 @@
             <version>${depend_version.reflections}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>${depend_version.javassist}</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -166,18 +226,31 @@
             <version>${depend_version.adventure-minimessage}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- PlaceholderAPI -->
+        <!-- NBT -->
         <dependency>
-            <groupId>me.clip</groupId>
-            <artifactId>placeholderapi</artifactId>
-            <version>2.11.1</version>
-            <scope>provided</scope>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>item-nbt-api</artifactId>
+            <version>${depend_version.nbt-api}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>nbt-data-api</artifactId>
+            <version>${depend_version.nbt-api}</version>
+            <scope>compile</scope>
         </dependency>
         <!-- Bstats Metrics -->
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
             <version>${depend_version.bstats}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!---->
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>${depend_version.guice}</version>
             <scope>compile</scope>
         </dependency>
         <!-- Testing -->

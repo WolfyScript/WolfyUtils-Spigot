@@ -28,6 +28,7 @@ public abstract class WUPlugin extends WolfyUtilCore {
         instance = this;
     }
 
+    @Deprecated
     public abstract WolfyUtilities getWolfyUtilities();
 
     @Deprecated
@@ -35,7 +36,8 @@ public abstract class WUPlugin extends WolfyUtilCore {
         return instance;
     }
 
-    public abstract void loadParticleEffects();
+    @Deprecated
+    public void loadParticleEffects(){ }
 
     public abstract MessageHandler getMessageHandler();
 

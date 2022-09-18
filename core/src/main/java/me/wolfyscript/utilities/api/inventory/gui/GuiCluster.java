@@ -135,13 +135,12 @@ public abstract class GuiCluster<C extends CustomCache> extends GuiMenuComponent
      * If it is not available it returns an empty component.
      *
      * @param key The key in the language.
-     * @param templates The placeholders and values in the message.
-     * @param translateLegacyColor If it should translate legacy '&' color codes.
+     * @param resolver The placeholders and values in the message.
      * @return The component set for the key; empty component if not available.
      */
     @Override
-    public Component translatedMsgKey(String key, boolean translateLegacyColor, List<? extends TagResolver> templates) {
-        return getChat().translated("inventories." + id + ".global_messages." + key, translateLegacyColor, templates);
+    public Component translatedMsgKey(String key, TagResolver resolver) {
+        return getChat().translated("inventories." + id + ".global_messages." + key, resolver);
     }
 
     /**

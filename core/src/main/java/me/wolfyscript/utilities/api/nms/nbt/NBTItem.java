@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
+@Deprecated(since = "4.16.2.0")
 public abstract class NBTItem {
 
     protected final ItemStack bukkitItemStack;

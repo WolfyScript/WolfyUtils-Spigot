@@ -193,6 +193,12 @@ public class ActionButton<C extends CustomCache> extends Button<C> {
             this.stateBuilder = ButtonState.of(cluster, key);
         }
 
+        /**
+         * Sets the state of the Button, that handles the interactions, icons, etc.
+         *
+         * @param builderConsumer The ButtonState builder of which the state is constructed.
+         * @return This builder to allow for chaining.
+         */
         public T state(Consumer<ButtonState.Builder<C>> builderConsumer) {
             builderConsumer.accept(stateBuilder);
             return inst();

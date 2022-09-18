@@ -3,6 +3,7 @@ version: '${project.version}'
 main: com.wolfyscript.utilities.bukkit.WolfyCoreBukkit
 api-version: 1.16
 authors: [ WolfyScript ]
+load: STARTUP
 
 libraries:
   - "com.google.inject:guice:5.1.0"
@@ -26,10 +27,10 @@ softdepend:
   - mcMMO
   - Oraxen
   - ItemsAdder
-  - ExecutableItems
   - PlaceholderAPI
   - eco
   - zAuctionHouseV3
+  - SCore
 
 commands:
   wolfyutils:
@@ -47,3 +48,9 @@ commands:
   particle_effect:
     usage: "/particle_effect spawn"
     description: "DEBUG! Spawns a test particle effect on the target block."
+  query_item:
+    usage: "/query_item"
+permissions: 
+  wolfyutilities.command.query_debug:
+    default: op
+    description: "Command to debug NBT querries on the item in the hand"

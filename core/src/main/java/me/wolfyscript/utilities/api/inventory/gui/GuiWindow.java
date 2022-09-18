@@ -45,22 +45,29 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * The GuiWindow represents an Inventory GUI in-game.
  * <p>
- * The {@link #onInit()} method is used for initialization of the buttons and other data required for the GUI.
+ *     The {@link #onInit()} method is used for initialization of the buttons and other data required for the GUI.<br>
+ *     To register Buttons you should use the {@link #getButtonBuilder()} and its methods.<br>
+ *     The {@link Button.Builder} provides the {@link Button.Builder#register()} to directly register each Button.
  * </p>
  * <p>
- * The methods {@link #onUpdateSync(GuiUpdate)} and {@link #onUpdateAsync(GuiUpdate)} are used to render the window for specific players.
+ * The methods {@link #onUpdateSync(GuiUpdate)} and {@link #onUpdateAsync(GuiUpdate)} are used to render the window for specific players.<br>
  * {@link GuiUpdate} contains all the required data, like which player it is, the cache of that player and more.
  * This way you can make the GUI contain the specific data.
  * See {@link GuiUpdate} for more information on how to render buttons etc.
+ * </p>
+ * <p>
+ *     To register Buttons
  * </p>
  *
  * @param <C> The type of the {@link CustomCache}.
@@ -72,8 +79,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
     private boolean forceSyncUpdate;
     private int titleUpdatePeriod = -1;
     private int titleUpdateDelay = 20;
-
-    //
+    private final Permission permission;
     private boolean useLegacyTitleUpdate = false;
 
     //Inventory
@@ -126,17 +132,41 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
         this.inventoryType = inventoryType;
         this.size = size;
         this.forceSyncUpdate = forceSyncUpdate;
+        this.permission = loadPermission();
         Bukkit.getPluginManager().registerEvents(this, wolfyUtilities.getPlugin());
 
         //Check if the old title update method is used.
         try {
-            Class<?> declaringClass = getClass().getMethod("onUpdateTitle", String.class, GUIInventory.class, GuiHandler.class).getDeclaringClass();
-            if (!declaringClass.equals(getClass())) {
+            Class<?> newTitleMethodClass = getClass().getMethod("onUpdateTitle", Player.class, GUIInventory.class, GuiHandler.class).getDeclaringClass();
+            Class<?> oldTitleMethodClass = getClass().getMethod("onUpdateTitle", String.class, GUIInventory.class, GuiHandler.class).getDeclaringClass();
+            if (!newTitleMethodClass.equals(getClass()) && oldTitleMethodClass.equals(getClass())) {
+                wolfyUtilities.getConsole().getLogger().warning("GuiWindow " + namespacedKey + " is using deprecated title method!");
                 useLegacyTitleUpdate = true;
             }
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
+    }
+
+    private Permission loadPermission() {
+        var permName = inventoryAPI.getPlugin().getName().toLowerCase(Locale.ROOT) + ".inv." + namespacedKey.toString(".");
+        var perm = Bukkit.getPluginManager().getPermission(permName);
+        if (perm == null) {
+            var parentPermName = inventoryAPI.getPlugin().getName().toLowerCase(Locale.ROOT) + ".inv.*";
+            var parentPerm = Bukkit.getPluginManager().getPermission(parentPermName);
+            if (parentPerm == null) {
+                parentPerm = new Permission(parentPermName);
+                parentPerm.addParent(wolfyUtilities.getPermissions().getRootPermission(), true);
+                Bukkit.getPluginManager().addPermission(parentPerm);
+            }
+            var wildcardPermName = inventoryAPI.getPlugin().getName().toLowerCase(Locale.ROOT) + ".inv." + namespacedKey.getNamespace() + ".*";
+            var wildcardPerm = new Permission(wildcardPermName);
+            wildcardPerm.addParent(parentPerm, true);
+            perm = new Permission(permName);
+            perm.addParent(wildcardPerm, true);
+            Bukkit.getPluginManager().addPermission(perm);
+        }
+        return perm;
     }
 
     /**
@@ -269,10 +299,6 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
         }
     }
 
-    void setTitle() {
-
-    }
-
     /**
      * The NamespacedKey consists of the namespace and key representing this window.
      * <br>
@@ -287,6 +313,8 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
     }
 
     /**
+     * Gets the {@link GuiCluster} of this GUI window.
+     *
      * @return The parent {@link GuiCluster} of this window.
      */
     public final GuiCluster<C> getCluster() {
@@ -302,6 +330,15 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
     public final void registerButton(Button<C> button) {
         button.init(this);
         buttons.put(button.getId(), button);
+    }
+
+    /**
+     * Gets the permission required to view this GUI window.
+     *
+     * @return The permission of this GUI window
+     */
+    public final Permission getPermission() {
+        return permission;
     }
 
     /**
@@ -418,14 +455,17 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
     }
 
     /**
-     * Creates a new Component of the given language message key.
+     * Creates a {@link Component} of the specified language key.<br>
+     * If the key exists in the language it will be translated and returns the according component.
+     * If it is not available it returns an empty component.
      *
-     * @param key The key of the message in the language.
-     * @return The translated Component of that message; Or empty Component if non-existing.
+     * @param key The key in the language.
+     * @param resolver The placeholders and values in the message.
+     * @return The component set for the key; empty component if not available.
      */
     @Override
-    public Component translatedMsgKey(String key, boolean translateLegacyColor, List<? extends TagResolver> templates) {
-        return getChat().translated("inventories." + getNamespacedKey().getNamespace() + "." + getNamespacedKey().getKey() + ".messages." + key, translateLegacyColor, templates);
+    public Component translatedMsgKey(String key, TagResolver resolver) {
+        return getChat().translated("inventories." + getNamespacedKey().getNamespace() + "." + getNamespacedKey().getKey() + ".messages." + key, resolver);
     }
 
     /**

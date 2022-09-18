@@ -51,7 +51,7 @@ public class LangAPISpigot extends LanguageAPI {
         injectableValues.addValue("api", api);
         injectableValues.addValue("lang", lang);
         try {
-            Language language = JacksonUtil.getObjectMapper().reader(injectableValues).readValue(file, Language.class);
+            Language language = api.getJacksonMapperUtil().getGlobalMapper().reader(injectableValues).readValue(file, Language.class);
             registerLanguage(language);
             return language;
         } catch (IOException ex) {
@@ -63,7 +63,7 @@ public class LangAPISpigot extends LanguageAPI {
 
     public void saveLangFile(@NotNull Language language) {
         try {
-            JacksonUtil.getObjectMapper().writeValue(getLangFile(language.getName()), language);
+            api.getJacksonMapperUtil().getGlobalMapper().writeValue(getLangFile(language.getName()), language);
         } catch (IOException ex) {
             getAPI().getConsole().getLogger().severe("Couldn't save language \""+language.getName()+"\"!");
             getAPI().getConsole().getLogger().throwing("LanguageAPI", "saveLangFile", ex);
@@ -89,30 +89,30 @@ public class LangAPISpigot extends LanguageAPI {
                 for (String key : keys) {
                     JsonNode node = getNodeAt(key.replace("$", ""));
                     if (node.isTextual()) {
-                        result.add(ChatColor.convert(s.replace(key, node.asText())));
+                        result.add(s.replace(key, node.asText()));
                     } else if (node.isArray()) {
                         StringBuilder sB = new StringBuilder();
                         node.elements().forEachRemaining(n -> sB.append(' ').append(n.asText()));
-                        result.add(ChatColor.convert(s.replace(key, sB.toString())));
+                        result.add(s.replace(key, sB.toString()));
                     }
                 }
             } else if (!keys.isEmpty()) {
                 String key = keys.get(0);
                 JsonNode node = getNodeAt(key.replace("$", ""));
                 if (node.isTextual()) {
-                    result.add(ChatColor.convert(s.replace(key, node.asText())));
+                    result.add(s.replace(key, node.asText()));
                 } else if (node.isArray()) {
                     node.elements().forEachRemaining(n -> result.add(n.asText()));
                 }
             } else {
-                result.add(ChatColor.convert(s));
+                result.add(s);
             }
         });
         return result;
     }
 
     @Override
-    protected String convertLegacyToMiniMessage(String legacyText) {
+    public String convertLegacyToMiniMessage(String legacyText) {
         String rawLegacy = ChatColor.convert(legacyText);
         Matcher matcher = LEGACY_PLACEHOLDER_PATTERN.matcher(rawLegacy);
         Map<String, String> foundPlaceholders = new HashMap<>();
@@ -158,19 +158,19 @@ public class LangAPISpigot extends LanguageAPI {
     }
 
     public String getButtonName(@NotNull NamespacedKey window, String buttonKey) {
-        return BukkitComponentSerializer.legacy().serialize(getComponent(String.format(ButtonState.BUTTON_WINDOW_KEY + ButtonState.NAME_KEY, window.getNamespace(), window.getKey(), buttonKey), true));
+        return BukkitComponentSerializer.legacy().serialize(getComponent(String.format(ButtonState.BUTTON_WINDOW_KEY + ButtonState.NAME_KEY, window.getNamespace(), window.getKey(), buttonKey)));
     }
 
     public String getButtonName(String clusterId, String buttonKey) {
-        return BukkitComponentSerializer.legacy().serialize(getComponent(String.format(ButtonState.BUTTON_CLUSTER_KEY + ButtonState.NAME_KEY, clusterId, buttonKey), true));
+        return BukkitComponentSerializer.legacy().serialize(getComponent(String.format(ButtonState.BUTTON_CLUSTER_KEY + ButtonState.NAME_KEY, clusterId, buttonKey)));
     }
 
     public List<String> getButtonLore(@NotNull NamespacedKey window, String buttonKey) {
-        return getComponents(String.format(ButtonState.BUTTON_WINDOW_KEY + ButtonState.NAME_KEY, window.getNamespace(), window.getKey(), buttonKey), true).stream().map(component -> BukkitComponentSerializer.legacy().serialize(component)).collect(Collectors.toList());
+        return getComponents(String.format(ButtonState.BUTTON_WINDOW_KEY + ButtonState.NAME_KEY, window.getNamespace(), window.getKey(), buttonKey)).stream().map(component -> BukkitComponentSerializer.legacy().serialize(component)).collect(Collectors.toList());
     }
 
     public List<String> getButtonLore(String clusterId, String buttonKey) {
-        return getComponents(String.format(ButtonState.BUTTON_CLUSTER_KEY + ButtonState.LORE_KEY, clusterId, buttonKey), true).stream().map(component -> BukkitComponentSerializer.legacy().serialize(component)).collect(Collectors.toList());
+        return getComponents(String.format(ButtonState.BUTTON_CLUSTER_KEY + ButtonState.LORE_KEY, clusterId, buttonKey)).stream().map(component -> BukkitComponentSerializer.legacy().serialize(component)).collect(Collectors.toList());
     }
 
 }

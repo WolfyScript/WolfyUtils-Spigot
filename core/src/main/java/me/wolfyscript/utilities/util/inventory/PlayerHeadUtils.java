@@ -46,6 +46,20 @@ public class PlayerHeadUtils {
     }
 
     /**
+     * Gets the Player Head ItemStack via a URL or Base64 encoded string.
+     * <p>This method uses the {@link ItemBuilder}!
+     *
+     * @see ItemBuilder#setPlayerHeadValue(String)
+     * @param value Skin URL or Base64 encoded value of textures object
+     * @param name The name of the skull owner
+     * @param uuid The uuid of the skull owner
+     * @return the Player Head ItemStack with the corresponding Texture
+     */
+    public static ItemStack getViaValue(String value, String name, UUID uuid) {
+        return new ItemBuilder(Material.PLAYER_HEAD).setPlayerHeadValue(value, name, uuid).create();
+    }
+
+    /**
      * Get the Player Head via URL value
      * <p>This method uses the {@link ItemBuilder}!
      *
@@ -59,6 +73,22 @@ public class PlayerHeadUtils {
     }
 
     /**
+     * Get the Player Head via URL value
+     * <p>This method uses the {@link ItemBuilder}!
+     *
+     * @see ItemBuilder#setPlayerHeadURL(String)
+     * @param value the Base64 value at the end of the textures url.
+     *              <p>e.g. http://textures.minecraft.net/texture/{value}
+     * @param name The name of the skull owner
+     * @param uuid The uuid of the skull owner
+     *
+     * @return the Player Head ItemStack with the corresponding Texture
+     */
+    public static ItemStack getViaURL(String value, String name, UUID uuid) {
+        return new ItemBuilder(Material.PLAYER_HEAD).setPlayerHeadURL(value, name, uuid).create();
+    }
+
+    /**
      * Gets the SkullMeta for this Texture value.
      *
      *
@@ -66,6 +96,7 @@ public class PlayerHeadUtils {
      * @param skullMeta the {@link SkullMeta} the texture value should be added to
      * @return the original skullMeta with the new texture value
      */
+    @Deprecated
     public static SkullMeta getSkullMeta(String value, SkullMeta skullMeta) {
         if (value != null && !value.isEmpty()) {
             String texture = value;
@@ -91,6 +122,7 @@ public class PlayerHeadUtils {
         return skullMeta;
     }
 
+    @Deprecated
     public static String getTextureValue(SkullMeta skullMeta) {
         GameProfile profile = null;
         Field profileField;

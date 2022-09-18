@@ -86,7 +86,7 @@ public abstract class ChatImplOld extends me.wolfyscript.utilities.api.chat.Chat
     @Override
     public void sendMessage(Player player, Component component) {
         if (player != null) {
-            player.spigot().sendMessage(BUNGEE_SERIALIZER.serialize(component));
+            sendMessage(player, true, component);
         }
     }
 
@@ -96,7 +96,7 @@ public abstract class ChatImplOld extends me.wolfyscript.utilities.api.chat.Chat
             if (prefix) {
                 component = getChatPrefix().append(Component.text(" ")).append(component);
             }
-            this.sendMessage(player, component);
+            player.spigot().sendMessage(BUNGEE_SERIALIZER.serialize(component));
         }
     }
 
@@ -195,26 +195,6 @@ public abstract class ChatImplOld extends me.wolfyscript.utilities.api.chat.Chat
 
     private List<? extends TagResolver> getTemplates(Pair<String, String>[] replacements) {
         return Arrays.stream(replacements).map(pair -> Placeholder.parsed(convertOldPlaceholder(pair.getKey()), pair.getValue())).toList();
-    }
-
-    @Override
-    public Component translated(String key) {
-        return languageAPI.getComponent(key);
-    }
-
-    @Override
-    public Component translated(String key, boolean translateLegacyColor) {
-        return languageAPI.getComponent(key, translateLegacyColor, List.of());
-    }
-
-    @Override
-    public Component translated(String key, List<? extends TagResolver> resolvers) {
-        return languageAPI.getComponent(key, resolvers);
-    }
-
-    @Override
-    public Component translated(String key, boolean translateLegacyColor, List<? extends TagResolver> resolvers) {
-        return languageAPI.getComponent(key, translateLegacyColor, resolvers);
     }
 
     @Override
@@ -338,7 +318,7 @@ public abstract class ChatImplOld extends me.wolfyscript.utilities.api.chat.Chat
                 char[] chars = placeholder.toCharArray();
                 boolean passedFirstGroup = false;
                 for (char currentChar : chars) {
-                    Matcher charMatch = ADVENTURE_PLACEHOLDER_PATTERN.matcher("" + currentChar);
+                    Matcher charMatch = ADVENTURE_PLACEHOLDER_PATTERN.matcher(String.valueOf(currentChar));
                     if (!charMatch.matches()) continue;
                     if (!passedFirstGroup) {
                         passedFirstGroup = true;

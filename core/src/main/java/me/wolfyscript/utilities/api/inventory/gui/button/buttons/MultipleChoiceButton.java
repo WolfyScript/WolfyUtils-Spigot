@@ -18,6 +18,7 @@
 
 package me.wolfyscript.utilities.api.inventory.gui.button.buttons;
 
+import java.util.ArrayList;
 import me.wolfyscript.utilities.api.inventory.gui.GuiCluster;
 import me.wolfyscript.utilities.api.inventory.gui.GuiHandler;
 import me.wolfyscript.utilities.api.inventory.gui.GuiWindow;
@@ -169,13 +170,26 @@ public class MultipleChoiceButton<C extends CustomCache> extends Button<C> {
         public Builder(GuiWindow<C> window, String id) {
             super(window, id, (Class<MultipleChoiceButton<C>>) (Object) MultipleChoiceButton.class);
             stateBuilderSupplier = () -> ButtonState.of(window, id);
+            stateFunction = null;
+            stateBuilders = new ArrayList<>();
         }
 
         public Builder(GuiCluster<C> cluster, String id) {
             super(cluster, id, (Class<MultipleChoiceButton<C>>) (Object) MultipleChoiceButton.class);
             stateBuilderSupplier = () -> ButtonState.of(cluster, id);
+            stateFunction = null;
+            stateBuilders = new ArrayList<>();
         }
 
+        /**
+         * Adds a choice state to the Button.<br>
+         * The Button will toggle between the choices in the order they were added.<br>
+         * Once it reaches the end it loops back to the first choice.<br>
+         * This behaviour can be manipulated using {@link #stateFunction(StateFunction)}
+         *
+         * @param builderConsumer The ButtonState builder of which the state is constructed.
+         * @return This builder to allow for chaining.
+         */
         public Builder<C> addState(Consumer<ButtonState.Builder<C>> builderConsumer) {
             var stateBuilder = stateBuilderSupplier.get();
             builderConsumer.accept(stateBuilder);
@@ -183,6 +197,13 @@ public class MultipleChoiceButton<C extends CustomCache> extends Button<C> {
             return this;
         }
 
+        /**
+         * Sets the state function, that manages which choice is displayed.<br>
+         * This allows to display the choice based on current data and state.
+         *
+         * @param stateFunction The state function to use
+         * @return This builder to allow chaining.
+         */
         public Builder<C> stateFunction(StateFunction<C> stateFunction) {
             this.stateFunction = stateFunction;
             return this;

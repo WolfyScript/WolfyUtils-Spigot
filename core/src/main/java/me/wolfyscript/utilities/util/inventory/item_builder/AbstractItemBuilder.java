@@ -20,10 +20,17 @@ package me.wolfyscript.utilities.util.inventory.item_builder;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
+import com.google.common.base.Preconditions;
+import de.tr7zw.changeme.nbtapi.NBTCompound;
+import de.tr7zw.changeme.nbtapi.NBTCompoundList;
+import de.tr7zw.changeme.nbtapi.NBTItem;
+import de.tr7zw.changeme.nbtapi.NBTListCompound;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.util.EncryptionUtils;
-import me.wolfyscript.utilities.util.chat.ChatColor;
+import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -48,12 +55,17 @@ public abstract class AbstractItemBuilder<T extends AbstractItemBuilder<?>> {
     private static final NamespacedKey CUSTOM_DURABILITY_DAMAGE = new NamespacedKey("wolfyutilities", "custom_durability.damage");
     private static final NamespacedKey CUSTOM_DURABILITY_INDEX = new NamespacedKey("wolfyutilities", "custom_durability.index");
     private static final NamespacedKey CUSTOM_DURABILITY_TAG = new NamespacedKey("wolfyutilities", "custom_durability.tag");
+    private static final NamespacedKey CUSTOM_DURABILITY_TAG_CONTENT = new NamespacedKey("wolfyutilities", "content");
+    private static final NamespacedKey CUSTOM_DURABILITY_TAG_MINIMSG = new NamespacedKey("wolfyutilities", "mini_msg");
 
     @JsonIgnore
     private final Class<T> typeClass;
+    @JsonIgnore
+    private final MiniMessage miniMessage;
 
     protected AbstractItemBuilder(Class<T> typeClass) {
         this.typeClass = typeClass;
+        this.miniMessage = WolfyUtilCore.getInstance().getChat().getMiniMessage();
     }
 
     protected abstract ItemStack getItemStack();
@@ -228,24 +240,54 @@ public abstract class AbstractItemBuilder<T extends AbstractItemBuilder<?>> {
         var itemMeta = getItemMeta();
         if (itemMeta != null) {
             var dataContainer = itemMeta.getPersistentDataContainer();
-            dataContainer.set(CUSTOM_DURABILITY_TAG, PersistentDataType.STRING, tag);
+            var tagContainer = dataContainer.getAdapterContext().newPersistentDataContainer();
+            tagContainer.set(CUSTOM_DURABILITY_TAG_CONTENT, PersistentDataType.STRING, tag);
+            tagContainer.set(CUSTOM_DURABILITY_TAG_MINIMSG, PersistentDataType.BYTE, (byte) 1);
+            dataContainer.set(CUSTOM_DURABILITY_TAG, PersistentDataType.TAG_CONTAINER, tagContainer);
             updateCustomDurabilityTag();
         }
         return setItemMeta(itemMeta);
     }
 
+    /**
+     * Returns the raw tag content that is specified for this ItemMeta.<br>
+     *
+     * @return The raw content (text) of the durability tag.
+     */
     public String getCustomDurabilityTag() {
         return getCustomDurabilityTag(getItemMeta());
     }
 
+    /**
+     * Returns the raw tag content that is specified for this ItemMeta.<br>
+     *
+     * @param itemMeta The ItemMeta, from which to get the tag.
+     * @return The raw content (text) of the durability tag.
+     */
     public String getCustomDurabilityTag(ItemMeta itemMeta) {
         if (itemMeta != null) {
             var dataContainer = itemMeta.getPersistentDataContainer();
-            if (dataContainer.has(CUSTOM_DURABILITY_TAG, PersistentDataType.STRING)) {
-                return dataContainer.get(CUSTOM_DURABILITY_TAG, PersistentDataType.STRING);
+            var miniMsg = false;
+            var content = "";
+            if (dataContainer.has(CUSTOM_DURABILITY_TAG, PersistentDataType.TAG_CONTAINER)) {
+                var tagContainer = dataContainer.get(CUSTOM_DURABILITY_TAG, PersistentDataType.TAG_CONTAINER);
+                miniMsg = tagContainer.getOrDefault(CUSTOM_DURABILITY_TAG_MINIMSG, PersistentDataType.BYTE, (byte) 1) == 1;
+                content = tagContainer.getOrDefault(CUSTOM_DURABILITY_TAG_CONTENT, PersistentDataType.STRING, "");
+            } else if (dataContainer.has(CUSTOM_DURABILITY_TAG, PersistentDataType.STRING)) {
+                //Using old tag version
+                content = dataContainer.getOrDefault(CUSTOM_DURABILITY_TAG, PersistentDataType.STRING, "").replace("%dur%", "<dur>").replace("%max_dur%", "<max_dur>");
             }
+            return miniMsg ? content : miniMessage.serialize(BukkitComponentSerializer.legacy().deserialize(content));
         }
         return "";
+    }
+
+    public Component getCustomDurabilityTagComponent() {
+        return getCustomDurabilityTagComponent(getItemMeta());
+    }
+
+    public Component getCustomDurabilityTagComponent(ItemMeta itemMeta) {
+        return miniMessage.deserialize(getCustomDurabilityTag(itemMeta), Placeholder.parsed("dur", String.valueOf(getCustomDurability(itemMeta) - getCustomDamage(itemMeta))), Placeholder.parsed("max_dur", String.valueOf(getCustomDurability(itemMeta))));
     }
 
     public T updateCustomDurabilityTag() {
@@ -256,7 +298,7 @@ public abstract class AbstractItemBuilder<T extends AbstractItemBuilder<?>> {
 
     public void updateCustomDurabilityTag(ItemMeta itemMeta) {
         if (itemMeta != null) {
-            String tag = ChatColor.convert(getCustomDurabilityTag().replace("%dur%", String.valueOf(getCustomDurability(itemMeta) - getCustomDamage(itemMeta))).replace("%max_dur%", String.valueOf(getCustomDurability(itemMeta))));
+            String tag = BukkitComponentSerializer.legacy().serialize(getCustomDurabilityTagComponent(itemMeta));
             var dataContainer = itemMeta.getPersistentDataContainer();
             List<String> lore = itemMeta.getLore() != null ? itemMeta.getLore() : new ArrayList<>();
             if (dataContainer.has(CUSTOM_DURABILITY_INDEX, PersistentDataType.INTEGER)) {
@@ -298,48 +340,53 @@ public abstract class AbstractItemBuilder<T extends AbstractItemBuilder<?>> {
         return setPlayerHeadValue("http://textures.minecraft.net/texture/" + value);
     }
 
+    public T setPlayerHeadURL(String value, String name, UUID uuid) {
+        if (value.startsWith("http://textures.minecraft.net/texture/")) {
+            return setPlayerHeadValue(value, name, uuid);
+        }
+        return setPlayerHeadValue("http://textures.minecraft.net/texture/" + value, name, uuid);
+    }
+
     public String getPlayerHeadValue() {
-        if (getItemMeta() instanceof SkullMeta skullMeta) {
-            GameProfile profile = null;
-            Field profileField;
-            try {
-                profileField = skullMeta.getClass().getDeclaredField("profile");
-                profileField.setAccessible(true);
-                profile = (GameProfile) profileField.get(skullMeta);
-            } catch (NoSuchFieldException | SecurityException | IllegalAccessException ex) {
-                ex.printStackTrace();
-            }
-            if (profile != null && !profile.getProperties().get("textures").isEmpty()) {
-                for (Property property : profile.getProperties().get("textures")) {
-                    if (!property.getValue().isEmpty())
-                        return property.getValue();
+        if (getItemMeta() instanceof SkullMeta) {
+            NBTItem nbtItem = new NBTItem(getItemStack());
+            NBTCompound skull = nbtItem.getCompound("SkullOwner");
+            if (skull != null) {
+                if(skull.hasKey("Properties")) {
+                    NBTCompound properties = skull.getCompound("Properties");
+                    if (properties.hasKey("textures")) {
+                        NBTCompoundList textures = properties.getCompoundList("textures");
+                        if (textures.size() > 0) {
+                            NBTCompound object = textures.get(0);
+                            String value = object.getString("Value");
+                            return value != null ? value : "";
+                        }
+                    }
                 }
             }
         }
         return "";
     }
 
-    public T setPlayerHeadValue(String value) {
-        if (getItemMeta() instanceof SkullMeta skullMeta) {
-            if (value != null && !value.isEmpty()) {
-                String texture = value;
-                if (value.startsWith("https://") || value.startsWith("http://")) {
-                    texture = EncryptionUtils.getBase64EncodedString(String.format("{textures:{SKIN:{url:\"%s\"}}}", value));
-                }
-                GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-                profile.getProperties().put("textures", new Property("textures", texture));
-                Field profileField = null;
-                try {
-                    profileField = skullMeta.getClass().getDeclaredField("profile");
-                    profileField.setAccessible(true);
-                    profileField.set(skullMeta, profile);
-                } catch (NoSuchFieldException | SecurityException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-            return setItemMeta(skullMeta);
+    public T setPlayerHeadValue(String value, String name, UUID uuid) {
+        Preconditions.checkArgument(!name.isEmpty(), "Name of Skull cannot be empty!");
+        String textureValue = value;
+        if (value.startsWith("https://") || value.startsWith("http://")) {
+            textureValue = EncryptionUtils.getBase64EncodedString(String.format("{textures:{SKIN:{url:\"%s\"}}}", value));
         }
+        NBTItem nbtItem = new NBTItem(getItemStack(), true);
+        NBTCompound skull = nbtItem.addCompound("SkullOwner");
+        skull.setString("Name", name);
+        skull.setString("Id", uuid.toString());
+        // The UUID, note that skulls with the same UUID but different textures will misbehave and only one texture will load
+        // (They'll share it), if skulls have different UUIDs and same textures they won't stack. See UUID.randomUUID();
+        NBTListCompound texture = skull.addCompound("Properties").getCompoundList("textures").addCompound();
+        texture.setString("Value",  textureValue);
         return get();
+    }
+
+    public T setPlayerHeadValue(String value) {
+        return setPlayerHeadValue(value, "none", UUID.randomUUID());
     }
 
 

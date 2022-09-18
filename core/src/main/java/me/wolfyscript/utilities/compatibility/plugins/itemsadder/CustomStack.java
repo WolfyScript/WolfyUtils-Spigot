@@ -34,6 +34,8 @@ public interface CustomStack {
 
     boolean hasPermission();
 
+    boolean isBlock();
+
     boolean isBlockAllEnchants();
 
     boolean hasUsagesAttribute();

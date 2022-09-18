@@ -18,6 +18,8 @@
 
 package me.wolfyscript.utilities.api.inventory.gui;
 
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.gui.button.Button;
 import me.wolfyscript.utilities.api.inventory.gui.button.ButtonAction;
@@ -29,10 +31,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -95,10 +95,31 @@ public class GuiHandler<C extends CustomCache> implements Listener {
         this.switchWindow = switchWindow;
     }
 
+    /**
+     * Gets the WolfyUtilities instance that belongs to this GuiHandler.
+     *
+     * @return The WolfyUtilities instance.
+     * @deprecated Use {@link #getWolfyUtils()} instead.
+     */
+    @Deprecated
     public WolfyUtilities getApi() {
         return api;
     }
 
+    /**
+     * Gets the WolfyUtils instance that this GuiHandler belongs to.
+     *
+     * @return The WolfyUtilities instance.
+     */
+    public WolfyUtilsBukkit getWolfyUtils() {
+        return api;
+    }
+
+    /**
+     * Gets the InventoryAPI instance that this GuiHandler belongs to.
+     *
+     * @return The InventoryAPI instance.
+     */
     public InventoryAPI<C> getInvAPI() {
         return invAPI;
     }
@@ -279,11 +300,21 @@ public class GuiHandler<C extends CustomCache> implements Listener {
         }
     }
 
+    /**
+     * Gets the complete history of all clusters.
+     *
+     * @return The complete history of all clusters.
+     * @deprecated This method will be removed in future versions. Use {@link #getHistory(GuiCluster)} instead.
+     */
+    @Deprecated(since = "4.16.6.1", forRemoval = true)
     public Map<GuiCluster<C>, List<GuiWindow<C>>> getClusterHistory() {
         return clusterHistory;
     }
 
     /**
+     * Gets the history of the specified cluster.<br>
+     * <b>It is not guaranteed that changes are reflected in the original List!</b>
+     *
      * @param cluster The {@link GuiCluster} to get the history for.
      * @return A list of the {@link GuiCluster} history, or an empty list if non-existing.
      */
@@ -332,7 +363,9 @@ public class GuiHandler<C extends CustomCache> implements Listener {
         }
         final GuiCluster<C> cluster = window.getCluster();
         Player player1 = getPlayer();
-        if (api.getPermissions().hasPermission(player1, (api.getPlugin().getName() + ".inv." + window.getNamespacedKey().toString(".")))) {
+        if (player1.hasPermission(window.getPermission())) {
+            // Cancels the chat input when a new window is opened to prevent
+            cancelChatInput();
             var currentWindow = getWindow(cluster);
             if (currentWindow == null || !currentWindow.getNamespacedKey().equals(window.getNamespacedKey())) {
                 getHistory(cluster).add(0, window);
@@ -342,7 +375,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
             window.create(this);
             return;
         }
-        api.getChat().sendMessage(player1, Component.text("You don't have the permission ", NamedTextColor.RED).append(Component.text(api.getPlugin().getName() + ".inv." + window.getNamespacedKey().toString("."), NamedTextColor.DARK_RED)));
+        window.getChat().sendMessage(player1, Component.text("You lack the permission ", NamedTextColor.RED).append(Component.text(window.getPermission().getName(), NamedTextColor.DARK_RED)));
     }
 
     /**
@@ -525,13 +558,6 @@ public class GuiHandler<C extends CustomCache> implements Listener {
             } else {
                 this.isWindowOpen = false;
             }
-        }
-    }
-
-    @EventHandler
-    private void onCommand(PlayerCommandPreprocessEvent event) {
-        if (!event.getMessage().startsWith("/wua") && !event.getMessage().startsWith("/wui") && event.getPlayer().getUniqueId().equals(uuid) && isChatEventActive()) {
-            cancelChatInput();
         }
     }
 }

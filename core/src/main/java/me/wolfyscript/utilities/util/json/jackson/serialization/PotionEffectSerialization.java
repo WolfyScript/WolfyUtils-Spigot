@@ -46,7 +46,7 @@ public class PotionEffectSerialization {
         }, (p, deserializationContext) -> {
             JsonNode node = p.readValueAsTree();
             if (!node.has(TYPE)) return null;
-            PotionEffectType type = JacksonUtil.getObjectMapper().convertValue(node.path(TYPE), PotionEffectType.class);
+            PotionEffectType type = p.getCodec().treeToValue(node.path(TYPE), PotionEffectType.class);
             boolean particles = node.path(PARTICLES).asBoolean(true);
             boolean icon = node.path(ICON).asBoolean(particles);
             return type == null ? null : new PotionEffect(type, node.path(DURATION).asInt(), node.path(AMPLIFIER).asInt(), node.path(AMBIENT).asBoolean(false), particles, icon);
