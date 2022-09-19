@@ -244,6 +244,8 @@ public final class WolfyCoreBukkit extends WUPlugin {
         JacksonUtil.registerModule(keyReferenceModule);
         JacksonUtil.registerModule(valueReferenceModule);
 
+        FunctionalRecipeGenerator.generateRecipeClasses();
+
         //Register custom item data
 
         //Register meta settings providers
