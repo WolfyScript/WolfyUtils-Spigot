@@ -8,24 +8,18 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public interface FunctionalRecipe extends Keyed {
 
-    BiFunction<Inventory, World, Boolean> getMatcher();
+    RecipeMatcher getMatcher();
 
-    Function<Inventory, Optional<ItemStack>> getAssembler();
+    RecipeAssembler getAssembler();
 
-    void setAssembler(Function<Inventory, Optional<ItemStack>> assembler);
-
-    Function<Inventory, Optional<List<ItemStack>>> getRemainingItemsFunction();
-
-    void setRemainingItemsFunction(Function<Inventory, Optional<List<ItemStack>>> function);
+    RecipeRemainingItemsFunction getRemainingItemsFunction();
 
     default boolean matches(Inventory inventory, World world) {
         try {
-            return getMatcher().apply(inventory, world);
+            return getMatcher().match(inventory, world);
         } catch (RuntimeException e) {
             Bukkit.getLogger().severe("Error occurred when checking recipe! Removing " + getNamespacedKey() + "");
             Bukkit.removeRecipe(getNamespacedKey().bukkit());
@@ -35,7 +29,7 @@ public interface FunctionalRecipe extends Keyed {
 
     default Optional<ItemStack> assemble(Inventory inventory) {
         try {
-            return getAssembler().apply(inventory);
+            return getAssembler().assemble(inventory);
         } catch (RuntimeException e) {
             Bukkit.getLogger().severe("Error occurred when assembling recipe! Removing " + getNamespacedKey() + "");
             Bukkit.removeRecipe(getNamespacedKey().bukkit());
@@ -52,6 +46,5 @@ public interface FunctionalRecipe extends Keyed {
         }
         return Optional.empty();
     }
-
 
 }
