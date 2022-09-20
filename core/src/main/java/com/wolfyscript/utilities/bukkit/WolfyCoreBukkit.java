@@ -38,6 +38,7 @@ import com.wolfyscript.utilities.bukkit.nbt.QueryNodeShort;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeString;
 import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import me.wolfyscript.utilities.api.WolfyUtilities;
@@ -76,6 +77,7 @@ import me.wolfyscript.utilities.api.inventory.custom_items.meta.UnbreakableMeta;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.VanillaRef;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.WolfyUtilitiesRef;
+import me.wolfyscript.utilities.api.nms.item.crafting.FunctionalRecipeGenerator;
 import me.wolfyscript.utilities.compatibility.CompatibilityManager;
 import me.wolfyscript.utilities.compatibility.CompatibilityManagerBukkit;
 import me.wolfyscript.utilities.main.WUPlugin;
@@ -378,6 +380,12 @@ public final class WolfyCoreBukkit extends WUPlugin {
 
         //Load Language
         api.getLanguageAPI().loadLangFile("en_US");
+
+        try {
+            FunctionalRecipeGenerator.createAndRegisterTestRecipes();
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
 
         if (!ServerVersion.isIsJUnitTest()) {
             this.metrics = new Metrics(this, 5114);
