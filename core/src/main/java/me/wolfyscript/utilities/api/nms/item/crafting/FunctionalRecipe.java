@@ -22,6 +22,7 @@ public interface FunctionalRecipe extends Keyed {
             return getMatcher().match(inventory, world);
         } catch (RuntimeException e) {
             Bukkit.getLogger().severe("Error occurred when checking recipe! Removing " + getNamespacedKey() + "");
+            e.printStackTrace();
             Bukkit.removeRecipe(getNamespacedKey().bukkit());
         }
         return false;
@@ -32,6 +33,7 @@ public interface FunctionalRecipe extends Keyed {
             return getAssembler().assemble(inventory);
         } catch (RuntimeException e) {
             Bukkit.getLogger().severe("Error occurred when assembling recipe! Removing " + getNamespacedKey() + "");
+            e.printStackTrace();
             Bukkit.removeRecipe(getNamespacedKey().bukkit());
         }
         return Optional.empty();
@@ -42,6 +44,7 @@ public interface FunctionalRecipe extends Keyed {
             return getRemainingItemsFunction().apply(inventory);
         } catch (RuntimeException e) {
             Bukkit.getLogger().severe("Error occurred when consuming recipe! Removing " + getNamespacedKey() + "");
+            e.printStackTrace();
             Bukkit.removeRecipe(getNamespacedKey().bukkit());
         }
         return Optional.empty();
