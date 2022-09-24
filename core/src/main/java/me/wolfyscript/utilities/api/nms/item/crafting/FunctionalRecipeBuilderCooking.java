@@ -8,7 +8,7 @@ import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 
-public abstract class FunctionalCookingRecipeBuilder {
+public abstract class FunctionalRecipeBuilderCooking {
 
     private final NamespacedKey key;
 
@@ -22,11 +22,11 @@ public abstract class FunctionalCookingRecipeBuilder {
     private int cookingTime = 60;
     private String group = "";
 
-    public FunctionalCookingRecipeBuilder(NamespacedKey key, ItemStack result, RecipeChoice ingredient) {
+    public FunctionalRecipeBuilderCooking(NamespacedKey key, ItemStack result, RecipeChoice ingredient) {
         this.key = key;
         this.result = result;
         this.ingredient = ingredient;
-        this.recipeMatcher = (inventory, world) -> ingredient.test(inventory.getItem(0));
+        this.recipeMatcher = (inventory, world) -> inventory.getItem(0) != null && ingredient.test(inventory.getItem(0));
         this.recipeAssembler = inventory -> Optional.empty();
         this.remainingItemsFunction = inventory -> Optional.empty();
     }

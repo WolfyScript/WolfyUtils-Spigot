@@ -4,7 +4,7 @@ import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 
-public class FunctionalRecipeBuilderCampfire extends FunctionalCookingRecipeBuilder{
+public class FunctionalRecipeBuilderCampfire extends FunctionalRecipeBuilderCooking {
 
     public FunctionalRecipeBuilderCampfire(NamespacedKey key, ItemStack result, RecipeChoice ingredient) {
         super(key, result, ingredient);
