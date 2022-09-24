@@ -178,7 +178,7 @@ public class FunctionalRecipeGenerator {
      * @throws NotFoundException
      * @throws CannotCompileException
      */
-    public static Class<?> inject(ClassPool classPool, Class<?> originalClass) throws NotFoundException, CannotCompileException, IOException {
+    private static Class<?> inject(ClassPool classPool, Class<?> originalClass) throws NotFoundException, CannotCompileException, IOException {
         classPool.insertClassPath(new LoaderClassPath(InjectGUIInventory.class.getClassLoader()));
 
         final String funcRecipeClass = "Functional" + originalClass.getSimpleName();
