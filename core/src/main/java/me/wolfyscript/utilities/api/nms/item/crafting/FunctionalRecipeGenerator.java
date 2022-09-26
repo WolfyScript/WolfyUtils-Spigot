@@ -27,6 +27,7 @@ import me.wolfyscript.utilities.api.nms.inventory.InjectGUIInventory;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.Reflection;
 import me.wolfyscript.utilities.util.version.MinecraftVersions;
+import me.wolfyscript.utilities.util.version.ServerVersion;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -36,6 +37,9 @@ public class FunctionalRecipeGenerator {
 
     private static final String GENERATOR_PACKAGE = FunctionalRecipeGenerator.class.getPackageName() + "";
 
+    /* ******************
+     * Minecraft classes
+     * ******************/
     private static final Class<?> CONTAINER_CLASS;
     private static final Class<?> WORLD_CLASS;
     private static final Class<?> ITEMSTACK_CLASS;
@@ -46,77 +50,89 @@ public class FunctionalRecipeGenerator {
     private static final Class<?> RECIPE_MANAGER_CLASS;
     private static final Class<?> MINECRAFT_SERVER_CLASS;
 
+    // Recipe classes
     private static final Class<?> RECIPE_CAMPFIRE_CLASS;
     private static final Class<?> RECIPE_FURNACE_CLASS;
     private static final Class<?> RECIPE_SMOKING_CLASS;
     private static final Class<?> RECIPE_BLASTING_CLASS;
 
+    // Fields
+    private static final Field ITEMSTACK_EMPTY_CONST;
+
+    // Methods
     private static final Method MINECRAFT_SERVER_GET_RECIPE_MANAGER_METHOD;
     private static final Method MINECRAFT_SERVER_STATIC_GETTER_METHOD;
     private static final Method RECIPE_MATCHES_METHOD;
     private static final Method RECIPE_ASSEMBLE_METHOD;
     private static final Method RECIPE_GET_REMAINING_ITEMS_METHOD;
     private static final Method RECIPE_MANAGER_ADD_RECIPE_METHOD;
-
-    private static final Method WORLD_GET_CRAFT_WORLD_METHOD;
     private static final Method NONNULLLIST_CREATE_METHOD;
 
+    /* ******************
+     * CraftBukkit classes
+     * ******************/
     private static final Class<?> CRAFT_ITEMSTACK_CLASS;
     private static final Class<?> CRAFT_INVENTORY_CLASS;
-    private static final Class<?> CRAFT_RECIPE_CLASS;
 
-    private static final Method CRAFT_RECIPE_RECIPE_CHOICE_TO_NMS;
+    // Fields
+
+    // Methods
     private static final Method CRAFT_ITEMSTACK_TO_NMS;
 
-    private static final Object ACCESS_RECIPE;
+    /* ******************
+     * Static Objects used to access internal values
+     * ******************/
     private static final Object MINECRAFT_SERVER;
 
+    /* ******************
+     * Caching and other fields
+     * ******************/
     private static final Map<FunctionalRecipeType, Class<?>> GENERATED_RECIPES = new HashMap<>();
 
     static {
-        MINECRAFT_SERVER_CLASS = Reflection.getNMS("server", "MinecraftServer");
         CONTAINER_CLASS = Reflection.getNMS("world", "IInventory");
         WORLD_CLASS = Reflection.getNMS("world.level", "World");
         ITEMSTACK_CLASS = Reflection.getNMS("world.item", "ItemStack");
-        RESOURCE_KEY_CLASS = Reflection.getNMS("resources", "MinecraftKey");
         RECIPE_CLASS = Reflection.getNMS("world.item.crafting", "IRecipe");
         RECIPE_ITEMSTACK_CLASS = Reflection.getNMS("world.item.crafting", "RecipeItemStack");
-
-        RECIPE_MANAGER_CLASS = Reflection.getNMS("world.item.crafting", "CraftingManager");
+        RESOURCE_KEY_CLASS = Reflection.getNMS("resources", "MinecraftKey");
         NON_NULL_LIST_CLASS = Reflection.getNMS("core", "NonNullList");
+        RECIPE_MANAGER_CLASS = Reflection.getNMS("world.item.crafting", "CraftingManager");
+        MINECRAFT_SERVER_CLASS = Reflection.getNMS("server", "MinecraftServer");
 
         RECIPE_CAMPFIRE_CLASS = Reflection.getNMS("world.item.crafting", "RecipeCampfire");
         RECIPE_FURNACE_CLASS = Reflection.getNMS("world.item.crafting", "FurnaceRecipe");
         RECIPE_SMOKING_CLASS = Reflection.getNMS("world.item.crafting", "RecipeSmoking");
         RECIPE_BLASTING_CLASS = Reflection.getNMS("world.item.crafting", "RecipeBlasting");
 
+        try {
+            ITEMSTACK_EMPTY_CONST = ITEMSTACK_CLASS.getDeclaredField("b");
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+
         MINECRAFT_SERVER_STATIC_GETTER_METHOD = Reflection.getMethod(MINECRAFT_SERVER_CLASS, "getServer");
-
         MINECRAFT_SERVER_GET_RECIPE_MANAGER_METHOD = Arrays.stream(MINECRAFT_SERVER_CLASS.getMethods()).filter(method -> method.getReturnType().equals(RECIPE_MANAGER_CLASS)).findFirst().orElseGet(() -> Reflection.getMethod(MINECRAFT_SERVER_CLASS, "getCraftingManager"));
-
-        NONNULLLIST_CREATE_METHOD = Reflection.getMethod(NON_NULL_LIST_CLASS, "a", Integer.TYPE);
+        NONNULLLIST_CREATE_METHOD = ServerVersion.getVersion().isAfterOrEq(MinecraftVersions.v1_17) ?
+                Reflection.getMethod(NON_NULL_LIST_CLASS, "a", Integer.TYPE) :
+                Reflection.getMethod(NON_NULL_LIST_CLASS, "a", Integer.TYPE, Object.class);
         RECIPE_MATCHES_METHOD = Reflection.getMethod(RECIPE_CLASS, "a", CONTAINER_CLASS, WORLD_CLASS);
         RECIPE_ASSEMBLE_METHOD = Reflection.getMethod(RECIPE_CLASS, "a", CONTAINER_CLASS);
         RECIPE_GET_REMAINING_ITEMS_METHOD = Reflection.getMethod(RECIPE_CLASS, "b", CONTAINER_CLASS);
         RECIPE_MANAGER_ADD_RECIPE_METHOD = Reflection.getMethod(RECIPE_MANAGER_CLASS, "addRecipe", RECIPE_CLASS);
 
-        WORLD_GET_CRAFT_WORLD_METHOD = Reflection.getMethod(WORLD_CLASS, "getWorld");
-
+        /* ******************
+         * CraftBukkit classes
+         * ******************/
         CRAFT_ITEMSTACK_CLASS = Reflection.getOBC("inventory.CraftItemStack");
         CRAFT_INVENTORY_CLASS = Reflection.getOBC("inventory.CraftInventory");
-        CRAFT_RECIPE_CLASS = Reflection.getOBC("inventory.CraftRecipe");
 
-        Constructor<?> accessRecipeConstructor = Reflection.getOBC("inventory.CraftFurnaceRecipe").getConstructors()[0];
-        try {
-            ACCESS_RECIPE = accessRecipeConstructor.newInstance(null, new ItemStack(Material.STRING), new RecipeChoice.MaterialChoice(Material.AIR), 1f, 60);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-
-        CRAFT_RECIPE_RECIPE_CHOICE_TO_NMS = Reflection.getMethod(ACCESS_RECIPE.getClass(), "toNMS", RecipeChoice.class, Boolean.TYPE);
+        // Methods
         CRAFT_ITEMSTACK_TO_NMS = Reflection.getDeclaredMethod(CRAFT_ITEMSTACK_CLASS, "asNMSCopy", ItemStack.class);
-        CRAFT_RECIPE_RECIPE_CHOICE_TO_NMS.setAccessible(true);
 
+        /* ******************
+         * Static Objects used to access internal values
+         * ******************/
         try {
             MINECRAFT_SERVER = MINECRAFT_SERVER_GET_RECIPE_MANAGER_METHOD.invoke(MINECRAFT_SERVER_STATIC_GETTER_METHOD.invoke(null));
         } catch (IllegalAccessException | InvocationTargetException e) {
@@ -335,7 +351,7 @@ public class FunctionalRecipeGenerator {
         classPool.importPackage(GENERATOR_PACKAGE);
         convertRemainingItems.addInterface(classPool.get(Function.class.getName()));
         String convertRemainingItemsMethod = "public " + NON_NULL_LIST_CLASS.getName() + " apply(" + List.class.getName() + " itemStacks) {\n"
-                + "    " + NON_NULL_LIST_CLASS.getName() + " items = " + NON_NULL_LIST_CLASS.getName() + "." + NONNULLLIST_CREATE_METHOD.getName() + "(itemStacks.size());\n"
+                + "    " + NON_NULL_LIST_CLASS.getName() + " items = " + NON_NULL_LIST_CLASS.getName() + "." + NONNULLLIST_CREATE_METHOD.getName() + "(itemStacks.size()" + (ServerVersion.getVersion().isBefore(MinecraftVersions.v1_17) ? ", " + ITEMSTACK_CLASS.getName() + "." + ITEMSTACK_EMPTY_CONST.getName() : "") + ");\n"
                 + "    for(int i = 0; i < itemStacks.size(); i++) {\n"
                 + "        items.set(i, " + CRAFT_ITEMSTACK_CLASS.getName() + ".asNMSCopy((" + ItemStack.class.getName() + ") itemStacks.get(i)));\n"
                 + "    }\n"
@@ -393,7 +409,7 @@ public class FunctionalRecipeGenerator {
                 "itemstack", ItemStack.class.getName(),
                 "empty_ingredient", emptyIngredientField.getName(),
                 "craftitemstack", CRAFT_ITEMSTACK_CLASS.getName(),
-                "ingredient_dissolve", Reflection.NMSMapping.of(MinecraftVersions.v1_19, "f").orElse("buildChoices"),
+                "ingredient_dissolve", Reflection.NMSMapping.of(MinecraftVersions.v1_18, "f").orElse("buildChoices"),
                 "ingredient_choices", Arrays.stream(RECIPE_ITEMSTACK_CLASS.getFields()).filter(field -> field.getType().equals(ITEMSTACK_CLASS.arrayType())).findFirst().map(Field::getName).orElse("choices")
         ));
         conversionUtils.addMethod(CtNewMethod.make(recipeChoiceConverterMethod, conversionUtils));
