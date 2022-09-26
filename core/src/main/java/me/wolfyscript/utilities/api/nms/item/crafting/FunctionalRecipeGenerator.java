@@ -166,26 +166,6 @@ public class FunctionalRecipeGenerator {
         }
     }
 
-    public static void createAndRegisterTestRecipes() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-
-        // Create a campfire with custom checks.
-        // Campfire recipes have limitations!
-        // The inventory that is used in the check, assembly and remaining items calculation has no reference to the campfire block
-        //
-        FunctionalRecipeBuilderCampfire builderCampfire = new FunctionalRecipeBuilderCampfire(new NamespacedKey(NamespacedKey.WOLFYUTILITIES, "test_functional_campfire"), new ItemStack(Material.CHEST), new RecipeChoice.MaterialChoice(Material.PLAYER_HEAD));
-        builderCampfire.createAndRegister();
-
-        // other types
-        FunctionalRecipeBuilderSmelting builderSmelting = new FunctionalRecipeBuilderSmelting(new NamespacedKey(NamespacedKey.WOLFYUTILITIES, "test_functional_smelting"), new ItemStack(Material.CHEST), new RecipeChoice.MaterialChoice(Material.PLAYER_HEAD));
-        builderSmelting.createAndRegister();
-
-        FunctionalRecipeBuilderBlasting builderBlasting = new FunctionalRecipeBuilderBlasting(new NamespacedKey(NamespacedKey.WOLFYUTILITIES, "test_functional_blasting"), new ItemStack(Material.CHEST), new RecipeChoice.MaterialChoice(Material.PLAYER_HEAD));
-        builderBlasting.createAndRegister();
-
-        FunctionalRecipeBuilderSmoking builderSmoking = new FunctionalRecipeBuilderSmoking(new NamespacedKey(NamespacedKey.WOLFYUTILITIES, "test_functional_smoking"), new ItemStack(Material.CHEST), new RecipeChoice.MaterialChoice(Material.PLAYER_HEAD));
-        builderSmoking.createAndRegister();
-    }
-
     /**
      * Injects FunctionalRecipe into the specified recipe class.
      *

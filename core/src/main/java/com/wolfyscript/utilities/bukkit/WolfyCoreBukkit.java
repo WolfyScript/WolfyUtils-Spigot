@@ -381,12 +381,6 @@ public final class WolfyCoreBukkit extends WUPlugin {
         //Load Language
         api.getLanguageAPI().loadLangFile("en_US");
 
-        try {
-            FunctionalRecipeGenerator.createAndRegisterTestRecipes();
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
         if (!ServerVersion.isIsJUnitTest()) {
             this.metrics = new Metrics(this, 5114);
 
