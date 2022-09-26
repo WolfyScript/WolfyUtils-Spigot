@@ -140,7 +140,14 @@ public class FunctionalRecipeGenerator {
         }
     }
 
+    /**
+     * Generates the internal FunctionalRecipe classes and caches them.<br>
+     * Get them using {@link #getFunctionalRecipeClass(FunctionalRecipeType)}.<br>
+     *
+     * <b>Only the first invocation generates the classes! Any invocation afterwards does nothing.</b>
+     */
     public static void generateRecipeClasses() {
+        if (!GENERATED_RECIPES.isEmpty()) return;
         try {
             ClassPool classPool = ClassPool.getDefault();
             generateConverterFunctions(classPool);
@@ -153,10 +160,22 @@ public class FunctionalRecipeGenerator {
         }
     }
 
+    /**
+     * Gets the class of the internal FunctionalRecipe for the specified {@link FunctionalRecipeType}
+     *
+     * @param type The type of the recipe
+     * @return The class associated with the type; Null if not available
+     */
     public static Class<?> getFunctionalRecipeClass(FunctionalRecipeType type) {
         return GENERATED_RECIPES.get(type);
     }
 
+    /**
+     * Adds the FunctionalRecipe to the Minecraft RecipeManager.
+     *
+     * @param recipe The FunctionalRecipe to add to Minecraft.
+     * @return True when the recipe was added successfully; False if an error occurred.
+     */
     public static boolean addRecipeToRecipeManager(FunctionalRecipe recipe) {
         try {
             RECIPE_MANAGER_ADD_RECIPE_METHOD.invoke(MINECRAFT_SERVER, recipe);
