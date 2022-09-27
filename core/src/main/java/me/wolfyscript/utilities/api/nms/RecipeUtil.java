@@ -23,6 +23,7 @@ import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
+import java.util.function.BiFunction;
 
 public abstract class RecipeUtil extends UtilComponent {
 
@@ -38,5 +39,23 @@ public abstract class RecipeUtil extends UtilComponent {
      * @return The iterator of the recipe type.
      */
     public abstract @NotNull Iterator<Recipe> recipeIterator(RecipeType recipeType);
+
+//    /**
+//     * Creates a functional Campfire Recipe.<br>
+//     * The recipeMatch function is used to check if the recipe is valid (Careful! This is called each tick!)<br>
+//     * Other functions like assembler and remaining items, can be set later on.<br>
+//     *
+//     *
+//     * @param key The id of the recipe.
+//     * @param group The group of the recipe.
+//     * @param result The result of the recipe. When using a custom assembler it is used as the display item.
+//     * @param source Used to display the source item/s.
+//     * @param experience The experience of the recipe.
+//     * @param cookingTime The cooking time of the recipe.
+//     * @param recipeMatch The function that checks if the recipe is valid.
+//     * @return A new instance of the functional campfire recipe.
+//     */
+//    public abstract FunctionalCampfireRecipe campfireRecipe(NamespacedKey key, String group, ItemStack result, RecipeChoice source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> recipeMatch);
+//
 
 }

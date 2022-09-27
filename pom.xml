@@ -6,7 +6,7 @@
 
     <groupId>com.wolfyscript.wolfyutils.spigot</groupId>
     <artifactId>wolfyutils-parent</artifactId>
-    <version>4.16.6.1</version>
+    <version>4.16.7-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>WolfyUtils-Spigot</name>
 

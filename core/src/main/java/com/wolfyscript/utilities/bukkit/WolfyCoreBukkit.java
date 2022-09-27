@@ -76,6 +76,7 @@ import me.wolfyscript.utilities.api.inventory.custom_items.meta.UnbreakableMeta;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.VanillaRef;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.WolfyUtilitiesRef;
+import com.wolfyscript.utilities.bukkit.nms.item.crafting.FunctionalRecipeGenerator;
 import me.wolfyscript.utilities.compatibility.CompatibilityManager;
 import me.wolfyscript.utilities.compatibility.CompatibilityManagerBukkit;
 import me.wolfyscript.utilities.main.WUPlugin;
@@ -243,6 +244,8 @@ public final class WolfyCoreBukkit extends WUPlugin {
 
         JacksonUtil.registerModule(keyReferenceModule);
         JacksonUtil.registerModule(valueReferenceModule);
+
+        FunctionalRecipeGenerator.generateRecipeClasses();
 
         //Register custom item data
 
