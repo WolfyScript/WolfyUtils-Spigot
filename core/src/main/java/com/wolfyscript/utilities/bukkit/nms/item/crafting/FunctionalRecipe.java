@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.api.nms.item.crafting;
+package com.wolfyscript.utilities.bukkit.nms.item.crafting;
 
 import me.wolfyscript.utilities.util.Keyed;
 import org.bukkit.Bukkit;

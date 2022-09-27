@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.api.nms.item.crafting;
+package com.wolfyscript.utilities.bukkit.nms.item.crafting;
 
 import com.google.common.base.Preconditions;
 import java.lang.reflect.Constructor;
