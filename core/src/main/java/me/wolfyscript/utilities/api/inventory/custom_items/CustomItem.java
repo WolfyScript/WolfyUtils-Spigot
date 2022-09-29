@@ -33,6 +33,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
+import com.wolfyscript.utilities.bukkit.items.CustomBlockSettings;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.meta.CustomItemTagMeta;
@@ -155,6 +156,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     @JsonAlias("particles")
     private ParticleContent particleContent;
     private ActionSettings actionSettings = new ActionSettings();
+    private final CustomBlockSettings blockSettings;
 
     @JsonIgnore
     private boolean checkOldMetaSettings = true;
@@ -174,6 +176,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
         }
         this.equipmentSlots = new ArrayList<>();
         this.particleContent = new ParticleContent();
+        this.blockSettings = new CustomBlockSettings();
         this.blockPlacement = false;
         this.blockVanillaEquip = false;
         this.blockVanillaRecipes = false;
@@ -248,6 +251,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
 
         this.namespacedKey = customItem.getNamespacedKey();
         this.fuelSettings = customItem.fuelSettings.clone();
+        this.blockSettings = customItem.blockSettings.copy();
         this.nbtChecks = customItem.nbtChecks;
         this.permission = customItem.permission;
         this.rarityPercentage = customItem.rarityPercentage;
@@ -647,7 +651,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCustomDataMap(), getNamespacedKey(), getReplacement(), getAllowedBlocks(), getPermission(), getRarityPercentage(), getBurnTime(), getDurabilityCost(), isConsumed(), blockPlacement, isBlockVanillaEquip(), isBlockVanillaRecipes(), getEquipmentSlots(), getApiReference(), getParticleContent(), getMetaSettings());
+        return Objects.hash(getCustomDataMap(), getNamespacedKey(), getReplacement(), getPermission(), getRarityPercentage(), getFuelSettings(), getBlockSettings(), getDurabilityCost(), isConsumed(), blockPlacement, isBlockVanillaEquip(), isBlockVanillaRecipes(), getEquipmentSlots(), getApiReference(), getParticleContent(), getMetaSettings());
     }
 
     /**
@@ -1183,6 +1187,10 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     @JsonSetter
     public void setActionSettings(ActionSettings actionSettings) {
         this.actionSettings = actionSettings == null ? new ActionSettings() : actionSettings;
+    }
+
+    public CustomBlockSettings getBlockSettings() {
+        return blockSettings;
     }
 
     /**
