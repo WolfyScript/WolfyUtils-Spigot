@@ -10,6 +10,8 @@ import com.wolfyscript.utilities.bukkit.commands.QueryDebugCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleAnimationCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleEffectCommand;
 import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
+import com.wolfyscript.utilities.bukkit.items.reference.BukkitItemReference;
+import com.wolfyscript.utilities.bukkit.items.reference.WolfyUtilsItemReference;
 import com.wolfyscript.utilities.bukkit.listeners.EquipListener;
 import com.wolfyscript.utilities.bukkit.listeners.GUIInventoryListener;
 import com.wolfyscript.utilities.bukkit.listeners.PersistentStorageListener;
@@ -372,8 +374,13 @@ public final class WolfyCoreBukkit extends WUPlugin {
         this.config = new WUConfig(api.getConfigAPI(), this);
         compatibilityManager.init();
 
-        // Register ReferenceParser
-        console.info("Register API references");
+        // Register ItemReferences
+        console.info("Register Item references");
+        var itemReferences = getRegistries().getItemReferences();
+        // TODO: Use priorities, similar to the old APIReference.Parser
+        itemReferences.register(WolfyUtilsItemReference.ID, WolfyUtilsItemReference.class);
+        itemReferences.register(BukkitItemReference.ID, BukkitItemReference.class);
+
         registerAPIReference(new VanillaRef.Parser());
         registerAPIReference(new WolfyUtilitiesRef.Parser());
 

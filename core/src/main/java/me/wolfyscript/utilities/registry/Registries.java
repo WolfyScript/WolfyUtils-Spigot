@@ -19,6 +19,7 @@
 package me.wolfyscript.utilities.registry;
 
 import com.google.common.base.Preconditions;
+import com.wolfyscript.utilities.bukkit.items.reference.ItemReference;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
@@ -85,6 +86,7 @@ public class Registries {
     private final TypeRegistry<Action<?>> customItemActions;
     private final TypeRegistry<Event<?>> customItemEvents;
     private final TypeRegistry<CustomBlockData> customBlockData;
+    private final TypeRegistry<ItemReference> itemReferences;
 
     private final TypeRegistry<ValueProvider<?>> valueProviders;
     private final TypeRegistry<Operator> operators;
@@ -114,7 +116,8 @@ public class Registries {
 
         customBlockData = new TypeRegistrySimple<>(new NamespacedKey(core, "persistent/block"), this);
 
-        this.nbtQueryNodes = new TypeRegistrySimple<>(new NamespacedKey(core, "nbt/query/nodes"), this);
+        nbtQueryNodes = new TypeRegistrySimple<>(new NamespacedKey(core, "nbt/query/nodes"), this);
+        itemReferences = new TypeRegistrySimple<>(new NamespacedKey(core, "item_references"), this);
     }
 
     void indexTypedRegistry(IRegistry<?> registry) {
@@ -260,5 +263,9 @@ public class Registries {
 
     public TypeRegistry<QueryNode<?>> getNbtQueryNodes() {
         return nbtQueryNodes;
+    }
+
+    public TypeRegistry<ItemReference> getItemReferences() {
+        return itemReferences;
     }
 }
