@@ -651,7 +651,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCustomDataMap(), getNamespacedKey(), getReplacement(), getPermission(), getRarityPercentage(), getFuelSettings(), getDurabilityCost(), isConsumed(), blockPlacement, isBlockVanillaEquip(), isBlockVanillaRecipes(), getEquipmentSlots(), getApiReference(), getParticleContent(), getMetaSettings());
+        return Objects.hash(getCustomDataMap(), getNamespacedKey(), getReplacement(), getPermission(), getRarityPercentage(), getFuelSettings(), getBlockSettings(), getDurabilityCost(), isConsumed(), blockPlacement, isBlockVanillaEquip(), isBlockVanillaRecipes(), getEquipmentSlots(), getApiReference(), getParticleContent(), getMetaSettings());
     }
 
     /**
