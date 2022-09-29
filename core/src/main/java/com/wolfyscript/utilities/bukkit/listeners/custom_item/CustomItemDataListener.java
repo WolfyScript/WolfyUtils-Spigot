@@ -32,23 +32,25 @@ public class CustomItemDataListener implements Listener {
         event.getStorage().getData(CustomItemBlockData.ID, CustomItemBlockData.class).ifPresent(data -> {
             var blockState = event.getBlockState();
             data.getCustomItem().ifPresent(customItem -> {
-                //TODO for future: Let people customize this!
-                event.getItems().clear();
-                ItemStack result = customItem.create();
-                if (blockState instanceof Container container) {
-                    var blockStateMeta = (BlockStateMeta) result.getItemMeta();
-                    if (container instanceof ShulkerBox) {
-                        var shulkerBox = (ShulkerBox) blockStateMeta.getBlockState();
-                        shulkerBox.getInventory().setContents(container.getInventory().getContents());
-                        blockStateMeta.setBlockState(shulkerBox);
-                    } else {
-                        var itemContainer = (Container) blockStateMeta.getBlockState();
-                        itemContainer.getInventory().clear();
-                        blockStateMeta.setBlockState(itemContainer);
+                if (customItem.getBlockSettings().isUseCustomDrops()) {
+                    event.setCancelled(true);
+                    //TODO for future: Let people customize this!
+                    ItemStack result = customItem.create();
+                    if (blockState instanceof Container container) {
+                        var blockStateMeta = (BlockStateMeta) result.getItemMeta();
+                        if (container instanceof ShulkerBox) {
+                            var shulkerBox = (ShulkerBox) blockStateMeta.getBlockState();
+                            shulkerBox.getInventory().setContents(container.getInventory().getContents());
+                            blockStateMeta.setBlockState(shulkerBox);
+                        } else {
+                            var itemContainer = (Container) blockStateMeta.getBlockState();
+                            itemContainer.getInventory().clear();
+                            blockStateMeta.setBlockState(itemContainer);
+                        }
+                        result.setItemMeta(blockStateMeta);
                     }
-                    result.setItemMeta(blockStateMeta);
+                    blockState.getWorld().dropItemNaturally(blockState.getLocation(), result);
                 }
-                blockState.getWorld().dropItemNaturally(blockState.getLocation(), result);
             });
         });
     }
