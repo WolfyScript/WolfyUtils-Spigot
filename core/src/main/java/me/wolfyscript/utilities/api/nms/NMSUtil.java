@@ -18,6 +18,7 @@
 
 package me.wolfyscript.utilities.api.nms;
 
+import com.wolfyscript.utilities.bukkit.nms.fallback.FallbackNMSEntry;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.util.Reflection;
 import me.wolfyscript.utilities.util.version.ServerVersion;
@@ -60,7 +61,7 @@ public abstract class NMSUtil {
         this.plugin = wolfyUtilities.getPlugin();
     }
 
-    public Plugin getPlugin(){
+    public Plugin getPlugin() {
         return this.plugin;
     }
 
@@ -92,7 +93,8 @@ public abstract class NMSUtil {
             ex.printStackTrace();
         }
         //Unsupported version
-        throw new UnsupportedOperationException("This server version (" + version + ") is not supported!");
+        wolfyUtilities.getCore().getLogger().warning("Did not detect NMS implementation for server version (" + version + ")! Using Fallback! This might cause issue if plugins use the NMS Utils!");
+        return new FallbackNMSEntry(wolfyUtilities);
     }
 
     public WolfyUtilities getWolfyUtilities() {
