@@ -103,4 +103,19 @@ public abstract class ItemReference implements Keyed, Copyable<ItemReference> {
         return id;
     }
 
+    public abstract static class Parser<T extends ItemReference> {
+
+        protected final int priority;
+
+        protected Parser(int priority) {
+            this.priority = priority;
+        }
+
+        public abstract T parseFromItem(ItemStack stack);
+
+        public int getPriority() {
+            return priority;
+        }
+    }
+
 }
