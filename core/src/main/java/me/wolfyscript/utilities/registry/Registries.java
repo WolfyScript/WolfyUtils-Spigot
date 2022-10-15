@@ -19,6 +19,7 @@
 package me.wolfyscript.utilities.registry;
 
 import com.google.common.base.Preconditions;
+import com.wolfyscript.utilities.bukkit.items.CustomItemData;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
@@ -63,6 +64,9 @@ public class Registries {
     public static final NamespacedKey ITEM_EVENT_VALUES = NamespacedKey.wolfyutilties("custom_item/events/values");
     public static final NamespacedKey ITEM_EVENT_TYPES = NamespacedKey.wolfyutilties("custom_item/events/types");
 
+    public static final NamespacedKey ITEM_CUSTOM_DATA = NamespacedKey.wolfyutilties("custom_item/data");
+    public static final NamespacedKey ITEM_NBT_CHECKS = NamespacedKey.wolfyutilties("custom_item/nbt_checks");
+
     private final WolfyUtilCore core;
 
     private final Map<Class<? extends Keyed>, IRegistry<?>> REGISTRIES_BY_TYPE = new HashMap<>();
@@ -85,6 +89,7 @@ public class Registries {
     private final TypeRegistry<Action<?>> customItemActions;
     private final TypeRegistry<Event<?>> customItemEvents;
     private final TypeRegistry<CustomBlockData> customBlockData;
+    private final TypeRegistry<CustomItemData> customItemDataTypeRegistry;
 
     private final TypeRegistry<ValueProvider<?>> valueProviders;
     private final TypeRegistry<Operator> operators;
@@ -106,7 +111,8 @@ public class Registries {
         particleAnimators = new TypeRegistrySimple<>(new NamespacedKey(core, "particle_animators"), this);
         particleShapes = new TypeRegistrySimple<>(new NamespacedKey(core, "particles/shapes"), this);
         particleTimer = new TypeRegistrySimple<>(new NamespacedKey(core, "particle_timers"), this);
-        customItemNbtChecks = new TypeRegistrySimple<>(new NamespacedKey(core, "custom_item_nbt_checks"), this);
+        customItemNbtChecks = new TypeRegistrySimple<>(ITEM_NBT_CHECKS, this);
+        customItemDataTypeRegistry = new TypeRegistrySimple<>(ITEM_CUSTOM_DATA, this);
         customItemActions = new TypeRegistrySimple<>(ITEM_ACTION_TYPES, this);
         customItemEvents = new TypeRegistrySimple<>(ITEM_EVENT_TYPES, this);
         valueProviders = new TypeRegistrySimple<>(new NamespacedKey(core, "value_providers"), this);
@@ -218,6 +224,10 @@ public class Registries {
      */
     public TypeRegistry<Meta> getCustomItemNbtChecks() {
         return customItemNbtChecks;
+    }
+
+    public TypeRegistry<CustomItemData> getCustomItemDataTypeRegistry() {
+        return customItemDataTypeRegistry;
     }
 
     /**

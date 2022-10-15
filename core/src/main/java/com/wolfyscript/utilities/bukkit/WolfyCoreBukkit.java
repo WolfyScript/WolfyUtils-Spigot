@@ -10,6 +10,7 @@ import com.wolfyscript.utilities.bukkit.commands.QueryDebugCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleAnimationCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleEffectCommand;
 import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
+import com.wolfyscript.utilities.bukkit.items.CustomItemData;
 import com.wolfyscript.utilities.bukkit.listeners.EquipListener;
 import com.wolfyscript.utilities.bukkit.listeners.GUIInventoryListener;
 import com.wolfyscript.utilities.bukkit.listeners.PersistentStorageListener;
@@ -350,6 +351,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         var customBlockData = getRegistries().getCustomBlockData();
         customBlockData.register(CustomItemBlockData.ID, CustomItemBlockData.class);
 
+        KeyedTypeIdResolver.registerTypeRegistry(CustomItemData.class, registries.getCustomItemDataTypeRegistry());
         KeyedTypeIdResolver.registerTypeRegistry(Meta.class, nbtChecks);
         KeyedTypeIdResolver.registerTypeRegistry(Animator.class, particleAnimators);
         KeyedTypeIdResolver.registerTypeRegistry(Shape.class, particleShapes);
