@@ -44,6 +44,7 @@ import java.util.List;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
 import me.wolfyscript.utilities.api.console.Console;
+import me.wolfyscript.utilities.api.inventory.custom_items.CustomData;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.api.inventory.custom_items.actions.Action;
 import me.wolfyscript.utilities.api.inventory.custom_items.actions.ActionCommand;
@@ -227,6 +228,9 @@ public final class WolfyCoreBukkit extends WUPlugin {
 
         //Reference Deserializer
         APIReferenceSerialization.create(module);
+        // Serializer for the old CustomData
+        module.addSerializer(CustomData.DeprecatedCustomDataWrapper.class, new CustomData.Serializer());
+
         jsonMapperModules.add(module);
 
         JacksonUtil.registerModule(module);

@@ -29,11 +29,19 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
 import com.wolfyscript.utilities.bukkit.items.CustomBlockSettings;
+import com.wolfyscript.utilities.bukkit.items.CustomItemData;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.meta.CustomItemTagMeta;
@@ -64,14 +72,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * <p>
@@ -134,10 +134,12 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
 
     @JsonAlias("api_reference")
     private final APIReference apiReference;
+
     @JsonAlias("custom_data")
-    @JsonDeserialize(using = CustomData.Deserializer.class)
-    @JsonSerialize(using = CustomData.Serializer.class)
-    private final Map<NamespacedKey, CustomData> customDataMap = new HashMap<>();
+    private final CustomData.DeprecatedCustomDataWrapper customDataMap = new CustomData.DeprecatedCustomDataWrapper(this);
+    @JsonIgnore
+    private final Map<NamespacedKey, CustomItemData> indexedData = new HashMap<>();
+
     @JsonAlias("equipment_slots")
     private final List<EquipmentSlot> equipmentSlots;
     private boolean consumed;
@@ -1137,14 +1139,64 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
         this.rarityPercentage = rarityPercentage;
     }
 
-    public CustomData getCustomData(NamespacedKey namespacedKey) {
-        return customDataMap.get(namespacedKey);
+    @JsonSetter("data")
+    private void setDataList(List<CustomItemData> data) {
+        for (CustomItemData itemData : data) {
+            indexedData.put(itemData.getNamespacedKey(), itemData);
+        }
     }
 
+    @JsonGetter("data")
+    private List<CustomItemData> getDataList() {
+        return indexedData.values().stream().toList();
+    }
+
+    @JsonIgnore
+    public CustomItemData getData(NamespacedKey id) {
+        return indexedData.get(id);
+    }
+
+    /**
+     * Used to deserialize the old CustomData content.<br>
+     * This is replaced by a better modular system {@link CustomItemData}
+     */
+    @Deprecated
+    @JsonAlias("custom_data")
+    @JsonSetter("customDataMap")
+    private void setCustomDataMap(JsonNode dataNode) {
+        if (dataNode == null || dataNode.isNull()) return;
+        WolfyUtilCore core = WolfyUtilCore.getInstance();
+        Registries registries = core.getRegistries();
+        Iterator<Map.Entry<String, JsonNode>> itr = dataNode.fields();
+        while (itr.hasNext()) {
+            Map.Entry<String, JsonNode> entry = itr.next();
+            var namespacedKey = entry.getKey().contains(":") ? NamespacedKey.of(entry.getKey()) : /* Backwards compatibility */ registries.getCustomItemData().keySet().parallelStream().filter(key -> key.getKey().equals(entry.getKey())).findFirst().orElse(null);
+            if (namespacedKey != null) {
+                CustomData.Provider<?> provider = registries.getCustomItemData().get(namespacedKey);
+                if (provider != null) {
+                    CustomData data = provider.createData();
+                    try {
+                        data.readFromJson(this, entry.getValue(), core.getWolfyUtils().getJacksonMapperUtil().getGlobalMapper().getDeserializationContext());
+                        this.customDataMap.put(namespacedKey, data);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+    }
+
+    @Deprecated
     public Map<NamespacedKey, CustomData> getCustomDataMap() {
         return customDataMap;
     }
 
+    @Deprecated
+    public CustomData getCustomData(NamespacedKey namespacedKey) {
+        return customDataMap.get(namespacedKey);
+    }
+
+    @Deprecated
     public void addCustomData(NamespacedKey namespacedKey, CustomData customData) {
         this.customDataMap.put(namespacedKey, customData);
     }
