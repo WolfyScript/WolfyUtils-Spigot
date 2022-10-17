@@ -9,17 +9,17 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.Optional;
 
-public interface FunctionalRecipe extends Keyed {
+public interface FunctionalRecipe<T extends Inventory> extends Keyed {
 
-    RecipeMatcher getMatcher();
+    Optional<RecipeMatcher<T>> getMatcher();
 
-    RecipeAssembler getAssembler();
+    RecipeAssembler<T> getAssembler();
 
-    RecipeRemainingItemsFunction getRemainingItemsFunction();
+    RecipeRemainingItemsFunction<T> getRemainingItemsFunction();
 
-    default boolean matches(Inventory inventory, World world) {
+    default boolean matches(T inventory, World world) {
         try {
-            return getMatcher().match(inventory, world);
+            return getMatcher().map(matcher -> matcher.match(inventory, world)).orElse(false);
         } catch (RuntimeException e) {
             Bukkit.getLogger().severe("Error occurred when checking recipe! Removing " + getNamespacedKey() + "");
             e.printStackTrace();
@@ -28,7 +28,7 @@ public interface FunctionalRecipe extends Keyed {
         return false;
     }
 
-    default Optional<ItemStack> assemble(Inventory inventory) {
+    default Optional<ItemStack> assemble(T inventory) {
         try {
             return getAssembler().assemble(inventory);
         } catch (RuntimeException e) {
@@ -39,7 +39,7 @@ public interface FunctionalRecipe extends Keyed {
         return Optional.empty();
     }
 
-    default Optional<List<ItemStack>> getRemainingItems(Inventory inventory) {
+    default Optional<List<ItemStack>> getRemainingItems(T inventory) {
         try {
             return getRemainingItemsFunction().apply(inventory);
         } catch (RuntimeException e) {
