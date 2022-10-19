@@ -34,6 +34,15 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
 import com.wolfyscript.utilities.bukkit.items.CustomBlockSettings;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.meta.CustomItemTagMeta;
@@ -64,14 +73,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * <p>
@@ -815,6 +816,102 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
         }
     }
 
+    public ItemStack shrink(ItemStack input, int totalAmount, boolean replaceWithRemains, BiFunction<CustomItem, ItemStack, ItemStack> stackReplacement) {
+        if (this.type.getMaxStackSize() == 1 && input.getAmount() == 1) {
+            return shrinkUnstackableItem(input, replaceWithRemains);
+        }
+        if (this.isConsumed()) {
+            int amount = input.getAmount() - getAmount() * totalAmount;
+            if (amount <= 0) {
+                input = new ItemStack(Material.AIR);
+            } else {
+                input.setAmount(amount);
+            }
+            return stackReplacement.apply(this, input);
+        }
+        return new ItemStack(Material.AIR);
+    }
+
+    public ItemStack shrink(ItemStack input, int totalAmount, boolean replaceWithRemains) {
+        return shrink(input, totalAmount, replaceWithRemains, null, null, null);
+    }
+
+    public ItemStack shrink(ItemStack input, int totalAmount, boolean replaceWithRemains, @Nullable final Inventory inventory, @Nullable final Player player, @Nullable final Location location) {
+        return shrink(input, totalAmount, replaceWithRemains, (customItem, stack) -> {
+            ItemStack replacement = isConsumed() && replaceWithRemains && craftRemain != null ? new ItemStack(craftRemain) : null;
+            if (this.hasReplacement()) {
+                assert getReplacement() != null;
+                replacement = new CustomItem(getReplacement()).create();
+            }
+            if (!ItemUtils.isAirOrNull(replacement)) {
+                int replacementAmount = replacement.getAmount() * totalAmount;
+                if (ItemUtils.isAirOrNull(stack)) {
+                    int returnableAmount = Math.min(replacement.getMaxStackSize(), replacementAmount);
+                    replacementAmount -= returnableAmount;
+                    stack = replacement.clone();
+                    stack.setAmount(replacementAmount);
+                }
+                if (replacementAmount > 0) {
+                    replacement.setAmount(replacementAmount);
+                    Location loc = location;
+                    if (player != null) {
+                        var playerInv = player.getInventory();
+                        if (InventoryUtils.hasInventorySpace(playerInv, replacement)) {
+                            playerInv.addItem(replacement);
+                            return stack;
+                        }
+                        loc = player.getLocation();
+                    }
+                    if (loc == null) {
+                        if (inventory == null) return stack;
+                        if (InventoryUtils.hasInventorySpace(inventory, replacement)) {
+                            inventory.addItem(replacement);
+                            return stack;
+                        }
+                        loc = inventory.getLocation();
+                    }
+                    if (loc != null && loc.getWorld() != null) {
+                        loc.getWorld().dropItemNaturally(loc.add(0.5, 1.0, 0.5), replacement);
+                    }
+                }
+            }
+            return stack;
+        });
+    }
+
+    public ItemStack shrinkUnstackableItem(ItemStack input, boolean replaceWithRemains) {
+        ItemStack result = new ItemStack(Material.AIR);
+        if (this.isConsumed() && craftRemain != null && replaceWithRemains) {
+            result = new ItemStack(craftRemain);
+        }
+        if (this.hasReplacement()) {
+            return this.getReplacement() == null ? new ItemStack(Material.AIR) : new CustomItem(this.getReplacement()).create();
+        }
+        if (this.getDurabilityCost() != 0) {
+            // handle custom durability
+            var itemBuilder = new ItemBuilder(input);
+            if (itemBuilder.hasCustomDurability()) {
+                int damage = itemBuilder.getCustomDamage() + this.getDurabilityCost();
+                if (damage > itemBuilder.getCustomDurability()) {
+                    return result;
+                }
+                itemBuilder.setCustomDamage(damage);
+                return itemBuilder.create();
+            }
+            // handle vanilla durability
+            if (input.getItemMeta() instanceof Damageable itemMeta) {
+                int damage = itemMeta.getDamage() + this.getDurabilityCost();
+                if (damage > type.getMaxDurability()) {
+                    return result;
+                }
+                itemMeta.setDamage(damage);
+                input.setItemMeta(itemMeta);
+                return input;
+            }
+        }
+        return result;
+    }
+
     /**
      * Removes the specified amount from the input ItemStack inside an inventory!
      * <p>
@@ -881,10 +978,10 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * </p>
      * <br>
      *
-     * @param input              The input ItemStack, that is also going to be edited.
-     * @param totalAmount        The amount of this custom item that should be removed from the input.
-     * @param inventory          The optional inventory to add the replacements to. (Only for stackable items)
-     * @param location           The location where the replacements should be dropped. (Only for stackable items)
+     * @param input       The input ItemStack, that is also going to be edited.
+     * @param totalAmount The amount of this custom item that should be removed from the input.
+     * @param inventory   The optional inventory to add the replacements to. (Only for stackable items)
+     * @param location    The location where the replacements should be dropped. (Only for stackable items)
      * @see #remove(ItemStack, int, Inventory, Location, boolean)
      */
     public void remove(ItemStack input, int totalAmount, Inventory inventory, Location location) {
@@ -1071,7 +1168,8 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
             Material replaceType = item.getType().getCraftingRemainingItem();
             if (replaceType != null) return replaceType;
             return switch (item.getType().name()) {
-                case "LAVA_BUCKET", "MILK_BUCKET", "WATER_BUCKET", "COD_BUCKET", "SALMON_BUCKET", "PUFFERFISH_BUCKET", "TROPICAL_FISH_BUCKET" -> Material.BUCKET;
+                case "LAVA_BUCKET", "MILK_BUCKET", "WATER_BUCKET", "COD_BUCKET", "SALMON_BUCKET", "PUFFERFISH_BUCKET", "TROPICAL_FISH_BUCKET" ->
+                        Material.BUCKET;
                 case "POTION" -> Material.GLASS_BOTTLE;
                 case "BEETROOT_SOUP", "MUSHROOM_STEW", "RABBIT_STEW" -> Material.BOWL;
                 default -> null;
