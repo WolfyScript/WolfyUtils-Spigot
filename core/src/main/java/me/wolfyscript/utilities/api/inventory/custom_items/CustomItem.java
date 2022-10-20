@@ -42,7 +42,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.meta.CustomItemTagMeta;
@@ -765,6 +764,15 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     }
 
     /**
+     * @param input The input ItemStack, that is going to be edited.
+     * @deprecated Replaced by {@link #removeUnStackableItem(ItemStack)}
+     */
+    @Deprecated
+    public void consumeUnstackableItem(ItemStack input) {
+        removeUnStackableItem(input);
+    }
+
+    /**
      * Removes the specified amount from the input ItemStack inside an inventory!
      * <p>
      * This method will directly edit the input ItemStack (Change it's type, amount, etc.) and won't return a result value!
@@ -808,108 +816,12 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
         if (this.type.getMaxStackSize() == 1 && input.getAmount() == 1) {
             removeUnStackableItem(input, replaceWithRemains);
         } else {
-            int amount = input.getAmount() - getAmount() * totalAmount;
             if (this.isConsumed()) {
+                int amount = input.getAmount() - getAmount() * totalAmount;
                 input.setAmount(amount);
             }
             applyStackableReplacement(totalAmount, replaceWithRemains, player, inventory, location);
         }
-    }
-
-    public ItemStack shrink(ItemStack input, int totalAmount, boolean replaceWithRemains, BiFunction<CustomItem, ItemStack, ItemStack> stackReplacement) {
-        if (this.type.getMaxStackSize() == 1 && input.getAmount() == 1) {
-            return shrinkUnstackableItem(input, replaceWithRemains);
-        }
-        if (this.isConsumed()) {
-            int amount = input.getAmount() - getAmount() * totalAmount;
-            if (amount <= 0) {
-                input = new ItemStack(Material.AIR);
-            } else {
-                input.setAmount(amount);
-            }
-            return stackReplacement.apply(this, input);
-        }
-        return new ItemStack(Material.AIR);
-    }
-
-    public ItemStack shrink(ItemStack input, int totalAmount, boolean replaceWithRemains) {
-        return shrink(input, totalAmount, replaceWithRemains, null, null, null);
-    }
-
-    public ItemStack shrink(ItemStack input, int totalAmount, boolean replaceWithRemains, @Nullable final Inventory inventory, @Nullable final Player player, @Nullable final Location location) {
-        return shrink(input, totalAmount, replaceWithRemains, (customItem, stack) -> {
-            ItemStack replacement = isConsumed() && replaceWithRemains && craftRemain != null ? new ItemStack(craftRemain) : null;
-            if (this.hasReplacement()) {
-                assert getReplacement() != null;
-                replacement = new CustomItem(getReplacement()).create();
-            }
-            if (!ItemUtils.isAirOrNull(replacement)) {
-                int replacementAmount = replacement.getAmount() * totalAmount;
-                if (ItemUtils.isAirOrNull(stack)) {
-                    int returnableAmount = Math.min(replacement.getMaxStackSize(), replacementAmount);
-                    replacementAmount -= returnableAmount;
-                    stack = replacement.clone();
-                    stack.setAmount(replacementAmount);
-                }
-                if (replacementAmount > 0) {
-                    replacement.setAmount(replacementAmount);
-                    Location loc = location;
-                    if (player != null) {
-                        var playerInv = player.getInventory();
-                        if (InventoryUtils.hasInventorySpace(playerInv, replacement)) {
-                            playerInv.addItem(replacement);
-                            return stack;
-                        }
-                        loc = player.getLocation();
-                    }
-                    if (loc == null) {
-                        if (inventory == null) return stack;
-                        if (InventoryUtils.hasInventorySpace(inventory, replacement)) {
-                            inventory.addItem(replacement);
-                            return stack;
-                        }
-                        loc = inventory.getLocation();
-                    }
-                    if (loc != null && loc.getWorld() != null) {
-                        loc.getWorld().dropItemNaturally(loc.add(0.5, 1.0, 0.5), replacement);
-                    }
-                }
-            }
-            return stack;
-        });
-    }
-
-    public ItemStack shrinkUnstackableItem(ItemStack input, boolean replaceWithRemains) {
-        ItemStack result = new ItemStack(Material.AIR);
-        if (this.isConsumed() && craftRemain != null && replaceWithRemains) {
-            result = new ItemStack(craftRemain);
-        }
-        if (this.hasReplacement()) {
-            return this.getReplacement() == null ? new ItemStack(Material.AIR) : new CustomItem(this.getReplacement()).create();
-        }
-        if (this.getDurabilityCost() != 0) {
-            // handle custom durability
-            var itemBuilder = new ItemBuilder(input);
-            if (itemBuilder.hasCustomDurability()) {
-                int damage = itemBuilder.getCustomDamage() + this.getDurabilityCost();
-                if (damage > itemBuilder.getCustomDurability()) {
-                    return result;
-                }
-                itemBuilder.setCustomDamage(damage);
-                return itemBuilder.create();
-            }
-            // handle vanilla durability
-            if (input.getItemMeta() instanceof Damageable itemMeta) {
-                int damage = itemMeta.getDamage() + this.getDurabilityCost();
-                if (damage > type.getMaxDurability()) {
-                    return result;
-                }
-                itemMeta.setDamage(damage);
-                input.setItemMeta(itemMeta);
-                return input;
-            }
-        }
-        return result;
     }
 
     /**
@@ -1154,12 +1066,164 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     }
 
     /**
-     * @param input The input ItemStack, that is going to be edited.
-     * @deprecated Replaced by {@link #removeUnStackableItem(ItemStack)}
+     * Shrinks the specified stack by the given amount and returns the manipulated or replaced item!
+     * <p>
+     * <p>
+     * <b>Stackable</b>  ({@linkplain Material#getMaxStackSize()} > 1 or stack count > 1)<b>:</b><br>
+     * The stack is shrunk by the specified amount (<strong><code>{@link #getAmount()} * totalAmount</code></strong>)
+     * <p>
+     * If this CustomItem has a custom replacement:<br>
+     * This calls the stackReplacement function with the shrunken stack and this CustomItem.
+     * It is meant for applying the stackable replacement items.<br>
+     * For default behaviour see {@link #shrink(ItemStack, int, boolean, Inventory, Player, Location)} and {@link #shrinkUnstackableItem(ItemStack, boolean)}
+     * </p>
+     * </p>
+     * <p>
+     * <b>Un-stackable</b>  ({@linkplain Material#getMaxStackSize()} == 1 and stack count == 1)<b>:</b><br>
+     * Redirects to {@link #removeUnStackableItem(ItemStack, boolean)}<br>
+     * </p>
+     * </p>
+     * <br>
+     *
+     * @param stack            The input ItemStack, that is also going to be edited.
+     * @param count            The amount of this custom item that should be removed from the input.
+     * @param useRemains       If the Item should be replaced by the default craft remains.
+     * @param stackReplacement Behaviour of how to apply the replacements of stackable items.
+     * @return  The manipulated stack, default remain, or custom remains.
      */
-    @Deprecated
-    public void consumeUnstackableItem(ItemStack input) {
-        removeUnStackableItem(input);
+    public ItemStack shrink(@NotNull ItemStack stack, int count, boolean useRemains, @NotNull BiFunction<CustomItem, ItemStack, ItemStack> stackReplacement) {
+        if (this.type.getMaxStackSize() == 1 && stack.getAmount() == 1) {
+            return shrinkUnstackableItem(stack, useRemains);
+        }
+        if (this.isConsumed()) {
+            int amount = stack.getAmount() - getAmount() * count;
+            if (amount <= 0) {
+                stack = new ItemStack(Material.AIR);
+            } else {
+                stack.setAmount(amount);
+            }
+            return stackReplacement.apply(this, stack);
+        }
+        return stack;
+    }
+
+    /**
+     * Shrinks the specified stack by the given amount and returns the manipulated or replaced item!
+     * <p>
+     * <b>Stackable</b>  ({@linkplain Material#getMaxStackSize()} > 1 or stack count > 1)<b>:</b><br>
+     * The stack is shrunk by the specified amount (<strong><code>{@link #getAmount()} * totalAmount</code></strong>)
+     * <p>
+     * If this CustomItem has a custom replacement:<br>
+     * <ul>
+     *   <li><b>Location: </b>Used as the drop location for remaining items. <br>May be overridden by options below.</li>
+     *   <li>
+     *     <b>Player: </b>Adds items to the players inventory.
+     *     <br>Remaining items are still in the pool for the next options below.
+     *     <br>Player location is used as the drop location for remaining items.</li>
+     *   <li>
+     *     <b>Inventory:</b> Adds items to the inventory.
+     *     <br>Remaining items are still in the pool for the next options below.
+     *     <br>If location not available yet: uses inventory location as drop location for remaining items.
+     *   </li>
+     * </ul>
+     * All remaining items that cannot be added to player or the other inventory are dropped at the specified location.<br>
+     * <b>Warning! If you do not provide a location via <code>player</code>, <code>inventory</code>, or <code>inventory</code>, then the remaining items are discarded!</b><br>
+     * For custom behaviour see {@link #shrink(ItemStack, int, boolean, BiFunction)}.
+     *
+     * </p>
+     * </p>
+     * <p>
+     * <b>Un-stackable</b>  ({@linkplain Material#getMaxStackSize()} == 1 and stack count == 1)<b>:</b><br>
+     * Redirects to {@link #removeUnStackableItem(ItemStack, boolean)}<br>
+     * </p>
+     * </p>
+     * <br>
+     *
+     * @param stack      The input ItemStack, that is also going to be edited.
+     * @param count      The amount of this custom item that should be removed from the input.
+     * @param useRemains If the Item should be replaced by the default craft remains.
+     * @param inventory  The optional inventory to add the replacements to. (Only for stackable items)
+     * @param player     The player to give the items to. If the players' inventory has space the craft remains are added. (Only for stackable items)
+     * @param location   The location where the replacements should be dropped. (Only for stackable items)
+     * @return  The manipulated stack, default remain, or custom remains.
+     */
+    public ItemStack shrink(ItemStack stack, int count, boolean useRemains, @Nullable final Inventory inventory, @Nullable final Player player, @Nullable final Location location) {
+        return shrink(stack, count, useRemains, (customItem, resultStack) -> {
+            ItemStack replacement = isConsumed() && useRemains && craftRemain != null ? new ItemStack(craftRemain) : null;
+            if (this.hasReplacement()) {
+                assert getReplacement() != null;
+                replacement = new CustomItem(getReplacement()).create();
+            }
+            if (!ItemUtils.isAirOrNull(replacement)) {
+                int replacementAmount = replacement.getAmount() * count;
+                if (ItemUtils.isAirOrNull(resultStack)) {
+                    int returnableAmount = Math.min(replacement.getMaxStackSize(), replacementAmount);
+                    replacementAmount -= returnableAmount;
+                    resultStack = replacement.clone();
+                    resultStack.setAmount(replacementAmount);
+                }
+                if (replacementAmount > 0) {
+                    replacement.setAmount(replacementAmount);
+                    Location loc = location;
+                    if (player != null) {
+                        replacement = player.getInventory().addItem(replacement).get(0);
+                        loc = player.getLocation();
+                    }
+                    if (inventory != null && replacement != null) {
+                        replacement = inventory.addItem(replacement).get(0);
+                        if (loc == null) loc = inventory.getLocation();
+                    }
+                    if (loc != null && replacement != null && loc.getWorld() != null) {
+                        loc.getWorld().dropItemNaturally(loc.add(0.5, 1.0, 0.5), replacement);
+                    }
+                }
+            }
+            return resultStack;
+        });
+    }
+
+    /**
+     * Shrinks the specified stack and returns the manipulated or replaced item!
+     * <p>
+     *     This firstly checks for custom replacements (remains) and sets it as the result.<br>
+     *     Then handles damaging of the stack, if there is a specified durability cost.<br>
+     *     In case the stack breaks due damage it is replaced by the result, specified earlier.
+     * </p>
+     *
+     * @param stack         The stack to shrink
+     * @param useRemains    If the Item should be replaced by the default craft remains.
+     * @return The manipulated (damaged) stack, default remain, or custom remains.
+     */
+    public ItemStack shrinkUnstackableItem(ItemStack stack, boolean useRemains) {
+        ItemStack result = new ItemStack(Material.AIR);
+        if (this.hasReplacement()) {
+            result = this.getReplacement() == null ? new ItemStack(Material.AIR) : new CustomItem(this.getReplacement()).create();
+        } else if (this.isConsumed() && craftRemain != null && useRemains) {
+            result = new ItemStack(craftRemain);
+        }
+        if (this.getDurabilityCost() != 0) {
+            // handle custom durability
+            var itemBuilder = new ItemBuilder(stack);
+            if (itemBuilder.hasCustomDurability()) {
+                int damage = itemBuilder.getCustomDamage() + this.getDurabilityCost();
+                if (damage > itemBuilder.getCustomDurability()) {
+                    return result;
+                }
+                itemBuilder.setCustomDamage(damage);
+                return itemBuilder.create();
+            }
+            // handle vanilla durability
+            if (stack.getItemMeta() instanceof Damageable itemMeta) {
+                int damage = itemMeta.getDamage() + this.getDurabilityCost();
+                if (damage > type.getMaxDurability()) {
+                    return result;
+                }
+                itemMeta.setDamage(damage);
+                stack.setItemMeta(itemMeta);
+                return stack;
+            }
+        }
+        return result;
     }
 
     private Material getCraftRemain() {
