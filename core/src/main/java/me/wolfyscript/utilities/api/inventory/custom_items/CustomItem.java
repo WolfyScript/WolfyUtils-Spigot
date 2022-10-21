@@ -33,9 +33,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
 import com.wolfyscript.utilities.bukkit.items.CustomBlockSettings;
 import com.wolfyscript.utilities.bukkit.items.CustomItemData;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1348,6 +1350,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     }
 
     @Deprecated
+    @JsonGetter("customDataMap")
     public Map<NamespacedKey, CustomData> getCustomDataMap() {
         return customDataMap;
     }
