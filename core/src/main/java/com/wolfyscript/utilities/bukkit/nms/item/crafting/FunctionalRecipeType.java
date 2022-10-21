@@ -5,6 +5,8 @@ public enum FunctionalRecipeType {
     SMELTING,
     BLASTING,
     SMOKING,
-    CAMPFIRE
+    CAMPFIRE,
+    CRAFTING_SHAPED,
+    CRAFTING_SHAPELESS
 
 }

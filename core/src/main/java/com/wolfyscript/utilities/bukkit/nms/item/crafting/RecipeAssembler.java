@@ -5,7 +5,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 @FunctionalInterface
-public interface RecipeAssembler {
+public interface RecipeAssembler<T extends Inventory> {
 
-    Optional<ItemStack> assemble(Inventory inventory);
+    Optional<ItemStack> assemble(T inventory);
 }

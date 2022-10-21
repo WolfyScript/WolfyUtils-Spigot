@@ -6,8 +6,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 @FunctionalInterface
-public interface RecipeRemainingItemsFunction {
+public interface RecipeRemainingItemsFunction<T extends Inventory> {
 
-    Optional<List<ItemStack>> apply(Inventory inventory);
+    Optional<List<ItemStack>> apply(T inventory);
 
 }
