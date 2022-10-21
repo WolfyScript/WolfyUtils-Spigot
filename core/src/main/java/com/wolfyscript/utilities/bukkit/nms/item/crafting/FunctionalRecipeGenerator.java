@@ -186,7 +186,7 @@ public class FunctionalRecipeGenerator {
      * @param recipe The FunctionalRecipe to add to Minecraft.
      * @return True when the recipe was added successfully; False if an error occurred.
      */
-    public static boolean addRecipeToRecipeManager(FunctionalRecipe recipe) {
+    public static boolean addRecipeToRecipeManager(FunctionalRecipe<?> recipe) {
         try {
             RECIPE_MANAGER_ADD_RECIPE_METHOD.invoke(MINECRAFT_SERVER, recipe);
             return true;
