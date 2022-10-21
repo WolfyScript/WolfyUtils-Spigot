@@ -4,7 +4,7 @@ import org.bukkit.World;
 import org.bukkit.inventory.Inventory;
 
 @FunctionalInterface
-public interface RecipeMatcher {
+public interface RecipeMatcher<T extends Inventory> {
 
-    boolean match(Inventory inventory, World world);
+    boolean match(T inventory, World world);
 }
