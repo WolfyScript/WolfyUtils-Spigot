@@ -20,25 +20,23 @@ package me.wolfyscript.utilities.api.inventory.custom_items;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.util.Keyed;
-import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
-
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
+import me.wolfyscript.utilities.util.Keyed;
+import me.wolfyscript.utilities.util.NamespacedKey;
 
+/**
+ * @deprecated Replaced by {@link com.wolfyscript.utilities.bukkit.items.CustomItemData}
+ */
+@Deprecated
 public abstract class CustomData implements Keyed {
 
     @JsonProperty("key")
@@ -166,7 +164,8 @@ public abstract class CustomData implements Keyed {
                 Constructor<T> constructor = customDataClass.getDeclaredConstructor(NamespacedKey.class);
                 constructor.setAccessible(true);
                 return constructor.newInstance(namespacedKey);
-            } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+            } catch (InstantiationException | InvocationTargetException | NoSuchMethodException |
+                     IllegalAccessException e) {
                 e.printStackTrace();
             }
             return null;
@@ -174,52 +173,30 @@ public abstract class CustomData implements Keyed {
 
     }
 
-    public static class Deserializer extends StdDeserializer<Map<NamespacedKey, CustomData>> {
+    @Deprecated
+    public static class DeprecatedCustomDataWrapper extends HashMap<NamespacedKey, CustomData> {
 
-        public Deserializer() {
-            super(JacksonUtil.getObjectMapper().getTypeFactory().constructMapType(Map.class, NamespacedKey.class, CustomData.class));
+        protected CustomItem owner;
+
+        public DeprecatedCustomDataWrapper(CustomItem owner) {
+            this.owner = owner;
         }
 
-        @Override
-        public Map<NamespacedKey, CustomData> deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException {
-            JsonNode node = jsonParser.readValueAsTree();
-            Map<NamespacedKey, CustomData> dataMap = new HashMap<>();
-            var parentObject = jsonParser.getParsingContext().getCurrentValue();
-            if (parentObject instanceof CustomItem customItem) {
-                Iterator<Map.Entry<String, JsonNode>> itr = node.fields();
-                while (itr.hasNext()) {
-                    Map.Entry<String, JsonNode> entry = itr.next();
-                    var namespacedKey = entry.getKey().contains(":") ? NamespacedKey.of(entry.getKey()) : /* This is only for backwards compatibility! Might be removed in the future */ WolfyUtilCore.getInstance().getRegistries().getCustomItemData().keySet().parallelStream().filter(namespacedKey1 -> namespacedKey1.getKey().equals(entry.getKey())).findFirst().orElse(null);
-                    if (namespacedKey != null) {
-                        Provider<?> provider = WolfyUtilCore.getInstance().getRegistries().getCustomItemData().get(namespacedKey);
-                        if (provider != null) {
-                            CustomData data = provider.createData();
-                            data.readFromJson(customItem, entry.getValue(), context);
-                            dataMap.put(namespacedKey, data);
-                        }
-                    }
-                }
-            }
-            return dataMap;
-        }
     }
 
-    public static class Serializer extends StdSerializer<Map<NamespacedKey, CustomData>> {
+    public static class Serializer extends StdSerializer<DeprecatedCustomDataWrapper> {
 
         public Serializer() {
-            super(JacksonUtil.getObjectMapper().getTypeFactory().constructMapType(Map.class, NamespacedKey.class, CustomData.class));
+            super(DeprecatedCustomDataWrapper.class);
         }
 
         @Override
-        public void serialize(Map<NamespacedKey, CustomData> dataMap, JsonGenerator gen, SerializerProvider provider) throws IOException {
+        public void serialize(DeprecatedCustomDataWrapper dataMap, JsonGenerator gen, SerializerProvider provider) throws IOException {
             gen.writeStartObject();
-            var parentObject = gen.getOutputContext().getParent().getCurrentValue();
-            if (parentObject instanceof CustomItem customItem) {
-                for (Map.Entry<NamespacedKey, CustomData> value : dataMap.entrySet()) {
-                    gen.writeObjectFieldStart(value.getKey().toString());
-                    value.getValue().writeToJson(customItem, gen, provider);
-                    gen.writeEndObject();
-                }
+            for (Map.Entry<NamespacedKey, CustomData> value : dataMap.entrySet()) {
+                gen.writeObjectFieldStart(value.getKey().toString());
+                value.getValue().writeToJson(dataMap.owner, gen, provider);
+                gen.writeEndObject();
             }
             gen.writeEndObject();
         }

@@ -10,6 +10,7 @@ import com.wolfyscript.utilities.bukkit.commands.QueryDebugCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleAnimationCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleEffectCommand;
 import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
+import com.wolfyscript.utilities.bukkit.items.CustomItemData;
 import com.wolfyscript.utilities.bukkit.listeners.EquipListener;
 import com.wolfyscript.utilities.bukkit.listeners.GUIInventoryListener;
 import com.wolfyscript.utilities.bukkit.listeners.PersistentStorageListener;
@@ -43,6 +44,7 @@ import java.util.List;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
 import me.wolfyscript.utilities.api.console.Console;
+import me.wolfyscript.utilities.api.inventory.custom_items.CustomData;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.api.inventory.custom_items.actions.Action;
 import me.wolfyscript.utilities.api.inventory.custom_items.actions.ActionCommand;
@@ -226,6 +228,9 @@ public final class WolfyCoreBukkit extends WUPlugin {
 
         //Reference Deserializer
         APIReferenceSerialization.create(module);
+        // Serializer for the old CustomData
+        module.addSerializer(CustomData.DeprecatedCustomDataWrapper.class, new CustomData.Serializer());
+
         jsonMapperModules.add(module);
 
         JacksonUtil.registerModule(module);
@@ -350,6 +355,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         var customBlockData = getRegistries().getCustomBlockData();
         customBlockData.register(CustomItemBlockData.ID, CustomItemBlockData.class);
 
+        KeyedTypeIdResolver.registerTypeRegistry(CustomItemData.class, registries.getCustomItemDataTypeRegistry());
         KeyedTypeIdResolver.registerTypeRegistry(Meta.class, nbtChecks);
         KeyedTypeIdResolver.registerTypeRegistry(Animator.class, particleAnimators);
         KeyedTypeIdResolver.registerTypeRegistry(Shape.class, particleShapes);

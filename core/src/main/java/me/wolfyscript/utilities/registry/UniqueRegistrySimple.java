@@ -18,31 +18,29 @@
 
 package me.wolfyscript.utilities.registry;
 
-import com.google.common.base.Preconditions;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import me.wolfyscript.utilities.util.Keyed;
 import me.wolfyscript.utilities.util.NamespacedKey;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * A simple registry, used for basic use cases.
  *
  * @param <V> The type of the value.
  */
-public class RegistrySimple<V extends Keyed> extends AbstractRegistry<Map<NamespacedKey, V>, V> {
+public class UniqueRegistrySimple<V extends Keyed> extends AbstractRegistry<BiMap<NamespacedKey, V>, V> {
 
-    public RegistrySimple(NamespacedKey namespacedKey, Registries registries) {
-        super(namespacedKey, new HashMap<>(), registries);
+    public UniqueRegistrySimple(NamespacedKey namespacedKey, Registries registries) {
+        super(namespacedKey, HashBiMap.create(), registries);
     }
 
-    public RegistrySimple(NamespacedKey namespacedKey, Registries registries, Class<V> type) {
-        super(namespacedKey, new HashMap<>(), registries, type);
+    public UniqueRegistrySimple(NamespacedKey namespacedKey, Registries registries, Class<V> type) {
+        super(namespacedKey, HashBiMap.create(), registries, type);
     }
+
+    @Override
+    public NamespacedKey getKey(V value) {
+        return map.inverse().get(value);
+    }
+
 }
