@@ -31,6 +31,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.items.CustomBlockSettings;
 import com.wolfyscript.utilities.bukkit.items.CustomItemData;
 import java.io.IOException;
@@ -42,7 +43,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.meta.CustomItemTagMeta;
@@ -1305,7 +1308,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     @JsonSetter("data")
     private void setDataList(List<CustomItemData> data) {
         for (CustomItemData itemData : data) {
-            indexedData.put(itemData.getNamespacedKey(), itemData);
+            addOrReplaceData(itemData);
         }
     }
 
@@ -1314,9 +1317,54 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
         return indexedData.values().stream().toList();
     }
 
-    @JsonIgnore
-    public CustomItemData getData(NamespacedKey id) {
-        return indexedData.get(id);
+    public <T extends CustomItemData> T addOrReplaceData(T data) {
+        Class<T> type = (Class<T>) data.getClass();
+        return type.cast(indexedData.put(getKeyForData(type), data));
+    }
+
+    public CustomItemData addDataIfAbsent(CustomItemData data) {
+        return indexedData.putIfAbsent(data.getNamespacedKey(), data);
+    }
+
+    public CustomItemData computeDataIfAbsent(NamespacedKey id, Function<NamespacedKey, CustomItemData> mappingFunction) {
+        return indexedData.computeIfAbsent(id, mappingFunction);
+    }
+
+    public <T extends CustomItemData> T computeDataIfAbsent(Class<T> type, Function<NamespacedKey, T> mappingFunction) {
+        return type.cast(indexedData.computeIfAbsent(getKeyForData(type), mappingFunction));
+    }
+
+    public CustomItemData computeDataIfPresent(NamespacedKey id, BiFunction<NamespacedKey, CustomItemData, CustomItemData> remappingFunction) {
+        return indexedData.computeIfPresent(id, remappingFunction);
+    }
+
+    public <T extends CustomItemData> T computeDataIfPresent(Class<T> type, BiFunction<NamespacedKey, T, T> remappingFunction) {
+        Objects.requireNonNull(remappingFunction);
+        NamespacedKey key = getKeyForData(type);
+        T oldValue = type.cast(indexedData.get(key));
+        if (oldValue != null) {
+            T newValue = remappingFunction.apply(key, oldValue);
+            if (newValue != null) {
+                indexedData.put(key, newValue);
+                return newValue;
+            } else {
+                indexedData.remove(key);
+                return null;
+            }
+        }
+        return null;
+    }
+
+    public Optional<CustomItemData> getData(NamespacedKey id) {
+        return Optional.ofNullable(indexedData.get(id));
+    }
+
+    public <T extends CustomItemData> Optional<T> getData(Class<T> type) {
+        return getData(getKeyForData(type)).map(type::cast);
+    }
+
+    private static NamespacedKey getKeyForData(Class<? extends CustomItemData> type) {
+        return WolfyCoreBukkit.getInstance().getRegistries().getCustomItemDataTypeRegistry().getKey(type);
     }
 
     /**
