@@ -43,6 +43,23 @@ public interface IRegistry<V> extends Iterable<V> {
     V get(@Nullable NamespacedKey key);
 
     /**
+     * Receives the key under which the value is registered in this Registry.<br>
+     * The default implementation is quite inefficient as it uses the stream filter method
+     * to find the matching value.<br>
+     * Additionally, it only returns the key of the first match. Therefor this only works reliably if the values are unique too!<br>
+     * Some Registry implementations or extensions might have exactly that behaviour.<br>
+     * <br>
+     * Some implementations are:<br>
+     * {@link UniqueTypeRegistrySimple}
+     *
+     * @param value The value to get the key for.
+     * @return The key for the registered value or null if not found.
+     */
+    default NamespacedKey getKey(V value) {
+        return entrySet().stream().filter(entry -> entry.getValue().equals(value)).map(Map.Entry::getKey).findFirst().orElse(null);
+    }
+
+    /**
      * Register a value with a {@link NamespacedKey} to this registry.
      * You can't override values that are already registered under the same {@link NamespacedKey}!
      *
@@ -50,6 +67,8 @@ public interface IRegistry<V> extends Iterable<V> {
      * @param value The value to register.
      */
     void register(NamespacedKey key, V value);
+
+    void register(V value);
 
     Set<NamespacedKey> keySet();
 

@@ -108,19 +108,19 @@ public class Registries {
 
         itemTags = new Tags<>(this);
 
-        particleAnimators = new TypeRegistrySimple<>(new NamespacedKey(core, "particle_animators"), this);
-        particleShapes = new TypeRegistrySimple<>(new NamespacedKey(core, "particles/shapes"), this);
-        particleTimer = new TypeRegistrySimple<>(new NamespacedKey(core, "particle_timers"), this);
-        customItemNbtChecks = new TypeRegistrySimple<>(ITEM_NBT_CHECKS, this);
-        customItemDataTypeRegistry = new TypeRegistrySimple<>(ITEM_CUSTOM_DATA, this);
-        customItemActions = new TypeRegistrySimple<>(ITEM_ACTION_TYPES, this);
-        customItemEvents = new TypeRegistrySimple<>(ITEM_EVENT_TYPES, this);
-        valueProviders = new TypeRegistrySimple<>(new NamespacedKey(core, "value_providers"), this);
-        operators = new TypeRegistrySimple<>(new NamespacedKey(core, "operators"), this);
+        particleAnimators = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "particle_animators"), this);
+        particleShapes = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "particles/shapes"), this);
+        particleTimer = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "particle_timers"), this);
+        customItemNbtChecks = new UniqueTypeRegistrySimple<>(ITEM_NBT_CHECKS, this);
+        customItemDataTypeRegistry = new UniqueTypeRegistrySimple<>(ITEM_CUSTOM_DATA, this);
+        customItemActions = new UniqueTypeRegistrySimple<>(ITEM_ACTION_TYPES, this);
+        customItemEvents = new UniqueTypeRegistrySimple<>(ITEM_EVENT_TYPES, this);
+        valueProviders = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "value_providers"), this);
+        operators = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "operators"), this);
 
-        customBlockData = new TypeRegistrySimple<>(new NamespacedKey(core, "persistent/block"), this);
+        customBlockData = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "persistent/block"), this);
 
-        this.nbtQueryNodes = new TypeRegistrySimple<>(new NamespacedKey(core, "nbt/query/nodes"), this);
+        this.nbtQueryNodes = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "nbt/query/nodes"), this);
     }
 
     void indexTypedRegistry(IRegistry<?> registry) {
