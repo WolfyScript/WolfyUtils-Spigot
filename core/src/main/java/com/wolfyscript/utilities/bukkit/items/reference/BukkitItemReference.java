@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 
+@ItemReferenceParserSettings(priority = -1000)
 public class BukkitItemReference extends ItemReference {
 
     public static final NamespacedKey ID = NamespacedKey.wolfyutilties("bukkit");
@@ -36,4 +37,9 @@ public class BukkitItemReference extends ItemReference {
     public boolean isValidItem(ItemStack other) {
         return stack.isSimilar(other);
     }
+
+    public static BukkitItemReference parseFromStack(ItemStack itemStack) {
+        return new BukkitItemReference(itemStack);
+    }
+
 }

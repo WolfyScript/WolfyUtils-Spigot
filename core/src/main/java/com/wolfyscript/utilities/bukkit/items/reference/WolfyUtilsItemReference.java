@@ -9,6 +9,7 @@ import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
+@ItemReferenceParserSettings
 public class WolfyUtilsItemReference extends ItemReference {
 
     public static final NamespacedKey ID = NamespacedKey.wolfyutilties("wolfyutils");
@@ -55,5 +56,17 @@ public class WolfyUtilsItemReference extends ItemReference {
             }
         }
         return false;
+    }
+
+    public static WolfyUtilsItemReference parseFromStack(ItemStack itemStack) {
+        if (itemStack == null) return null;
+        var itemMeta = itemStack.getItemMeta();
+        if (itemMeta != null) {
+            var container = itemMeta.getPersistentDataContainer();
+            if (container.has(CUSTOM_ITEM_KEY, PersistentDataType.STRING)) {
+                return new WolfyUtilsItemReference(NamespacedKey.of(container.get(CUSTOM_ITEM_KEY, PersistentDataType.STRING)));
+            }
+        }
+        return null;
     }
 }

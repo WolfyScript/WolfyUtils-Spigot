@@ -103,15 +103,22 @@ public abstract class ItemReference implements Keyed, Copyable<ItemReference> {
         return id;
     }
 
+    /**
+     * Parser used to receive the correct {@link ItemReference} from {@link ItemStack}s.
+     *
+     * @param <T> The type of the {@link ItemReference}
+     */
     public abstract static class Parser<T extends ItemReference> {
 
         protected final int priority;
+        final Class<T> type;
 
-        protected Parser(int priority) {
+        protected Parser(int priority, Class<T> type) {
             this.priority = priority;
+            this.type = type;
         }
 
-        public abstract T parseFromItem(ItemStack stack);
+        public abstract T parseFromStack(ItemStack stack);
 
         public int getPriority() {
             return priority;
