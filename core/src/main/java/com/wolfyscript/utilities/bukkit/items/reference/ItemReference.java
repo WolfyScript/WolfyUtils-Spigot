@@ -108,12 +108,14 @@ public abstract class ItemReference implements Keyed, Copyable<ItemReference> {
      *
      * @param <T> The type of the {@link ItemReference}
      */
-    public abstract static class Parser<T extends ItemReference> {
+    public abstract static class Parser<T extends ItemReference> implements Keyed {
 
+        protected final NamespacedKey id;
         protected final int priority;
         final Class<T> type;
 
-        protected Parser(int priority, Class<T> type) {
+        protected Parser(NamespacedKey id, int priority, Class<T> type) {
+            this.id = id;
             this.priority = priority;
             this.type = type;
         }
@@ -122,6 +124,11 @@ public abstract class ItemReference implements Keyed, Copyable<ItemReference> {
 
         public int getPriority() {
             return priority;
+        }
+
+        @Override
+        public NamespacedKey getNamespacedKey() {
+            return id;
         }
     }
 
