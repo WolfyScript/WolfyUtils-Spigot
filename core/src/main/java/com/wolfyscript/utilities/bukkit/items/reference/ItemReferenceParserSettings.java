@@ -8,6 +8,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import me.wolfyscript.utilities.api.WolfyUtilities;
+import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -31,9 +33,11 @@ public @interface ItemReferenceParserSettings {
      */
     Class<? extends ItemReference.Parser> customParser() default ItemReference.Parser.class;
 
+    String plugin() default "";
+
     class Creator {
 
-        private static <R extends ItemReference> ItemReference.Parser<R> constructDefaultParser(int priority, Class<R> itemReferenceType) {
+        private static <R extends ItemReference> ItemReference.Parser<R> constructDefaultParser(ItemReferenceParserSettings settings, NamespacedKey id, Class<R> itemReferenceType) {
             try {
                 Method parseMethod = itemReferenceType.getMethod("parseFromStack", ItemStack.class);
                 if (!Modifier.isStatic(parseMethod.getModifiers())) {
@@ -43,28 +47,57 @@ public @interface ItemReferenceParserSettings {
                     return null;
                 }
                 final Method finalParseMethod = parseMethod;
-                return new ItemReference.Parser<>(priority, itemReferenceType) {
-                    @Override
-                    public R parseFromStack(ItemStack stack) {
-                        try {
-                            // We can do this because we check the return type above
-                            return (R) finalParseMethod.invoke(null, stack);
-                        } catch (IllegalAccessException | InvocationTargetException e) {
-                            throw new RuntimeException(e);
+
+                final int priority;
+                final String plugin;
+
+                if (settings != null) {
+                    priority = settings.priority();
+                    plugin = settings.plugin();
+                } else {
+                    priority = 0;
+                    plugin = null;
+                }
+
+                if (plugin == null) {
+                    return new ItemReference.Parser<>(id, priority, itemReferenceType) {
+                        @Override
+                        public R parseFromStack(ItemStack stack) {
+                            try {
+                                // We can do this because we check the return type above
+                                return (R) finalParseMethod.invoke(null, stack);
+                            } catch (IllegalAccessException | InvocationTargetException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
-                    }
-                };
+                    };
+                } else {
+                    return new ItemReference.Parser<>(id, priority, itemReferenceType) {
+                        @Override
+                        public R parseFromStack(ItemStack stack) {
+                            if (!WolfyUtilities.hasPlugin(plugin)) {
+                                return null;
+                            }
+                            try {
+                                // We can do this because we check the return type above
+                                return (R) finalParseMethod.invoke(null, stack);
+                            } catch (IllegalAccessException | InvocationTargetException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    };
+                }
             } catch (NoSuchMethodException ignored) {
                 // parse method is not defined!
             }
             return null;
         }
 
-        public static <R extends ItemReference> ItemReference.Parser<R> constructParser(Class<R> itemReferenceType) {
+        public static <R extends ItemReference> ItemReference.Parser<R> constructParser(NamespacedKey id, Class<R> itemReferenceType) {
             ItemReferenceParserSettings annotation = itemReferenceType.getAnnotation(ItemReferenceParserSettings.class);
             if (annotation == null) {
                 // Fallback to default constructor parser!
-                return constructDefaultParser(0, itemReferenceType);
+                return constructDefaultParser(null, id, itemReferenceType);
             }
             if (annotation.customParser() != ItemReference.Parser.class) {
                 // Specified Custom Parse class!
@@ -87,7 +120,7 @@ public @interface ItemReferenceParserSettings {
                 return null;
             }
             // Construct default parser
-            return constructDefaultParser(annotation.priority(), itemReferenceType);
+            return constructDefaultParser(annotation, id, itemReferenceType);
         }
 
     }
