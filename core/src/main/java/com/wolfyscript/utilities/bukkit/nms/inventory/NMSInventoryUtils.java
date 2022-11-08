@@ -10,6 +10,7 @@ import org.bukkit.inventory.Inventory;
 
 public class NMSInventoryUtils {
 
+    // TODO: Combine these and FunctionalRecipeGenerator constants!
     private static final Class<?> CONTAINER_CLASS = Reflection.getNMS("world", "IInventory");
     private static final Class<?> RECIPE_CLASS = Reflection.getNMS("world.item.crafting", "IRecipe");
     private static final Class<?> RESOURCE_KEY_CLASS = Reflection.getNMS("resources", "MinecraftKey");
