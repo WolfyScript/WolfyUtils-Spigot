@@ -192,6 +192,17 @@ public final class WolfyCoreBukkit extends WUPlugin {
         this.compatibilityManager = new CompatibilityManagerBukkit(this);
     }
 
+    /**
+     * Gets an instance of the core plugin.
+     * <strong>Only use this if necessary! First try to get the instance via your {@link WolfyUtilities} instance!</strong>
+     *
+     * @return The instance of the core.
+     */
+    @Deprecated
+    public static WolfyCoreBukkit getInstance() {
+        return (WolfyCoreBukkit) WolfyUtilCore.getInstance();
+    }
+
     @Override
     public CompatibilityManager getCompatibilityManager() {
         return compatibilityManager;
