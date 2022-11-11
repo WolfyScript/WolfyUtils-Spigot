@@ -111,9 +111,9 @@ public class Registries {
 
         itemTags = new Tags<>(this);
 
-        particleAnimators = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "particle_animators"), this);
+        particleAnimators = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "particles/animators"), this);
         particleShapes = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "particles/shapes"), this);
-        particleTimer = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "particle_timers"), this);
+        particleTimer = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "particles/timers"), this);
         customItemNbtChecks = new UniqueTypeRegistrySimple<>(ITEM_NBT_CHECKS, this);
         customItemDataTypeRegistry = new UniqueTypeRegistrySimple<>(ITEM_CUSTOM_DATA, this);
         customItemActions = new UniqueTypeRegistrySimple<>(ITEM_ACTION_TYPES, this);
