@@ -21,6 +21,7 @@ package me.wolfyscript.utilities.registry;
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.bukkit.items.CustomItemData;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
+import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
@@ -88,7 +89,9 @@ public class Registries {
     private final TypeRegistry<Meta> customItemNbtChecks;
     private final TypeRegistry<Action<?>> customItemActions;
     private final TypeRegistry<Event<?>> customItemEvents;
+
     private final TypeRegistry<CustomBlockData> customBlockData;
+    private final TypeRegistry<CustomPlayerData> customPlayerData;
     private final TypeRegistry<CustomItemData> customItemDataTypeRegistry;
 
     private final TypeRegistry<ValueProvider<?>> valueProviders;
@@ -118,6 +121,7 @@ public class Registries {
         valueProviders = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "value_providers"), this);
         operators = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "operators"), this);
 
+        customPlayerData = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "persistent/player"), this);
         customBlockData = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "persistent/block"), this);
 
         this.nbtQueryNodes = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "nbt/query/nodes"), this);
@@ -262,6 +266,10 @@ public class Registries {
 
     public TypeRegistry<Operator> getOperators() {
         return operators;
+    }
+
+    public TypeRegistry<CustomPlayerData> getCustomPlayerData() {
+        return customPlayerData;
     }
 
     public TypeRegistry<CustomBlockData> getCustomBlockData() {
