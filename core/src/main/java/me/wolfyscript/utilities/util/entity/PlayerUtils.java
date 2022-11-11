@@ -77,43 +77,27 @@ public class PlayerUtils {
 
     @Deprecated
     public static void loadStores() {
-        WolfyUtilities.getWUPlugin().getLogger().info("Loading Player Data");
-        if (STORE_FOLDER.exists() || STORE_FOLDER.mkdirs()) {
-            String[] files = STORE_FOLDER.list();
-            if (files != null) {
-                for (String s : files) {
-                    if (s.endsWith(".store")) {
-                        try {
-                            var uuid = UUID.fromString(s.replace(".store", ""));
-                            indexedStores.put(uuid, PlayerStore.load(uuid));
-                        } catch (IllegalArgumentException e) {
-                            WolfyUtilities.getWUPlugin().getLogger().info("Failed to load file " + s + ": " + e.getMessage());
-                        }
-                    }
-                }
-            }
-        }
+        // The old system is very broken, so do not load old data, to prevent further crashes, etc.!
     }
 
+    /**
+     * @deprecated Does nothing anymore! Kept for backwards compatibility!
+     */
+    @Deprecated
     public static void saveStores() {
-        if (STORE_FOLDER.exists() || STORE_FOLDER.mkdirs()) {
-            indexedStores.forEach((uuid, playerStore) -> playerStore.save(uuid));
-        }
+        // Does nothing anymore. Kept for backwards compatibility!
     }
 
+    @Deprecated
     @NotNull
     public static PlayerStore getStore(@NotNull Player player) {
         return getStore(player.getUniqueId());
     }
 
+    @Deprecated
     @NotNull
     public static PlayerStore getStore(@NotNull UUID uuid) {
-        indexedStores.computeIfAbsent(uuid, key -> {
-            var playerStore = new PlayerStore();
-            playerStore.save(key);
-            return playerStore;
-        });
-        return indexedStores.get(uuid);
+        return new PlayerStore(); // Just return a dummy obj, as the old data is no longer available!
     }
 
 }
