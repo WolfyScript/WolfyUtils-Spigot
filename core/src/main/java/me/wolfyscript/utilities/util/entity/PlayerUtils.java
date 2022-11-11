@@ -18,35 +18,35 @@
 
 package me.wolfyscript.utilities.util.entity;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.util.particles.ParticleUtils;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectData;
+import java.util.Optional;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Deprecated
 public class PlayerUtils {
 
     private PlayerUtils() {
     }
 
-    static final Map<UUID, PlayerStore> indexedStores = new HashMap<>();
-
-    private static final HashMap<UUID, Map<EquipmentSlot, UUID>> playerItemParticles = new HashMap<>();
-    static final File STORE_FOLDER = new File(WolfyUtilities.getWUPlugin().getDataFolder(), "players");
-
-
-    public static boolean hasActiveItemEffects(Player player) {
-        return playerItemParticles.containsKey(player.getUniqueId());
+    private static Optional<PlayerParticleEffectData> getParticleData(Player player) {
+        return WolfyCoreBukkit.getInstance().getPersistentStorage().getOrCreatePlayerStorage(player).getData(PlayerParticleEffectData.class);
     }
 
+    @Deprecated
+    public static boolean hasActiveItemEffects(Player player) {
+        return getParticleData(player).isPresent();
+    }
+
+    @Deprecated
     public static boolean hasActiveItemEffects(Player player, EquipmentSlot equipmentSlot) {
-        return getActiveItemEffects(player).containsKey(equipmentSlot);
+        return getParticleData(player).map(data -> data.hasActiveItemEffects(equipmentSlot)).orElse(false);
     }
 
     /**
@@ -55,24 +55,27 @@ public class PlayerUtils {
      * @param player The player object
      * @return The active particle effects on the player
      */
+    @Deprecated
     public static Map<EquipmentSlot, UUID> getActiveItemEffects(Player player) {
-        return playerItemParticles.computeIfAbsent(player.getUniqueId(), uuid -> new EnumMap<>(EquipmentSlot.class));
+        return getParticleData(player).map(PlayerParticleEffectData::getActiveItemEffects).orElseGet(() -> new EnumMap<>(EquipmentSlot.class));
     }
 
+    @Deprecated
     public static UUID getActiveItemEffects(Player player, EquipmentSlot equipmentSlot) {
         return getActiveItemEffects(player).get(equipmentSlot);
     }
 
+    @Deprecated
     public static void setActiveParticleEffect(Player player, EquipmentSlot equipmentSlot, UUID uuid) {
-        stopActiveParticleEffect(player, equipmentSlot);
-        getActiveItemEffects(player).put(equipmentSlot, uuid);
+        getParticleData(player).ifPresent(data -> data.setActiveParticleEffect(equipmentSlot, uuid));
     }
 
+    @Deprecated
     public static void stopActiveParticleEffect(Player player, EquipmentSlot equipmentSlot) {
-        ParticleUtils.stopAnimation(getActiveItemEffects(player, equipmentSlot));
-        getActiveItemEffects(player).remove(equipmentSlot);
+        getParticleData(player).ifPresent(data -> data.stopActiveParticleEffect(equipmentSlot));
     }
 
+    @Deprecated
     public static void loadStores() {
         WolfyUtilities.getWUPlugin().getLogger().info("Loading Player Data");
         if (STORE_FOLDER.exists() || STORE_FOLDER.mkdirs()) {
