@@ -43,6 +43,7 @@ import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectDa
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import java.util.ArrayList;
 import java.util.List;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
 import me.wolfyscript.utilities.api.console.Console;
@@ -87,7 +88,6 @@ import me.wolfyscript.utilities.main.WUPlugin;
 import me.wolfyscript.utilities.main.configs.WUConfig;
 import me.wolfyscript.utilities.messages.MessageFactory;
 import me.wolfyscript.utilities.messages.MessageHandler;
-import me.wolfyscript.utilities.util.entity.PlayerUtils;
 import me.wolfyscript.utilities.util.eval.operators.ComparisonOperatorEqual;
 import me.wolfyscript.utilities.util.eval.operators.ComparisonOperatorGreater;
 import me.wolfyscript.utilities.util.eval.operators.ComparisonOperatorGreaterEqual;
@@ -228,7 +228,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
     @Override
     public void onLoad() {
         //Jackson Serializer
-        getLogger().info("Register json serializer/deserializer");
+        getLogger().info("Register JSON de-/serializers");
         var module = new SimpleModule();
         ItemStackSerialization.create(module);
         ColorSerialization.create(module);
@@ -285,6 +285,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         nbtChecks.register(RepairCostMeta.KEY, RepairCostMeta.class);
         nbtChecks.register(UnbreakableMeta.KEY, UnbreakableMeta.class);
 
+        getLogger().info("Register Particle Animators");
         var particleAnimators = getRegistries().getParticleAnimators();
         particleAnimators.register(AnimatorBasic.KEY, AnimatorBasic.class);
         particleAnimators.register(AnimatorSphere.KEY, AnimatorSphere.class);
@@ -292,6 +293,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         particleAnimators.register(AnimatorVectorPath.KEY, AnimatorVectorPath.class);
         particleAnimators.register(AnimatorShape.KEY, AnimatorShape.class);
 
+        getLogger().info("Register Particle Shapes");
         var particleShapes = getRegistries().getParticleShapes();
         particleShapes.register(ShapeSquare.KEY, ShapeSquare.class);
         particleShapes.register(ShapeCircle.KEY, ShapeCircle.class);
@@ -301,16 +303,19 @@ public final class WolfyCoreBukkit extends WUPlugin {
         particleShapes.register(ShapeComplexRotation.KEY, ShapeComplexRotation.class);
         particleShapes.register(ShapeComplexCompound.KEY, ShapeComplexCompound.class);
 
+        getLogger().info("Register Particle Timers");
         var particleTimers = getRegistries().getParticleTimer();
         particleTimers.register(TimerLinear.KEY, TimerLinear.class);
         particleTimers.register(TimerRandom.KEY, TimerRandom.class);
         particleTimers.register(TimerPi.KEY, TimerPi.class);
 
+        getLogger().info("Register CustomItem Actions");
         var customItemActions = getRegistries().getCustomItemActions();
         customItemActions.register(ActionCommand.KEY, ActionCommand.class);
         customItemActions.register(ActionParticleAnimation.KEY, ActionParticleAnimation.class);
         customItemActions.register(ActionSound.KEY, ActionSound.class);
 
+        getLogger().info("Register CustomItem Events");
         var customItemEvents = getRegistries().getCustomItemEvents();
         customItemEvents.register(EventPlayerInteract.KEY, EventPlayerInteract.class);
         customItemEvents.register(EventPlayerConsumeItem.KEY, EventPlayerConsumeItem.class);
@@ -322,6 +327,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         customItemEvents.register(EventPlayerItemHandSwap.KEY, EventPlayerItemHandSwap.class);
         customItemEvents.register(EventPlayerItemHeld.KEY, EventPlayerItemHeld.class);
 
+        getLogger().info("Register JSON Operators");
         var operators = getRegistries().getOperators();
         operators.register(ComparisonOperatorEqual.KEY, ComparisonOperatorEqual.class);
         operators.register(ComparisonOperatorNotEqual.KEY, ComparisonOperatorNotEqual.class);
@@ -333,6 +339,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         operators.register(LogicalOperatorOr.KEY, LogicalOperatorOr.class);
         operators.register(LogicalOperatorNot.KEY, LogicalOperatorNot.class);
 
+        getLogger().info("Register JSON Value Providers");
         var valueProviders = getRegistries().getValueProviders();
         valueProviders.register(ValueProviderConditioned.KEY, (Class<ValueProviderConditioned<?>>)(Object) ValueProviderConditioned.class);
         valueProviders.register(ValueProviderIntegerConst.KEY, ValueProviderIntegerConst.class);
@@ -342,6 +349,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         valueProviders.register(ValueProviderStringConst.KEY, ValueProviderStringConst.class);
         valueProviders.register(ValueProviderStringVar.KEY, ValueProviderStringVar.class);
 
+        getLogger().info("Register NBT Query Nodes");
         var nbtQueryNodes = getRegistries().getNbtQueryNodes();
         nbtQueryNodes.register(QueryNodeCompound.TYPE, QueryNodeCompound.class);
         nbtQueryNodes.register(QueryNodeBoolean.TYPE, QueryNodeBoolean.class);
@@ -356,7 +364,6 @@ public final class WolfyCoreBukkit extends WUPlugin {
         //Arrays
         nbtQueryNodes.register(QueryNodeByteArray.TYPE, QueryNodeByteArray.class);
         nbtQueryNodes.register(QueryNodeIntArray.TYPE, QueryNodeIntArray.class);
-
         //Lists
         nbtQueryNodes.register(QueryNodeListInt.TYPE, QueryNodeListInt.class);
         nbtQueryNodes.register(QueryNodeListLong.TYPE, QueryNodeListLong.class);
@@ -365,6 +372,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         nbtQueryNodes.register(QueryNodeListString.TYPE, QueryNodeListString.class);
         nbtQueryNodes.register(QueryNodeListCompound.TYPE, QueryNodeListCompound.class);
 
+        getLogger().info("Register Custom Block Data");
         var customBlockData = getRegistries().getCustomBlockData();
         customBlockData.register(CustomItemBlockData.ID, CustomItemBlockData.class);
 
@@ -408,7 +416,6 @@ public final class WolfyCoreBukkit extends WUPlugin {
             this.metrics = new Metrics(this, 5114);
 
             WorldUtils.load();
-            PlayerUtils.loadStores();
             registerListeners();
             registerCommands();
 
@@ -423,7 +430,6 @@ public final class WolfyCoreBukkit extends WUPlugin {
      */
     private void onJUnitTests() {
         WorldUtils.load();
-        PlayerUtils.loadStores();
 
         registerCommands();
     }
@@ -442,7 +448,6 @@ public final class WolfyCoreBukkit extends WUPlugin {
             this.adventure = null;
         }
         api.getConfigAPI().saveConfigs();
-        PlayerUtils.saveStores();
         console.info("Save stored Custom Items");
     }
 
