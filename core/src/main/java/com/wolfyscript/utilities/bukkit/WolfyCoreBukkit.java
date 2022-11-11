@@ -38,6 +38,8 @@ import com.wolfyscript.utilities.bukkit.nbt.QueryNodeCompound;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeShort;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeString;
 import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
+import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
+import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectData;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import java.util.ArrayList;
 import java.util.List;
@@ -366,6 +368,10 @@ public final class WolfyCoreBukkit extends WUPlugin {
         var customBlockData = getRegistries().getCustomBlockData();
         customBlockData.register(CustomItemBlockData.ID, CustomItemBlockData.class);
 
+        getLogger().info("Register Custom Player Data");
+        var customPlayerDataReg = getRegistries().getCustomPlayerData();
+        customPlayerDataReg.register(PlayerParticleEffectData.class);
+
         KeyedTypeIdResolver.registerTypeRegistry(CustomItemData.class, registries.getCustomItemDataTypeRegistry());
         KeyedTypeIdResolver.registerTypeRegistry(Meta.class, nbtChecks);
         KeyedTypeIdResolver.registerTypeRegistry(Animator.class, particleAnimators);
@@ -377,6 +383,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         KeyedTypeIdResolver.registerTypeRegistry((Class<ValueProvider<?>>) (Object)ValueProvider.class, valueProviders);
         KeyedTypeIdResolver.registerTypeRegistry((Class<QueryNode<?>>) (Object)QueryNode.class, nbtQueryNodes);
         KeyedTypeIdResolver.registerTypeRegistry(CustomBlockData.class, customBlockData);
+        KeyedTypeIdResolver.registerTypeRegistry(CustomPlayerData.class, registries.getCustomPlayerData());
     }
 
     @Override
