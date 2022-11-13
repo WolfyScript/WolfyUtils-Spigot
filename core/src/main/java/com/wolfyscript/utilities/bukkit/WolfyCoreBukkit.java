@@ -227,6 +227,9 @@ public final class WolfyCoreBukkit extends WUPlugin {
 
     @Override
     public void onLoad() {
+        getLogger().info("Generate Functional Recipes");
+        FunctionalRecipeGenerator.generateRecipeClasses();
+
         //Jackson Serializer
         getLogger().info("Register JSON de-/serializers");
         var module = new SimpleModule();
@@ -263,12 +266,29 @@ public final class WolfyCoreBukkit extends WUPlugin {
         JacksonUtil.registerModule(keyReferenceModule);
         JacksonUtil.registerModule(valueReferenceModule);
 
-        FunctionalRecipeGenerator.generateRecipeClasses();
+        getLogger().info("Register JSON Operators");
+        var operators = getRegistries().getOperators();
+        operators.register(ComparisonOperatorEqual.KEY, ComparisonOperatorEqual.class);
+        operators.register(ComparisonOperatorNotEqual.KEY, ComparisonOperatorNotEqual.class);
+        operators.register(ComparisonOperatorGreater.KEY, ComparisonOperatorGreater.class);
+        operators.register(ComparisonOperatorGreaterEqual.KEY, ComparisonOperatorGreaterEqual.class);
+        operators.register(ComparisonOperatorLess.KEY, ComparisonOperatorLess.class);
+        operators.register(ComparisonOperatorLessEqual.KEY, ComparisonOperatorLessEqual.class);
+        operators.register(LogicalOperatorAnd.KEY, LogicalOperatorAnd.class);
+        operators.register(LogicalOperatorOr.KEY, LogicalOperatorOr.class);
+        operators.register(LogicalOperatorNot.KEY, LogicalOperatorNot.class);
 
-        //Register custom item data
+        getLogger().info("Register JSON Value Providers");
+        var valueProviders = getRegistries().getValueProviders();
+        valueProviders.register(ValueProviderConditioned.KEY, (Class<ValueProviderConditioned<?>>)(Object) ValueProviderConditioned.class);
+        valueProviders.register(ValueProviderIntegerConst.KEY, ValueProviderIntegerConst.class);
+        valueProviders.register(ValueProviderIntegerVar.KEY, ValueProviderIntegerVar.class);
+        valueProviders.register(ValueProviderFloatConst.KEY, ValueProviderFloatConst.class);
+        valueProviders.register(ValueProviderFloatVar.KEY, ValueProviderFloatVar.class);
+        valueProviders.register(ValueProviderStringConst.KEY, ValueProviderStringConst.class);
+        valueProviders.register(ValueProviderStringVar.KEY, ValueProviderStringVar.class);
 
-        //Register meta settings providers
-        getLogger().info("Register CustomItem meta checks");
+        getLogger().info("Register CustomItem NBT Checks");
         var nbtChecks = getRegistries().getCustomItemNbtChecks();
         nbtChecks.register(AttributesModifiersMeta.KEY, AttributesModifiersMeta.class);
         nbtChecks.register(CustomDamageMeta.KEY, CustomDamageMeta.class);
@@ -284,6 +304,24 @@ public final class WolfyCoreBukkit extends WUPlugin {
         nbtChecks.register(PotionMeta.KEY, PotionMeta.class);
         nbtChecks.register(RepairCostMeta.KEY, RepairCostMeta.class);
         nbtChecks.register(UnbreakableMeta.KEY, UnbreakableMeta.class);
+
+        getLogger().info("Register CustomItem Actions");
+        var customItemActions = getRegistries().getCustomItemActions();
+        customItemActions.register(ActionCommand.KEY, ActionCommand.class);
+        customItemActions.register(ActionParticleAnimation.KEY, ActionParticleAnimation.class);
+        customItemActions.register(ActionSound.KEY, ActionSound.class);
+
+        getLogger().info("Register CustomItem Events");
+        var customItemEvents = getRegistries().getCustomItemEvents();
+        customItemEvents.register(EventPlayerInteract.KEY, EventPlayerInteract.class);
+        customItemEvents.register(EventPlayerConsumeItem.KEY, EventPlayerConsumeItem.class);
+        customItemEvents.register(EventPlayerInteractEntity.KEY, EventPlayerInteractEntity.class);
+        customItemEvents.register(EventPlayerInteractAtEntity.KEY, EventPlayerInteractAtEntity.class);
+        customItemEvents.register(EventPlayerItemBreak.KEY, EventPlayerItemBreak.class);
+        customItemEvents.register(EventPlayerItemDamage.KEY, EventPlayerItemDamage.class);
+        customItemEvents.register(EventPlayerItemDrop.KEY, EventPlayerItemDrop.class);
+        customItemEvents.register(EventPlayerItemHandSwap.KEY, EventPlayerItemHandSwap.class);
+        customItemEvents.register(EventPlayerItemHeld.KEY, EventPlayerItemHeld.class);
 
         getLogger().info("Register Particle Animators");
         var particleAnimators = getRegistries().getParticleAnimators();
@@ -309,45 +347,13 @@ public final class WolfyCoreBukkit extends WUPlugin {
         particleTimers.register(TimerRandom.KEY, TimerRandom.class);
         particleTimers.register(TimerPi.KEY, TimerPi.class);
 
-        getLogger().info("Register CustomItem Actions");
-        var customItemActions = getRegistries().getCustomItemActions();
-        customItemActions.register(ActionCommand.KEY, ActionCommand.class);
-        customItemActions.register(ActionParticleAnimation.KEY, ActionParticleAnimation.class);
-        customItemActions.register(ActionSound.KEY, ActionSound.class);
+        getLogger().info("Register Custom Block Data");
+        var customBlockData = getRegistries().getCustomBlockData();
+        customBlockData.register(CustomItemBlockData.ID, CustomItemBlockData.class);
 
-        getLogger().info("Register CustomItem Events");
-        var customItemEvents = getRegistries().getCustomItemEvents();
-        customItemEvents.register(EventPlayerInteract.KEY, EventPlayerInteract.class);
-        customItemEvents.register(EventPlayerConsumeItem.KEY, EventPlayerConsumeItem.class);
-        customItemEvents.register(EventPlayerInteractEntity.KEY, EventPlayerInteractEntity.class);
-        customItemEvents.register(EventPlayerInteractAtEntity.KEY, EventPlayerInteractAtEntity.class);
-        customItemEvents.register(EventPlayerItemBreak.KEY, EventPlayerItemBreak.class);
-        customItemEvents.register(EventPlayerItemDamage.KEY, EventPlayerItemDamage.class);
-        customItemEvents.register(EventPlayerItemDrop.KEY, EventPlayerItemDrop.class);
-        customItemEvents.register(EventPlayerItemHandSwap.KEY, EventPlayerItemHandSwap.class);
-        customItemEvents.register(EventPlayerItemHeld.KEY, EventPlayerItemHeld.class);
-
-        getLogger().info("Register JSON Operators");
-        var operators = getRegistries().getOperators();
-        operators.register(ComparisonOperatorEqual.KEY, ComparisonOperatorEqual.class);
-        operators.register(ComparisonOperatorNotEqual.KEY, ComparisonOperatorNotEqual.class);
-        operators.register(ComparisonOperatorGreater.KEY, ComparisonOperatorGreater.class);
-        operators.register(ComparisonOperatorGreaterEqual.KEY, ComparisonOperatorGreaterEqual.class);
-        operators.register(ComparisonOperatorLess.KEY, ComparisonOperatorLess.class);
-        operators.register(ComparisonOperatorLessEqual.KEY, ComparisonOperatorLessEqual.class);
-        operators.register(LogicalOperatorAnd.KEY, LogicalOperatorAnd.class);
-        operators.register(LogicalOperatorOr.KEY, LogicalOperatorOr.class);
-        operators.register(LogicalOperatorNot.KEY, LogicalOperatorNot.class);
-
-        getLogger().info("Register JSON Value Providers");
-        var valueProviders = getRegistries().getValueProviders();
-        valueProviders.register(ValueProviderConditioned.KEY, (Class<ValueProviderConditioned<?>>)(Object) ValueProviderConditioned.class);
-        valueProviders.register(ValueProviderIntegerConst.KEY, ValueProviderIntegerConst.class);
-        valueProviders.register(ValueProviderIntegerVar.KEY, ValueProviderIntegerVar.class);
-        valueProviders.register(ValueProviderFloatConst.KEY, ValueProviderFloatConst.class);
-        valueProviders.register(ValueProviderFloatVar.KEY, ValueProviderFloatVar.class);
-        valueProviders.register(ValueProviderStringConst.KEY, ValueProviderStringConst.class);
-        valueProviders.register(ValueProviderStringVar.KEY, ValueProviderStringVar.class);
+        getLogger().info("Register Custom Player Data");
+        var customPlayerDataReg = getRegistries().getCustomPlayerData();
+        customPlayerDataReg.register(PlayerParticleEffectData.class);
 
         getLogger().info("Register NBT Query Nodes");
         var nbtQueryNodes = getRegistries().getNbtQueryNodes();
@@ -371,14 +377,6 @@ public final class WolfyCoreBukkit extends WUPlugin {
         nbtQueryNodes.register(QueryNodeListFloat.TYPE, QueryNodeListFloat.class);
         nbtQueryNodes.register(QueryNodeListString.TYPE, QueryNodeListString.class);
         nbtQueryNodes.register(QueryNodeListCompound.TYPE, QueryNodeListCompound.class);
-
-        getLogger().info("Register Custom Block Data");
-        var customBlockData = getRegistries().getCustomBlockData();
-        customBlockData.register(CustomItemBlockData.ID, CustomItemBlockData.class);
-
-        getLogger().info("Register Custom Player Data");
-        var customPlayerDataReg = getRegistries().getCustomPlayerData();
-        customPlayerDataReg.register(PlayerParticleEffectData.class);
 
         KeyedTypeIdResolver.registerTypeRegistry(CustomItemData.class, registries.getCustomItemDataTypeRegistry());
         KeyedTypeIdResolver.registerTypeRegistry(Meta.class, nbtChecks);

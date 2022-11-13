@@ -80,7 +80,7 @@ public class PlayerUtils {
 
     @Deprecated
     public static void loadStores() {
-        // The old system is very broken, so do not load old data, to prevent further crashes, etc.!
+        // The old system is very broken, so do not load old data to prevent further crashes, etc.!
     }
 
     /**
