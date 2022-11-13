@@ -20,6 +20,7 @@ package me.wolfyscript.utilities.util.entity;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectData;
+import java.util.HashMap;
 import java.util.Optional;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
@@ -31,6 +32,8 @@ import java.util.UUID;
 
 @Deprecated
 public class PlayerUtils {
+
+    private static final Map<UUID, PlayerStore> cachedStores = new HashMap<>();
 
     private PlayerUtils() {
     }
@@ -97,7 +100,7 @@ public class PlayerUtils {
     @Deprecated
     @NotNull
     public static PlayerStore getStore(@NotNull UUID uuid) {
-        return new PlayerStore(); // Just return a dummy obj, as the old data is no longer available!
+        return cachedStores.computeIfAbsent(uuid, uuid1 -> new PlayerStore()); // Just return a dummy obj, as the old data is no longer available!
     }
 
 }
