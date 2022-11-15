@@ -58,6 +58,22 @@ import java.lang.annotation.Target;
  *
  * <br>Deserialization:<br>
  * If the {@link JsonNode} is text it will convert it to {@link NamespacedKey} and look for the value in the {@link Registry} of the objects type.
+ * <br>
+ * Looks for the value in the registry:
+ * <pre><code>
+ *     {
+ *         "value": "wolfyutils:registered_value"
+ *     }
+ * </code></pre>
+ * Uses the custom value specified:
+ * <pre><code>
+ *     {
+ *         "value": {
+ *             "custom_object_val": 7,
+ *             ...
+ *         }
+ *     }
+ * </code></pre>
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
