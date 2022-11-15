@@ -2,7 +2,7 @@ package com.wolfyscript.utilities.bukkit.persistent.player;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.InjectableValues;
-import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -44,7 +44,7 @@ public class PlayerStorage {
      *
      * @return The player linked to this storage; or empty Optional if not available or offline.
      */
-    public Optional<Player> getPlayer () {
+    public Optional<Player> getPlayer() {
         return Optional.ofNullable(Bukkit.getPlayer(playerUUID));
     }
 
@@ -87,10 +87,10 @@ public class PlayerStorage {
     /**
      * Gets the data that is saved under the specified type, or if not available gets and sets the default data.
      *
-     * @param dataType The type of the data.
+     * @param dataType     The type of the data.
      * @param defaultValue Function that creates the default value.
+     * @param <T>          The type of the data.
      * @return The existing data; or the newly set default value.
-     * @param <T> The type of the data.
      */
     public <T extends CustomPlayerData> Optional<T> computeIfAbsent(Class<T> dataType, Function<Class<T>, T> defaultValue) {
         return getData(dataType).or(() -> {
@@ -106,8 +106,8 @@ public class PlayerStorage {
      * If the persistent data container is not available, which is the case when the player is offline, it returns an empty Optional.<br>
      *
      * @param dataType The type of the data. Must be registered in {@link Registries#getCustomPlayerData()}!
+     * @param <T>      The type of the data.
      * @return The data of the specified type; or empty Optional when not available.
-     * @param <T> The type of the data.
      */
     public <T extends CustomPlayerData> Optional<T> getData(Class<T> dataType) {
         NamespacedKey dataID = core.getRegistries().getCustomPlayerData().getKey(dataType);
@@ -120,7 +120,12 @@ public class PlayerStorage {
                 org.bukkit.NamespacedKey key = dataID.bukkit();
                 if (dataContainer.has(key, PersistentDataType.STRING)) {
                     try {
-                        return objectMapper.reader(new InjectableValues.Std().addValue(WolfyUtilCore.class, core)).forType(CustomBlockData.class).readValue(dataContainer.get(key, PersistentDataType.STRING));
+                        return objectMapper.reader(new InjectableValues.Std()
+                                        .addValue(WolfyCoreBukkit.class, core)
+                                        .addValue(UUID.class, playerUUID)
+                                )
+                                .forType(CustomPlayerData.class)
+                                .readValue(dataContainer.get(key, PersistentDataType.STRING));
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }
@@ -137,8 +142,8 @@ public class PlayerStorage {
      * Removes the data saved under the specified id.
      *
      * @param dataType The type of the data. Must be registered in {@link Registries#getCustomPlayerData()}!
+     * @param <T>      The type of the data.
      * @return The removed data value; or null if nothing was removed.
-     * @param <T> The type of the data.
      */
     public <T extends CustomPlayerData> T removeData(Class<T> dataType) {
         NamespacedKey dataID = core.getRegistries().getCustomPlayerData().getKey(dataType);
