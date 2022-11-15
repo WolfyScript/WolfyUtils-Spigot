@@ -1,5 +1,6 @@
 package com.wolfyscript.utilities.bukkit.persistent.player;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wolfyscript.utilities.KeyedStaticId;
 import java.util.EnumMap;
 import java.util.Map;
@@ -38,6 +39,7 @@ public class PlayerParticleEffectData extends CustomPlayerData {
      *
      * @return The active particle effects on the player
      */
+    @JsonIgnore
     public Map<EquipmentSlot, UUID> getActiveItemEffects() {
         return new EnumMap<>(effectsPerSlot);
     }
