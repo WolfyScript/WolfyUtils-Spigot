@@ -6,6 +6,7 @@ import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageDropItemsE
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageMultiPlaceEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoragePlaceEvent;
 import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
+import com.wolfyscript.utilities.bukkit.persistent.player.PlayerStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.ChunkStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.WorldStorage;
@@ -42,6 +43,7 @@ import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
@@ -59,6 +61,12 @@ public class PersistentStorageListener implements Listener {
     public PersistentStorageListener(WolfyCoreBukkit core) {
         this.core = core;
         this.persistentStorage = core.getPersistentStorage();
+    }
+
+    @EventHandler
+    private void onPlayerQuit(PlayerQuitEvent event) {
+        PlayerStorage playerStorage = persistentStorage.getOrCreatePlayerStorage(event.getPlayer());
+        playerStorage.updateAndClearCache(); // Clear cache when player leaves the server, to not waste memory!
     }
 
     @EventHandler
