@@ -29,6 +29,10 @@ public abstract class CustomPlayerData implements Keyed {
     @JsonProperty("id")
     private final NamespacedKey id;
 
+    /**
+     * The default constructor that must get the id of the custom data type.
+     * @param id The id of the custom data type.
+     */
     protected CustomPlayerData(NamespacedKey id) {
         this.id = id;
     }
@@ -45,6 +49,10 @@ public abstract class CustomPlayerData implements Keyed {
      */
     public abstract void onUnload();
 
+    /**
+     * Copies the custom data.
+     * @return A deep-copy of this custom data.
+     */
     public abstract CustomPlayerData copy();
 
     @JsonIgnore
