@@ -6,11 +6,15 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
+import java.util.Optional;
+import java.util.UUID;
 import me.wolfyscript.utilities.registry.Registries;
 import me.wolfyscript.utilities.util.Keyed;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.json.jackson.KeyedTypeIdResolver;
 import me.wolfyscript.utilities.util.json.jackson.KeyedTypeResolver;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 /**
  * Custom Data that can be applied to Players and persists across server restarts.<br>
@@ -54,6 +58,16 @@ public abstract class CustomPlayerData implements Keyed {
      * @return A deep-copy of this custom data.
      */
     public abstract CustomPlayerData copy();
+
+    /**
+     * Convenience method to get the player by uuid.
+     *
+     * @param uuid The uuid of the player.
+     * @return The online player with that uuid; or empty optional if not online.
+     */
+    protected Optional<Player> getPlayer(UUID uuid) {
+        return Optional.ofNullable(Bukkit.getPlayer(uuid));
+    }
 
     @JsonIgnore
     @Override
