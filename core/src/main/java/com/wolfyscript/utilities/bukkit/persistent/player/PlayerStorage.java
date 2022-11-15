@@ -17,13 +17,21 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataHolder;
 import org.bukkit.persistence.PersistentDataType;
 
+/**
+ * This class stores data for player entities.<br>
+ * If the player is offline, then the stored data is inaccessible.<br>
+ * <br>
+ * {@link CustomPlayerData} stored using {@link #setData(CustomPlayerData)} or {@link #computeIfAbsent(Class, Function)}
+ * is directly cached and stored into the {@link PersistentDataContainer} of the player.<br>
+ * When data is requested via {@link #getData(Class)} it first tries to look for the cached data, and if unavailable
+ * it tries to load it from the {@link PersistentDataContainer}. Only if both fail to find the data it returns an empty value.
+ */
 public class PlayerStorage {
 
     private static final org.bukkit.NamespacedKey DATA_KEY = new org.bukkit.NamespacedKey("wolfyutils", "data");
 
     private final WolfyUtilCore core;
     private final UUID playerUUID;
-
     private final Map<NamespacedKey, CustomPlayerData> CACHED_DATA = new HashMap<>();
 
     public PlayerStorage(WolfyUtilCore core, UUID playerUUID) {
@@ -50,11 +58,11 @@ public class PlayerStorage {
     }
 
     /**
-     * Adds/Updates the specified custom data to this storage.<br>
+     * Adds/Updates the specified custom data to/in this storage.<br>
      * The data is then cached and added to the persistent storage!<br>
      * Therefor this method should only be used a limited amount of times!
      *
-     * @param data
+     * @param data The data value to add/update
      * @return The previous cached value, if any; otherwise null
      */
     public <T extends CustomPlayerData> T setData(T data) {
