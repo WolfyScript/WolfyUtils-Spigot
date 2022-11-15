@@ -230,42 +230,43 @@ public final class WolfyCoreBukkit extends WUPlugin {
         getLogger().info("Generate Functional Recipes");
         FunctionalRecipeGenerator.generateRecipeClasses();
 
-        //Jackson Serializer
+        // Jackson Serializer
         getLogger().info("Register JSON de-/serializers");
         var module = new SimpleModule();
         ItemStackSerialization.create(module);
         ColorSerialization.create(module);
         DustOptionsSerialization.create(module);
         LocationSerialization.create(module);
-        //ParticleContentSerialization.create(module);
+        // ParticleContentSerialization.create(module);
         PotionEffectTypeSerialization.create(module);
         PotionEffectSerialization.create(module);
         VectorSerialization.create(module);
-
-        //Reference Deserializer
+        // APIReference Deserializer
         APIReferenceSerialization.create(module);
         // Serializer for the old CustomData
         module.addSerializer(CustomData.DeprecatedCustomDataWrapper.class, new CustomData.Serializer());
 
+        // Add module to WU Modules and register it to the old JacksonUtil.
         jsonMapperModules.add(module);
-
         JacksonUtil.registerModule(module);
 
+        // De-/Serializer Modifiers that handle type references in JSON
         var keyReferenceModule = new SimpleModule();
         keyReferenceModule.setSerializerModifier(new OptionalKeyReference.SerializerModifier());
         keyReferenceModule.setDeserializerModifier(new OptionalKeyReference.DeserializerModifier());
         jsonMapperModules.add(keyReferenceModule);
+        JacksonUtil.registerModule(keyReferenceModule);
 
         var valueReferenceModule = new SimpleModule();
         valueReferenceModule.setSerializerModifier(new OptionalValueSerializer.SerializerModifier());
         valueReferenceModule.setDeserializerModifier(new OptionalValueDeserializer.DeserializerModifier());
         jsonMapperModules.add(valueReferenceModule);
-
-        api.getJacksonMapperUtil().setGlobalMapper(applyWolfyUtilsJsonMapperModules(new HoconMapper()));
-
-        JacksonUtil.registerModule(keyReferenceModule);
         JacksonUtil.registerModule(valueReferenceModule);
 
+        // Create Global WUCore Mapper and apply modules
+        api.getJacksonMapperUtil().setGlobalMapper(applyWolfyUtilsJsonMapperModules(new HoconMapper()));
+
+        // Initialise all the Registers
         getLogger().info("Register JSON Operators");
         var operators = getRegistries().getOperators();
         operators.register(ComparisonOperatorEqual.KEY, ComparisonOperatorEqual.class);
@@ -378,6 +379,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         nbtQueryNodes.register(QueryNodeListString.TYPE, QueryNodeListString.class);
         nbtQueryNodes.register(QueryNodeListCompound.TYPE, QueryNodeListCompound.class);
 
+        // Register the Registries to resolve type references in JSON
         KeyedTypeIdResolver.registerTypeRegistry(CustomItemData.class, registries.getCustomItemDataTypeRegistry());
         KeyedTypeIdResolver.registerTypeRegistry(Meta.class, nbtChecks);
         KeyedTypeIdResolver.registerTypeRegistry(Animator.class, particleAnimators);
@@ -452,7 +454,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
     private void registerListeners() {
         Bukkit.getPluginManager().registerEvents(new ChatImpl.ChatListener(), this);
         Bukkit.getPluginManager().registerEvents(new CustomDurabilityListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new CustomParticleListener(), this);
+        Bukkit.getPluginManager().registerEvents(new CustomParticleListener(this), this);
         Bukkit.getPluginManager().registerEvents(new CustomItemPlayerListener(this), this);
         Bukkit.getPluginManager().registerEvents(new EquipListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
