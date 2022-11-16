@@ -25,18 +25,18 @@ import org.jetbrains.annotations.Nullable;
 
 public class CustomStackWrapper implements CustomStack {
 
-    private final CustomStack item;
+    private final dev.lone.itemsadder.api.CustomStack item;
 
-    private CustomStackWrapper(@NotNull CustomStack item) {
+    private CustomStackWrapper(@NotNull dev.lone.itemsadder.api.CustomStack item) {
         this.item = item;
     }
 
-    public static Optional<CustomStackWrapper> wrapStack(@Nullable CustomStack customStack) {
+    public static Optional<CustomStack> wrapStack(@Nullable dev.lone.itemsadder.api.CustomStack customStack) {
         return Optional.ofNullable(wrapNullableStack(customStack));
     }
 
     @Nullable
-    private static CustomStackWrapper wrapNullableStack(@Nullable CustomStack customStack) {
+    private static CustomStackWrapper wrapNullableStack(@Nullable dev.lone.itemsadder.api.CustomStack customStack) {
         return customStack != null ? new CustomStackWrapper(customStack) : null;
     }
 
