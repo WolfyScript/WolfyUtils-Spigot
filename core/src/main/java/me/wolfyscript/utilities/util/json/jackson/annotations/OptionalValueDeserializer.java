@@ -44,6 +44,8 @@ public @interface OptionalValueDeserializer {
 
     Class<? extends ValueDeserializer<?>> deserializer();
 
+    boolean delegateObjectDeserializer() default false;
+
     final class DeserializerModifier extends BeanDeserializerModifier {
 
         @Override
@@ -64,11 +66,13 @@ public @interface OptionalValueDeserializer {
 
             private final ValueDeserializer<T> deserializer;
             private final JsonDeserializer<T> defaultDeserializer;
+            private final boolean alwaysDelegate;
 
             protected Deserializer(OptionalValueDeserializer reference, JsonDeserializer<T> defaultSerializer) throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
                 super(defaultSerializer.handledType());
                 Class<T> genericType = (Class<T>) defaultSerializer.handledType();
                 this.defaultDeserializer = defaultSerializer;
+                this.alwaysDelegate = reference.delegateObjectDeserializer();
                 ValueDeserializer<?> constructedDeserializer = reference.deserializer().getDeclaredConstructor().newInstance();
                 if (genericType.isAssignableFrom(constructedDeserializer.getType())) {
                     this.deserializer = (ValueDeserializer<T>) constructedDeserializer;
@@ -80,6 +84,10 @@ public @interface OptionalValueDeserializer {
             @Override
             public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
                 if (p.isExpectedStartObjectToken()) {
+                    if (alwaysDelegate) {
+                        var value = deserializer.deserialize(p, ctxt);
+                        if (value != null) return value;
+                    }
                     return defaultDeserializer.deserialize(p, ctxt);
                 }
                 return deserializer.deserialize(p, ctxt);
@@ -95,6 +103,10 @@ public @interface OptionalValueDeserializer {
             @Override
             public Object deserializeWithType(JsonParser p, DeserializationContext ctxt, TypeDeserializer typeDeserializer) throws IOException {
                 if (p.isExpectedStartObjectToken()) {
+                    if (alwaysDelegate) {
+                        var value = deserializer.deserialize(p, ctxt);
+                        if (value != null) return value;
+                    }
                     return defaultDeserializer.deserializeWithType(p, ctxt, typeDeserializer);
                 }
                 return deserializer.deserialize(p, ctxt);

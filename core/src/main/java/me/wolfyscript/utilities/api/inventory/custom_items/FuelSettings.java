@@ -20,6 +20,7 @@ package me.wolfyscript.utilities.api.inventory.custom_items;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import java.util.Objects;
 import org.bukkit.Material;
 
 import java.util.ArrayList;
@@ -63,4 +64,16 @@ public class FuelSettings {
         return new FuelSettings(this);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FuelSettings that = (FuelSettings) o;
+        return burnTime == that.burnTime && Objects.equals(allowedBlocks, that.allowedBlocks);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(allowedBlocks, burnTime);
+    }
 }

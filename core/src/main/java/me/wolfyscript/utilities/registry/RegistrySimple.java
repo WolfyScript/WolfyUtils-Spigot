@@ -36,75 +36,13 @@ import java.util.Set;
  *
  * @param <V> The type of the value.
  */
-public class RegistrySimple<V extends Keyed> implements Registry<V> {
-
-    private final NamespacedKey namespacedKey;
-    protected final Map<NamespacedKey, V> map;
-    private final Class<V> type;
+public class RegistrySimple<V extends Keyed> extends AbstractRegistry<Map<NamespacedKey, V>, V> {
 
     public RegistrySimple(NamespacedKey namespacedKey, Registries registries) {
-        this.map = new HashMap<>();
-        this.namespacedKey = namespacedKey;
-        this.type = null;
-        registries.indexTypedRegistry(this);
+        super(namespacedKey, new HashMap<>(), registries);
     }
 
     public RegistrySimple(NamespacedKey namespacedKey, Registries registries, Class<V> type) {
-        this.map = new HashMap<>();
-        this.type = type;
-        this.namespacedKey = namespacedKey;
-        registries.indexTypedRegistry(this);
-    }
-
-    public Class<V> getType() {
-        return type;
-    }
-
-    private boolean isTypeOf(Class<?> type) {
-        return this.type != null && this.type.equals(type);
-    }
-
-    @Override
-    public @Nullable V get(@Nullable NamespacedKey key) {
-        return map.get(key);
-    }
-
-    @Override
-    public void register(NamespacedKey namespacedKey, V value) {
-        if (value != null) {
-            Preconditions.checkState(!this.map.containsKey(namespacedKey), "namespaced key '%s' already has an associated value!", namespacedKey);
-            map.put(namespacedKey, value);
-        }
-    }
-
-    @Override
-    public void register(V value) {
-        register(value.getNamespacedKey(), value);
-    }
-
-    @NotNull
-    @Override
-    public Iterator<V> iterator() {
-        return map.values().iterator();
-    }
-
-    @Override
-    public Set<NamespacedKey> keySet() {
-        return Collections.unmodifiableSet(this.map.keySet());
-    }
-
-    @Override
-    public Collection<V> values() {
-        return Collections.unmodifiableCollection(this.map.values());
-    }
-
-    @Override
-    public Set<Map.Entry<NamespacedKey, V>> entrySet() {
-        return Collections.unmodifiableSet(this.map.entrySet());
-    }
-
-    @Override
-    public NamespacedKey getKey() {
-        return namespacedKey;
+        super(namespacedKey, new HashMap<>(), registries, type);
     }
 }

@@ -7,6 +7,7 @@ import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
+import java.util.function.BiFunction;
 
 public class RecipeUtilImpl extends me.wolfyscript.utilities.api.nms.RecipeUtil {
 
@@ -18,4 +19,5 @@ public class RecipeUtilImpl extends me.wolfyscript.utilities.api.nms.RecipeUtil 
     public @NotNull Iterator<Recipe> recipeIterator(RecipeType recipeType) {
         return new RecipeIterator(recipeType);
     }
+
 }

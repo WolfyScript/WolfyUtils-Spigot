@@ -29,10 +29,23 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.items.CustomBlockSettings;
+import com.wolfyscript.utilities.bukkit.items.CustomItemData;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.meta.CustomItemTagMeta;
@@ -63,14 +76,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * <p>
@@ -133,10 +138,12 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
 
     @JsonAlias("api_reference")
     private final APIReference apiReference;
+
     @JsonAlias("custom_data")
-    @JsonDeserialize(using = CustomData.Deserializer.class)
-    @JsonSerialize(using = CustomData.Serializer.class)
-    private final Map<NamespacedKey, CustomData> customDataMap = new HashMap<>();
+    private final CustomData.DeprecatedCustomDataWrapper customDataMap = new CustomData.DeprecatedCustomDataWrapper(this);
+    @JsonIgnore
+    private final Map<NamespacedKey, CustomItemData> indexedData = new HashMap<>();
+
     @JsonAlias("equipment_slots")
     private final List<EquipmentSlot> equipmentSlots;
     private boolean consumed;
@@ -155,6 +162,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     @JsonAlias("particles")
     private ParticleContent particleContent;
     private ActionSettings actionSettings = new ActionSettings();
+    private final CustomBlockSettings blockSettings;
 
     @JsonIgnore
     private boolean checkOldMetaSettings = true;
@@ -174,6 +182,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
         }
         this.equipmentSlots = new ArrayList<>();
         this.particleContent = new ParticleContent();
+        this.blockSettings = new CustomBlockSettings();
         this.blockPlacement = false;
         this.blockVanillaEquip = false;
         this.blockVanillaRecipes = false;
@@ -248,6 +257,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
 
         this.namespacedKey = customItem.getNamespacedKey();
         this.fuelSettings = customItem.fuelSettings.clone();
+        this.blockSettings = customItem.blockSettings.copy();
         this.nbtChecks = customItem.nbtChecks;
         this.permission = customItem.permission;
         this.rarityPercentage = customItem.rarityPercentage;
@@ -647,7 +657,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCustomDataMap(), getNamespacedKey(), getReplacement(), getAllowedBlocks(), getPermission(), getRarityPercentage(), getBurnTime(), getDurabilityCost(), isConsumed(), blockPlacement, isBlockVanillaEquip(), isBlockVanillaRecipes(), getEquipmentSlots(), getApiReference(), getParticleContent(), getMetaSettings());
+        return Objects.hash(getCustomDataMap(), getNamespacedKey(), getReplacement(), getPermission(), getRarityPercentage(), getFuelSettings(), getBlockSettings(), getDurabilityCost(), isConsumed(), blockPlacement, isBlockVanillaEquip(), isBlockVanillaRecipes(), getEquipmentSlots(), getApiReference(), getParticleContent(), getMetaSettings());
     }
 
     /**
@@ -760,6 +770,15 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     }
 
     /**
+     * @param input The input ItemStack, that is going to be edited.
+     * @deprecated Replaced by {@link #removeUnStackableItem(ItemStack)}
+     */
+    @Deprecated
+    public void consumeUnstackableItem(ItemStack input) {
+        removeUnStackableItem(input);
+    }
+
+    /**
      * Removes the specified amount from the input ItemStack inside an inventory!
      * <p>
      * This method will directly edit the input ItemStack (Change it's type, amount, etc.) and won't return a result value!
@@ -803,8 +822,8 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
         if (this.type.getMaxStackSize() == 1 && input.getAmount() == 1) {
             removeUnStackableItem(input, replaceWithRemains);
         } else {
-            int amount = input.getAmount() - getAmount() * totalAmount;
             if (this.isConsumed()) {
+                int amount = input.getAmount() - getAmount() * totalAmount;
                 input.setAmount(amount);
             }
             applyStackableReplacement(totalAmount, replaceWithRemains, player, inventory, location);
@@ -877,10 +896,10 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * </p>
      * <br>
      *
-     * @param input              The input ItemStack, that is also going to be edited.
-     * @param totalAmount        The amount of this custom item that should be removed from the input.
-     * @param inventory          The optional inventory to add the replacements to. (Only for stackable items)
-     * @param location           The location where the replacements should be dropped. (Only for stackable items)
+     * @param input       The input ItemStack, that is also going to be edited.
+     * @param totalAmount The amount of this custom item that should be removed from the input.
+     * @param inventory   The optional inventory to add the replacements to. (Only for stackable items)
+     * @param location    The location where the replacements should be dropped. (Only for stackable items)
      * @see #remove(ItemStack, int, Inventory, Location, boolean)
      */
     public void remove(ItemStack input, int totalAmount, Inventory inventory, Location location) {
@@ -1053,12 +1072,164 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     }
 
     /**
-     * @param input The input ItemStack, that is going to be edited.
-     * @deprecated Replaced by {@link #removeUnStackableItem(ItemStack)}
+     * Shrinks the specified stack by the given amount and returns the manipulated or replaced item!
+     * <p>
+     * <p>
+     * <b>Stackable</b>  ({@linkplain Material#getMaxStackSize()} > 1 or stack count > 1)<b>:</b><br>
+     * The stack is shrunk by the specified amount (<strong><code>{@link #getAmount()} * totalAmount</code></strong>)
+     * <p>
+     * If this CustomItem has a custom replacement:<br>
+     * This calls the stackReplacement function with the shrunken stack and this CustomItem.
+     * It is meant for applying the stackable replacement items.<br>
+     * For default behaviour see {@link #shrink(ItemStack, int, boolean, Inventory, Player, Location)} and {@link #shrinkUnstackableItem(ItemStack, boolean)}
+     * </p>
+     * </p>
+     * <p>
+     * <b>Un-stackable</b>  ({@linkplain Material#getMaxStackSize()} == 1 and stack count == 1)<b>:</b><br>
+     * Redirects to {@link #removeUnStackableItem(ItemStack, boolean)}<br>
+     * </p>
+     * </p>
+     * <br>
+     *
+     * @param stack            The input ItemStack, that is also going to be edited.
+     * @param count            The amount of this custom item that should be removed from the input.
+     * @param useRemains       If the Item should be replaced by the default craft remains.
+     * @param stackReplacement Behaviour of how to apply the replacements of stackable items.
+     * @return  The manipulated stack, default remain, or custom remains.
      */
-    @Deprecated
-    public void consumeUnstackableItem(ItemStack input) {
-        removeUnStackableItem(input);
+    public ItemStack shrink(@NotNull ItemStack stack, int count, boolean useRemains, @NotNull BiFunction<CustomItem, ItemStack, ItemStack> stackReplacement) {
+        if (this.type.getMaxStackSize() == 1 && stack.getAmount() == 1) {
+            return shrinkUnstackableItem(stack, useRemains);
+        }
+        if (this.isConsumed()) {
+            int amount = stack.getAmount() - getAmount() * count;
+            if (amount <= 0) {
+                stack = new ItemStack(Material.AIR);
+            } else {
+                stack.setAmount(amount);
+            }
+            return stackReplacement.apply(this, stack);
+        }
+        return stack;
+    }
+
+    /**
+     * Shrinks the specified stack by the given amount and returns the manipulated or replaced item!
+     * <p>
+     * <b>Stackable</b>  ({@linkplain Material#getMaxStackSize()} > 1 or stack count > 1)<b>:</b><br>
+     * The stack is shrunk by the specified amount (<strong><code>{@link #getAmount()} * totalAmount</code></strong>)
+     * <p>
+     * If this CustomItem has a custom replacement:<br>
+     * <ul>
+     *   <li><b>Location: </b>Used as the drop location for remaining items. <br>May be overridden by options below.</li>
+     *   <li>
+     *     <b>Player: </b>Adds items to the players inventory.
+     *     <br>Remaining items are still in the pool for the next options below.
+     *     <br>Player location is used as the drop location for remaining items.</li>
+     *   <li>
+     *     <b>Inventory:</b> Adds items to the inventory.
+     *     <br>Remaining items are still in the pool for the next options below.
+     *     <br>If location not available yet: uses inventory location as drop location for remaining items.
+     *   </li>
+     * </ul>
+     * All remaining items that cannot be added to player or the other inventory are dropped at the specified location.<br>
+     * <b>Warning! If you do not provide a location via <code>player</code>, <code>inventory</code>, or <code>inventory</code>, then the remaining items are discarded!</b><br>
+     * For custom behaviour see {@link #shrink(ItemStack, int, boolean, BiFunction)}.
+     *
+     * </p>
+     * </p>
+     * <p>
+     * <b>Un-stackable</b>  ({@linkplain Material#getMaxStackSize()} == 1 and stack count == 1)<b>:</b><br>
+     * Redirects to {@link #removeUnStackableItem(ItemStack, boolean)}<br>
+     * </p>
+     * </p>
+     * <br>
+     *
+     * @param stack      The input ItemStack, that is also going to be edited.
+     * @param count      The amount of this custom item that should be removed from the input.
+     * @param useRemains If the Item should be replaced by the default craft remains.
+     * @param inventory  The optional inventory to add the replacements to. (Only for stackable items)
+     * @param player     The player to give the items to. If the players' inventory has space the craft remains are added. (Only for stackable items)
+     * @param location   The location where the replacements should be dropped. (Only for stackable items)
+     * @return  The manipulated stack, default remain, or custom remains.
+     */
+    public ItemStack shrink(ItemStack stack, int count, boolean useRemains, @Nullable final Inventory inventory, @Nullable final Player player, @Nullable final Location location) {
+        return shrink(stack, count, useRemains, (customItem, resultStack) -> {
+            ItemStack replacement = isConsumed() && useRemains && craftRemain != null ? new ItemStack(craftRemain) : null;
+            if (this.hasReplacement()) {
+                assert getReplacement() != null;
+                replacement = new CustomItem(getReplacement()).create();
+            }
+            if (!ItemUtils.isAirOrNull(replacement)) {
+                int replacementAmount = replacement.getAmount() * count;
+                if (ItemUtils.isAirOrNull(resultStack)) {
+                    int returnableAmount = Math.min(replacement.getMaxStackSize(), replacementAmount);
+                    replacementAmount -= returnableAmount;
+                    resultStack = replacement.clone();
+                    resultStack.setAmount(replacementAmount);
+                }
+                if (replacementAmount > 0) {
+                    replacement.setAmount(replacementAmount);
+                    Location loc = location;
+                    if (player != null) {
+                        replacement = player.getInventory().addItem(replacement).get(0);
+                        loc = player.getLocation();
+                    }
+                    if (inventory != null && replacement != null) {
+                        replacement = inventory.addItem(replacement).get(0);
+                        if (loc == null) loc = inventory.getLocation();
+                    }
+                    if (loc != null && replacement != null && loc.getWorld() != null) {
+                        loc.getWorld().dropItemNaturally(loc.add(0.5, 1.0, 0.5), replacement);
+                    }
+                }
+            }
+            return resultStack;
+        });
+    }
+
+    /**
+     * Shrinks the specified stack and returns the manipulated or replaced item!
+     * <p>
+     *     This firstly checks for custom replacements (remains) and sets it as the result.<br>
+     *     Then handles damaging of the stack, if there is a specified durability cost.<br>
+     *     In case the stack breaks due damage it is replaced by the result, specified earlier.
+     * </p>
+     *
+     * @param stack         The stack to shrink
+     * @param useRemains    If the Item should be replaced by the default craft remains.
+     * @return The manipulated (damaged) stack, default remain, or custom remains.
+     */
+    public ItemStack shrinkUnstackableItem(ItemStack stack, boolean useRemains) {
+        ItemStack result = new ItemStack(Material.AIR);
+        if (this.hasReplacement()) {
+            result = this.getReplacement() == null ? new ItemStack(Material.AIR) : new CustomItem(this.getReplacement()).create();
+        } else if (this.isConsumed() && craftRemain != null && useRemains) {
+            result = new ItemStack(craftRemain);
+        }
+        if (this.getDurabilityCost() != 0) {
+            // handle custom durability
+            var itemBuilder = new ItemBuilder(stack);
+            if (itemBuilder.hasCustomDurability()) {
+                int damage = itemBuilder.getCustomDamage() + this.getDurabilityCost();
+                if (damage > itemBuilder.getCustomDurability()) {
+                    return result;
+                }
+                itemBuilder.setCustomDamage(damage);
+                return itemBuilder.create();
+            }
+            // handle vanilla durability
+            if (stack.getItemMeta() instanceof Damageable itemMeta) {
+                int damage = itemMeta.getDamage() + this.getDurabilityCost();
+                if (damage > type.getMaxDurability()) {
+                    return result;
+                }
+                itemMeta.setDamage(damage);
+                stack.setItemMeta(itemMeta);
+                return stack;
+            }
+        }
+        return result;
     }
 
     private Material getCraftRemain() {
@@ -1067,7 +1238,8 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
             Material replaceType = item.getType().getCraftingRemainingItem();
             if (replaceType != null) return replaceType;
             return switch (item.getType().name()) {
-                case "LAVA_BUCKET", "MILK_BUCKET", "WATER_BUCKET", "COD_BUCKET", "SALMON_BUCKET", "PUFFERFISH_BUCKET", "TROPICAL_FISH_BUCKET" -> Material.BUCKET;
+                case "LAVA_BUCKET", "MILK_BUCKET", "WATER_BUCKET", "COD_BUCKET", "SALMON_BUCKET", "PUFFERFISH_BUCKET", "TROPICAL_FISH_BUCKET" ->
+                        Material.BUCKET;
                 case "POTION" -> Material.GLASS_BOTTLE;
                 case "BEETROOT_SOUP", "MUSHROOM_STEW", "RABBIT_STEW" -> Material.BOWL;
                 default -> null;
@@ -1133,14 +1305,110 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
         this.rarityPercentage = rarityPercentage;
     }
 
-    public CustomData getCustomData(NamespacedKey namespacedKey) {
-        return customDataMap.get(namespacedKey);
+    @JsonSetter("data")
+    private void setDataList(List<CustomItemData> data) {
+        for (CustomItemData itemData : data) {
+            addOrReplaceData(itemData);
+        }
     }
 
+    @JsonGetter("data")
+    private List<CustomItemData> getDataList() {
+        return indexedData.values().stream().toList();
+    }
+
+    public <T extends CustomItemData> T addOrReplaceData(T data) {
+        Class<T> type = (Class<T>) data.getClass();
+        return type.cast(indexedData.put(getKeyForData(type), data));
+    }
+
+    public CustomItemData addDataIfAbsent(CustomItemData data) {
+        return indexedData.putIfAbsent(data.getNamespacedKey(), data);
+    }
+
+    public CustomItemData computeDataIfAbsent(NamespacedKey id, Function<NamespacedKey, CustomItemData> mappingFunction) {
+        return indexedData.computeIfAbsent(id, mappingFunction);
+    }
+
+    public <T extends CustomItemData> T computeDataIfAbsent(Class<T> type, Function<NamespacedKey, T> mappingFunction) {
+        return type.cast(indexedData.computeIfAbsent(getKeyForData(type), mappingFunction));
+    }
+
+    public CustomItemData computeDataIfPresent(NamespacedKey id, BiFunction<NamespacedKey, CustomItemData, CustomItemData> remappingFunction) {
+        return indexedData.computeIfPresent(id, remappingFunction);
+    }
+
+    public <T extends CustomItemData> T computeDataIfPresent(Class<T> type, BiFunction<NamespacedKey, T, T> remappingFunction) {
+        Objects.requireNonNull(remappingFunction);
+        NamespacedKey key = getKeyForData(type);
+        T oldValue = type.cast(indexedData.get(key));
+        if (oldValue != null) {
+            T newValue = remappingFunction.apply(key, oldValue);
+            if (newValue != null) {
+                indexedData.put(key, newValue);
+                return newValue;
+            } else {
+                indexedData.remove(key);
+                return null;
+            }
+        }
+        return null;
+    }
+
+    public Optional<CustomItemData> getData(NamespacedKey id) {
+        return Optional.ofNullable(indexedData.get(id));
+    }
+
+    public <T extends CustomItemData> Optional<T> getData(Class<T> type) {
+        return getData(getKeyForData(type)).map(type::cast);
+    }
+
+    private static NamespacedKey getKeyForData(Class<? extends CustomItemData> type) {
+        return WolfyCoreBukkit.getInstance().getRegistries().getCustomItemDataTypeRegistry().getKey(type);
+    }
+
+    /**
+     * Used to deserialize the old CustomData content.<br>
+     * This is replaced by a better modular system {@link CustomItemData}
+     */
+    @Deprecated
+    @JsonAlias("custom_data")
+    @JsonSetter("customDataMap")
+    private void setCustomDataMap(JsonNode dataNode) {
+        if (dataNode == null || dataNode.isNull()) return;
+        WolfyUtilCore core = WolfyUtilCore.getInstance();
+        Registries registries = core.getRegistries();
+        Iterator<Map.Entry<String, JsonNode>> itr = dataNode.fields();
+        while (itr.hasNext()) {
+            Map.Entry<String, JsonNode> entry = itr.next();
+            var namespacedKey = entry.getKey().contains(":") ? NamespacedKey.of(entry.getKey()) : /* Backwards compatibility */ registries.getCustomItemData().keySet().parallelStream().filter(key -> key.getKey().equals(entry.getKey())).findFirst().orElse(null);
+            if (namespacedKey != null) {
+                CustomData.Provider<?> provider = registries.getCustomItemData().get(namespacedKey);
+                if (provider != null) {
+                    CustomData data = provider.createData();
+                    try {
+                        data.readFromJson(this, entry.getValue(), core.getWolfyUtils().getJacksonMapperUtil().getGlobalMapper().getDeserializationContext());
+                        this.customDataMap.put(namespacedKey, data);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+    }
+
+    @Deprecated
+    @JsonGetter("customDataMap")
     public Map<NamespacedKey, CustomData> getCustomDataMap() {
         return customDataMap;
     }
 
+    @Deprecated
+    public CustomData getCustomData(NamespacedKey namespacedKey) {
+        return customDataMap.get(namespacedKey);
+    }
+
+    @Deprecated
     public void addCustomData(NamespacedKey namespacedKey, CustomData customData) {
         this.customDataMap.put(namespacedKey, customData);
     }
@@ -1183,6 +1451,10 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     @JsonSetter
     public void setActionSettings(ActionSettings actionSettings) {
         this.actionSettings = actionSettings == null ? new ActionSettings() : actionSettings;
+    }
+
+    public CustomBlockSettings getBlockSettings() {
+        return blockSettings;
     }
 
     /**

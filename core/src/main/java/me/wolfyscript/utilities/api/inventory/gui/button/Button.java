@@ -204,8 +204,16 @@ public abstract class Button<C extends CustomCache> {
             this.builderType = (Class<T>) getClass();
         }
 
+        /**
+         * Constructs the Button instance with the builders' settings and returns it.
+         *
+         * @return The instance of the newly created Button.
+         */
         public abstract B create();
 
+        /**
+         * Constructs the Button instance with the builders' settings and registers it to the parent GuiComponent.
+         */
         public void register() {
             B button = create();
             if (window != null) {

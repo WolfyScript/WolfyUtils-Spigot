@@ -53,7 +53,7 @@ public class ItemStackSerialization {
             }
             var config = new YamlConfiguration();
             //Loads the Map from the JsonNode && Sets the Map to YamlConfig
-            config.set("i", JacksonUtil.getObjectMapper().convertValue(node, new TypeReference<Map<String, Object>>() {
+            config.set("i", p.getCodec().readValue(node.traverse(p.getCodec()), new TypeReference<Map<String, Object>>() {
             }));
             try {
                     /*

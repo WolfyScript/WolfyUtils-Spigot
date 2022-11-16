@@ -20,6 +20,7 @@ package me.wolfyscript.utilities.api.nms;
 
 import me.wolfyscript.utilities.api.nms.nbt.NBTItem;
 
+@Deprecated(since = "4.16.2.0")
 public abstract class NBTUtil extends UtilComponent {
 
     protected NBTTag nbtTag;

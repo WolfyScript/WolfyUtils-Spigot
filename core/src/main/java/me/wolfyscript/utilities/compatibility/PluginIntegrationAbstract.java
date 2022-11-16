@@ -53,6 +53,7 @@ public abstract class PluginIntegrationAbstract implements PluginIntegration {
     private final String pluginName;
     protected final WolfyUtilCore core;
     private boolean enabled = false;
+    private boolean ignore = false;
 
     /**
      * The main constructor that is called whenever the integration is created.<br>
@@ -100,6 +101,11 @@ public abstract class PluginIntegrationAbstract implements PluginIntegration {
         this.enabled = enabled;
     }
 
+    @Override
+    public final boolean shouldBeIgnored() {
+        return ignore;
+    }
+
     /**
      * Marks this integration as done. That tells the system that, the integrations' plugin is done with loading all its data.<br>
      * For example, usually plugins with async data loading will provide a listener that will be called once done. <br>
@@ -108,6 +114,11 @@ public abstract class PluginIntegrationAbstract implements PluginIntegration {
     protected final void markAsDoneLoading() {
         setEnabled(true);
         ((PluginsBukkit) core.getCompatibilityManager().getPlugins()).checkDependencies();
+    }
+
+    protected final void ignore() {
+        setEnabled(false);
+        this.ignore = true;
     }
 
     @Override

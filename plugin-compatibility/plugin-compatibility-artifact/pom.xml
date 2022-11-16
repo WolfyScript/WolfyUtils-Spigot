@@ -23,48 +23,118 @@
     <parent>
         <artifactId>plugin-compatibility</artifactId>
         <groupId>com.wolfyscript.wolfyutils.spigot</groupId>
-        <version>4.16.2-SNAPSHOT</version>
+        <version>4.16.9.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>plugin-compatibility-artifact</artifactId>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>citizen</id>
+            <url>https://repo.citizensnpcs.co</url>
+        </repository>
+    </repositories>
+
     <dependencies>
+        <!-- ExecutableItems -->
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>itemsadder</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
+            <groupId>com.github.Ssomar-Developement</groupId>
+            <artifactId>SCore</artifactId>
+            <version>main-d90dd3b60e-1</version>
+            <scope>provided</scope>
         </dependency>
+        <!-- Denizen -->
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>oraxen</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
+            <groupId>com.denizenscript</groupId>
+            <artifactId>denizen</artifactId>
+            <version>1.2.5-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
+        <!-- PlaceholderAPI -->
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>magic</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.11.1</version>
+            <scope>provided</scope>
         </dependency>
+        <!-- Eco -->
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>mythicmobs</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>mmoitems</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>com.willfp</groupId>
             <artifactId>eco</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
+            <version>6.13.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- ItemsAdder -->
+        <dependency>
+            <groupId>com.github.LoneDev6</groupId>
+            <artifactId>api-itemsadder</artifactId>
+            <version>3.1.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Magic -->
+        <dependency>
+            <groupId>com.elmakers.mine.bukkit</groupId>
+            <artifactId>MagicAPI</artifactId>
+            <version>10.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- FancyBags -->
+        <dependency>
+            <groupId>com.github.AlessioGr</groupId>
+            <artifactId>FancyBags</artifactId>
+            <version>2.7.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Oraxen -->
+        <dependency>
+            <groupId>io.th0rgal</groupId>
+            <artifactId>oraxen</artifactId>
+            <version>1.66.2</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <!-- Mythic Plugins -->
+        <dependency>
+            <groupId>io.lumine</groupId>
+            <artifactId>MythicLib</artifactId>
+            <version>1.1.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.Indyuce</groupId>
+            <artifactId>mmoitems</artifactId>
+            <version>6.6.2</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.lumine.xikage</groupId>
+            <artifactId>MythicMobs</artifactId>
+            <version>4.12.0</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.comphenix.protocol</groupId>
+                    <artifactId>ProtocolLib</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.lumine.mythic.mythicmobs</groupId>
+            <artifactId>MythicMobs-Bukkit</artifactId>
+            <version>5.0.1</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.comphenix.protocol</groupId>
+                    <artifactId>ProtocolLib</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

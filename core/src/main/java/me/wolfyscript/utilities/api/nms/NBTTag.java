@@ -32,6 +32,7 @@ import me.wolfyscript.utilities.api.nms.nbt.NBTTagLongArray;
 import me.wolfyscript.utilities.api.nms.nbt.NBTTagShort;
 import me.wolfyscript.utilities.api.nms.nbt.NBTTagString;
 
+@Deprecated(since = "4.16.2.0")
 public abstract class NBTTag {
 
     public abstract NBTTagEnd end();

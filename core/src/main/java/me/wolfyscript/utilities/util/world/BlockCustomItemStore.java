@@ -18,37 +18,44 @@
 
 package me.wolfyscript.utilities.util.world;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
 import java.io.IOException;
 import java.util.UUID;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-@JsonSerialize(using = BlockCustomItemStore.Serializer.class)
+/**
+ * Replaced by {@link com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage}, that is available
+ * via the {@link com.wolfyscript.utilities.bukkit.persistent.world.ChunkStorage} methods.<br>
+ * For convenience {@link  com.wolfyscript.utilities.bukkit.persistent.world.WorldStorage} methods can be used too.
+ * @deprecated Replaced by {@link com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage}
+ * @see com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage
+ */
 @JsonDeserialize(using = BlockCustomItemStore.Deserializer.class)
+@Deprecated
 public class BlockCustomItemStore {
 
-    private final NamespacedKey customItemKey;
-    private UUID particleUUID;
+    private static final org.bukkit.NamespacedKey ITEM_ID_KEY = new org.bukkit.NamespacedKey("wolfyutils", "item_id");
 
-    public BlockCustomItemStore(CustomItem customItem, UUID particleUUID) {
+    private final NamespacedKey customItemKey;
+    private UUID particleAnimationID;
+
+    public BlockCustomItemStore(@NotNull CustomItem customItem, UUID particleAnimationID) {
         this.customItemKey = customItem.getNamespacedKey();
-        this.particleUUID = particleUUID;
+        this.particleAnimationID = particleAnimationID;
     }
 
-    public BlockCustomItemStore(NamespacedKey customItemKey, UUID particleUUID) {
+    public BlockCustomItemStore(NamespacedKey customItemKey, UUID particleAnimationID) {
         this.customItemKey = customItemKey;
-        this.particleUUID = particleUUID;
+        this.particleAnimationID = particleAnimationID;
     }
 
     public NamespacedKey getCustomItemKey() {
@@ -60,31 +67,11 @@ public class BlockCustomItemStore {
     }
 
     public UUID getParticleUUID() {
-        return particleUUID;
+        return particleAnimationID;
     }
 
-    public void setParticleUUID(UUID particleUUID) {
-        this.particleUUID = particleUUID;
-    }
-
-
-    static class Serializer extends StdSerializer<BlockCustomItemStore> {
-
-        public Serializer() {
-            this(BlockCustomItemStore.class);
-        }
-
-        protected Serializer(Class<BlockCustomItemStore> t) {
-            super(t);
-        }
-
-        @Override
-        public void serialize(BlockCustomItemStore blockStore, JsonGenerator gen, SerializerProvider provider) throws IOException {
-            gen.writeStartObject();
-            gen.writeStringField("key", blockStore.getCustomItemKey().toString());
-            gen.writeEndObject();
-        }
-
+    public void setParticleUUID(@Nullable UUID particleUUID) {
+        this.particleAnimationID = particleUUID;
     }
 
     static class Deserializer extends StdDeserializer<BlockCustomItemStore> {

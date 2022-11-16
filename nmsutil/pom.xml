@@ -23,7 +23,7 @@
     <parent>
         <artifactId>wolfyutils-parent</artifactId>
         <groupId>com.wolfyscript.wolfyutils.spigot</groupId>
-        <version>4.16.2-SNAPSHOT</version>
+        <version>4.16.9.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
@@ -31,7 +31,6 @@
     <artifactId>nmsutil</artifactId>
 
     <modules>
-        <module>nmsutil-v1_15_R1</module>
         <module>nmsutil-v1_16_R1</module>
         <module>nmsutil-v1_16_R2</module>
         <module>nmsutil-v1_16_R3</module>
@@ -40,6 +39,7 @@
         <module>nmsutil-v1_18_R1</module>
         <module>nmsutil-v1_18_R1_P1</module>
         <module>nmsutil-v1_18_R2</module>
+        <module>nmsutil-v1_19_R1</module>
         <module>nmsutil-artifact</module>
     </modules>
 

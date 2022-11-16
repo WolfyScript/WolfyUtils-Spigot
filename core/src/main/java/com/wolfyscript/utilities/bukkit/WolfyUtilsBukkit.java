@@ -61,6 +61,7 @@ public class WolfyUtilsBukkit extends WolfyUtils {
 
     public final void initialize() {
         Bukkit.getPluginManager().registerEvents(this.inventoryAPI, plugin);
+        permissions.initRootPerm(getName().toLowerCase(Locale.ROOT).replace(" ", "_") + ".*");
     }
 
     @Override

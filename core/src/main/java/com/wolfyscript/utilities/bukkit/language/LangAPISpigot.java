@@ -51,7 +51,7 @@ public class LangAPISpigot extends LanguageAPI {
         injectableValues.addValue("api", api);
         injectableValues.addValue("lang", lang);
         try {
-            Language language = JacksonUtil.getObjectMapper().reader(injectableValues).readValue(file, Language.class);
+            Language language = api.getJacksonMapperUtil().getGlobalMapper().reader(injectableValues).readValue(file, Language.class);
             registerLanguage(language);
             return language;
         } catch (IOException ex) {
@@ -63,7 +63,7 @@ public class LangAPISpigot extends LanguageAPI {
 
     public void saveLangFile(@NotNull Language language) {
         try {
-            JacksonUtil.getObjectMapper().writeValue(getLangFile(language.getName()), language);
+            api.getJacksonMapperUtil().getGlobalMapper().writeValue(getLangFile(language.getName()), language);
         } catch (IOException ex) {
             getAPI().getConsole().getLogger().severe("Couldn't save language \""+language.getName()+"\"!");
             getAPI().getConsole().getLogger().throwing("LanguageAPI", "saveLangFile", ex);

@@ -231,7 +231,7 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
     protected interface ButtonBuilder<C extends CustomCache> {
 
         /**
-         * Gets a new builder for a {@link ChatInputButton <C>}.
+         * Gets a new builder for a {@link ChatInputButton<C>}.
          *
          * @param id The id of the new button.
          * @return The new builder.
@@ -239,7 +239,7 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
         ChatInputButton.Builder<C> chatInput(String id);
 
         /**
-         * Gets a new builder for a {@link ActionButton <C>}.
+         * Gets a new builder for a {@link ActionButton<C>}.
          *
          * @param id The id of the new button.
          * @return The new builder.
@@ -247,7 +247,7 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
         ActionButton.Builder<C> action(String id);
 
         /**
-         * Gets a new builder for a {@link DummyButton <C>}.
+         * Gets a new builder for a {@link DummyButton<C>}.
          *
          * @param id The id of the new button.
          * @return The new builder.
@@ -255,7 +255,7 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
         DummyButton.Builder<C> dummy(String id);
 
         /**
-         * Gets a new builder for a {@link ItemInputButton <C>}.
+         * Gets a new builder for a {@link ItemInputButton<C>}.
          *
          * @param id The id of the new button.
          * @return The new builder.
@@ -263,7 +263,7 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
         ItemInputButton.Builder<C> itemInput(String id);
 
         /**
-         * Gets a new builder for a {@link ToggleButton <C>}.
+         * Gets a new builder for a {@link ToggleButton<C>}.
          *
          * @param id The id of the new button.
          * @return The new builder.
@@ -271,7 +271,7 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
         ToggleButton.Builder<C> toggle(String id);
 
         /**
-         * Gets a new builder for a {@link MultipleChoiceButton <C>}.
+         * Gets a new builder for a {@link MultipleChoiceButton<C>}.
          *
          * @param id The id of the new button.
          * @return The new builder.

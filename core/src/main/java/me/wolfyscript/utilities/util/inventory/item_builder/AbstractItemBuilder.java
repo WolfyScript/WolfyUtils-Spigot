@@ -20,8 +20,11 @@ package me.wolfyscript.utilities.util.inventory.item_builder;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
+import com.google.common.base.Preconditions;
+import de.tr7zw.changeme.nbtapi.NBTCompound;
+import de.tr7zw.changeme.nbtapi.NBTCompoundList;
+import de.tr7zw.changeme.nbtapi.NBTItem;
+import de.tr7zw.changeme.nbtapi.NBTListCompound;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.util.EncryptionUtils;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
@@ -57,6 +60,7 @@ public abstract class AbstractItemBuilder<T extends AbstractItemBuilder<?>> {
 
     @JsonIgnore
     private final Class<T> typeClass;
+    @JsonIgnore
     private final MiniMessage miniMessage;
 
     protected AbstractItemBuilder(Class<T> typeClass) {
@@ -336,48 +340,53 @@ public abstract class AbstractItemBuilder<T extends AbstractItemBuilder<?>> {
         return setPlayerHeadValue("http://textures.minecraft.net/texture/" + value);
     }
 
+    public T setPlayerHeadURL(String value, String name, UUID uuid) {
+        if (value.startsWith("http://textures.minecraft.net/texture/")) {
+            return setPlayerHeadValue(value, name, uuid);
+        }
+        return setPlayerHeadValue("http://textures.minecraft.net/texture/" + value, name, uuid);
+    }
+
     public String getPlayerHeadValue() {
-        if (getItemMeta() instanceof SkullMeta skullMeta) {
-            GameProfile profile = null;
-            Field profileField;
-            try {
-                profileField = skullMeta.getClass().getDeclaredField("profile");
-                profileField.setAccessible(true);
-                profile = (GameProfile) profileField.get(skullMeta);
-            } catch (NoSuchFieldException | SecurityException | IllegalAccessException ex) {
-                ex.printStackTrace();
-            }
-            if (profile != null && !profile.getProperties().get("textures").isEmpty()) {
-                for (Property property : profile.getProperties().get("textures")) {
-                    if (!property.getValue().isEmpty())
-                        return property.getValue();
+        if (getItemMeta() instanceof SkullMeta) {
+            NBTItem nbtItem = new NBTItem(getItemStack());
+            NBTCompound skull = nbtItem.getCompound("SkullOwner");
+            if (skull != null) {
+                if(skull.hasKey("Properties")) {
+                    NBTCompound properties = skull.getCompound("Properties");
+                    if (properties.hasKey("textures")) {
+                        NBTCompoundList textures = properties.getCompoundList("textures");
+                        if (textures.size() > 0) {
+                            NBTCompound object = textures.get(0);
+                            String value = object.getString("Value");
+                            return value != null ? value : "";
+                        }
+                    }
                 }
             }
         }
         return "";
     }
 
-    public T setPlayerHeadValue(String value) {
-        if (getItemMeta() instanceof SkullMeta skullMeta) {
-            if (value != null && !value.isEmpty()) {
-                String texture = value;
-                if (value.startsWith("https://") || value.startsWith("http://")) {
-                    texture = EncryptionUtils.getBase64EncodedString(String.format("{textures:{SKIN:{url:\"%s\"}}}", value));
-                }
-                GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-                profile.getProperties().put("textures", new Property("textures", texture));
-                Field profileField = null;
-                try {
-                    profileField = skullMeta.getClass().getDeclaredField("profile");
-                    profileField.setAccessible(true);
-                    profileField.set(skullMeta, profile);
-                } catch (NoSuchFieldException | SecurityException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-            return setItemMeta(skullMeta);
+    public T setPlayerHeadValue(String value, String name, UUID uuid) {
+        Preconditions.checkArgument(!name.isEmpty(), "Name of Skull cannot be empty!");
+        String textureValue = value;
+        if (value.startsWith("https://") || value.startsWith("http://")) {
+            textureValue = EncryptionUtils.getBase64EncodedString(String.format("{textures:{SKIN:{url:\"%s\"}}}", value));
         }
+        NBTItem nbtItem = new NBTItem(getItemStack(), true);
+        NBTCompound skull = nbtItem.addCompound("SkullOwner");
+        skull.setString("Name", name);
+        skull.setString("Id", uuid.toString());
+        // The UUID, note that skulls with the same UUID but different textures will misbehave and only one texture will load
+        // (They'll share it), if skulls have different UUIDs and same textures they won't stack. See UUID.randomUUID();
+        NBTListCompound texture = skull.addCompound("Properties").getCompoundList("textures").addCompound();
+        texture.setString("Value",  textureValue);
         return get();
+    }
+
+    public T setPlayerHeadValue(String value) {
+        return setPlayerHeadValue(value, "none", UUID.randomUUID());
     }
 
 

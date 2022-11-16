@@ -34,11 +34,10 @@ public class DustOptionsSerialization {
             gen.writeObjectField("color", dustOptions.getColor());
             gen.writeEndObject();
         }, (p, ctxt) -> {
-            p.setCodec(JacksonUtil.getObjectMapper());
             JsonNode node = p.readValueAsTree();
             if (node.isObject()) {
                 float size = node.get("size").floatValue();
-                Color color = ctxt.readValue(node.get("color").traverse(JacksonUtil.getObjectMapper()), Color.class);
+                Color color = p.getCodec().treeToValue(node.get("color"), Color.class);
                 return new Particle.DustOptions(color, size);
             }
             WolfyUtilities.getWUCore().getConsole().warn("Error Deserializing DustOptions! Invalid DustOptions object!");

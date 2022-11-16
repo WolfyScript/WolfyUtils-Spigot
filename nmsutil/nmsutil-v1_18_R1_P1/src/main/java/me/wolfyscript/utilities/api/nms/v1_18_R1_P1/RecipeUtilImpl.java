@@ -37,5 +37,4 @@ public class RecipeUtilImpl extends me.wolfyscript.utilities.api.nms.RecipeUtil 
         return new RecipeIterator(recipeType);
     }
 
-
 }

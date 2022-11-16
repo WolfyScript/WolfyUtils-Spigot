@@ -19,6 +19,10 @@
 package me.wolfyscript.utilities.registry;
 
 import com.google.common.base.Preconditions;
+import com.wolfyscript.utilities.bukkit.items.CustomItemData;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
+import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
+import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomData;
@@ -61,6 +65,9 @@ public class Registries {
     public static final NamespacedKey ITEM_EVENT_VALUES = NamespacedKey.wolfyutilties("custom_item/events/values");
     public static final NamespacedKey ITEM_EVENT_TYPES = NamespacedKey.wolfyutilties("custom_item/events/types");
 
+    public static final NamespacedKey ITEM_CUSTOM_DATA = NamespacedKey.wolfyutilties("custom_item/data");
+    public static final NamespacedKey ITEM_NBT_CHECKS = NamespacedKey.wolfyutilties("custom_item/nbt_checks");
+
     private final WolfyUtilCore core;
 
     private final Map<Class<? extends Keyed>, IRegistry<?>> REGISTRIES_BY_TYPE = new HashMap<>();
@@ -83,8 +90,14 @@ public class Registries {
     private final TypeRegistry<Action<?>> customItemActions;
     private final TypeRegistry<Event<?>> customItemEvents;
 
+    private final TypeRegistry<CustomBlockData> customBlockData;
+    private final TypeRegistry<CustomPlayerData> customPlayerData;
+    private final TypeRegistry<CustomItemData> customItemDataTypeRegistry;
+
     private final TypeRegistry<ValueProvider<?>> valueProviders;
     private final TypeRegistry<Operator> operators;
+
+    private final TypeRegistry<QueryNode<?>> nbtQueryNodes;
 
     public Registries(WolfyUtilCore core) {
         this.core = core;
@@ -98,14 +111,20 @@ public class Registries {
 
         itemTags = new Tags<>(this);
 
-        particleAnimators = new TypeRegistrySimple<>(new NamespacedKey(core, "particle_animators"), this);
-        particleShapes = new TypeRegistrySimple<>(new NamespacedKey(core, "particles/shapes"), this);
-        particleTimer = new TypeRegistrySimple<>(new NamespacedKey(core, "particle_timers"), this);
-        customItemNbtChecks = new TypeRegistrySimple<>(new NamespacedKey(core, "custom_item_nbt_checks"), this);
-        customItemActions = new TypeRegistrySimple<>(ITEM_ACTION_TYPES, this);
-        customItemEvents = new TypeRegistrySimple<>(ITEM_EVENT_TYPES, this);
-        valueProviders = new TypeRegistrySimple<>(new NamespacedKey(core, "value_providers"), this);
-        operators = new TypeRegistrySimple<>(new NamespacedKey(core, "operators"), this);
+        particleAnimators = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "particles/animators"), this);
+        particleShapes = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "particles/shapes"), this);
+        particleTimer = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "particles/timers"), this);
+        customItemNbtChecks = new UniqueTypeRegistrySimple<>(ITEM_NBT_CHECKS, this);
+        customItemDataTypeRegistry = new UniqueTypeRegistrySimple<>(ITEM_CUSTOM_DATA, this);
+        customItemActions = new UniqueTypeRegistrySimple<>(ITEM_ACTION_TYPES, this);
+        customItemEvents = new UniqueTypeRegistrySimple<>(ITEM_EVENT_TYPES, this);
+        valueProviders = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "value_providers"), this);
+        operators = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "operators"), this);
+
+        customPlayerData = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "persistent/player"), this);
+        customBlockData = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "persistent/block"), this);
+
+        this.nbtQueryNodes = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "nbt/query/nodes"), this);
     }
 
     void indexTypedRegistry(IRegistry<?> registry) {
@@ -211,6 +230,10 @@ public class Registries {
         return customItemNbtChecks;
     }
 
+    public TypeRegistry<CustomItemData> getCustomItemDataTypeRegistry() {
+        return customItemDataTypeRegistry;
+    }
+
     /**
      * Gets the registry containing all the available Animators, that can be used in {@link ParticleAnimation}s.
      *
@@ -243,5 +266,17 @@ public class Registries {
 
     public TypeRegistry<Operator> getOperators() {
         return operators;
+    }
+
+    public TypeRegistry<CustomPlayerData> getCustomPlayerData() {
+        return customPlayerData;
+    }
+
+    public TypeRegistry<CustomBlockData> getCustomBlockData() {
+        return customBlockData;
+    }
+
+    public TypeRegistry<QueryNode<?>> getNbtQueryNodes() {
+        return nbtQueryNodes;
     }
 }

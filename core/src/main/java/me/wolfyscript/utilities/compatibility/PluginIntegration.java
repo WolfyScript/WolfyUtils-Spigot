@@ -62,6 +62,14 @@ public interface PluginIntegration {
     boolean isDoneLoading();
 
     /**
+     * Gets if this Integration should be ignored, as its plugin failed
+     * to load or had errors.
+     *
+     * @return True if this integration should be ignored.
+     */
+    boolean shouldBeIgnored();
+
+    /**
      * Gets the registered adapter of this plugin and specified key.<br>
      *
      * @param type The type of the adapter.

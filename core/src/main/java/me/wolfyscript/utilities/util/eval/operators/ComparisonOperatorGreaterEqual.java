@@ -18,6 +18,8 @@
 
 package me.wolfyscript.utilities.util.eval.operators;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.eval.context.EvalContext;
 import me.wolfyscript.utilities.util.eval.value_providers.ValueProvider;
@@ -26,7 +28,8 @@ public class ComparisonOperatorGreaterEqual<V extends Comparable<V>> extends Com
 
     public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("greater_equal");
 
-    protected ComparisonOperatorGreaterEqual(ValueProvider<V> thisValue, ValueProvider<V> thatValue) {
+    @JsonCreator
+    protected ComparisonOperatorGreaterEqual(@JsonProperty("this") ValueProvider<V> thisValue, @JsonProperty("that") ValueProvider<V> thatValue) {
         super(KEY, thisValue, thatValue);
     }
 
