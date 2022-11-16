@@ -58,7 +58,7 @@ public class CustomItemDataListener implements Listener {
     @EventHandler
     public void onPlaceBlock(BlockStoragePlaceEvent event) {
         var customItem = CustomItem.getByItemStack(event.getItemInHand());
-        if (!ItemUtils.isAirOrNull(customItem) && customItem.getItemStack().getType().isBlock()) {
+        if (!ItemUtils.isAirOrNull(customItem) && customItem.isBlock()) {
             if (customItem.isBlockPlacement()) {
                 event.setCancelled(true);
             }
