@@ -53,7 +53,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 
 public class PersistentStorageListener implements Listener {
 
-    private static final String PREVIOUS_BROKEN_STORE = "previous_store";
+    public static final String PREVIOUS_BROKEN_STORE = "previous_store";
 
     private final WolfyCoreBukkit core;
     private final PersistentStorage persistentStorage;
@@ -117,13 +117,14 @@ public class PersistentStorageListener implements Listener {
     /**
      * Handles the BlockStorages that are placed together with blocks.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockStoragePlace(BlockPlaceEvent event) {
         if (event.canBuild()) {
             Block block = event.getBlock();
             WorldStorage worldStorage = persistentStorage.getOrCreateWorldStorage(block.getWorld());
             BlockStorage blockStorage = worldStorage.createBlockStorage(block.getLocation());
             var blockStorePlaceEvent = new BlockStoragePlaceEvent(block, blockStorage, event.getBlockReplacedState(), event.getBlockAgainst(), event.getItemInHand(), event.getPlayer(), event.canBuild(), event.getHand());
+            blockStorePlaceEvent.setCancelled(event.isCancelled());
             Bukkit.getPluginManager().callEvent(blockStorePlaceEvent);
             event.setCancelled(blockStorePlaceEvent.isCancelled());
 
@@ -133,11 +134,13 @@ public class PersistentStorageListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlaceMulti(BlockMultiPlaceEvent event) {
         WorldStorage worldStorage = persistentStorage.getOrCreateWorldStorage(event.getBlock().getWorld());
         List<BlockStorage> storages = event.getReplacedBlockStates().stream().map(state -> worldStorage.createBlockStorage(state.getLocation())).toList();
         var blockStorageMultiPlaceEvent = new BlockStorageMultiPlaceEvent(event.getReplacedBlockStates(), storages, event.getBlockAgainst(), event.getItemInHand(), event.getPlayer(), event.canBuild());
+        blockStorageMultiPlaceEvent.setCancelled(event.isCancelled());
+        Bukkit.getPluginManager().callEvent(blockStorageMultiPlaceEvent);
         event.setCancelled(blockStorageMultiPlaceEvent.isCancelled());
 
         if (blockStorageMultiPlaceEvent.isCancelled()) return;
@@ -191,13 +194,14 @@ public class PersistentStorageListener implements Listener {
         }));
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockStorageBreak(BlockBreakEvent event) {
         var block = event.getBlock();
         var worldStorage = persistentStorage.getOrCreateWorldStorage(block.getWorld());
         worldStorage.getBlock(block.getLocation()).ifPresent(store -> {
             if (!store.isEmpty()) {
                 var blockStorageBreakEvent = new BlockStorageBreakEvent(event.getBlock(), store, event.getPlayer());
+                blockStorageBreakEvent.setCancelled(event.isCancelled());
                 Bukkit.getPluginManager().callEvent(blockStorageBreakEvent);
                 if (blockStorageBreakEvent.isCancelled()) return;
                 worldStorage.removeBlock(block.getLocation()).ifPresent(storage -> {
