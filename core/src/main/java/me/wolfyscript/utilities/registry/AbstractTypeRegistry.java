@@ -67,7 +67,7 @@ public abstract class AbstractTypeRegistry<M extends Map<NamespacedKey, Class<? 
     public void register(Class<? extends V> value) {
         KeyedStaticId staticIdAnnot = value.getAnnotation(KeyedStaticId.class);
         Preconditions.checkArgument(staticIdAnnot != null, "Value does not specify static id via the KeyedStaticId annotation!");
-        NamespacedKey id = NamespacedKey.of(staticIdAnnot.value());
+        NamespacedKey id = NamespacedKey.of(KeyedStaticId.KeyBuilder.createKeyString(value));
         register(id, value);
     }
 

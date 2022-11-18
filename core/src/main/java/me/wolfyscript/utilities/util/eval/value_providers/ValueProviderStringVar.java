@@ -20,14 +20,14 @@ package me.wolfyscript.utilities.util.eval.value_providers;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wolfyscript.utilities.KeyedStaticId;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
+@KeyedStaticId(key = "string/var")
 public class ValueProviderStringVar extends ValueProviderVariable<String> {
-
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("string/var");
 
     @JsonCreator
     public ValueProviderStringVar(@JsonProperty("var") String name) {
-        super(KEY, String.class, name);
+        super(String.class, name);
     }
 }
