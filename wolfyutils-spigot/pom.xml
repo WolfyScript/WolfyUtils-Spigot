@@ -167,13 +167,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- Reflections -->
-        <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>${depend_version.reflections}</version>
-            <scope>provided</scope>
-        </dependency>
         <!-- NBT -->
         <dependency>
             <groupId>de.tr7zw</groupId>
