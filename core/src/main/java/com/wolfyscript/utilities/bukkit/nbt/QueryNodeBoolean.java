@@ -31,15 +31,17 @@ import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
 import java.util.Optional;
+import me.wolfyscript.utilities.util.eval.context.EvalContext;
+import me.wolfyscript.utilities.util.eval.operators.BoolOperator;
 
 public class QueryNodeBoolean extends QueryNode<Object> {
 
     public static final NamespacedKey TYPE = NamespacedKey.wolfyutilties("boolean");
 
-    private final boolean value;
+    private final BoolOperator value;
 
     @JsonCreator
-    public QueryNodeBoolean(@JsonProperty("value") boolean value, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
+    public QueryNodeBoolean(@JsonProperty("value") BoolOperator value, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
         super(TYPE, key, parentPath);
         this.value = value;
     }
@@ -50,8 +52,8 @@ public class QueryNodeBoolean extends QueryNode<Object> {
     }
 
     @Override
-    public boolean check(String key, NBTType nbtType, Object value) {
-        return this.key.equals(key) && this.value;
+    public boolean check(String key, NBTType nbtType, EvalContext context, Object value) {
+        return this.key.equals(key) && this.value.evaluate(context);
     }
 
     @Override
@@ -87,7 +89,7 @@ public class QueryNodeBoolean extends QueryNode<Object> {
     }
 
     @Override
-    protected void applyValue(String path, String key, Object value, NBTCompound resultContainer) {
+    protected void applyValue(String path, String key, EvalContext context, Object value, NBTCompound resultContainer) {
         if (value instanceof Integer integer) {
             resultContainer.setInteger(key, integer);
         } else if (value instanceof Byte cVal) {

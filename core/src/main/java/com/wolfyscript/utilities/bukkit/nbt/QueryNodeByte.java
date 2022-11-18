@@ -9,14 +9,16 @@ import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
 import java.util.Optional;
+import me.wolfyscript.utilities.util.eval.context.EvalContext;
+import me.wolfyscript.utilities.util.eval.value_providers.ValueProvider;
 
 public class QueryNodeByte extends QueryNodePrimitive<Byte> {
 
     public static final NamespacedKey TYPE = NamespacedKey.wolfyutilties("byte");
 
     @JsonCreator
-    public QueryNodeByte(@JsonProperty("value") JsonNode valueNode, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
-        super(TYPE, valueNode.isTextual() ? Byte.parseByte(valueNode.asText().replaceAll("[bB]", "")) : valueNode.numberValue().byteValue(), key, parentPath);
+    public QueryNodeByte(@JsonProperty("value") ValueProvider<Byte> value, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
+        super(TYPE, value, key, parentPath);
         this.nbtType = NBTType.NBTTagByte;
     }
 
@@ -30,7 +32,7 @@ public class QueryNodeByte extends QueryNodePrimitive<Byte> {
     }
 
     @Override
-    protected void applyValue(String path, String key, Byte value, NBTCompound resultContainer) {
+    protected void applyValue(String path, String key, EvalContext context, Byte value, NBTCompound resultContainer) {
         resultContainer.setByte(key, value);
     }
 

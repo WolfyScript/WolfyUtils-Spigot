@@ -9,14 +9,17 @@ import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
 import java.util.Optional;
+import me.wolfyscript.utilities.util.eval.context.EvalContext;
+import me.wolfyscript.utilities.util.eval.value_providers.ValueProvider;
+import me.wolfyscript.utilities.util.eval.value_providers.ValueProviderFloat;
 
 public class QueryNodeFloat extends QueryNodePrimitive<Float> {
 
     public static final NamespacedKey TYPE = NamespacedKey.wolfyutilties("float");
 
     @JsonCreator
-    public QueryNodeFloat(@JsonProperty("value") JsonNode valueNode, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
-        super(TYPE, valueNode.isTextual() ? Float.parseFloat(valueNode.asText().replaceAll("[dD]", "")) : valueNode.numberValue().floatValue(), key, parentPath);
+    public QueryNodeFloat(@JsonProperty("value") ValueProvider<Float> valueNode, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
+        super(TYPE, valueNode, key, parentPath);
         this.nbtType = NBTType.NBTTagFloat;
     }
 
@@ -30,7 +33,7 @@ public class QueryNodeFloat extends QueryNodePrimitive<Float> {
     }
 
     @Override
-    protected void applyValue(String path, String key, Float value, NBTCompound resultContainer) {
+    protected void applyValue(String path, String key, EvalContext context, Float value, NBTCompound resultContainer) {
         resultContainer.setFloat(key, value);
     }
 
