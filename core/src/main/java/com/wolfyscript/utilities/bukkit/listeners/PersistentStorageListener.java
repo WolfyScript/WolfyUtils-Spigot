@@ -6,6 +6,7 @@ import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageDropItemsE
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageMultiPlaceEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoragePlaceEvent;
 import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
+import com.wolfyscript.utilities.bukkit.persistent.player.PlayerStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.ChunkStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.WorldStorage;
@@ -42,6 +43,7 @@ import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
@@ -51,7 +53,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 
 public class PersistentStorageListener implements Listener {
 
-    private static final String PREVIOUS_BROKEN_STORE = "previous_store";
+    public static final String PREVIOUS_BROKEN_STORE = "previous_store";
 
     private final WolfyCoreBukkit core;
     private final PersistentStorage persistentStorage;
@@ -59,6 +61,12 @@ public class PersistentStorageListener implements Listener {
     public PersistentStorageListener(WolfyCoreBukkit core) {
         this.core = core;
         this.persistentStorage = core.getPersistentStorage();
+    }
+
+    @EventHandler
+    private void onPlayerQuit(PlayerQuitEvent event) {
+        PlayerStorage playerStorage = persistentStorage.getOrCreatePlayerStorage(event.getPlayer());
+        playerStorage.updateAndClearCache(); // Clear cache when player leaves the server, to not waste memory!
     }
 
     @EventHandler
@@ -109,13 +117,14 @@ public class PersistentStorageListener implements Listener {
     /**
      * Handles the BlockStorages that are placed together with blocks.
      */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockStoragePlace(BlockPlaceEvent event) {
         if (event.canBuild()) {
             Block block = event.getBlock();
             WorldStorage worldStorage = persistentStorage.getOrCreateWorldStorage(block.getWorld());
             BlockStorage blockStorage = worldStorage.createBlockStorage(block.getLocation());
             var blockStorePlaceEvent = new BlockStoragePlaceEvent(block, blockStorage, event.getBlockReplacedState(), event.getBlockAgainst(), event.getItemInHand(), event.getPlayer(), event.canBuild(), event.getHand());
+            blockStorePlaceEvent.setCancelled(event.isCancelled());
             Bukkit.getPluginManager().callEvent(blockStorePlaceEvent);
             event.setCancelled(blockStorePlaceEvent.isCancelled());
 
@@ -125,11 +134,13 @@ public class PersistentStorageListener implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlaceMulti(BlockMultiPlaceEvent event) {
         WorldStorage worldStorage = persistentStorage.getOrCreateWorldStorage(event.getBlock().getWorld());
         List<BlockStorage> storages = event.getReplacedBlockStates().stream().map(state -> worldStorage.createBlockStorage(state.getLocation())).toList();
         var blockStorageMultiPlaceEvent = new BlockStorageMultiPlaceEvent(event.getReplacedBlockStates(), storages, event.getBlockAgainst(), event.getItemInHand(), event.getPlayer(), event.canBuild());
+        blockStorageMultiPlaceEvent.setCancelled(event.isCancelled());
+        Bukkit.getPluginManager().callEvent(blockStorageMultiPlaceEvent);
         event.setCancelled(blockStorageMultiPlaceEvent.isCancelled());
 
         if (blockStorageMultiPlaceEvent.isCancelled()) return;
@@ -183,13 +194,14 @@ public class PersistentStorageListener implements Listener {
         }));
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockStorageBreak(BlockBreakEvent event) {
         var block = event.getBlock();
         var worldStorage = persistentStorage.getOrCreateWorldStorage(block.getWorld());
         worldStorage.getBlock(block.getLocation()).ifPresent(store -> {
             if (!store.isEmpty()) {
                 var blockStorageBreakEvent = new BlockStorageBreakEvent(event.getBlock(), store, event.getPlayer());
+                blockStorageBreakEvent.setCancelled(event.isCancelled());
                 Bukkit.getPluginManager().callEvent(blockStorageBreakEvent);
                 if (blockStorageBreakEvent.isCancelled()) return;
                 worldStorage.removeBlock(block.getLocation()).ifPresent(storage -> {

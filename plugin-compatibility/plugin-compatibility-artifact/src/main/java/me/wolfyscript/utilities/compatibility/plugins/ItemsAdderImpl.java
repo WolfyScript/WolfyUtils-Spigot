@@ -25,7 +25,10 @@ import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomBlock;
+import me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomItemListener;
+import me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomBlockWrapper;
 import me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomStack;
+import me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomStackWrapper;
 import me.wolfyscript.utilities.compatibility.plugins.itemsadder.ItemsAdderRefImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
@@ -46,6 +49,7 @@ public class ItemsAdderImpl extends PluginIntegrationAbstract implements ItemsAd
     public void init(Plugin plugin) {
         core.registerAPIReference(new ItemsAdderRefImpl.Parser());
         Bukkit.getPluginManager().registerEvents(this, core);
+        Bukkit.getPluginManager().registerEvents(new CustomItemListener(this), core);
     }
 
     @Override
@@ -67,26 +71,26 @@ public class ItemsAdderImpl extends PluginIntegrationAbstract implements ItemsAd
 
     @Override
     public Optional<CustomStack> getStackByItemStack(ItemStack itemStack) {
-        return Optional.empty();
+        return CustomStackWrapper.wrapStack(dev.lone.itemsadder.api.CustomStack.byItemStack(itemStack));
     }
 
     @Override
     public Optional<CustomStack> getStackInstance(String namespacedID) {
-        return Optional.empty();
+        return CustomStackWrapper.wrapStack(dev.lone.itemsadder.api.CustomStack.getInstance(namespacedID));
     }
 
     @Override
     public @Nullable Optional<CustomBlock> getBlockByItemStack(ItemStack itemStack) {
-        return Optional.empty();
+        return CustomBlockWrapper.wrapBlock(dev.lone.itemsadder.api.CustomBlock.byItemStack(itemStack));
     }
 
     @Override
     public @Nullable Optional<CustomBlock> getBlockPlaced(Block block) {
-        return Optional.empty();
+        return CustomBlockWrapper.wrapBlock(dev.lone.itemsadder.api.CustomBlock.byAlreadyPlaced(block));
     }
 
     @Override
     public @Nullable Optional<CustomBlock> getBlockInstance(String namespacedID) {
-        return Optional.empty();
+        return CustomBlockWrapper.wrapBlock(dev.lone.itemsadder.api.CustomBlock.getInstance(namespacedID));
     }
 }

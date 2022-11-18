@@ -59,6 +59,9 @@ import me.wolfyscript.utilities.api.inventory.custom_items.meta.MetaSettings;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.VanillaRef;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.WolfyUtilitiesRef;
+import me.wolfyscript.utilities.compatibility.plugins.ItemsAdderIntegration;
+import me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomStack;
+import me.wolfyscript.utilities.compatibility.plugins.itemsadder.ItemsAdderRef;
 import me.wolfyscript.utilities.registry.Registries;
 import me.wolfyscript.utilities.util.Keyed;
 import me.wolfyscript.utilities.util.NamespacedKey;
@@ -1507,6 +1510,11 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      */
     public void setAmount(int amount) {
         getReference().setAmount(amount);
+    }
+
+    public boolean isBlock() {
+        return type.isBlock() || (getApiReference() instanceof ItemsAdderRef iaRef && WolfyCoreBukkit.getInstance().getCompatibilityManager().getPlugins()
+                .evaluateIfAvailable("ItemsAdder", ItemsAdderIntegration.class, ia -> ia.getStackInstance(iaRef.getItemID()).map(CustomStack::isBlock).orElse(false)));
     }
 
     @Override

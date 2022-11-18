@@ -143,7 +143,7 @@ public class QueryNodeCompound extends QueryNode<NBTCompound> {
         if (!includes.isEmpty()) {
             keys = value.getKeys().stream().filter(s -> includes.getOrDefault(s, includeAll)).collect(Collectors.toSet());
         } else {
-            keys = value.getKeys().stream().filter(s -> getChildren().containsKey(s)).collect(Collectors.toSet());
+            keys = value.getKeys().stream().filter(s -> getChildren().containsKey(s) || includeAll).collect(Collectors.toSet());
         }
         //Process child nodes with the specified settings.
         for (String childKey : keys) {
@@ -152,7 +152,7 @@ public class QueryNodeCompound extends QueryNode<NBTCompound> {
                 subQueryNode.visit(newPath, childKey, value, container);
             } else {
                 QueryNodeBoolean node = new QueryNodeBoolean(true, childKey, newPath);
-                node.visit(newPath, key, value, container);
+                node.visit(newPath, childKey, value, container);
             }
         }
     }

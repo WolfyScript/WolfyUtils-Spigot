@@ -63,20 +63,20 @@ public class WorldCustomItemStore {
     @Deprecated
     public void remove(Location location) {
         if (location == null || location.getWorld() == null) return;
-        ((WolfyCoreBukkit) WolfyCoreBukkit.getInstance()).getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).removeBlock(location);
+        WolfyCoreBukkit.getInstance().getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).removeBlock(location);
     }
 
     @Deprecated
     public boolean isStored(Location location) {
         if (location == null || location.getWorld() == null) return false;
-        return ((WolfyCoreBukkit) WolfyCoreBukkit.getInstance()).getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).getBlock(location).isPresent();
+        return WolfyCoreBukkit.getInstance().getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).getBlock(location).isPresent();
     }
 
     @Deprecated
     @Nullable
     public BlockCustomItemStore get(Location location) {
         if (location == null || location.getWorld() == null) return null;
-        return ((WolfyCoreBukkit) WolfyCoreBukkit.getInstance()).getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).getBlock(location)
+        return WolfyCoreBukkit.getInstance().getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).getBlock(location)
                 .flatMap(storage -> storage.getData(CustomItemBlockData.ID, CustomItemBlockData.class)).map(data -> new BlockCustomItemStore(data.getItem(), null)).orElse(null);
     }
 
@@ -107,7 +107,7 @@ public class WorldCustomItemStore {
     @Deprecated
     void setStore(Location location, BlockCustomItemStore blockStore) {
         if (location == null || location.getWorld() == null) return;
-        ChunkStorage chunkStorage = ((WolfyCoreBukkit) WolfyCoreBukkit.getInstance()).getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).getOrCreateChunkStorage(location);
+        ChunkStorage chunkStorage = WolfyCoreBukkit.getInstance().getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).getOrCreateChunkStorage(location);
         BlockStorage blockStorage = chunkStorage.getOrCreateBlockStorage(location);
         blockStorage.addOrSetData(new CustomItemBlockData(WolfyCoreBukkit.getInstance(), chunkStorage, blockStorage.getPos(), blockStore.getCustomItemKey()));
         chunkStorage.setBlockStorageIfAbsent(blockStorage);

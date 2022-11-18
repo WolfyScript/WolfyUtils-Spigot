@@ -30,6 +30,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public abstract class CustomPlayerData {
 
     static Map<NamespacedKey, Provider<?>> providers = new HashMap<>();

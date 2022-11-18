@@ -22,6 +22,7 @@ import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.bukkit.items.CustomItemData;
 import com.wolfyscript.utilities.bukkit.items.reference.ItemReference;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
+import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
@@ -89,7 +90,9 @@ public class Registries {
     private final TypeRegistry<Meta> customItemNbtChecks;
     private final TypeRegistry<Action<?>> customItemActions;
     private final TypeRegistry<Event<?>> customItemEvents;
+
     private final TypeRegistry<CustomBlockData> customBlockData;
+    private final TypeRegistry<CustomPlayerData> customPlayerData;
     private final TypeRegistry<CustomItemData> customItemDataTypeRegistry;
     private final RegistryItemReferences itemReferences;
 
@@ -110,9 +113,9 @@ public class Registries {
 
         itemTags = new Tags<>(this);
 
-        particleAnimators = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "particle_animators"), this);
+        particleAnimators = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "particles/animators"), this);
         particleShapes = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "particles/shapes"), this);
-        particleTimer = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "particle_timers"), this);
+        particleTimer = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "particles/timers"), this);
         customItemNbtChecks = new UniqueTypeRegistrySimple<>(ITEM_NBT_CHECKS, this);
         customItemDataTypeRegistry = new UniqueTypeRegistrySimple<>(ITEM_CUSTOM_DATA, this);
         customItemActions = new UniqueTypeRegistrySimple<>(ITEM_ACTION_TYPES, this);
@@ -120,6 +123,7 @@ public class Registries {
         valueProviders = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "value_providers"), this);
         operators = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "operators"), this);
 
+        customPlayerData = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "persistent/player"), this);
         customBlockData = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "persistent/block"), this);
 
         nbtQueryNodes = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "nbt/query/nodes"), this);
@@ -265,6 +269,10 @@ public class Registries {
 
     public TypeRegistry<Operator> getOperators() {
         return operators;
+    }
+
+    public TypeRegistry<CustomPlayerData> getCustomPlayerData() {
+        return customPlayerData;
     }
 
     public TypeRegistry<CustomBlockData> getCustomBlockData() {
