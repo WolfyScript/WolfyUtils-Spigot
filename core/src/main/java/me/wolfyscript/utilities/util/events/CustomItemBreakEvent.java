@@ -18,6 +18,7 @@
 
 package me.wolfyscript.utilities.util.events;
 
+import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageBreakEvent;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -35,10 +36,10 @@ public class CustomItemBreakEvent extends Event {
     private boolean cancel;
     private CustomItem customItem;
 
-    public CustomItemBreakEvent(CustomItem customItem, BlockBreakEvent event){
+    public CustomItemBreakEvent(CustomItem customItem, BlockStorageBreakEvent event){
         this.player = event.getPlayer();
         this.dropItems = true;
-        this.exp = event.getExpToDrop();
+        this.exp = 0;
         this.block = event.getBlock();
         this.customItem = customItem;
     }
