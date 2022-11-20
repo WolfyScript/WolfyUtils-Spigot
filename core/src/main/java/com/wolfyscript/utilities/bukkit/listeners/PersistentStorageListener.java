@@ -138,7 +138,7 @@ public class PersistentStorageListener implements Listener {
     public void onBlockPlaceMulti(BlockMultiPlaceEvent event) {
         WorldStorage worldStorage = persistentStorage.getOrCreateWorldStorage(event.getBlock().getWorld());
         List<BlockStorage> storages = event.getReplacedBlockStates().stream().map(state -> worldStorage.createBlockStorage(state.getLocation())).toList();
-        var blockStorageMultiPlaceEvent = new BlockStorageMultiPlaceEvent(event.getReplacedBlockStates(), storages, event.getBlockAgainst(), event.getItemInHand(), event.getPlayer(), event.canBuild());
+        var blockStorageMultiPlaceEvent = new BlockStorageMultiPlaceEvent(event.getReplacedBlockStates(), storages, event.getBlockAgainst(), event.getItemInHand(), event.getPlayer(), event.canBuild(), event.getHand());
         blockStorageMultiPlaceEvent.setCancelled(event.isCancelled());
         Bukkit.getPluginManager().callEvent(blockStorageMultiPlaceEvent);
         event.setCancelled(blockStorageMultiPlaceEvent.isCancelled());
