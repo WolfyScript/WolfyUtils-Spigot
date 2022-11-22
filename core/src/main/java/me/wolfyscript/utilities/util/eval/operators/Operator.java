@@ -24,6 +24,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
+import com.fasterxml.jackson.databind.jsontype.impl.AsDeductionTypeDeserializer;
+import com.wolfyscript.utilities.KeyedStaticId;
 import me.wolfyscript.utilities.util.Keyed;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.json.jackson.KeyedTypeIdResolver;
@@ -40,6 +42,10 @@ public abstract class Operator implements Keyed {
 
     public Operator(NamespacedKey namespacedKey) {
         this.key = namespacedKey;
+    }
+
+    public Operator() {
+        this.key = NamespacedKey.of(KeyedStaticId.KeyBuilder.createKeyString(getClass()));
     }
 
     @JsonIgnore

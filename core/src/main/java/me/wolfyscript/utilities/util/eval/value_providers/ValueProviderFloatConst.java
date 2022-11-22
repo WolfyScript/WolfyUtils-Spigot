@@ -20,18 +20,17 @@ package me.wolfyscript.utilities.util.eval.value_providers;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.KeyedStaticId;
 import me.wolfyscript.utilities.util.eval.context.EvalContext;
 
+@KeyedStaticId(key = "float/const")
 public class ValueProviderFloatConst extends AbstractValueProvider<Float> implements ValueProviderFloat {
-
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("float/const");
 
     private final float value;
 
     @JsonCreator
     public ValueProviderFloatConst(@JsonProperty("value") float value) {
-        super(KEY);
+        super();
         this.value = value;
     }
 
@@ -40,8 +39,4 @@ public class ValueProviderFloatConst extends AbstractValueProvider<Float> implem
         return value;
     }
 
-    @Override
-    public NamespacedKey getNamespacedKey() {
-        return null;
-    }
 }

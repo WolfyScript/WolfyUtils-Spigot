@@ -16,34 +16,28 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.util.eval.value_providers;
+package com.wolfyscript.utilities.eval.value_provider;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wolfyscript.utilities.KeyedStaticId;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.eval.context.EvalContext;
-import me.wolfyscript.utilities.util.eval.operators.BoolOperator;
+import me.wolfyscript.utilities.util.eval.value_providers.AbstractValueProvider;
 
-@KeyedStaticId(key = "conditioned")
-public class ValueProviderConditioned<V> extends AbstractValueProvider<V> {
+@KeyedStaticId(key = "byte/array/const")
+public class ValueProviderByteArrayConst extends AbstractValueProvider<byte[]> {
 
-    private final BoolOperator condition;
-    @JsonProperty("then")
-    private final me.wolfyscript.utilities.util.eval.value_providers.ValueProvider<V> thenValue;
-    @JsonProperty("else")
-    private final me.wolfyscript.utilities.util.eval.value_providers.ValueProvider<V> elseValue;
+    private final byte[] value;
 
     @JsonCreator
-    public ValueProviderConditioned(@JsonProperty("condition") BoolOperator condition, @JsonProperty("then") me.wolfyscript.utilities.util.eval.value_providers.ValueProvider<V> thenValue, @JsonProperty("else") ValueProvider<V> elseValue) {
+    public ValueProviderByteArrayConst(@JsonProperty("value") byte[] value) {
         super();
-        this.condition = condition;
-        this.thenValue = thenValue;
-        this.elseValue = elseValue;
+        this.value = value;
     }
 
     @Override
-    public V getValue(EvalContext context) {
-        return condition.evaluate(context) ? thenValue.getValue() : elseValue.getValue();
+    public byte[] getValue(EvalContext context) {
+        return value;
     }
 }

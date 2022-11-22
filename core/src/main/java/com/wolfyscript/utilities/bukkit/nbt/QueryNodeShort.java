@@ -3,20 +3,21 @@ package com.wolfyscript.utilities.bukkit.nbt;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderShort;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
 import java.util.Optional;
+import me.wolfyscript.utilities.util.eval.context.EvalContext;
 
 public class QueryNodeShort extends QueryNodePrimitive<Short> {
 
     public static final NamespacedKey TYPE = NamespacedKey.wolfyutilties("short");
 
     @JsonCreator
-    public QueryNodeShort(@JsonProperty("value") JsonNode valueNode, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
-        super(TYPE, valueNode.isTextual() ? Short.parseShort(valueNode.asText().replaceAll("[sS]", "")) : valueNode.numberValue().shortValue(), key, parentPath);
+    public QueryNodeShort(@JsonProperty("value") ValueProviderShort value, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
+        super(TYPE, value, key, parentPath);
         this.nbtType = NBTType.NBTTagShort;
     }
 
@@ -30,7 +31,7 @@ public class QueryNodeShort extends QueryNodePrimitive<Short> {
     }
 
     @Override
-    protected void applyValue(String path, String key, Short value, NBTCompound resultContainer) {
+    protected void applyValue(String path, String key, EvalContext context, Short value, NBTCompound resultContainer) {
         resultContainer.setShort(key, value);
     }
 

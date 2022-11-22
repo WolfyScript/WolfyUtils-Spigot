@@ -35,6 +35,7 @@ import me.wolfyscript.utilities.util.NamespacedKey;
 
 import java.util.List;
 import java.util.Optional;
+import me.wolfyscript.utilities.util.eval.context.EvalContext;
 
 public abstract class QueryNodeList<VAL> extends QueryNode<NBTList<VAL>> {
 
@@ -62,7 +63,7 @@ public abstract class QueryNodeList<VAL> extends QueryNode<NBTList<VAL>> {
     }
 
     @Override
-    public boolean check(String key, NBTType nbtType, NBTList<VAL> value) {
+    public boolean check(String key, NBTType nbtType, EvalContext context, NBTList<VAL> value) {
         return !value.isEmpty();
     }
 
@@ -72,9 +73,11 @@ public abstract class QueryNodeList<VAL> extends QueryNode<NBTList<VAL>> {
     }
 
     @Override
-    protected void applyValue(String path, String key, NBTList<VAL> value, NBTCompound resultContainer) {
+    protected void applyValue(String path, String key, EvalContext context, NBTList<VAL> value, NBTCompound resultContainer) {
+        String newPath = path + "." + key;
         NBTList<VAL> list = readList(key, resultContainer);
         if (list != null && !value.isEmpty()) {
+            context.setVariable(newPath + "_size", list.size());
             for (Element<VAL> element : elements) {
                 element.index().ifPresentOrElse(index -> {
                     if (index < 0) {
@@ -83,11 +86,12 @@ public abstract class QueryNodeList<VAL> extends QueryNode<NBTList<VAL>> {
                     index = index % value.size(); //Prevent out of bounds
                     if (value.size() > index) {
                         int fIndex = index;
-                        element.value().ifPresentOrElse(queryNode -> queryNode.visit(path, fIndex, value, list), () -> list.add(value.get(fIndex)));
+                        element.value().ifPresentOrElse(queryNode -> queryNode.visit(newPath, fIndex, context, value, list), () -> list.add(value.get(fIndex)));
                     }
                 }, () -> element.value().ifPresent(valQueryNode -> {
                     for (int i = 0; i < value.size(); i++) {
-                        valQueryNode.visit(path, i, value, list);
+                        context.setVariable(newPath + "_index", i);
+                        valQueryNode.visit(newPath, i, context, value, list);
                     }
                 }));
             }

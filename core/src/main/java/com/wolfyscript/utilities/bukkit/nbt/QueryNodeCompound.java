@@ -38,6 +38,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import me.wolfyscript.utilities.util.eval.context.EvalContext;
+import com.wolfyscript.utilities.eval.operator.BoolOperatorConst;
 
 public class QueryNodeCompound extends QueryNode<NBTCompound> {
 
@@ -66,6 +68,8 @@ public class QueryNodeCompound extends QueryNode<NBTCompound> {
         super(TYPE, other.key, other.parentPath);
         this.nbtType = NBTType.NBTTagCompound;
         this.includes = new HashMap<>(other.includes);
+        this.preservePath = other.preservePath;
+        this.includeAll = other.includeAll;
         this.required = other.required.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().copy()));
         this.children = other.children.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().copy()));
     }
@@ -126,7 +130,7 @@ public class QueryNodeCompound extends QueryNode<NBTCompound> {
     }
 
     @Override
-    public boolean check(String key, NBTType nbtType, NBTCompound value) {
+    public boolean check(String key, NBTType nbtType, EvalContext context, NBTCompound value) {
         return !value.getKeys().isEmpty();
     }
 
@@ -136,7 +140,7 @@ public class QueryNodeCompound extends QueryNode<NBTCompound> {
     }
 
     @Override
-    public void applyValue(String path, String key, NBTCompound value, NBTCompound resultContainer) {
+    public void applyValue(String path, String key, EvalContext context, NBTCompound value, NBTCompound resultContainer) {
         String newPath = path + "." + key;
         NBTCompound container = preservePath ? resultContainer.addCompound(key) : resultContainer;
         Set<String> keys;
@@ -149,10 +153,10 @@ public class QueryNodeCompound extends QueryNode<NBTCompound> {
         for (String childKey : keys) {
             QueryNode<?> subQueryNode = getChildren().get(childKey);
             if (subQueryNode != null) {
-                subQueryNode.visit(newPath, childKey, value, container);
+                subQueryNode.visit(newPath, childKey, context, value, container);
             } else {
-                QueryNodeBoolean node = new QueryNodeBoolean(true, childKey, newPath);
-                node.visit(newPath, childKey, value, container);
+                QueryNodeBoolean node = new QueryNodeBoolean(new BoolOperatorConst(true), childKey, newPath);
+                node.visit(newPath, childKey, context, value, container);
             }
         }
     }

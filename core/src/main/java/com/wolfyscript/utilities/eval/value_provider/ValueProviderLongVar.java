@@ -16,28 +16,19 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.util.eval.value_providers;
+package com.wolfyscript.utilities.eval.value_provider;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wolfyscript.utilities.KeyedStaticId;
 import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.eval.context.EvalContext;
+import me.wolfyscript.utilities.util.eval.value_providers.ValueProviderVariable;
 
-@KeyedStaticId(key = "string/const")
-public class ValueProviderStringConst extends AbstractValueProvider<String> {
-
-    private final String value;
+@KeyedStaticId(key = "long/var")
+public class ValueProviderLongVar extends ValueProviderVariable<Long> implements ValueProviderLong {
 
     @JsonCreator
-    public ValueProviderStringConst(@JsonProperty("value") String value) {
-        super();
-        this.value = value;
+    public ValueProviderLongVar(@JsonProperty("var") String name) {
+        super(Long.class, name);
     }
-
-    @Override
-    public String getValue(EvalContext context) {
-        return value;
-    }
-
 }

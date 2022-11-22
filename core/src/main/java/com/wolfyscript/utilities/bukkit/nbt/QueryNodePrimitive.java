@@ -27,6 +27,8 @@ import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import me.wolfyscript.utilities.util.eval.context.EvalContext;
+import me.wolfyscript.utilities.util.eval.value_providers.ValueProvider;
 import me.wolfyscript.utilities.util.json.jackson.annotations.KeyedBaseType;
 
 import java.util.Objects;
@@ -34,10 +36,10 @@ import java.util.Objects;
 @KeyedBaseType(baseType = QueryNode.class)
 public abstract class QueryNodePrimitive<VAL> extends QueryNode<VAL> {
 
-    protected final VAL value;
+    protected final ValueProvider<VAL> value;
 
     @JsonCreator
-    protected QueryNodePrimitive(NamespacedKey type, VAL value, @JacksonInject("key") String key, @JacksonInject("path") String parentPath) {
+    protected QueryNodePrimitive(NamespacedKey type, ValueProvider<VAL> value, @JacksonInject("key") String key, @JacksonInject("path") String parentPath) {
         super(type, key, parentPath);
         this.value = value;
     }
@@ -49,7 +51,7 @@ public abstract class QueryNodePrimitive<VAL> extends QueryNode<VAL> {
     }
 
     @Override
-    public boolean check(String key, NBTType nbtType, VAL value) {
-        return Objects.equals(this.value, value);
+    public boolean check(String key, NBTType nbtType, EvalContext context, VAL value) {
+        return Objects.equals(this.value.getValue(context), value);
     }
 }
