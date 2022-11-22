@@ -19,7 +19,7 @@
 package me.wolfyscript.utilities.util.particles.shapes;
 
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import me.wolfyscript.utilities.util.math.MathUtil;
+import com.wolfyscript.utilities.bukkit.math.MathUtil;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 

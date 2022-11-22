@@ -23,8 +23,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import me.wolfyscript.utilities.util.math.MathUtil;
-import me.wolfyscript.utilities.util.math.Triangle;
+import com.wolfyscript.utilities.bukkit.math.MathUtil;
+import com.wolfyscript.utilities.bukkit.math.Triangle;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;

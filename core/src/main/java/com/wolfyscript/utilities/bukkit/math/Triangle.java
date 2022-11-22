@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.util.math;
+package com.wolfyscript.utilities.bukkit.math;
 
 import org.bukkit.util.Vector;
 
