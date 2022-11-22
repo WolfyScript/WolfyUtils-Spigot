@@ -36,6 +36,12 @@ public abstract class ValueProviderVariable<V> extends AbstractValueProvider<V> 
         this.variable = variable;
     }
 
+    protected ValueProviderVariable(Class<V> typeClass, String variable) {
+        super();
+        this.typeClass = typeClass;
+        this.variable = variable;
+    }
+
     @Override
     public V getValue(EvalContext context) {
         return typeClass.cast(context.getVariable(variable));

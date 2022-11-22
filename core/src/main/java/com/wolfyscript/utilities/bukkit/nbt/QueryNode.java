@@ -42,6 +42,7 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import me.wolfyscript.utilities.util.Keyed;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import me.wolfyscript.utilities.util.eval.context.EvalContext;
 import me.wolfyscript.utilities.util.json.jackson.KeyedTypeIdResolver;
 import me.wolfyscript.utilities.util.json.jackson.KeyedTypeResolver;
 import me.wolfyscript.utilities.util.json.jackson.ValueDeserializer;
@@ -99,7 +100,7 @@ public abstract class QueryNode<VAL> implements Keyed {
         return Optional.empty();
     }
 
-    public abstract boolean check(String key, NBTType nbtType, VAL value);
+    public abstract boolean check(String key, NBTType nbtType, EvalContext context, VAL value);
 
     /**
      * Applies the value to the specified key in the result NBTCompound.
@@ -109,7 +110,7 @@ public abstract class QueryNode<VAL> implements Keyed {
      * @param value           The available value read from the parent. (Read via {@link #readValue(String, String, NBTCompound)})
      * @param resultContainer The result NBTCompound to apply the value to. This compound is part of the container that will be returned once the query is completed.
      */
-    protected abstract void applyValue(String path, String key, VAL value, NBTCompound resultContainer);
+    protected abstract void applyValue(String path, String key, EvalContext context, VAL value, NBTCompound resultContainer);
 
     /**
      * Applies the value to result NBTList.
@@ -119,16 +120,16 @@ public abstract class QueryNode<VAL> implements Keyed {
      * @param value      The available value read from the parent. (Read via {@link #readValue(String, int, NBTList)})
      * @param resultList The result NBTList to apply the value to. This list is part of the container that will be returned once the query is completed.
      */
-    protected void applyValue(String path, int index, VAL value, NBTList<VAL> resultList) {
+    protected void applyValue(String path, int index, EvalContext context, VAL value, NBTList<VAL> resultList) {
         resultList.add(value);
     }
 
-    public final void visit(String path, String key, NBTCompound parent, NBTCompound resultContainer) {
-        readValue(path, key, parent).filter(val -> check(key, parent.getType(key), val)).ifPresent(val -> applyValue(path, key, val, resultContainer));
+    public final void visit(String path, String key, EvalContext context, NBTCompound parent, NBTCompound resultContainer) {
+        readValue(path, key, parent).filter(val -> check(key, parent.getType(key), context, val)).ifPresent(val -> applyValue(path, key, context, val, resultContainer));
     }
 
-    public void visit(String path, int index, NBTList<VAL> parentList, NBTList<VAL> resultList) {
-        readValue(path, index, parentList).filter(val -> check(key, parentList.getType(), val)).ifPresent(val -> applyValue(path, index, val, resultList));
+    public void visit(String path, int index, EvalContext context, NBTList<VAL> parentList, NBTList<VAL> resultList) {
+        readValue(path, index, parentList).filter(val -> check(key, parentList.getType(), context, val)).ifPresent(val -> applyValue(path, index, context, val, resultList));
     }
 
     @JsonGetter("type")
@@ -178,7 +179,7 @@ public abstract class QueryNode<VAL> implements Keyed {
                 case VALUE_STRING -> {
                     node = jsonParser.readValueAsTree();
                     var text = node.asText();
-                    yield switch (!text.isBlank() ? text.charAt(text.length() - 1) : 'S') {
+                    yield switch (!text.isBlank() ? text.charAt(text.length() - 1) : '0') {
                         case 'b', 'B' -> QueryNodeByte.TYPE;
                         case 's', 'S' -> QueryNodeShort.TYPE;
                         case 'i', 'I' -> QueryNodeInt.TYPE;

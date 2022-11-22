@@ -9,14 +9,17 @@ import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
 import java.util.Optional;
+import me.wolfyscript.utilities.util.eval.context.EvalContext;
+import me.wolfyscript.utilities.util.eval.value_providers.ValueProvider;
+import me.wolfyscript.utilities.util.eval.value_providers.ValueProviderInteger;
 
 public class QueryNodeInt extends QueryNodePrimitive<Integer> {
 
     public static final NamespacedKey TYPE = NamespacedKey.wolfyutilties("int");
 
     @JsonCreator
-    public QueryNodeInt(@JsonProperty("value") JsonNode valueNode, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
-        super(TYPE, valueNode.isTextual() ? Integer.parseInt(valueNode.asText().replaceAll("[iI]", "")) : valueNode.numberValue().intValue(), key, parentPath);
+    public QueryNodeInt(@JsonProperty("value") ValueProvider<Integer> value, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
+        super(TYPE, value, key, parentPath);
         this.nbtType = NBTType.NBTTagInt;
     }
 
@@ -30,7 +33,7 @@ public class QueryNodeInt extends QueryNodePrimitive<Integer> {
     }
 
     @Override
-    protected void applyValue(String path, String key, Integer value, NBTCompound resultContainer) {
+    protected void applyValue(String path, String key, EvalContext context, Integer value, NBTCompound resultContainer) {
         resultContainer.setInteger(key, value);
     }
 

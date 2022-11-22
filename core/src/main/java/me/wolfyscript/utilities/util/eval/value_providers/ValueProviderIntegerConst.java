@@ -20,9 +20,11 @@ package me.wolfyscript.utilities.util.eval.value_providers;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wolfyscript.utilities.KeyedStaticId;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.eval.context.EvalContext;
 
+@KeyedStaticId(key = "int/const")
 public class ValueProviderIntegerConst extends AbstractValueProvider<Integer> implements ValueProviderInteger {
 
     public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("int/const");
@@ -31,7 +33,7 @@ public class ValueProviderIntegerConst extends AbstractValueProvider<Integer> im
 
     @JsonCreator
     public ValueProviderIntegerConst(@JsonProperty("value") int value) {
-        super(KEY);
+        super();
         this.value = value;
     }
 
