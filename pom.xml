@@ -36,9 +36,9 @@
         <!-- The dependency versions -->
         <depend_version.spigotapi>1.19-R0.1-SNAPSHOT</depend_version.spigotapi>
         <depend_version.mojang-authlib>1.5.21</depend_version.mojang-authlib>
-        <depend_version.jackson>2.14.0-rc1</depend_version.jackson>
+        <depend_version.jackson>2.14.0</depend_version.jackson>
         <depend_version.jetbrains-annotations>23.0.0</depend_version.jetbrains-annotations>
-        <depend_version.netty>4.1.77.Final</depend_version.netty>
+        <depend_version.netty>4.1.85.Final</depend_version.netty>
         <depend_version.guice>5.1.0</depend_version.guice>
         <depend_version.reflections>0.10.2</depend_version.reflections>
         <depend_version.bstats>3.0.0</depend_version.bstats>
@@ -46,7 +46,10 @@
         <depend_version.adventure-platform>4.1.2</depend_version.adventure-platform>
         <depend_version.adventure-minimessage>4.11.0</depend_version.adventure-minimessage>
         <depend_version.nbt-api>2.10.0</depend_version.nbt-api>
-        <depend_version.javassist>3.29.1-GA</depend_version.javassist>
+        <depend_version.javassist>3.29.2-GA</depend_version.javassist>
+        <depend_version.test.jupiter>5.9.0</depend_version.test.jupiter>
+        <depend_version.test.mockito>4.8.0</depend_version.test.mockito>
+        <depend_version.test.mockbukkit>2.85.2</depend_version.test.mockbukkit>
     </properties>
 
     <build>
@@ -138,19 +141,16 @@
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
             <version>${depend_version.guice}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>${depend_version.reflections}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
             <version>${depend_version.javassist}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
@@ -181,19 +181,16 @@
             <groupId>net.kyori</groupId>
             <artifactId>adventure-api</artifactId>
             <version>${depend_version.adventure-api}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-platform-bukkit</artifactId>
             <version>${depend_version.adventure-platform}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-minimessage</artifactId>
             <version>${depend_version.adventure-minimessage}</version>
-            <scope>provided</scope>
         </dependency>
         <!-- NBT -->
         <dependency>
