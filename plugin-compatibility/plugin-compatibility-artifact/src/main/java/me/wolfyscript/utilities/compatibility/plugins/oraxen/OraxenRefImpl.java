@@ -21,6 +21,7 @@ package me.wolfyscript.utilities.compatibility.plugins.oraxen;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.wolfyscript.utilities.bukkit.compatibility.plugins.oraxen.OraxenRef;
 import io.th0rgal.oraxen.items.OraxenItems;
 import java.io.IOException;
 import java.util.Objects;

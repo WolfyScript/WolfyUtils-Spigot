@@ -22,7 +22,7 @@ import com.elmakers.mine.bukkit.api.event.LoadEvent;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
-import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
+import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.magic.MagicRefImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;

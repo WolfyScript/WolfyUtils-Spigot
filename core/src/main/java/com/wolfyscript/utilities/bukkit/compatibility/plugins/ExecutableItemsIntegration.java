@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.compatibility.plugins;
+package com.wolfyscript.utilities.bukkit.compatibility.plugins;
 
 import java.util.List;
 

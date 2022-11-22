@@ -90,8 +90,8 @@ import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReferen
 import me.wolfyscript.utilities.api.inventory.custom_items.references.VanillaRef;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.WolfyUtilitiesRef;
 import com.wolfyscript.utilities.bukkit.nms.item.crafting.FunctionalRecipeGenerator;
-import me.wolfyscript.utilities.compatibility.CompatibilityManager;
-import me.wolfyscript.utilities.compatibility.CompatibilityManagerBukkit;
+import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManager;
+import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManagerBukkit;
 import me.wolfyscript.utilities.main.WUPlugin;
 import me.wolfyscript.utilities.main.configs.WUConfig;
 import me.wolfyscript.utilities.messages.MessageFactory;

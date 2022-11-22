@@ -16,9 +16,9 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.compatibility.plugins;
+package com.wolfyscript.utilities.bukkit.compatibility.plugins;
 
-import me.wolfyscript.utilities.compatibility.PluginIntegration;
+import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegration;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

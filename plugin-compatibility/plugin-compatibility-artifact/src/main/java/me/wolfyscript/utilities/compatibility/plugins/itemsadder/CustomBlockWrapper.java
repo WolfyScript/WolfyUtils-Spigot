@@ -1,5 +1,6 @@
 package me.wolfyscript.utilities.compatibility.plugins.itemsadder;
 
+import com.wolfyscript.utilities.bukkit.compatibility.plugins.itemsadder.CustomBlock;
 import java.util.List;
 import java.util.Optional;
 import org.bukkit.Location;

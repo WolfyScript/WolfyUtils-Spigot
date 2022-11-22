@@ -16,9 +16,9 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.compatibility.plugins;
+package com.wolfyscript.utilities.bukkit.compatibility.plugins;
 
-import me.wolfyscript.utilities.compatibility.PluginIntegration;
+import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegration;
 
 public interface OraxenIntegration extends PluginIntegration {
 

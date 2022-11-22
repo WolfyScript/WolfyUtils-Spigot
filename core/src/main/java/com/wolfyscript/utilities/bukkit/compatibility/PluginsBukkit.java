@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.compatibility;
+package com.wolfyscript.utilities.bukkit.compatibility;
 
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;

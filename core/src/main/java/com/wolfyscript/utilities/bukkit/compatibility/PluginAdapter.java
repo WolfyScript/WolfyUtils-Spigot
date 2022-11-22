@@ -16,7 +16,25 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.compatibility.plugins.mythicmobs;
+package com.wolfyscript.utilities.bukkit.compatibility;
 
-public interface MythicMobsRef {
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+
+/**
+ * These adapters are used for easier management of plugin dependent classes.<br>
+ * e.g. If you have a soft-depend and need to only register an object when it is available.
+ *
+ */
+public abstract class PluginAdapter {
+
+    private final BukkitNamespacedKey key;
+
+    protected PluginAdapter(BukkitNamespacedKey namespacedKey) {
+        this.key = namespacedKey;
+    }
+
+    public final BukkitNamespacedKey getNamespacedKey() {
+        return key;
+    }
+
 }

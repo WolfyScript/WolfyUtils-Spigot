@@ -18,6 +18,7 @@
 
 package me.wolfyscript.utilities.compatibility.plugins;
 
+import com.wolfyscript.utilities.bukkit.compatibility.plugins.MythicMobsIntegration;
 import io.lumine.xikage.mythicmobs.MythicMobs;
 import io.lumine.xikage.mythicmobs.adapters.bukkit.BukkitAdapter;
 import io.lumine.xikage.mythicmobs.mobs.MythicMob;
@@ -25,7 +26,7 @@ import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
-import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
+import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.mythicmobs.MythicMobs5RefImpl;
 import me.wolfyscript.utilities.compatibility.plugins.mythicmobs.MythicMobsRefImpl;
 import org.bukkit.Location;

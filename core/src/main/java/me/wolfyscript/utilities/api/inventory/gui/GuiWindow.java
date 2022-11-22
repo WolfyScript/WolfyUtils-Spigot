@@ -31,7 +31,7 @@ import me.wolfyscript.utilities.api.inventory.gui.button.buttons.MultipleChoiceB
 import me.wolfyscript.utilities.api.inventory.gui.button.buttons.ToggleButton;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
-import me.wolfyscript.utilities.compatibility.plugins.PlaceholderAPIIntegration;
+import com.wolfyscript.utilities.bukkit.compatibility.plugins.PlaceholderAPIIntegration;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.Pair;
 import me.wolfyscript.utilities.util.chat.ChatColor;

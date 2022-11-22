@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.compatibility;
+package com.wolfyscript.utilities.bukkit.compatibility;
 
 public interface CompatibilityManager {
 

@@ -16,25 +16,10 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.compatibility;
+package com.wolfyscript.utilities.bukkit.compatibility.plugins.magic;
 
-import me.wolfyscript.utilities.api.WolfyUtilCore;
+public interface MagicRef {
 
-public final class CompatibilityManagerBukkit implements CompatibilityManager {
 
-    private final WolfyUtilCore core;
-    private final PluginsBukkit pluginsBukkit;
 
-    public CompatibilityManagerBukkit(WolfyUtilCore core) {
-        this.core = core;
-        this.pluginsBukkit = new PluginsBukkit(core);
-    }
-
-    public void init() {
-        pluginsBukkit.init();
-    }
-
-    public Plugins getPlugins() {
-        return pluginsBukkit;
-    }
 }

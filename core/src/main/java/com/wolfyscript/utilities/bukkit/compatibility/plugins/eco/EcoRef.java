@@ -16,14 +16,11 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.compatibility.plugins;
+package com.wolfyscript.utilities.bukkit.compatibility.plugins.eco;
 
-import me.wolfyscript.utilities.compatibility.PluginIntegration;
-import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 
-public interface MythicMobsIntegration extends PluginIntegration {
+public interface EcoRef {
 
-    String KEY = "MythicMobs";
-
-    void spawnMob(String mobName, Location location, int mobLevel);
+    NamespacedKey getKey();
 }

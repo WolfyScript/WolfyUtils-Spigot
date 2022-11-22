@@ -16,10 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.compatibility.plugins.oraxen;
+package com.wolfyscript.utilities.bukkit.compatibility.plugins.mmoitems;
 
-public interface OraxenRef {
-
-    String getItemID();
-
+public interface MMOItemsRef {
 }

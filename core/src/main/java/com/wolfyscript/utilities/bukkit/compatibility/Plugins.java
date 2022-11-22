@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.compatibility;
+package com.wolfyscript.utilities.bukkit.compatibility;
 
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.jetbrains.annotations.Nullable;

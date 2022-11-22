@@ -20,6 +20,7 @@ package me.wolfyscript.utilities.compatibility.plugins.mythicmobs;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.wolfyscript.utilities.bukkit.compatibility.plugins.mythicmobs.MythicMobsRef;
 import java.io.IOException;
 import java.util.Objects;
 import me.wolfyscript.utilities.api.WolfyUtilities;

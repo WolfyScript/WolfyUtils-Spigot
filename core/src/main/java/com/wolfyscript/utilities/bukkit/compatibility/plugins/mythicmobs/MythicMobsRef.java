@@ -16,10 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.compatibility.plugins.itemsadder;
+package com.wolfyscript.utilities.bukkit.compatibility.plugins.mythicmobs;
 
-public interface ItemsAdderRef {
-
-    String getItemID();
-
+public interface MythicMobsRef {
 }

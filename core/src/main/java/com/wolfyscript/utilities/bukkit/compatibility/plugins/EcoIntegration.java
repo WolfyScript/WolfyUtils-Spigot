@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.compatibility.plugins;
+package com.wolfyscript.utilities.bukkit.compatibility.plugins;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;

@@ -21,7 +21,7 @@ package me.wolfyscript.utilities.compatibility.plugins;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
-import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
+import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.mmoitems.MMOItemsRefImpl;
 import org.bukkit.plugin.Plugin;
 

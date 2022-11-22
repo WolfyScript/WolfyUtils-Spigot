@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.willfp.eco.core.items.Items;
+import com.wolfyscript.utilities.bukkit.compatibility.plugins.eco.EcoRef;
 import java.io.IOException;
 import java.util.Objects;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;

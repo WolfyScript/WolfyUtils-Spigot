@@ -20,7 +20,7 @@ package me.wolfyscript.utilities.api.inventory.custom_items.actions;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.compatibility.plugins.PlaceholderAPIIntegration;
+import com.wolfyscript.utilities.bukkit.compatibility.plugins.PlaceholderAPIIntegration;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

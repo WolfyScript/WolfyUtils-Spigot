@@ -16,10 +16,14 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.compatibility.plugins.magic;
+package com.wolfyscript.utilities.bukkit.compatibility.plugins;
 
-public interface MagicRef {
+import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegration;
+import org.bukkit.Location;
 
+public interface MythicMobsIntegration extends PluginIntegration {
 
+    String KEY = "MythicMobs";
 
+    void spawnMob(String mobName, Location location, int mobLevel);
 }

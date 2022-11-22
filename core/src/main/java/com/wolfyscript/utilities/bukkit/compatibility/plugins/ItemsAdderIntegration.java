@@ -16,11 +16,11 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.compatibility.plugins;
+package com.wolfyscript.utilities.bukkit.compatibility.plugins;
 
-import me.wolfyscript.utilities.compatibility.PluginIntegration;
-import me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomBlock;
-import me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomStack;
+import com.wolfyscript.utilities.bukkit.compatibility.plugins.itemsadder.CustomBlock;
+import com.wolfyscript.utilities.bukkit.compatibility.plugins.itemsadder.CustomStack;
+import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegration;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;

@@ -21,6 +21,7 @@ package me.wolfyscript.utilities.compatibility.plugins.mmoitems;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.wolfyscript.utilities.bukkit.compatibility.plugins.mmoitems.MMOItemsRef;
 import io.lumine.mythic.lib.api.item.NBTItem;
 import java.io.IOException;
 import java.util.Objects;

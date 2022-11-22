@@ -16,7 +16,42 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.compatibility.plugins.mmoitems;
+package com.wolfyscript.utilities.bukkit.compatibility.plugins.itemsadder;
 
-public interface MMOItemsRef {
+import org.bukkit.inventory.ItemStack;
+
+public interface CustomStack {
+
+    ItemStack getItemStack();
+
+    String getNamespace();
+
+    String getId();
+
+    String getNamespacedID();
+
+    String getPermission();
+
+    boolean hasPermission();
+
+    boolean isBlock();
+
+    boolean isBlockAllEnchants();
+
+    boolean hasUsagesAttribute();
+
+    void setUsages(int amount);
+
+    void reduceUsages(int amount);
+
+    int getUsages();
+
+    boolean hasCustomDurability();
+
+    int getDurability();
+
+    void setDurability(int durability);
+
+    int getMaxDurability();
+
 }

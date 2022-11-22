@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.compatibility.plugins.itemsadder;
+package com.wolfyscript.utilities.bukkit.compatibility.plugins.itemsadder;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
