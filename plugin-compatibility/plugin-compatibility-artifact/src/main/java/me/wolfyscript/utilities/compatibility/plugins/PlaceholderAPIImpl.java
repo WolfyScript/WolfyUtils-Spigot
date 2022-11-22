@@ -20,7 +20,7 @@ package me.wolfyscript.utilities.compatibility.plugins;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.events.ExpansionsLoadedEvent;
-import me.wolfyscript.utilities.annotations.WUPluginIntegration;
+import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.placeholderapi.value_providers.ValueProviderFloatPAPI;

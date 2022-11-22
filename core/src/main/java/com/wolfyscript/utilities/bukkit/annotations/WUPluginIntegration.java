@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.annotations;
+package com.wolfyscript.utilities.bukkit.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

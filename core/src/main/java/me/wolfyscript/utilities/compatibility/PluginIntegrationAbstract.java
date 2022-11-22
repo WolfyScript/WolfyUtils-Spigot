@@ -18,12 +18,13 @@
 
 package me.wolfyscript.utilities.compatibility;
 
+import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.plugin.Plugin;
 
 /**
- * To add a PluginIntegration you need to extend this class and add the annotation {@link me.wolfyscript.utilities.annotations.WUPluginIntegration} to that class.<br>
+ * To add a PluginIntegration you need to extend this class and add the annotation {@link WUPluginIntegration} to that class.<br>
  * <br>
  * The constructor must have only one parameter of type {@link WolfyUtilCore}, that is passed to the super class.<br>
  * <br>

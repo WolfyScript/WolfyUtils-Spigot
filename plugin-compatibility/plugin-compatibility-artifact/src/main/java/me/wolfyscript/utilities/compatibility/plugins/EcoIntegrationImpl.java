@@ -20,7 +20,7 @@ package me.wolfyscript.utilities.compatibility.plugins;
 
 import com.willfp.eco.core.items.CustomItem;
 import com.willfp.eco.core.items.Items;
-import me.wolfyscript.utilities.annotations.WUPluginIntegration;
+import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
