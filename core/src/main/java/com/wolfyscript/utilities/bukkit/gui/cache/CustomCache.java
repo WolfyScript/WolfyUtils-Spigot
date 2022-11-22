@@ -18,13 +18,12 @@
 
 package com.wolfyscript.utilities.bukkit.gui.cache;
 
-import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import org.jetbrains.annotations.NotNull;
-
+import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import org.jetbrains.annotations.NotNull;
 
 public class CustomCache {
 

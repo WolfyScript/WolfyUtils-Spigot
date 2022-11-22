@@ -18,8 +18,10 @@
 
 package me.wolfyscript.utilities.util.inventory;
 
-import me.wolfyscript.utilities.api.inventory.custom_items.ArmorType;
-import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
+import com.wolfyscript.utilities.bukkit.items.ArmorType;
+import com.wolfyscript.utilities.bukkit.items.CustomItem;
+import java.util.LinkedList;
+import java.util.List;
 import me.wolfyscript.utilities.util.chat.ChatColor;
 import me.wolfyscript.utilities.util.inventory.item_builder.ItemBuilder;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
@@ -31,9 +33,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public class ItemUtils {
 

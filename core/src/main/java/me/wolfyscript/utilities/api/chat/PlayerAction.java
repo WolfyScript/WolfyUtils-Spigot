@@ -18,12 +18,11 @@
 
 package me.wolfyscript.utilities.api.chat;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import java.util.UUID;
 import me.wolfyscript.utilities.util.chat.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
-
-import java.util.UUID;
 
 /**
  * Caches all the data necessary to create and call callbacks, when the corresponding text component is clicked.
@@ -34,7 +33,7 @@ import java.util.UUID;
 public class PlayerAction {
 
     private UUID uuid;
-    private WolfyUtilities api;
+    private WolfyUtilsBukkit api;
 
     /**
      * @deprecated No longer used, as the text is now managed by the parent {@link net.kyori.adventure.text.Component}
@@ -46,7 +45,7 @@ public class PlayerAction {
     private final boolean discard;
 
     @Deprecated(since = "3.16.1.0")
-    public PlayerAction(WolfyUtilities api, Player player, ClickData clickData) {
+    public PlayerAction(WolfyUtilsBukkit api, Player player, ClickData clickData) {
         this.uuid = player.getUniqueId();
         this.api = api;
         this.message = new TextComponent(ChatColor.convert(api.getLanguageAPI().replaceKeys(clickData.getMessage())));
@@ -54,7 +53,7 @@ public class PlayerAction {
         this.discard = clickData.isDiscard();
     }
 
-    public PlayerAction(WolfyUtilities api, Player player, ClickAction action, boolean discard) {
+    public PlayerAction(WolfyUtilsBukkit api, Player player, ClickAction action, boolean discard) {
         this.uuid = player.getUniqueId();
         this.api = api;
         this.message = null;
@@ -76,11 +75,11 @@ public class PlayerAction {
         this.uuid = uuid;
     }
 
-    public WolfyUtilities getApi() {
+    public WolfyUtilsBukkit getApi() {
         return api;
     }
 
-    public void setApi(WolfyUtilities api) {
+    public void setApi(WolfyUtilsBukkit api) {
         this.api = api;
     }
 

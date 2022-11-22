@@ -18,13 +18,12 @@
 
 package me.wolfyscript.utilities.util.inventory;
 
+import java.text.DecimalFormat;
+import java.util.Locale;
 import me.wolfyscript.utilities.util.chat.ChatColor;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
-
-import java.text.DecimalFormat;
-import java.util.Locale;
 
 public class PotionUtils {
 

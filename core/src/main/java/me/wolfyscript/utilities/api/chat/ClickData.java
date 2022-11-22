@@ -18,9 +18,9 @@
 
 package me.wolfyscript.utilities.api.chat;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
+import javax.annotation.Nullable;
 
 @Deprecated
 public class ClickData {

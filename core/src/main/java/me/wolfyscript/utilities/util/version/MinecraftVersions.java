@@ -18,10 +18,9 @@
 
 package me.wolfyscript.utilities.util.version;
 
-import org.bukkit.Bukkit;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.bukkit.Bukkit;
 
 public class MinecraftVersions {
 

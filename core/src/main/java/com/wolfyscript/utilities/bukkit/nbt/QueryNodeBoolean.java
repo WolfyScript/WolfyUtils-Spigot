@@ -28,13 +28,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.eval.context.EvalContext;
+import com.wolfyscript.utilities.eval.operator.BoolOperator;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTList;
 import de.tr7zw.changeme.nbtapi.NBTType;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-
 import java.util.Optional;
-import com.wolfyscript.utilities.eval.operator.BoolOperator;
 
 @KeyedStaticId(key = "bool")
 public class QueryNodeBoolean extends QueryNode<Object> {

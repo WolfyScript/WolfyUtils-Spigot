@@ -1,6 +1,9 @@
 package me.wolfyscript.utilities.api.nms.inventory;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
+import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
+import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -20,9 +23,6 @@ import javassist.LoaderClassPath;
 import javassist.Modifier;
 import javassist.NotFoundException;
 import javassist.bytecode.SignatureAttribute;
-import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
-import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
-import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import me.wolfyscript.utilities.api.nms.inventory.generated.PermissionReference;
 import me.wolfyscript.utilities.util.Reflection;
 import org.bukkit.event.inventory.InventoryType;
@@ -200,7 +200,7 @@ public class InjectGUIInventory {
             bodyBuilder.append("    this.wolfyutils$window = var1;\n");
             bodyBuilder.append('}');
 
-            CtConstructor generatedConstructor = CtNewConstructor.make(signatureBuilder.toString() + bodyBuilder.toString(), wrappedInventory);
+            CtConstructor generatedConstructor = CtNewConstructor.make(signatureBuilder.toString() + bodyBuilder, wrappedInventory);
             wrappedInventory.addConstructor(generatedConstructor);
         }
 

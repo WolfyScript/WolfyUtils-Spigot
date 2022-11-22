@@ -26,16 +26,15 @@ import com.wolfyscript.utilities.bukkit.gui.button.ButtonRender;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonState;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonType;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This Button acts as a container for Items.

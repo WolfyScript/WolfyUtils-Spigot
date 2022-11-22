@@ -20,11 +20,10 @@ package com.wolfyscript.utilities.bukkit.gui.button;
 
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
+import java.util.HashMap;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.HashMap;
 
 /**
  * <strong>

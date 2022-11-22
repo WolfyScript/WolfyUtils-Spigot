@@ -1,10 +1,10 @@
 package com.wolfyscript.utilities.bukkit.nms.item.crafting;
 
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;

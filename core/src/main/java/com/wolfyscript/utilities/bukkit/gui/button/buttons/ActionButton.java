@@ -30,6 +30,8 @@ import com.wolfyscript.utilities.bukkit.gui.button.ButtonRender;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonState;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonType;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
+import java.io.IOException;
+import java.util.function.Consumer;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -38,9 +40,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.util.function.Consumer;
 
 /**
  * Button that executes the action method and renders the item manipulated via the render method of the ButtonState.

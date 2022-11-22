@@ -19,21 +19,21 @@
 package com.wolfyscript.utilities.bukkit.gui.button;
 
 import com.google.common.base.Preconditions;
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import com.wolfyscript.utilities.bukkit.gui.InventoryAPI;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import java.util.List;
+import java.util.function.Consumer;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * ButtonState represents the state of a Button.
@@ -53,7 +53,7 @@ public class ButtonState<C extends CustomCache> {
     public static final String BUTTON_WINDOW_KEY = "inventories.%s.%s.items.%s";
     public static final String BUTTON_CLUSTER_KEY = "inventories.%s.global_items.%s";
 
-    private WolfyUtilities wolfyUtilities;
+    private WolfyUtilsBukkit wolfyUtilities;
     private String clusterID = null;
     private BukkitNamespacedKey windowID = null;
     private String key;
@@ -87,7 +87,7 @@ public class ButtonState<C extends CustomCache> {
     }
 
     @Deprecated
-    public ButtonState(BukkitNamespacedKey buttonKey, ItemStack presetIcon) {
+    public ButtonState(NamespacedKey buttonKey, ItemStack presetIcon) {
         Preconditions.checkArgument(buttonKey != null, "Cannot create ButtonState with missing key!");
         Preconditions.checkArgument(presetIcon != null, "Cannot create ButtonState with missing icon! Provided icon: " + presetIcon);
         this.key = buttonKey.getKey();
@@ -96,7 +96,7 @@ public class ButtonState<C extends CustomCache> {
     }
 
     @Deprecated
-    public ButtonState(BukkitNamespacedKey buttonKey, Material presetIcon) {
+    public ButtonState(NamespacedKey buttonKey, Material presetIcon) {
         this(buttonKey, new ItemStack(presetIcon));
     }
 
@@ -558,7 +558,7 @@ public class ButtonState<C extends CustomCache> {
      */
     public static class Builder<C extends CustomCache> {
 
-        private final WolfyUtilities api;
+        private final WolfyUtilsBukkit api;
         private final InventoryAPI<C> invApi;
         private GuiWindow<C> window;
         private GuiCluster<C> cluster;
@@ -579,7 +579,7 @@ public class ButtonState<C extends CustomCache> {
             this.cluster = cluster;
         }
 
-        private Builder(InventoryAPI<C> invApi, WolfyUtilities api, String key) {
+        private Builder(InventoryAPI<C> invApi, WolfyUtilsBukkit api, String key) {
             this.api = api;
             this.invApi = invApi;
             this.key = key;

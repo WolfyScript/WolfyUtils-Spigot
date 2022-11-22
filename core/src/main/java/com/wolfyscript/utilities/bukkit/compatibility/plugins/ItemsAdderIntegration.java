@@ -18,14 +18,13 @@
 
 package com.wolfyscript.utilities.bukkit.compatibility.plugins;
 
+import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.itemsadder.CustomBlock;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.itemsadder.CustomStack;
-import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegration;
+import java.util.Optional;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Optional;
 
 public interface ItemsAdderIntegration extends PluginIntegration {
 

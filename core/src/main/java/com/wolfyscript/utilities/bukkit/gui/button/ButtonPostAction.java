@@ -21,12 +21,11 @@ package com.wolfyscript.utilities.bukkit.gui.button;
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.button.buttons.ItemInputButton;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
+import java.io.IOException;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.io.IOException;
 
 /**
  * This interface is identical to the {@link ButtonAction}, however the behavior is different as it is similar to {@link ButtonPreRender}.

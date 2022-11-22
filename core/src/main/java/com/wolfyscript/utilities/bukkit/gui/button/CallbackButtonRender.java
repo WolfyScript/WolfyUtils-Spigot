@@ -20,14 +20,13 @@ package com.wolfyscript.utilities.bukkit.gui.button;
 
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
+import java.util.HashMap;
+import java.util.Optional;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.Optional;
 
 /**
  * @param <C> The type of the {@link CustomCache}

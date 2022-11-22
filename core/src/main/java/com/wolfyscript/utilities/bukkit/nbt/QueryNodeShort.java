@@ -9,8 +9,6 @@ import com.wolfyscript.utilities.eval.context.EvalContext;
 import com.wolfyscript.utilities.eval.value_provider.ValueProviderShort;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTType;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-
 import java.util.Optional;
 
 @KeyedStaticId(key = "short")

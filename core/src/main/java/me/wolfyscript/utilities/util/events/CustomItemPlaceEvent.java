@@ -19,7 +19,7 @@
 package me.wolfyscript.utilities.util.events;
 
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoragePlaceEvent;
-import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
+import com.wolfyscript.utilities.bukkit.items.CustomItem;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;

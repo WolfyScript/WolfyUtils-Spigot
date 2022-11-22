@@ -18,7 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.compatibility;
 
-import me.wolfyscript.utilities.api.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
 
 public final class CompatibilityManagerBukkit implements CompatibilityManager {
 

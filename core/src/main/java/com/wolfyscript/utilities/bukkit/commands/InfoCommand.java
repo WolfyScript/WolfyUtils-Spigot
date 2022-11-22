@@ -19,6 +19,7 @@
 package com.wolfyscript.utilities.bukkit.commands;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import java.util.List;
 import me.wolfyscript.utilities.util.version.ServerVersion;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -29,8 +30,6 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class InfoCommand implements TabExecutor {
 
@@ -43,7 +42,7 @@ public class InfoCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player)) return true;
-        plugin.getWolfyUtilities().getChat().sendMessages((Player) sender, true,
+        plugin.getWolfyUtils().getChat().sendMessages((Player) sender, true,
                 Component.text("——————— ", NamedTextColor.GRAY).append(Component.text("WolfyUtilities", NamedTextColor.AQUA, TextDecoration.BOLD)).append(Component.text(" ———————")),
                 Component.empty(),
                 Component.text("Author: ", NamedTextColor.GRAY).append(Component.text(String.join(", ", plugin.getDescription().getAuthors()), null, TextDecoration.BOLD)),

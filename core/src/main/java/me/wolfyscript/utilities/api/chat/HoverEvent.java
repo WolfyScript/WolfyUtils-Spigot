@@ -18,7 +18,7 @@
 
 package me.wolfyscript.utilities.api.chat;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.inventory.ItemStack;
@@ -39,7 +39,7 @@ public class HoverEvent implements ChatEvent<net.md_5.bungee.api.chat.HoverEvent
     }
 
     public HoverEvent(ItemStack itemStack) {
-        this(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(WolfyUtilities.getWUCore().getNmsUtil().getItemUtil().getItemStackJson(itemStack)).create());
+        this(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_ITEM, new ComponentBuilder(WolfyCoreBukkit.getInstance().getWolfyUtils().getNmsUtil().getItemUtil().getItemStackJson(itemStack)).create());
     }
 
     public HoverEvent(Action action, BaseComponent[] value) {

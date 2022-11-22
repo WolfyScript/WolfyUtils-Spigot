@@ -1,6 +1,6 @@
 package com.wolfyscript.utilities.bukkit.nms.fallback;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import me.wolfyscript.utilities.api.nms.BlockUtil;
 import me.wolfyscript.utilities.api.nms.InventoryUtil;
 import me.wolfyscript.utilities.api.nms.ItemUtil;
@@ -21,7 +21,7 @@ public class FallbackNMSEntry extends NMSUtil {
      *
      * @param wolfyUtilities
      */
-    public FallbackNMSEntry(WolfyUtilities wolfyUtilities) {
+    public FallbackNMSEntry(WolfyUtilsBukkit wolfyUtilities) {
         super(wolfyUtilities);
         this.inventoryUtil = new FallbackInventoryUtilImpl(this);
     }

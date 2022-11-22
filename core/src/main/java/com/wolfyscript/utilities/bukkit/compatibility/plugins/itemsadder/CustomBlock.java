@@ -1,12 +1,11 @@
 package com.wolfyscript.utilities.bukkit.compatibility.plugins.itemsadder;
 
+import java.util.List;
+import java.util.Optional;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.List;
-import java.util.Optional;
 
 public interface CustomBlock {
 

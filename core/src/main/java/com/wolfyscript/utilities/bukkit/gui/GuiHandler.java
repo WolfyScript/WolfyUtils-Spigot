@@ -18,14 +18,19 @@
 
 package com.wolfyscript.utilities.bukkit.gui;
 
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
-import me.wolfyscript.utilities.api.WolfyUtilities;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonAction;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonRender;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -35,13 +40,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * This object is used to store all relevant data for the Player using the GUI.<br>
@@ -62,7 +60,7 @@ import java.util.UUID;
  */
 public class GuiHandler<C extends CustomCache> implements Listener {
 
-    private final WolfyUtilities api;
+    private final WolfyUtilsBukkit api;
     private final InventoryAPI<C> invAPI;
     private final UUID uuid;
     private final Map<GuiCluster<C>, List<GuiWindow<C>>> clusterHistory;
@@ -77,7 +75,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
 
     private final C customCache;
 
-    public GuiHandler(Player player, WolfyUtilities api, InventoryAPI<C> invAPI, C customCache) {
+    public GuiHandler(Player player, WolfyUtilsBukkit api, InventoryAPI<C> invAPI, C customCache) {
         this.api = api;
         this.invAPI = invAPI;
         this.uuid = player.getUniqueId();
@@ -101,7 +99,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      * @deprecated Use {@link #getWolfyUtils()} instead.
      */
     @Deprecated
-    public WolfyUtilities getApi() {
+    public WolfyUtilsBukkit getApi() {
         return api;
     }
 

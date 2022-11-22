@@ -18,7 +18,7 @@
 
 package me.wolfyscript.utilities.util.events;
 
-import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
+import com.wolfyscript.utilities.bukkit.items.CustomItem;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;

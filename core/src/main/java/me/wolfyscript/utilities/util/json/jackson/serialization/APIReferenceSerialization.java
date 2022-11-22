@@ -21,14 +21,13 @@ package me.wolfyscript.utilities.util.json.jackson.serialization;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.collect.Streams;
-import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
-import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
-import me.wolfyscript.utilities.api.inventory.custom_items.references.VanillaRef;
+import com.wolfyscript.utilities.bukkit.items.CustomItem;
+import com.wolfyscript.utilities.bukkit.items.references.APIReference;
+import com.wolfyscript.utilities.bukkit.items.references.VanillaRef;
+import java.util.stream.Collectors;
 import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.stream.Collectors;
 
 public class APIReferenceSerialization {
 

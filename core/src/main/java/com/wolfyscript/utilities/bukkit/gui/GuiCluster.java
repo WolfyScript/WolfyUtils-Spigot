@@ -18,6 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.gui;
 
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
 import com.wolfyscript.utilities.bukkit.gui.button.buttons.ActionButton;
 import com.wolfyscript.utilities.bukkit.gui.button.buttons.ChatInputButton;
@@ -26,12 +27,10 @@ import com.wolfyscript.utilities.bukkit.gui.button.buttons.ItemInputButton;
 import com.wolfyscript.utilities.bukkit.gui.button.buttons.MultipleChoiceButton;
 import com.wolfyscript.utilities.bukkit.gui.button.buttons.ToggleButton;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-
 import java.util.HashMap;
 import java.util.Map;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 /**
  * The GuiCluster combines multiple child <b>{@link GuiWindow}s</b>.<br>

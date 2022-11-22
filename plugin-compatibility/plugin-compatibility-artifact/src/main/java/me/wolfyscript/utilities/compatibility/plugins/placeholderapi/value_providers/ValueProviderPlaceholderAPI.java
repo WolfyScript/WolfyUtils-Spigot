@@ -20,7 +20,7 @@ package me.wolfyscript.utilities.compatibility.plugins.placeholderapi.value_prov
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wolfyscript.utilities.eval.context.EvalContext;
-import me.wolfyscript.utilities.api.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.PlaceholderAPIIntegration;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.eval.context.EvalContextPlayer;

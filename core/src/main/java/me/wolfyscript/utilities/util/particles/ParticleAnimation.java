@@ -22,12 +22,20 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wolfyscript.utilities.NamespacedKey;
-import me.wolfyscript.utilities.api.WolfyUtilities;
 import com.wolfyscript.utilities.Keyed;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import me.wolfyscript.utilities.util.entity.PlayerUtils;
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.json.annotations.OptionalKeyReference;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import me.wolfyscript.utilities.util.entity.PlayerUtils;
 import me.wolfyscript.utilities.util.particles.pos.ParticlePos;
 import me.wolfyscript.utilities.util.particles.pos.ParticlePosBlock;
 import me.wolfyscript.utilities.util.particles.pos.ParticlePosEntity;
@@ -43,16 +51,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * ParticleAnimations are used to combine {@link ParticleEffect}s and schedule them to create animations.<br>
@@ -284,7 +282,7 @@ public class ParticleAnimation implements Keyed {
          * @return The UUID of the running animation.
          */
         public UUID start() {
-            this.task = Bukkit.getScheduler().runTaskTimer(WolfyUtilities.getWUPlugin(), this, delay, 1);
+            this.task = Bukkit.getScheduler().runTaskTimer(WolfyCoreBukkit.getInstance(), this, delay, 1);
             this.uuid = ParticleUtils.addScheduler(this);
             return uuid;
         }

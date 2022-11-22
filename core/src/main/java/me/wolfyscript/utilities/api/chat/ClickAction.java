@@ -18,13 +18,13 @@
 
 package me.wolfyscript.utilities.api.chat;
 
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.common.WolfyUtils;
-import me.wolfyscript.utilities.api.WolfyUtilities;
 import org.bukkit.entity.Player;
 
 public interface ClickAction extends ClickActionCallback {
 
-    void run(WolfyUtilities api, Player player);
+    void run(WolfyUtilsBukkit api, Player player);
 
     @Override
     default void run(WolfyUtils wolfyUtils, com.wolfyscript.utilities.common.adapters.Player player) {

@@ -18,19 +18,19 @@
 
 package com.wolfyscript.utilities.bukkit.listeners.custom_item;
 
-import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.DataPlayerEvent;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayerConsumeItem;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayerInteract;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayerInteractAtEntity;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayerInteractEntity;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayerItemBreak;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayerItemDamage;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayerItemDrop;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayerItemHandSwap;
-import com.wolfyscript.utilities.bukkit.registry.RegistryCustomItem;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.items.CustomItem;
+import com.wolfyscript.utilities.bukkit.items.actions.DataPlayerEvent;
+import com.wolfyscript.utilities.bukkit.items.actions.EventPlayerConsumeItem;
+import com.wolfyscript.utilities.bukkit.items.actions.EventPlayerInteract;
+import com.wolfyscript.utilities.bukkit.items.actions.EventPlayerInteractAtEntity;
+import com.wolfyscript.utilities.bukkit.items.actions.EventPlayerInteractEntity;
+import com.wolfyscript.utilities.bukkit.items.actions.EventPlayerItemBreak;
+import com.wolfyscript.utilities.bukkit.items.actions.EventPlayerItemDamage;
+import com.wolfyscript.utilities.bukkit.items.actions.EventPlayerItemDrop;
+import com.wolfyscript.utilities.bukkit.items.actions.EventPlayerItemHandSwap;
+import com.wolfyscript.utilities.bukkit.registry.RegistryCustomItem;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;

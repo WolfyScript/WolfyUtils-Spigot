@@ -20,12 +20,11 @@ package me.wolfyscript.utilities.util.json.jackson.serialization;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import java.util.UUID;
 import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-
-import java.util.UUID;
 
 public class LocationSerialization {
 
@@ -44,7 +43,7 @@ public class LocationSerialization {
             gen.writeEndObject();
         }, (p, d) -> {
             JsonNode node = p.readValueAsTree();
-            var api = WolfyUtilities.getWUCore();
+            var api = WolfyCoreBukkit.getInstance().getWolfyUtils();
             if (node.isObject()) {
                 var uuid = UUID.fromString(node.get("world").asText());
                 var world = Bukkit.getWorld(uuid);

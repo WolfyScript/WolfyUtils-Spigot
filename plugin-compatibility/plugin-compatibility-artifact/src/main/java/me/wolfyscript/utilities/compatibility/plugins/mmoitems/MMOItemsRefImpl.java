@@ -25,7 +25,7 @@ import com.wolfyscript.utilities.bukkit.compatibility.plugins.mmoitems.MMOItemsR
 import io.lumine.mythic.lib.api.item.NBTItem;
 import java.io.IOException;
 import java.util.Objects;
-import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
+import com.wolfyscript.utilities.bukkit.items.references.APIReference;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.Type;
 import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;

@@ -18,10 +18,9 @@
 
 package me.wolfyscript.utilities.util.version;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Comparator;
 import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
 public class MinecraftVersion implements Comparable<MinecraftVersion> {
 

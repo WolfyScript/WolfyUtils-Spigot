@@ -18,14 +18,13 @@
 
 package me.wolfyscript.utilities.api.nms;
 
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.nms.fallback.FallbackNMSEntry;
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
 import me.wolfyscript.utilities.util.Reflection;
 import me.wolfyscript.utilities.util.version.ServerVersion;
 import org.bukkit.plugin.Plugin;
-
-import java.lang.reflect.Constructor;
-import java.util.HashMap;
 
 public abstract class NMSUtil {
 
@@ -40,7 +39,7 @@ public abstract class NMSUtil {
         versionAdapters.putIfAbsent(adapter.version, adapter);
     }
 
-    private final WolfyUtilities wolfyUtilities;
+    private final WolfyUtilsBukkit wolfyUtilities;
 
     private final Plugin plugin;
     protected BlockUtil blockUtil;
@@ -56,7 +55,7 @@ public abstract class NMSUtil {
      *
      * @param wolfyUtilities
      */
-    protected NMSUtil(WolfyUtilities wolfyUtilities) {
+    protected NMSUtil(WolfyUtilsBukkit wolfyUtilities) {
         this.wolfyUtilities = wolfyUtilities;
         this.plugin = wolfyUtilities.getPlugin();
     }
@@ -71,7 +70,7 @@ public abstract class NMSUtil {
      * @param wolfyUtilities
      * @return
      */
-    public static NMSUtil create(WolfyUtilities wolfyUtilities) {
+    public static NMSUtil create(WolfyUtilsBukkit wolfyUtilities) {
         if(ServerVersion.isIsJUnitTest()) {
             return null;
         }
@@ -85,7 +84,7 @@ public abstract class NMSUtil {
             String className = NMSUtil.class.getPackage().getName() + '.' + version + ".NMSEntry";
             Class<?> nmsUtilsType = Class.forName(className);
             if (NMSUtil.class.isAssignableFrom(nmsUtilsType)) {
-                Constructor<?> constructor = nmsUtilsType.getDeclaredConstructor(WolfyUtilities.class);
+                Constructor<?> constructor = nmsUtilsType.getDeclaredConstructor(WolfyUtilsBukkit.class);
                 constructor.setAccessible(true);
                 return ((NMSUtil) constructor.newInstance(wolfyUtilities));
             }
@@ -97,7 +96,7 @@ public abstract class NMSUtil {
         return new FallbackNMSEntry(wolfyUtilities);
     }
 
-    public WolfyUtilities getWolfyUtilities() {
+    public WolfyUtilsBukkit getWolfyUtilities() {
         return wolfyUtilities;
     }
 

@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import de.tr7zw.changeme.nbtapi.NBTType;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-
 import java.util.List;
 
 @KeyedStaticId(key = "list/string")

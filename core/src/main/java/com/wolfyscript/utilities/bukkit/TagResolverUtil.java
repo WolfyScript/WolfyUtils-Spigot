@@ -1,15 +1,13 @@
 package com.wolfyscript.utilities.bukkit;
 
-import me.wolfyscript.utilities.api.WolfyUtilCore;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.PlaceholderAPIIntegration;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
-
-import java.util.List;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class TagResolverUtil {
 

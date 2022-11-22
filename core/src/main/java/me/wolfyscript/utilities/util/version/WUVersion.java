@@ -18,9 +18,8 @@
 
 package me.wolfyscript.utilities.util.version;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Comparator;
+import org.jetbrains.annotations.NotNull;
 
 public class WUVersion implements Comparable<WUVersion> {
 

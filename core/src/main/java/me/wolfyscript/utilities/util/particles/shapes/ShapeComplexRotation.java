@@ -20,11 +20,10 @@ package me.wolfyscript.utilities.util.particles.shapes;
 
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.math.MathUtil;
-import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Objects;
 import java.util.function.Consumer;
+import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A complex shape that rotates the contained shape with the given settings.<br>

@@ -18,10 +18,12 @@
 
 package com.wolfyscript.utilities.bukkit.listeners;
 
-import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.api.inventory.custom_items.ArmorType;
-import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
-import me.wolfyscript.utilities.main.WUPlugin;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.items.ArmorType;
+import com.wolfyscript.utilities.bukkit.items.CustomItem;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 import me.wolfyscript.utilities.util.events.ArmorEquipEvent;
 import me.wolfyscript.utilities.util.events.EventFactory;
 import me.wolfyscript.utilities.util.inventory.InventoryUtils;
@@ -50,15 +52,11 @@ import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
-
 public class EquipListener implements Listener {
 
-    private final WolfyUtilCore core;
+    private final WolfyCoreBukkit core;
 
-    public EquipListener(WUPlugin core) {
+    public EquipListener(WolfyCoreBukkit core) {
         this.core = core;
     }
 

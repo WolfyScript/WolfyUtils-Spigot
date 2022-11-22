@@ -25,7 +25,7 @@ import com.wolfyscript.utilities.bukkit.compatibility.plugins.oraxen.OraxenRef;
 import io.th0rgal.oraxen.items.OraxenItems;
 import java.io.IOException;
 import java.util.Objects;
-import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
+import com.wolfyscript.utilities.bukkit.items.references.APIReference;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;

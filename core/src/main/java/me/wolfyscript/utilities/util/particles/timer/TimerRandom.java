@@ -20,7 +20,6 @@ package me.wolfyscript.utilities.util.particles.timer;
 
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-
 import java.util.Random;
 
 /**

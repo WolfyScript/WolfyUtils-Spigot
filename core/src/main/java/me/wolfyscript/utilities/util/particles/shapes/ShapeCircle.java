@@ -22,10 +22,9 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import org.bukkit.util.Vector;
-
 import java.util.function.Consumer;
 import java.util.function.Function;
+import org.bukkit.util.Vector;
 
 public class ShapeCircle extends Shape {
 

@@ -21,14 +21,13 @@ package me.wolfyscript.utilities.util.json.jackson.serialization;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import java.util.Map;
 import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.yaml.snakeyaml.Yaml;
-
-import java.util.Map;
 
 public class ItemStackSerialization {
 
@@ -47,9 +46,9 @@ public class ItemStackSerialization {
                 //Old Serialization Methods. like Base64 or NMS serialization
                 String value = node.asText();
                 if (!value.startsWith("{")) {
-                    return WolfyUtilities.getWUCore().getNmsUtil().getItemUtil().getBase64ItemStack(value);
+                    return WolfyCoreBukkit.getInstance().getWolfyUtils().getNmsUtil().getItemUtil().getBase64ItemStack(value);
                 }
-                return value.equals("empty") ? null : WolfyUtilities.getWUCore().getNmsUtil().getItemUtil().getJsonItemStack(value);
+                return value.equals("empty") ? null : WolfyCoreBukkit.getInstance().getWolfyUtils().getNmsUtil().getItemUtil().getJsonItemStack(value);
             }
             var config = new YamlConfiguration();
             //Loads the Map from the JsonNode && Sets the Map to YamlConfig

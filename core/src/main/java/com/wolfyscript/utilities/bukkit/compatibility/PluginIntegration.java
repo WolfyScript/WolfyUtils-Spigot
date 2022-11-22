@@ -18,9 +18,9 @@
 
 package com.wolfyscript.utilities.bukkit.compatibility;
 
-import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.items.references.APIReference;
 
 public interface PluginIntegration {
 

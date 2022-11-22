@@ -20,15 +20,10 @@ package me.wolfyscript.utilities.api.nms.network;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.ByteProcessor;
-import me.wolfyscript.utilities.api.nms.NetworkUtil;
-import me.wolfyscript.utilities.api.nms.nbt.NBTCompound;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import org.bukkit.inventory.ItemStack;
-
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -47,6 +42,10 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
+import javax.annotation.Nullable;
+import me.wolfyscript.utilities.api.nms.NetworkUtil;
+import me.wolfyscript.utilities.api.nms.nbt.NBTCompound;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * This Class acts as a Wrapper for the Minecraft ByteBuf to make it able to correctly encode ItemStacks and more.

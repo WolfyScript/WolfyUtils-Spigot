@@ -18,10 +18,9 @@
 
 package com.wolfyscript.utilities.bukkit.math;
 
-import org.bukkit.util.Vector;
-
 import java.util.LinkedList;
 import java.util.List;
+import org.bukkit.util.Vector;
 
 public class MathUtil {
 

@@ -28,14 +28,13 @@ import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.eval.context.EvalContext;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
-import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 
 public class NBTQuery {
 

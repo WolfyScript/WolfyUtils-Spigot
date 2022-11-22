@@ -18,29 +18,22 @@
 
 package me.wolfyscript.utilities.api.inventory.tags;
 
+import com.wolfyscript.utilities.Keyed;
 import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import com.wolfyscript.utilities.common.registry.AbstractRegistry;
 import java.util.HashMap;
 import java.util.Map;
-import me.wolfyscript.utilities.api.WolfyUtilCore;
-import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
-import com.wolfyscript.utilities.Keyed;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.jetbrains.annotations.Nullable;
 
 public class Tags<T extends Keyed> extends AbstractRegistry<Map<NamespacedKey, CustomTag<T>>, CustomTag<T>> {
-
-    @Deprecated
-    public Tags() {
-        super(new BukkitNamespacedKey(WolfyUtilCore.getInstance(), "custom_tags"), HashMap::new, WolfyUtilCore.getInstance().getRegistries());
-    }
 
     public Tags(BukkitRegistries registries) {
         super(registries.getCore().getWolfyUtils().getIdentifiers().getWolfyUtilsNamespaced("custom_tags"), HashMap::new, registries);
     }
 
     @Nullable
-    public CustomTag<T> getTag(BukkitNamespacedKey namespacedKey) {
+    public CustomTag<T> getTag(NamespacedKey namespacedKey) {
         return get(namespacedKey);
     }
 

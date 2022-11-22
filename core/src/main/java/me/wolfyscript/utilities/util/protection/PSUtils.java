@@ -21,10 +21,9 @@ package me.wolfyscript.utilities.util.protection;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotAPI;
 import com.plotsquared.core.plot.Plot;
+import java.util.UUID;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-
-import java.util.UUID;
 
 public class PSUtils {
 

@@ -19,16 +19,15 @@
 package me.wolfyscript.utilities.util.inventory;
 
 import com.google.common.collect.Streams;
-import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
+import com.wolfyscript.utilities.bukkit.items.CustomItem;
+import java.util.List;
+import java.util.Objects;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Objects;
 
 public class InventoryUtils {
 

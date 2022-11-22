@@ -18,13 +18,20 @@
 
 package com.wolfyscript.utilities.bukkit.gui;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonType;
 import com.wolfyscript.utilities.bukkit.gui.button.buttons.ItemInputButton;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -39,24 +46,16 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
-
 public class InventoryAPI<C extends CustomCache> implements Listener {
 
     private final Plugin plugin;
-    private final WolfyUtilities wolfyUtilities;
+    private final WolfyUtilsBukkit wolfyUtilities;
     private final Map<UUID, GuiHandler<C>> guiHandlers = new HashMap<>();
     private final Map<String, GuiCluster<C>> guiClusters = new HashMap<>();
 
     private final Class<C> customCacheClass;
 
-    public InventoryAPI(Plugin plugin, WolfyUtilities wolfyUtilities, Class<C> customCacheClass) {
+    public InventoryAPI(Plugin plugin, WolfyUtilsBukkit wolfyUtilities, Class<C> customCacheClass) {
         this.wolfyUtilities = wolfyUtilities;
         this.plugin = plugin;
         this.customCacheClass = customCacheClass;
@@ -94,7 +93,12 @@ public class InventoryAPI<C extends CustomCache> implements Listener {
         return cluster != null ? cluster.getGuiWindow(namespacedKey.getKey()) : null;
     }
 
-    public WolfyUtilities getWolfyUtilities() {
+    @Deprecated
+    public WolfyUtilsBukkit getWolfyUtilities() {
+        return wolfyUtilities;
+    }
+
+    public WolfyUtilsBukkit getWolfyUtils() {
         return wolfyUtilities;
     }
 

@@ -18,8 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.gui.button.buttons;
 
-import me.wolfyscript.utilities.api.chat.Chat;
-import me.wolfyscript.utilities.api.chat.ClickData;
+import com.wolfyscript.utilities.bukkit.chat.IBukkitChat;
 import com.wolfyscript.utilities.bukkit.gui.ChatInputAction;
 import com.wolfyscript.utilities.bukkit.gui.ChatTabComplete;
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
@@ -29,6 +28,8 @@ import com.wolfyscript.utilities.bukkit.gui.button.ButtonAction;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonRender;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonState;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
+import java.io.IOException;
+import me.wolfyscript.utilities.api.chat.ClickData;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
@@ -36,8 +37,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.io.IOException;
 
 /**
  * @param <C> The type of the {@link CustomCache}
@@ -237,7 +236,7 @@ public class ChatInputButton<C extends CustomCache> extends ActionButton<C> {
         if (super.execute(guiHandler, player, inventory, slot, event)) {
             guiHandler.setChatTabComplete(tabComplete);
             guiHandler.setChatInputAction(action);
-            Chat chat = guiHandler.getApi().getChat();
+            IBukkitChat chat = guiHandler.getApi().getChat();
             if (msg != null) {
                 chat.sendMessage(guiHandler.getPlayer(), msg);
             } else if (clickData != null) {

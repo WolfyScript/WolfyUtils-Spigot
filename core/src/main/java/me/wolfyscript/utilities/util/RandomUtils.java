@@ -19,9 +19,8 @@
 package me.wolfyscript.utilities.util;
 
 
-import org.bukkit.util.Vector;
-
 import java.util.Random;
+import org.bukkit.util.Vector;
 
 public class RandomUtils {
 

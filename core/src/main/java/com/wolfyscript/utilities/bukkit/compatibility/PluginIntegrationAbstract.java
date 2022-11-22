@@ -18,9 +18,9 @@
 
 package com.wolfyscript.utilities.bukkit.compatibility;
 
-import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
-import me.wolfyscript.utilities.api.WolfyUtilCore;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import org.bukkit.plugin.Plugin;
 
 /**

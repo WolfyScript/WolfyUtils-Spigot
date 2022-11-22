@@ -20,11 +20,11 @@ package me.wolfyscript.utilities.compatibility.plugins.mythicmobs;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.mythicmobs.MythicMobsRef;
 import java.io.IOException;
 import java.util.Objects;
-import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
+import com.wolfyscript.utilities.bukkit.items.references.APIReference;
 import me.wolfyscript.utilities.api.nms.nbt.NBTItem;
 import me.wolfyscript.utilities.api.nms.nbt.NBTTagString;
 import org.bukkit.inventory.ItemStack;
@@ -48,7 +48,7 @@ public abstract class AbstractMythicMobsRef extends APIReference implements Myth
 
     @Override
     public boolean isValidItem(ItemStack itemStack) {
-        var nbtItem = WolfyUtilities.getWUCore().getNmsUtil().getNBTUtil().getItem(itemStack);
+        var nbtItem = WolfyCoreBukkit.getInstance().getWolfyUtils().getNmsUtil().getNBTUtil().getItem(itemStack);
         if (nbtItem != null && nbtItem.hasKey(ITEM_KEY) && nbtItem.getTag(ITEM_KEY) instanceof NBTTagString nbtTagString) {
             return Objects.equals(this.itemName, nbtTagString.asString());
         }
@@ -89,7 +89,7 @@ public abstract class AbstractMythicMobsRef extends APIReference implements Myth
         @Override
         public @Nullable
         T construct(ItemStack itemStack) {
-            NBTItem nbtItem = WolfyUtilities.getWUCore().getNmsUtil().getNBTUtil().getItem(itemStack);
+            NBTItem nbtItem = WolfyCoreBukkit.getInstance().getWolfyUtils().getNmsUtil().getNBTUtil().getItem(itemStack);
             if (nbtItem != null && nbtItem.hasKey(ITEM_KEY) && nbtItem.getTag(ITEM_KEY) instanceof NBTTagString nbtTagString) {
                 String name = nbtTagString.asString();
                 return construct(name);

@@ -18,8 +18,9 @@
 
 package com.wolfyscript.utilities.bukkit.gui;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.api.chat.Chat;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
+import com.wolfyscript.utilities.bukkit.chat.IBukkitChat;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
 import com.wolfyscript.utilities.bukkit.gui.button.buttons.ActionButton;
 import com.wolfyscript.utilities.bukkit.gui.button.buttons.ChatInputButton;
@@ -28,13 +29,12 @@ import com.wolfyscript.utilities.bukkit.gui.button.buttons.ItemInputButton;
 import com.wolfyscript.utilities.bukkit.gui.button.buttons.MultipleChoiceButton;
 import com.wolfyscript.utilities.bukkit.gui.button.buttons.ToggleButton;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a GUI menu, that is linked to the InventoryAPI.<br>
@@ -50,7 +50,7 @@ import java.util.Map;
  */
 public abstract class GuiMenuComponent<C extends CustomCache> {
 
-    public final WolfyUtilities wolfyUtilities;
+    public final WolfyUtilsBukkit wolfyUtilities;
     protected final InventoryAPI<C> inventoryAPI;
     ButtonBuilder<C> buttonBuilder;
 
@@ -71,16 +71,25 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
     }
 
     /**
-     * @return The {@link WolfyUtilities} that this window belongs to.
+     * @return The {@link WolfyUtilsBukkit} that this window belongs to.
+     * @see #getWolfyUtils()
      */
-    public WolfyUtilities getWolfyUtilities() {
+    @Deprecated
+    public WolfyUtilsBukkit getWolfyUtilities() {
+        return wolfyUtilities;
+    }
+
+    /**
+     * @return The {@link WolfyUtilsBukkit} that this window belongs to.
+     */
+    public WolfyUtilsBukkit getWolfyUtils() {
         return wolfyUtilities;
     }
 
     /**
      * @return The Chat of the API.
      */
-    public Chat getChat() {
+    public BukkitChat getChat() {
         return wolfyUtilities.getChat();
     }
 

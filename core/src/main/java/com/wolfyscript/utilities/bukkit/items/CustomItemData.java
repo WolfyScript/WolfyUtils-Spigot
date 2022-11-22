@@ -13,7 +13,7 @@ import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
 import com.wolfyscript.utilities.json.KeyedTypeResolver;
 
 /**
- * This is the direct replacement for the old {@link me.wolfyscript.utilities.api.inventory.custom_items.CustomData}
+ * This is the direct replacement for the old {@link CustomData}
  *
  */
 @JsonTypeResolver(KeyedTypeResolver.class)

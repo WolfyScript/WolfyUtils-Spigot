@@ -25,11 +25,10 @@ import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.math.MathUtil;
 import com.wolfyscript.utilities.bukkit.math.Triangle;
-import org.bukkit.util.Vector;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import org.bukkit.util.Vector;
 
 public class ShapeIcosahedron extends Shape {
 

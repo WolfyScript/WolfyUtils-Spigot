@@ -21,7 +21,7 @@ package me.wolfyscript.utilities.util.json.jackson.serialization;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import org.bukkit.util.Vector;
 
@@ -35,7 +35,7 @@ public class VectorSerialization {
             gen.writeNumber(value.getZ());
             gen.writeEndArray();
         }, (p, deserializationContext) -> {
-            var api = WolfyUtilities.getWUCore();
+            var api = WolfyCoreBukkit.getInstance().getWolfyUtils();
             JsonNode node = p.readValueAsTree();
             if (node.isArray()) {
                 var arrayNode = (ArrayNode) node;

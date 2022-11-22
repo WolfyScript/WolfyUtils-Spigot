@@ -1,6 +1,5 @@
 package me.wolfyscript.utilities.compatibility.plugins.fancybags;
 
-import com.denizenscript.denizen.scripts.containers.core.ItemScriptHelper;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -10,12 +9,8 @@ import java.io.IOException;
 import me.chickenstyle.backpack.Backpack;
 import me.chickenstyle.backpack.Utils;
 import me.chickenstyle.backpack.configs.CustomBackpacks;
-import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
-import me.wolfyscript.utilities.compatibility.plugins.DenizenIntegrationImpl;
+import com.wolfyscript.utilities.bukkit.items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.plugins.FancyBagsImpl;
-import me.wolfyscript.utilities.compatibility.plugins.denizen.DenizenRefImpl;
-import me.wolfyscript.utilities.util.inventory.ItemUtils;
-import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;

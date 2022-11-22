@@ -18,13 +18,8 @@
 
 package me.wolfyscript.utilities.util;
 
-import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
+import com.wolfyscript.utilities.bukkit.items.CustomItem;
 import java.util.Random;
-import java.util.TreeMap;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiConsumer;
 import java.util.stream.Collector;
 

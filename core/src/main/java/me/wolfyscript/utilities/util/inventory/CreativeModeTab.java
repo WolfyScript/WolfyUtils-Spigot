@@ -19,13 +19,12 @@
 package me.wolfyscript.utilities.util.inventory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import me.wolfyscript.utilities.api.WolfyUtilities;
-import org.bukkit.Material;
-
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import org.bukkit.Material;
 
 /**
  * This class contains enums for the creative menu tabs.
@@ -76,8 +75,8 @@ public enum CreativeModeTab {
     }
 
     public static void init() {
-        WolfyUtilities.getWUPlugin().getLogger().info("Loading Creative Mode Tabs");
-        WolfyUtilities.getWUCore().getNmsUtil().getInventoryUtil().initItemCategories();
+        WolfyCoreBukkit.getInstance().getWolfyUtils().getLogger().info("Loading Creative Mode Tabs");
+        WolfyCoreBukkit.getInstance().getWolfyUtils().getNmsUtil().getInventoryUtil().initItemCategories();
         register = false;
     }
 

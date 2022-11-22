@@ -18,11 +18,14 @@
 
 package com.wolfyscript.utilities.bukkit.gui;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -30,10 +33,6 @@ import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
 
 /**
  * Contains all the data that is used in {@link GuiWindow} updates like {@link GuiWindow#onUpdateAsync(GuiUpdate)} or {@link GuiWindow#onUpdateSync(GuiUpdate)}.
@@ -46,7 +45,7 @@ public class GuiUpdate<C extends CustomCache> {
 
     private final GuiHandler<C> guiHandler;
     private final InventoryAPI<C> inventoryAPI;
-    private final WolfyUtilities wolfyUtilities;
+    private final WolfyUtilsBukkit wolfyUtilities;
     private final Player player;
     private final GUIInventory<C> inventory;
     private final Inventory queueInventory;
@@ -55,7 +54,7 @@ public class GuiUpdate<C extends CustomCache> {
     GuiUpdate(GUIInventory<C> inventory, GuiHandler<C> guiHandler, GuiWindow<C> guiWindow) {
         this.guiHandler = guiHandler;
         this.inventoryAPI = guiHandler.getInvAPI();
-        this.wolfyUtilities = guiHandler.getApi();
+        this.wolfyUtilities = guiHandler.getWolfyUtils();
         this.player = guiHandler.getPlayer();
         this.guiWindow = guiWindow;
         this.queueInventory = Bukkit.createInventory(null, 54, "");

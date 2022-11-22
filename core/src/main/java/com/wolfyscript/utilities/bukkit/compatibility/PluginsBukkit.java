@@ -19,18 +19,10 @@
 package com.wolfyscript.utilities.bukkit.compatibility;
 
 import com.google.common.base.Preconditions;
-import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
-import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.events.DependenciesLoadedEvent;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import org.bukkit.Bukkit;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.server.PluginDisableEvent;
-import org.bukkit.event.server.PluginEnableEvent;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.Nullable;
-
+import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
+import com.wolfyscript.utilities.bukkit.events.DependenciesLoadedEvent;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -41,6 +33,13 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.event.server.PluginEnableEvent;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Manages compatibility with other plugins. <br>

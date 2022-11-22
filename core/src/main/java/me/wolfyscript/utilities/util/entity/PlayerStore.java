@@ -18,9 +18,9 @@
 
 package me.wolfyscript.utilities.util.entity;
 
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import java.util.HashMap;
 import java.util.Map;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 
 @Deprecated
 public class PlayerStore {

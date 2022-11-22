@@ -27,12 +27,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
-import com.wolfyscript.utilities.NamespacedKey;
-import me.wolfyscript.utilities.api.WolfyUtilities;
 import com.wolfyscript.utilities.Keyed;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.json.annotations.OptionalKeyReference;
+import java.util.List;
+import java.util.Objects;
+import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import me.wolfyscript.utilities.util.particles.animators.Animator;
 import me.wolfyscript.utilities.util.particles.animators.AnimatorBasic;
 import me.wolfyscript.utilities.util.particles.pos.ParticlePos;
@@ -49,9 +50,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Objects;
 
 /**
  * ParticleEffects contain the data to draw particles using a specified animation and timer.<br>
@@ -319,7 +317,7 @@ public class ParticleEffect implements Keyed {
 
         @Override
         public void run() {
-            Bukkit.getScheduler().runTaskTimer(WolfyUtilities.getWUPlugin(), task -> {
+            Bukkit.getScheduler().runTaskTimer(WolfyCoreBukkit.getInstance(), task -> {
                 if (!task.isCancelled()) {
                     animator.draw(runner, ParticleEffect.this, origin.getLocation(), player);
                     if (runner.shouldStop()) {

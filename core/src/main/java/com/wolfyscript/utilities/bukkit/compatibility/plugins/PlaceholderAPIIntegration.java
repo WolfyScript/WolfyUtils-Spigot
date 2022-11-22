@@ -19,13 +19,12 @@
 package com.wolfyscript.utilities.bukkit.compatibility.plugins;
 
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegration;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public interface PlaceholderAPIIntegration extends PluginIntegration {
 

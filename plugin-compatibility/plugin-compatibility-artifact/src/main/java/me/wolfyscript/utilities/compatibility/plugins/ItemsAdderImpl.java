@@ -22,8 +22,8 @@ import com.wolfyscript.utilities.bukkit.compatibility.plugins.ItemsAdderIntegrat
 import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
 import java.util.Optional;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
-import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
+import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.itemsadder.CustomBlock;
 import me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomItemListener;

@@ -18,11 +18,10 @@
 
 package me.wolfyscript.utilities.util.chat;
 
+import java.util.regex.Pattern;
 import me.wolfyscript.utilities.util.version.MinecraftVersions;
 import me.wolfyscript.utilities.util.version.ServerVersion;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.regex.Pattern;
 
 @Deprecated
 public class ChatColor {

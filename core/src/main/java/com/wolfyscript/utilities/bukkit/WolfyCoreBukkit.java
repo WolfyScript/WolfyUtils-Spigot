@@ -3,14 +3,53 @@ package com.wolfyscript.utilities.bukkit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.wolfyscript.jackson.dataformat.hocon.HoconMapper;
+import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
 import com.wolfyscript.utilities.bukkit.commands.ChatActionCommand;
 import com.wolfyscript.utilities.bukkit.commands.InfoCommand;
 import com.wolfyscript.utilities.bukkit.commands.InputCommand;
 import com.wolfyscript.utilities.bukkit.commands.QueryDebugCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleAnimationCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleEffectCommand;
+import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManager;
+import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManagerBukkit;
+import com.wolfyscript.utilities.bukkit.config.WUConfig;
+import com.wolfyscript.utilities.bukkit.console.Console;
+import com.wolfyscript.utilities.bukkit.items.CustomData;
+import com.wolfyscript.utilities.bukkit.items.CustomItem;
 import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
 import com.wolfyscript.utilities.bukkit.items.CustomItemData;
+import com.wolfyscript.utilities.bukkit.items.actions.Action;
+import com.wolfyscript.utilities.bukkit.items.actions.ActionCommand;
+import com.wolfyscript.utilities.bukkit.items.actions.ActionParticleAnimation;
+import com.wolfyscript.utilities.bukkit.items.actions.ActionSound;
+import com.wolfyscript.utilities.bukkit.items.actions.Event;
+import com.wolfyscript.utilities.bukkit.items.actions.EventPlayerConsumeItem;
+import com.wolfyscript.utilities.bukkit.items.actions.EventPlayerInteract;
+import com.wolfyscript.utilities.bukkit.items.actions.EventPlayerInteractAtEntity;
+import com.wolfyscript.utilities.bukkit.items.actions.EventPlayerInteractEntity;
+import com.wolfyscript.utilities.bukkit.items.actions.EventPlayerItemBreak;
+import com.wolfyscript.utilities.bukkit.items.actions.EventPlayerItemDamage;
+import com.wolfyscript.utilities.bukkit.items.actions.EventPlayerItemDrop;
+import com.wolfyscript.utilities.bukkit.items.actions.EventPlayerItemHandSwap;
+import com.wolfyscript.utilities.bukkit.items.actions.EventPlayerItemHeld;
+import com.wolfyscript.utilities.bukkit.items.meta.AttributesModifiersMeta;
+import com.wolfyscript.utilities.bukkit.items.meta.CustomDamageMeta;
+import com.wolfyscript.utilities.bukkit.items.meta.CustomDurabilityMeta;
+import com.wolfyscript.utilities.bukkit.items.meta.CustomItemTagMeta;
+import com.wolfyscript.utilities.bukkit.items.meta.CustomModelDataMeta;
+import com.wolfyscript.utilities.bukkit.items.meta.DamageMeta;
+import com.wolfyscript.utilities.bukkit.items.meta.EnchantMeta;
+import com.wolfyscript.utilities.bukkit.items.meta.FlagsMeta;
+import com.wolfyscript.utilities.bukkit.items.meta.LoreMeta;
+import com.wolfyscript.utilities.bukkit.items.meta.Meta;
+import com.wolfyscript.utilities.bukkit.items.meta.NameMeta;
+import com.wolfyscript.utilities.bukkit.items.meta.PlayerHeadMeta;
+import com.wolfyscript.utilities.bukkit.items.meta.PotionMeta;
+import com.wolfyscript.utilities.bukkit.items.meta.RepairCostMeta;
+import com.wolfyscript.utilities.bukkit.items.meta.UnbreakableMeta;
+import com.wolfyscript.utilities.bukkit.items.references.APIReference;
+import com.wolfyscript.utilities.bukkit.items.references.VanillaRef;
+import com.wolfyscript.utilities.bukkit.items.references.WolfyUtilitiesRef;
 import com.wolfyscript.utilities.bukkit.listeners.EquipListener;
 import com.wolfyscript.utilities.bukkit.listeners.GUIInventoryListener;
 import com.wolfyscript.utilities.bukkit.listeners.PersistentStorageListener;
@@ -23,6 +62,7 @@ import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeBoolean;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeByte;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeByteArray;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeCompound;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeDouble;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeFloat;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeInt;
@@ -34,68 +74,14 @@ import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListInt;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListLong;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListString;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeLong;
-import com.wolfyscript.utilities.bukkit.nbt.QueryNodeCompound;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeShort;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeString;
+import com.wolfyscript.utilities.bukkit.nms.item.crafting.FunctionalRecipeGenerator;
 import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
 import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectData;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
-import com.wolfyscript.utilities.eval.value_provider.ValueProviderByteArrayConst;
-import com.wolfyscript.utilities.eval.value_provider.ValueProviderDoubleConst;
-import com.wolfyscript.utilities.eval.value_provider.ValueProviderDoubleVar;
-import com.wolfyscript.utilities.eval.value_provider.ValueProviderIntArrayConst;
-import com.wolfyscript.utilities.eval.value_provider.ValueProviderLongConst;
-import com.wolfyscript.utilities.eval.value_provider.ValueProviderLongVar;
-import com.wolfyscript.utilities.eval.value_provider.ValueProviderShortConst;
-import com.wolfyscript.utilities.eval.value_provider.ValueProviderShortVar;
-import java.util.ArrayList;
-import java.util.List;
-import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.api.WolfyUtilities;
-import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
-import me.wolfyscript.utilities.api.console.Console;
-import me.wolfyscript.utilities.api.inventory.custom_items.CustomData;
-import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.Action;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.ActionCommand;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.ActionParticleAnimation;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.ActionSound;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.Event;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayerConsumeItem;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayerInteract;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayerInteractAtEntity;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayerInteractEntity;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayerItemBreak;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayerItemDamage;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayerItemDrop;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayerItemHandSwap;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayerItemHeld;
-import me.wolfyscript.utilities.api.inventory.custom_items.meta.AttributesModifiersMeta;
-import me.wolfyscript.utilities.api.inventory.custom_items.meta.CustomDamageMeta;
-import me.wolfyscript.utilities.api.inventory.custom_items.meta.CustomDurabilityMeta;
-import me.wolfyscript.utilities.api.inventory.custom_items.meta.CustomItemTagMeta;
-import me.wolfyscript.utilities.api.inventory.custom_items.meta.CustomModelDataMeta;
-import me.wolfyscript.utilities.api.inventory.custom_items.meta.DamageMeta;
-import me.wolfyscript.utilities.api.inventory.custom_items.meta.EnchantMeta;
-import me.wolfyscript.utilities.api.inventory.custom_items.meta.FlagsMeta;
-import me.wolfyscript.utilities.api.inventory.custom_items.meta.LoreMeta;
-import me.wolfyscript.utilities.api.inventory.custom_items.meta.Meta;
-import me.wolfyscript.utilities.api.inventory.custom_items.meta.NameMeta;
-import me.wolfyscript.utilities.api.inventory.custom_items.meta.PlayerHeadMeta;
-import me.wolfyscript.utilities.api.inventory.custom_items.meta.PotionMeta;
-import me.wolfyscript.utilities.api.inventory.custom_items.meta.RepairCostMeta;
-import me.wolfyscript.utilities.api.inventory.custom_items.meta.UnbreakableMeta;
-import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
-import me.wolfyscript.utilities.api.inventory.custom_items.references.VanillaRef;
-import me.wolfyscript.utilities.api.inventory.custom_items.references.WolfyUtilitiesRef;
-import com.wolfyscript.utilities.bukkit.nms.item.crafting.FunctionalRecipeGenerator;
-import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManager;
-import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManagerBukkit;
-import me.wolfyscript.utilities.main.WUPlugin;
-import me.wolfyscript.utilities.main.configs.WUConfig;
-import me.wolfyscript.utilities.messages.MessageFactory;
-import me.wolfyscript.utilities.messages.MessageHandler;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.eval.operator.BoolOperatorConst;
 import com.wolfyscript.utilities.eval.operator.ComparisonOperatorEqual;
 import com.wolfyscript.utilities.eval.operator.ComparisonOperatorGreater;
@@ -108,19 +94,34 @@ import com.wolfyscript.utilities.eval.operator.LogicalOperatorNot;
 import com.wolfyscript.utilities.eval.operator.LogicalOperatorOr;
 import com.wolfyscript.utilities.eval.operator.Operator;
 import com.wolfyscript.utilities.eval.value_provider.ValueProvider;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderByteArrayConst;
 import com.wolfyscript.utilities.eval.value_provider.ValueProviderConditioned;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderDoubleConst;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderDoubleVar;
 import com.wolfyscript.utilities.eval.value_provider.ValueProviderFloatConst;
 import com.wolfyscript.utilities.eval.value_provider.ValueProviderFloatVar;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderIntArrayConst;
 import com.wolfyscript.utilities.eval.value_provider.ValueProviderIntegerConst;
 import com.wolfyscript.utilities.eval.value_provider.ValueProviderIntegerVar;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderLongConst;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderLongVar;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderShortConst;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderShortVar;
 import com.wolfyscript.utilities.eval.value_provider.ValueProviderStringConst;
 import com.wolfyscript.utilities.eval.value_provider.ValueProviderStringVar;
-import me.wolfyscript.utilities.util.inventory.CreativeModeTab;
-import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
 import com.wolfyscript.utilities.json.annotations.OptionalKeyReference;
 import com.wolfyscript.utilities.json.annotations.OptionalValueDeserializer;
 import com.wolfyscript.utilities.json.annotations.OptionalValueSerializer;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import com.wolfyscript.utilities.bukkit.network.messages.MessageFactory;
+import com.wolfyscript.utilities.bukkit.network.messages.MessageHandler;
+import me.wolfyscript.utilities.util.inventory.CreativeModeTab;
+import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import me.wolfyscript.utilities.util.json.jackson.serialization.APIReferenceSerialization;
 import me.wolfyscript.utilities.util.json.jackson.serialization.ColorSerialization;
 import me.wolfyscript.utilities.util.json.jackson.serialization.DustOptionsSerialization;
@@ -158,16 +159,15 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-
 /**
  * The core implementation of WolfyUtils.<br>
  * It manages the core plugin of WolfyUtils and there is only one instance of it.<br>
  *
  * If you want to use the plugin specific API, see {@link com.wolfyscript.utilities.common.WolfyUtils} & {@link WolfyUtilsBukkit}
  */
-public final class WolfyCoreBukkit extends WUPlugin {
+public final class WolfyCoreBukkit extends WolfyUtilCore {
 
+    private static final Map<String, Boolean> classes = new HashMap<>();
     private final Console console;
     private Metrics metrics;
     private WUConfig config;
@@ -205,7 +205,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
 
     /**
      * Gets an instance of the core plugin.
-     * <strong>Only use this if necessary! First try to get the instance via your {@link WolfyUtilities} instance!</strong>
+     * <strong>Only use this if necessary! First try to get the instance via your {@link WolfyUtilsBukkit} instance!</strong>
      *
      * @return The instance of the core.
      */
@@ -226,12 +226,6 @@ public final class WolfyCoreBukkit extends WUPlugin {
             throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
         }
         return this.adventure;
-    }
-
-    @Deprecated
-    @Override
-    public WolfyUtilities getWolfyUtilities() {
-        return (WolfyUtilities) getWolfyUtils();
     }
 
     @Override
@@ -422,7 +416,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         this.api.initialize();
         console.info("Minecraft version: " + ServerVersion.getVersion().getVersion());
         console.info("WolfyUtils version: " + ServerVersion.getWUVersion().getVersion());
-        console.info("Environment: " + WolfyUtilities.getENVIRONMENT());
+        console.info("Environment: " + WolfyUtils.getENVIRONMENT());
         this.adventure = BukkitAudiences.create(this);
         this.config = new WUConfig(api.getConfigAPI(), this);
         compatibilityManager.init();
@@ -475,7 +469,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
     }
 
     private void registerListeners() {
-        Bukkit.getPluginManager().registerEvents(new ChatImpl.ChatListener(), this);
+        Bukkit.getPluginManager().registerEvents(new BukkitChat.ChatListener(), this);
         Bukkit.getPluginManager().registerEvents(new CustomDurabilityListener(this), this);
         Bukkit.getPluginManager().registerEvents(new CustomParticleListener(this), this);
         Bukkit.getPluginManager().registerEvents(new CustomItemPlayerListener(this), this);
@@ -497,18 +491,16 @@ public final class WolfyCoreBukkit extends WUPlugin {
         Bukkit.getServer().getPluginCommand("query_item").setExecutor(new QueryDebugCommand(this));
     }
 
-    @Override
     public MessageHandler getMessageHandler() {
         return messageHandler;
     }
 
-    @Override
     public MessageFactory getMessageFactory() {
         return messageFactory;
     }
 
     @Override
-    public com.wolfyscript.utilities.common.chat.Chat getChat() {
+    public BukkitChat getChat() {
         return api.getChat();
     }
 
@@ -520,5 +512,25 @@ public final class WolfyCoreBukkit extends WUPlugin {
 
     public PersistentStorage getPersistentStorage() {
         return persistentStorage;
+    }
+
+    /**
+     * Check if the specific class exists.
+     *
+     * @param path The path to the class to check for.
+     * @return If the class exists.
+     */
+    public static boolean hasClass(String path) {
+        if (classes.containsKey(path)) {
+            return classes.get(path);
+        }
+        try {
+            Class.forName(path);
+            classes.put(path, true);
+            return true;
+        } catch (Exception e) {
+            classes.put(path, false);
+            return false;
+        }
     }
 }

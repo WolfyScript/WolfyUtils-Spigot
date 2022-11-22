@@ -18,12 +18,10 @@
 
 package me.wolfyscript.utilities.api.nms;
 
+import java.util.Iterator;
 import me.wolfyscript.utilities.api.nms.inventory.RecipeType;
 import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Iterator;
-import java.util.function.BiFunction;
 
 public abstract class RecipeUtil extends UtilComponent {
 

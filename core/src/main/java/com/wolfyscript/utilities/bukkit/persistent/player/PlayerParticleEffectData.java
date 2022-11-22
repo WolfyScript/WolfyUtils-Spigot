@@ -2,10 +2,10 @@ package com.wolfyscript.utilities.bukkit.persistent.player;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wolfyscript.utilities.KeyedStaticId;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.particles.ParticleUtils;
 import org.bukkit.inventory.EquipmentSlot;
 

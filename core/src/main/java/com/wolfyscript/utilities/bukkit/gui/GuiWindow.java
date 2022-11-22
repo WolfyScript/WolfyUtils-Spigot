@@ -18,10 +18,10 @@
 
 package com.wolfyscript.utilities.bukkit.gui;
 
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.TagResolverUtil;
-import me.wolfyscript.utilities.api.chat.Chat;
-import me.wolfyscript.utilities.api.chat.ClickAction;
-import me.wolfyscript.utilities.api.chat.ClickData;
+import com.wolfyscript.utilities.bukkit.chat.IBukkitChat;
+import com.wolfyscript.utilities.bukkit.compatibility.plugins.PlaceholderAPIIntegration;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
 import com.wolfyscript.utilities.bukkit.gui.button.buttons.ActionButton;
 import com.wolfyscript.utilities.bukkit.gui.button.buttons.ChatInputButton;
@@ -30,9 +30,13 @@ import com.wolfyscript.utilities.bukkit.gui.button.buttons.ItemInputButton;
 import com.wolfyscript.utilities.bukkit.gui.button.buttons.MultipleChoiceButton;
 import com.wolfyscript.utilities.bukkit.gui.button.buttons.ToggleButton;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import me.wolfyscript.utilities.api.chat.ClickAction;
+import me.wolfyscript.utilities.api.chat.ClickData;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
-import com.wolfyscript.utilities.bukkit.compatibility.plugins.PlaceholderAPIIntegration;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.Pair;
 import me.wolfyscript.utilities.util.chat.ChatColor;
 import me.wolfyscript.utilities.util.reflection.InventoryUpdate;
@@ -47,11 +51,6 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * The GuiWindow represents an Inventory GUI in-game.
@@ -401,7 +400,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      * @param clickData   The {@link ClickData} to be send to the player.
      * @param inputAction The {@link ChatInputAction} to be executed when the player types in the chat.
      * @see #openChat(GuiHandler, Component, ChatInputAction)
-     * @deprecated This uses the legacy chat format. <b>Use {@link #openChat(GuiHandler, Component, ChatInputAction)} instead!</b> For callback execution on text click use {@link Chat#executable(Player, boolean, ClickAction)}
+     * @deprecated This uses the legacy chat format. <b>Use {@link #openChat(GuiHandler, Component, ChatInputAction)} instead!</b> For callback execution on text click use {@link IBukkitChat#executable(Player, boolean, ClickAction)}
      */
     @Deprecated
     public void openActionChat(GuiHandler<C> guiHandler, ClickData clickData, ChatInputAction<C> inputAction) {
@@ -425,7 +424,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
     /**
      * @param player The Player this message should be sent to.
      * @param msgKey The key of the message.
-     * @deprecated This uses the legacy chat format. <b>Use {@link Chat#sendMessage(Player, Component)} or {@link #sendMessage(GuiHandler, Component)} instead!</b>
+     * @deprecated This uses the legacy chat format. <b>Use {@link IBukkitChat#sendMessage(Player, Component)} or {@link #sendMessage(GuiHandler, Component)} instead!</b>
      */
     @Deprecated
     public final void sendMessage(Player player, String msgKey) {

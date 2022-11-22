@@ -19,12 +19,11 @@
 package com.wolfyscript.utilities.bukkit.compatibility;
 
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Manages compatibility with other plugins. <br>

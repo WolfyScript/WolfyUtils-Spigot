@@ -24,10 +24,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.wolfyscript.utilities.NamespacedKey;
-import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-
+import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.items.CustomItem;
 import java.io.IOException;
 import java.util.UUID;
 import org.jetbrains.annotations.NotNull;

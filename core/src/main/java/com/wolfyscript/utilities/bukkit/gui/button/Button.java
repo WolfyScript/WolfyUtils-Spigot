@@ -19,12 +19,18 @@
 package com.wolfyscript.utilities.bukkit.gui.button;
 
 import com.google.common.base.Preconditions;
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import com.wolfyscript.utilities.bukkit.gui.InventoryAPI;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
 import me.wolfyscript.utilities.util.chat.ChatColor;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
@@ -36,13 +42,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * @param <C> The type of the {@link CustomCache}
@@ -180,23 +179,23 @@ public abstract class Button<C extends CustomCache> {
 
         protected final Class<B> buttonType;
         protected final Class<T> builderType;
-        protected final WolfyUtilities api;
+        protected final WolfyUtilsBukkit api;
         protected final InventoryAPI<C> invApi;
         protected GuiWindow<C> window;
         protected GuiCluster<C> cluster;
         protected final String key;
 
         protected Builder(GuiWindow<C> window, String key, Class<B> buttonType) {
-            this(window.getCluster().getInventoryAPI(), window.getWolfyUtilities(), key, buttonType);
+            this(window.getCluster().getInventoryAPI(), window.getWolfyUtils(), key, buttonType);
             this.window = window;
         }
 
         protected Builder(GuiCluster<C> cluster, String key, Class<B> buttonType) {
-            this(cluster.getInventoryAPI(), cluster.getWolfyUtilities(), key, buttonType);
+            this(cluster.getInventoryAPI(), cluster.getWolfyUtils(), key, buttonType);
             this.cluster = cluster;
         }
 
-        private Builder(InventoryAPI<C> invApi, WolfyUtilities api, String key, Class<B> buttonType) {
+        private Builder(InventoryAPI<C> invApi, WolfyUtilsBukkit api, String key, Class<B> buttonType) {
             this.api = api;
             this.invApi = invApi;
             this.buttonType = buttonType;

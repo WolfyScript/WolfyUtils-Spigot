@@ -20,7 +20,7 @@ package me.wolfyscript.utilities.util.json.jackson.serialization;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import org.bukkit.Color;
 
@@ -41,7 +41,7 @@ public class ColorSerialization {
                 int blue = node.get("blue").asInt();
                 return Color.fromBGR(blue, green, red);
             }
-            WolfyUtilities.getWUCore().getConsole().warn("Error Deserializing Color! Invalid Color object!");
+            WolfyCoreBukkit.getInstance().getWolfyUtils().getConsole().warn("Error Deserializing Color! Invalid Color object!");
             return null;
         });
     }

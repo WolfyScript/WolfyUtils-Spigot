@@ -18,7 +18,9 @@
 
 package com.wolfyscript.utilities.bukkit.commands;
 
-import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
+import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
+import java.util.List;
+import java.util.UUID;
 import me.wolfyscript.utilities.api.chat.PlayerAction;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -26,9 +28,6 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.UUID;
 
 public class ChatActionCommand implements TabExecutor {
 
@@ -42,11 +41,11 @@ public class ChatActionCommand implements TabExecutor {
             } catch (IllegalArgumentException expected) {
                 return true;
             }
-            PlayerAction action = ChatImpl.getClickData(uuid);
+            PlayerAction action = BukkitChat.getClickData(uuid);
             if (action != null && player.getUniqueId().equals(action.getUuid())) {
                 action.run(player);
                 if (action.isDiscard()) {
-                    ChatImpl.removeClickData(uuid);
+                    BukkitChat.removeClickData(uuid);
                 }
             }
         }

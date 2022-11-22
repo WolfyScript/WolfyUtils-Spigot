@@ -28,17 +28,14 @@ import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
-import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.api.WolfyUtilities;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Pattern;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The NamespacedKey is used to manage and identify resources and prevent conflicts with for example plugins.<br>
@@ -187,7 +184,7 @@ public class BukkitNamespacedKey implements NamespacedKey, Comparable<BukkitName
      */
     @Deprecated
     public org.bukkit.NamespacedKey toBukkit() {
-        return toBukkit(WolfyUtilities.getWUPlugin());
+        return toBukkit(WolfyCoreBukkit.getInstance());
     }
 
     public static BukkitNamespacedKey wolfyutilties(String key) {

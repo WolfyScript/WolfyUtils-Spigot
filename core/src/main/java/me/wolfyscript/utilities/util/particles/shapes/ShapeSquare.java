@@ -23,10 +23,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import org.bukkit.util.Vector;
-
 import java.util.function.Consumer;
 import java.util.function.Function;
+import org.bukkit.util.Vector;
 
 public class ShapeSquare extends Shape {
 

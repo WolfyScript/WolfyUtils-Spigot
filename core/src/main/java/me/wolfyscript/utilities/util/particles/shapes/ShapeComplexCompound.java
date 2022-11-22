@@ -20,12 +20,11 @@ package me.wolfyscript.utilities.util.particles.shapes;
 
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A complex shape that combines multiple shapes together.<br>
