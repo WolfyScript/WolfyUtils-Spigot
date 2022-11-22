@@ -18,14 +18,22 @@
 
 package me.wolfyscript.utilities.util.eval.operators;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.wolfyscript.utilities.eval.operator.BoolOperatorConst;
+import java.io.IOException;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.eval.context.EvalContext;
 import me.wolfyscript.utilities.util.json.jackson.annotations.KeyedBaseType;
+import me.wolfyscript.utilities.util.json.jackson.annotations.OptionalValueDeserializer;
 
 /**
  * An Operator that evaluates into a booleanish value.
  */
 @KeyedBaseType(baseType = me.wolfyscript.utilities.util.eval.operators.Operator.class)
+@OptionalValueDeserializer(delegateObjectDeserializer = true, deserializer = BoolOperator.OptionalValueDeserializer.class)
 public abstract class BoolOperator extends Operator {
 
     public BoolOperator(NamespacedKey namespacedKey) {
@@ -33,4 +41,18 @@ public abstract class BoolOperator extends Operator {
     }
 
     public abstract boolean evaluate(EvalContext context);
+
+    public static class OptionalValueDeserializer extends me.wolfyscript.utilities.util.json.jackson.ValueDeserializer<BoolOperator> {
+
+        public OptionalValueDeserializer() {
+            super(BoolOperator.class);
+        }
+
+        @Override
+        public BoolOperator deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+            JsonNode node = p.readValueAsTree();
+            if (node.isObject()) return null;
+            return new BoolOperatorConst(node.asBoolean());
+        }
+    }
 }

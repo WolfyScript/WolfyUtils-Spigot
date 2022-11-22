@@ -43,6 +43,14 @@ import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
 import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectData;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderByteArrayConst;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderDoubleConst;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderDoubleVar;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderIntArrayConst;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderLongConst;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderLongVar;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderShortConst;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderShortVar;
 import java.util.ArrayList;
 import java.util.List;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
@@ -90,6 +98,7 @@ import me.wolfyscript.utilities.main.WUPlugin;
 import me.wolfyscript.utilities.main.configs.WUConfig;
 import me.wolfyscript.utilities.messages.MessageFactory;
 import me.wolfyscript.utilities.messages.MessageHandler;
+import com.wolfyscript.utilities.eval.operator.BoolOperatorConst;
 import me.wolfyscript.utilities.util.eval.operators.ComparisonOperatorEqual;
 import me.wolfyscript.utilities.util.eval.operators.ComparisonOperatorGreater;
 import me.wolfyscript.utilities.util.eval.operators.ComparisonOperatorGreaterEqual;
@@ -271,25 +280,39 @@ public final class WolfyCoreBukkit extends WUPlugin {
         // Initialise all the Registers
         getLogger().info("Register JSON Operators");
         var operators = getRegistries().getOperators();
+        operators.register(BoolOperatorConst.KEY, BoolOperatorConst.class);
+        // Compare operators
         operators.register(ComparisonOperatorEqual.KEY, ComparisonOperatorEqual.class);
         operators.register(ComparisonOperatorNotEqual.KEY, ComparisonOperatorNotEqual.class);
         operators.register(ComparisonOperatorGreater.KEY, ComparisonOperatorGreater.class);
         operators.register(ComparisonOperatorGreaterEqual.KEY, ComparisonOperatorGreaterEqual.class);
         operators.register(ComparisonOperatorLess.KEY, ComparisonOperatorLess.class);
         operators.register(ComparisonOperatorLessEqual.KEY, ComparisonOperatorLessEqual.class);
+        // Logical
         operators.register(LogicalOperatorAnd.KEY, LogicalOperatorAnd.class);
         operators.register(LogicalOperatorOr.KEY, LogicalOperatorOr.class);
         operators.register(LogicalOperatorNot.KEY, LogicalOperatorNot.class);
 
         getLogger().info("Register JSON Value Providers");
         var valueProviders = getRegistries().getValueProviders();
-        valueProviders.register(ValueProviderConditioned.KEY, (Class<ValueProviderConditioned<?>>)(Object) ValueProviderConditioned.class);
-        valueProviders.register(ValueProviderIntegerConst.KEY, ValueProviderIntegerConst.class);
-        valueProviders.register(ValueProviderIntegerVar.KEY, ValueProviderIntegerVar.class);
-        valueProviders.register(ValueProviderFloatConst.KEY, ValueProviderFloatConst.class);
-        valueProviders.register(ValueProviderFloatVar.KEY, ValueProviderFloatVar.class);
-        valueProviders.register(ValueProviderStringConst.KEY, ValueProviderStringConst.class);
-        valueProviders.register(ValueProviderStringVar.KEY, ValueProviderStringVar.class);
+        // Custom
+        valueProviders.register((Class<ValueProviderConditioned<?>>)(Object) ValueProviderConditioned.class);
+        // Primitive
+        valueProviders.register(ValueProviderShortConst.class);
+        valueProviders.register(ValueProviderShortVar.class);
+        valueProviders.register(ValueProviderIntegerConst.class);
+        valueProviders.register(ValueProviderIntegerVar.class);
+        valueProviders.register(ValueProviderLongConst.class);
+        valueProviders.register(ValueProviderLongVar.class);
+        valueProviders.register(ValueProviderFloatConst.class);
+        valueProviders.register(ValueProviderFloatVar.class);
+        valueProviders.register(ValueProviderDoubleConst.class);
+        valueProviders.register(ValueProviderDoubleVar.class);
+        valueProviders.register(ValueProviderStringConst.class);
+        valueProviders.register(ValueProviderStringVar.class);
+        // Arrays
+        valueProviders.register(ValueProviderByteArrayConst.class);
+        valueProviders.register(ValueProviderIntArrayConst.class);
 
         getLogger().info("Register CustomItem NBT Checks");
         var nbtChecks = getRegistries().getCustomItemNbtChecks();

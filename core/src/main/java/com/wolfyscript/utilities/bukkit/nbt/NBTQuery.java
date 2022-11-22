@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
+import me.wolfyscript.utilities.util.eval.context.EvalContext;
 import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 
 import java.io.File;
@@ -75,10 +76,14 @@ public class NBTQuery {
     }
 
     public NBTCompound run(NBTCompound input) {
+        return run(input, new EvalContext());
+    }
+
+    public NBTCompound run(NBTCompound input, EvalContext context) {
         NBTContainer container = new NBTContainer();
         nodes.forEach((key, queryNode) -> {
             if (input.hasKey(key)) {
-                queryNode.visit("", key, input, container);
+                queryNode.visit("", key, context, input, container);
             }
         });
         return container;

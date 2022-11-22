@@ -8,19 +8,21 @@ import de.tr7zw.changeme.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
 import java.util.Optional;
+import me.wolfyscript.utilities.util.eval.context.EvalContext;
+import me.wolfyscript.utilities.util.eval.value_providers.ValueProvider;
 
 public class QueryNodeByteArray extends QueryNodePrimitive<byte[]> {
 
     public static final NamespacedKey TYPE = NamespacedKey.wolfyutilties("byte_array");
 
     @JsonCreator
-    public QueryNodeByteArray(@JsonProperty("value") byte[] value, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
+    public QueryNodeByteArray(@JsonProperty("value") ValueProvider<byte[]> value, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
         super(TYPE, value, key, parentPath);
         this.nbtType = NBTType.NBTTagByteArray;
     }
 
     private QueryNodeByteArray(QueryNodeByteArray other) {
-        super(TYPE, other.value.clone(), other.key, other.parentPath);
+        super(TYPE, other.value, other.key, other.parentPath);
     }
 
     @Override
@@ -29,7 +31,7 @@ public class QueryNodeByteArray extends QueryNodePrimitive<byte[]> {
     }
 
     @Override
-    protected void applyValue(String path, String key, byte[] value, NBTCompound resultContainer) {
+    protected void applyValue(String path, String key, EvalContext context, byte[] value, NBTCompound resultContainer) {
         resultContainer.setByteArray(key, value);
     }
 

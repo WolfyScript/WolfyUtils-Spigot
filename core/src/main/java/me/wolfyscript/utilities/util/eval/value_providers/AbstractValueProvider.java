@@ -19,6 +19,7 @@
 package me.wolfyscript.utilities.util.eval.value_providers;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wolfyscript.utilities.KeyedStaticId;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
 public abstract class AbstractValueProvider<V> implements ValueProvider<V> {
@@ -27,6 +28,10 @@ public abstract class AbstractValueProvider<V> implements ValueProvider<V> {
 
     protected AbstractValueProvider(NamespacedKey key) {
         this.key = key;
+    }
+
+    protected AbstractValueProvider() {
+        this.key = NamespacedKey.of(KeyedStaticId.KeyBuilder.createKeyString(getClass()));
     }
 
     @JsonIgnore

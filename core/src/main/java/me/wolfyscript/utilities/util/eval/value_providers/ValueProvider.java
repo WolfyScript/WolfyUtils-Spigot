@@ -29,6 +29,9 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderDoubleConst;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderLongConst;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderShortConst;
 import me.wolfyscript.utilities.util.Keyed;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.eval.context.EvalContext;
@@ -74,8 +77,11 @@ public interface ValueProvider<V> extends Keyed {
                     String value = text.substring(0, text.length() - 1);
                     try {
                         return switch (identifier) {
+                            case 's', 'S' -> new ValueProviderShortConst(Short.parseShort(value));
                             case 'i', 'I' -> new ValueProviderIntegerConst(Integer.parseInt(value));
+                            case 'l', 'L' -> new ValueProviderLongConst(Long.parseLong(value));
                             case 'f', 'F' -> new ValueProviderFloatConst(Float.parseFloat(value));
+                            case 'd', 'D' -> new ValueProviderDoubleConst(Double.parseDouble(value));
                             default -> new ValueProviderStringConst(text);
                         };
                     } catch (NumberFormatException e) {

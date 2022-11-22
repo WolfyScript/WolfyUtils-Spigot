@@ -16,34 +16,28 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.util.eval.value_providers;
+package com.wolfyscript.utilities.eval.operator;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wolfyscript.utilities.KeyedStaticId;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.eval.context.EvalContext;
 import me.wolfyscript.utilities.util.eval.operators.BoolOperator;
 
-@KeyedStaticId(key = "conditioned")
-public class ValueProviderConditioned<V> extends AbstractValueProvider<V> {
+public class BoolOperatorConst extends BoolOperator {
 
-    private final BoolOperator condition;
-    @JsonProperty("then")
-    private final me.wolfyscript.utilities.util.eval.value_providers.ValueProvider<V> thenValue;
-    @JsonProperty("else")
-    private final me.wolfyscript.utilities.util.eval.value_providers.ValueProvider<V> elseValue;
+    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("bool/const");
+
+    private final boolean value;
 
     @JsonCreator
-    public ValueProviderConditioned(@JsonProperty("condition") BoolOperator condition, @JsonProperty("then") me.wolfyscript.utilities.util.eval.value_providers.ValueProvider<V> thenValue, @JsonProperty("else") ValueProvider<V> elseValue) {
-        super();
-        this.condition = condition;
-        this.thenValue = thenValue;
-        this.elseValue = elseValue;
+    public BoolOperatorConst(@JsonProperty("value") boolean value) {
+        super(KEY);
+        this.value = value;
     }
 
     @Override
-    public V getValue(EvalContext context) {
-        return condition.evaluate(context) ? thenValue.getValue() : elseValue.getValue();
+    public boolean evaluate(EvalContext context) {
+        return value;
     }
 }
