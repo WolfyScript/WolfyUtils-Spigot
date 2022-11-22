@@ -28,9 +28,12 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.wolfyscript.utilities.KeyedStaticId;
+import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.eval.context.EvalContext;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTType;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,12 +41,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import me.wolfyscript.utilities.util.eval.context.EvalContext;
 import com.wolfyscript.utilities.eval.operator.BoolOperatorConst;
 
+@KeyedStaticId(key = "compound")
 public class QueryNodeCompound extends QueryNode<NBTCompound> {
-
-    public static final NamespacedKey TYPE = NamespacedKey.wolfyutilties("compound");
 
     private boolean preservePath = true;
     //If include is true it includes this node with each and every child node.
@@ -56,8 +57,8 @@ public class QueryNodeCompound extends QueryNode<NBTCompound> {
     @JsonIgnore
     private Map<String, QueryNode<?>> children;
 
-    public QueryNodeCompound(@JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
-        super(TYPE, key, parentPath);
+    public QueryNodeCompound(@JacksonInject WolfyUtils wolfyUtils, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
+        super(wolfyUtils, key, parentPath);
         this.nbtType = NBTType.NBTTagCompound;
         this.includes = new HashMap<>();
         this.required = new HashMap<>();
@@ -65,7 +66,7 @@ public class QueryNodeCompound extends QueryNode<NBTCompound> {
     }
 
     private QueryNodeCompound(QueryNodeCompound other) {
-        super(TYPE, other.key, other.parentPath);
+        super(other.wolfyUtils, other.key, other.parentPath);
         this.nbtType = NBTType.NBTTagCompound;
         this.includes = new HashMap<>(other.includes);
         this.preservePath = other.preservePath;
@@ -155,7 +156,7 @@ public class QueryNodeCompound extends QueryNode<NBTCompound> {
             if (subQueryNode != null) {
                 subQueryNode.visit(newPath, childKey, context, value, container);
             } else {
-                QueryNodeBoolean node = new QueryNodeBoolean(new BoolOperatorConst(true), childKey, newPath);
+                QueryNodeBoolean node = new QueryNodeBoolean(wolfyUtils, new BoolOperatorConst(wolfyUtils, true), childKey, newPath);
                 node.visit(newPath, childKey, context, value, container);
             }
         }

@@ -18,7 +18,7 @@
 
 package me.wolfyscript.utilities.compatibility;
 
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -150,6 +150,6 @@ public interface Plugins {
      * @param <T> The PluginAdapter type.
      * @return The adapter of the specified key; or null if it doesn't exist or doesn't match the type.
      */
-    <T extends PluginAdapter> T getAdapter(String pluginName, Class<T> type, NamespacedKey key);
+    <T extends PluginAdapter> T getAdapter(String pluginName, Class<T> type, BukkitNamespacedKey key);
 
 }

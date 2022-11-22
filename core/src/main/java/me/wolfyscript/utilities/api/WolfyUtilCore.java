@@ -7,7 +7,7 @@ import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReferen
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
 import me.wolfyscript.utilities.compatibility.CompatibilityManager;
 import me.wolfyscript.utilities.compatibility.CompatibilityManagerBukkit;
-import me.wolfyscript.utilities.registry.Registries;
+import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import me.wolfyscript.utilities.util.version.ServerVersion;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.Plugin;
@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * This abstract class is the actual core of the plugin (This class is being extended by the plugin instance).<br>
  * <p>
- * It provides access to internal functionality like {@link Registries}, {@link CompatibilityManagerBukkit}, and of course the creation of the API instance.<br>
+ * It provides access to internal functionality like {@link BukkitRegistries}, {@link CompatibilityManagerBukkit}, and of course the creation of the API instance.<br>
  * <p>
  * To get an instance of the API ({@link WolfyUtilities}) for your plugin you need one of the following methods. <br>
  * <ul>
@@ -44,7 +44,7 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
     protected Reflections reflections;
     protected final Map<String, WolfyUtilities> wolfyUtilsInstances = new HashMap<>();
     protected final WolfyUtilities api;
-    protected final Registries registries;
+    protected final BukkitRegistries registries;
 
     protected WolfyUtilCore() {
         super();
@@ -55,7 +55,7 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
         }
         this.api = getAPI(this);
         ServerVersion.setWUVersion(getDescription().getVersion());
-        this.registries = new Registries(this);
+        this.registries = new BukkitRegistries(this);
         this.reflections = initReflections();
     }
 
@@ -70,7 +70,7 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
         ServerVersion.setIsJUnitTest(true);
         System.setProperty("bstats.relocatecheck", "false");
         this.api = getAPI(this);
-        this.registries = new Registries(this);
+        this.registries = new BukkitRegistries(this);
         this.reflections = initReflections();
     }
 
@@ -95,11 +95,11 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
     }
 
     /**
-     * Gets the {@link Registries} object, that contains all info about available registries.
+     * Gets the {@link BukkitRegistries} object, that contains all info about available registries.
      *
-     * @return The {@link Registries} object, to access registries.
+     * @return The {@link BukkitRegistries} object, to access registries.
      */
-    public Registries getRegistries() {
+    public BukkitRegistries getRegistries() {
         return registries;
     }
 

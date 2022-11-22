@@ -18,8 +18,10 @@
 
 package me.wolfyscript.utilities.util;
 
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+
 /**
- * Objects that implement this interface are bound to a {@link NamespacedKey} and can be uniquely identified.<br>
+ * Objects that implement this interface are bound to a {@link BukkitNamespacedKey} and can be uniquely identified.<br>
  * This interface may only be used for registrable resources and/or uniquely identifiably public resources!
  * <b>This interface may not be used for internal plugin resources!</b><br>
  * Usually this interface is implemented to register data into a kind of {@link me.wolfyscript.utilities.registry.Registry},
@@ -32,5 +34,5 @@ public interface Keyed {
      *
      * @return The NamespacedKey of the object.
      */
-    NamespacedKey getNamespacedKey();
+    BukkitNamespacedKey getNamespacedKey();
 }

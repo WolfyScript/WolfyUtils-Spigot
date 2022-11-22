@@ -25,7 +25,7 @@ import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.ByteProcessor;
 import me.wolfyscript.utilities.api.nms.NetworkUtil;
 import me.wolfyscript.utilities.api.nms.nbt.NBTCompound;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
@@ -193,21 +193,21 @@ public interface MCByteBuf {
     MCByteBuf writeUtf(String s, int i);
 
     /**
-     * Reads the {@link NamespacedKey} from the buffer.<br>
+     * Reads the {@link BukkitNamespacedKey} from the buffer.<br>
      * This method is compatible with the <strong>ResourceLocation</strong> on the client-side.
      *
-     * @return The {@link NamespacedKey} instance, read from the buffer.
+     * @return The {@link BukkitNamespacedKey} instance, read from the buffer.
      */
-    NamespacedKey readNamespacedKey();
+    BukkitNamespacedKey readNamespacedKey();
 
     /**
-     * Writes the {@link NamespacedKey} instance to the buffer.<br>
+     * Writes the {@link BukkitNamespacedKey} instance to the buffer.<br>
      * This method is compatible with the <strong>ResourceLocation</strong> on the client-side.
      *
-     * @param namespacedKey The {@link NamespacedKey} to write to the buffer.
+     * @param namespacedKey The {@link BukkitNamespacedKey} to write to the buffer.
      * @return The instance of this {@link MCByteBuf} for chaining.
      */
-    MCByteBuf writeNamespacedKey(NamespacedKey namespacedKey);
+    MCByteBuf writeNamespacedKey(BukkitNamespacedKey namespacedKey);
 
     Date readDate();
 

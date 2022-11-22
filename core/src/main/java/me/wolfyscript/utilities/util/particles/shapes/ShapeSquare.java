@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.common.base.Preconditions;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.util.Vector;
 
 import java.util.function.Consumer;
@@ -30,7 +30,7 @@ import java.util.function.Function;
 
 public class ShapeSquare extends Shape {
 
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("square");
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("square");
 
     private final double radius;
     private int pointsPerSide;

@@ -16,13 +16,17 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.registry;
+package com.wolfyscript.utilities.bukkit.registry;
 
-import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.bukkit.items.CustomItemData;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
 import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
+import com.wolfyscript.utilities.common.registry.Registries;
+import com.wolfyscript.utilities.common.registry.Registry;
+import com.wolfyscript.utilities.common.registry.RegistrySimple;
+import com.wolfyscript.utilities.common.registry.TypeRegistry;
+import com.wolfyscript.utilities.common.registry.UniqueTypeRegistrySimple;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomData;
@@ -31,18 +35,14 @@ import me.wolfyscript.utilities.api.inventory.custom_items.actions.Action;
 import me.wolfyscript.utilities.api.inventory.custom_items.actions.Event;
 import me.wolfyscript.utilities.api.inventory.custom_items.meta.Meta;
 import me.wolfyscript.utilities.api.inventory.tags.Tags;
-import me.wolfyscript.utilities.util.Keyed;
-import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.eval.operators.Operator;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.particles.ParticleAnimation;
 import me.wolfyscript.utilities.util.particles.ParticleEffect;
 import me.wolfyscript.utilities.util.particles.animators.Animator;
 import me.wolfyscript.utilities.util.particles.shapes.Shape;
 import me.wolfyscript.utilities.util.particles.timer.Timer;
-import me.wolfyscript.utilities.util.eval.value_providers.ValueProvider;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Includes all the Registries inside WolfyUtilities.<br>
@@ -58,20 +58,15 @@ import java.util.Map;
  *     <li>via static method {@link WolfyUtilCore#getInstance()} & {@link WolfyUtilCore#getRegistries()} (This should only be used in cases where you have no access to your API instance!)</li>
  * </ul>
  */
-public class Registries {
+public class BukkitRegistries extends Registries {
 
-    public static final NamespacedKey ITEM_ACTION_VALUES = NamespacedKey.wolfyutilties("custom_item/actions/values");
-    public static final NamespacedKey ITEM_ACTION_TYPES = NamespacedKey.wolfyutilties("custom_item/actions/types");
-    public static final NamespacedKey ITEM_EVENT_VALUES = NamespacedKey.wolfyutilties("custom_item/events/values");
-    public static final NamespacedKey ITEM_EVENT_TYPES = NamespacedKey.wolfyutilties("custom_item/events/types");
+    public static final BukkitNamespacedKey ITEM_ACTION_VALUES = BukkitNamespacedKey.wolfyutilties("custom_item/actions/values");
+    public static final BukkitNamespacedKey ITEM_ACTION_TYPES = BukkitNamespacedKey.wolfyutilties("custom_item/actions/types");
+    public static final BukkitNamespacedKey ITEM_EVENT_VALUES = BukkitNamespacedKey.wolfyutilties("custom_item/events/values");
+    public static final BukkitNamespacedKey ITEM_EVENT_TYPES = BukkitNamespacedKey.wolfyutilties("custom_item/events/types");
 
-    public static final NamespacedKey ITEM_CUSTOM_DATA = NamespacedKey.wolfyutilties("custom_item/data");
-    public static final NamespacedKey ITEM_NBT_CHECKS = NamespacedKey.wolfyutilties("custom_item/nbt_checks");
-
-    private final WolfyUtilCore core;
-
-    private final Map<Class<? extends Keyed>, IRegistry<?>> REGISTRIES_BY_TYPE = new HashMap<>();
-    private final Map<NamespacedKey, IRegistry<?>> REGISTRIES_BY_KEY = new HashMap<>();
+    public static final BukkitNamespacedKey ITEM_CUSTOM_DATA = BukkitNamespacedKey.wolfyutilties("custom_item/data");
+    public static final BukkitNamespacedKey ITEM_NBT_CHECKS = BukkitNamespacedKey.wolfyutilties("custom_item/nbt_checks");
 
     //Value registries
     private final RegistryCustomItem customItems;
@@ -94,16 +89,13 @@ public class Registries {
     private final TypeRegistry<CustomPlayerData> customPlayerData;
     private final TypeRegistry<CustomItemData> customItemDataTypeRegistry;
 
-    private final TypeRegistry<ValueProvider<?>> valueProviders;
-    private final TypeRegistry<Operator> operators;
-
     private final TypeRegistry<QueryNode<?>> nbtQueryNodes;
 
-    public Registries(WolfyUtilCore core) {
-        this.core = core;
+    public BukkitRegistries(WolfyUtilCore core) {
+        super(core);
 
         customItems = new RegistryCustomItem(this);
-        customItemData = new RegistrySimple<>(new NamespacedKey(core, "custom_item_data"), this);
+        customItemData = new RegistrySimple<>(new BukkitNamespacedKey(core, "custom_item_data"), this);
         particleEffects = new RegistryParticleEffect(this);
         particleAnimations = new RegistryParticleAnimation(this);
         customItemActionValues = new RegistrySimple<>(ITEM_ACTION_VALUES, this, (Class<Action<?>>)(Object) Action.class);
@@ -111,57 +103,23 @@ public class Registries {
 
         itemTags = new Tags<>(this);
 
-        particleAnimators = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "particles/animators"), this);
-        particleShapes = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "particles/shapes"), this);
-        particleTimer = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "particles/timers"), this);
+        particleAnimators = new UniqueTypeRegistrySimple<>(new BukkitNamespacedKey(core, "particles/animators"), this);
+        particleShapes = new UniqueTypeRegistrySimple<>(new BukkitNamespacedKey(core, "particles/shapes"), this);
+        particleTimer = new UniqueTypeRegistrySimple<>(new BukkitNamespacedKey(core, "particles/timers"), this);
         customItemNbtChecks = new UniqueTypeRegistrySimple<>(ITEM_NBT_CHECKS, this);
         customItemDataTypeRegistry = new UniqueTypeRegistrySimple<>(ITEM_CUSTOM_DATA, this);
         customItemActions = new UniqueTypeRegistrySimple<>(ITEM_ACTION_TYPES, this);
         customItemEvents = new UniqueTypeRegistrySimple<>(ITEM_EVENT_TYPES, this);
-        valueProviders = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "value_providers"), this);
-        operators = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "operators"), this);
 
-        customPlayerData = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "persistent/player"), this);
-        customBlockData = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "persistent/block"), this);
+        customPlayerData = new UniqueTypeRegistrySimple<>(new BukkitNamespacedKey(core, "persistent/player"), this);
+        customBlockData = new UniqueTypeRegistrySimple<>(new BukkitNamespacedKey(core, "persistent/block"), this);
 
-        this.nbtQueryNodes = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "nbt/query/nodes"), this);
+        this.nbtQueryNodes = new UniqueTypeRegistrySimple<>(new BukkitNamespacedKey(core, "nbt/query/nodes"), this);
     }
 
-    void indexTypedRegistry(IRegistry<?> registry) {
-        Preconditions.checkArgument(!REGISTRIES_BY_KEY.containsKey(registry.getKey()), "A registry with the key \"" + registry.getKey() + "\" already exists!");
-        REGISTRIES_BY_KEY.put(registry.getKey(), registry);
-
-        //Index them by type if available
-        if(registry instanceof RegistrySimple<?> simpleRegistry && simpleRegistry.getType() != null) {
-            Preconditions.checkArgument(!REGISTRIES_BY_TYPE.containsKey(simpleRegistry.getType()), "A registry with that type already exists!");
-            REGISTRIES_BY_TYPE.put(simpleRegistry.getType(), simpleRegistry);
-        }
-    }
-
-    /**
-     * Gets a Registry by the type it contains.
-     * The Registry has to be created with the class of the type (See: {@link RegistrySimple#RegistrySimple(NamespacedKey, Registries, Class)}).
-     *
-     * @param type The class of the type the registry contains.
-     * @param <V> The type the registry contains.
-     * @return The registry of the specific type; or null if not available.
-     */
-    @SuppressWarnings("unchecked")
-    public <V extends Keyed> Registry<V> getByType(Class<V> type) {
-        return (Registry<V>) REGISTRIES_BY_TYPE.get(type);
-    }
-
-    public IRegistry<?> getByKey(NamespacedKey key) {
-        return REGISTRIES_BY_KEY.get(key);
-    }
-
-    public <V extends IRegistry<?>> V getByKeyOfType(NamespacedKey key, Class<V> registryType) {
-        var registry = getByKey(key);
-        return registryType.cast(registry);
-    }
-
-    public WolfyUtilCore getCore() {
-        return core;
+    @Override
+    protected void indexTypedRegistry(@NotNull com.wolfyscript.utilities.common.registry.Registry<?> registry) {
+        super.indexTypedRegistry(registry);
     }
 
     /**
@@ -258,14 +216,6 @@ public class Registries {
 
     public TypeRegistry<Event<?>> getCustomItemEvents() {
         return customItemEvents;
-    }
-
-    public TypeRegistry<ValueProvider<?>> getValueProviders() {
-        return valueProviders;
-    }
-
-    public TypeRegistry<Operator> getOperators() {
-        return operators;
     }
 
     public TypeRegistry<CustomPlayerData> getCustomPlayerData() {

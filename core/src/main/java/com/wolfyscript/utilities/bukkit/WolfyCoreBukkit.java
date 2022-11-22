@@ -97,30 +97,30 @@ import me.wolfyscript.utilities.main.configs.WUConfig;
 import me.wolfyscript.utilities.messages.MessageFactory;
 import me.wolfyscript.utilities.messages.MessageHandler;
 import com.wolfyscript.utilities.eval.operator.BoolOperatorConst;
-import me.wolfyscript.utilities.util.eval.operators.ComparisonOperatorEqual;
-import me.wolfyscript.utilities.util.eval.operators.ComparisonOperatorGreater;
-import me.wolfyscript.utilities.util.eval.operators.ComparisonOperatorGreaterEqual;
-import me.wolfyscript.utilities.util.eval.operators.ComparisonOperatorLess;
-import me.wolfyscript.utilities.util.eval.operators.ComparisonOperatorLessEqual;
-import me.wolfyscript.utilities.util.eval.operators.ComparisonOperatorNotEqual;
-import me.wolfyscript.utilities.util.eval.operators.LogicalOperatorAnd;
-import me.wolfyscript.utilities.util.eval.operators.LogicalOperatorNot;
-import me.wolfyscript.utilities.util.eval.operators.LogicalOperatorOr;
-import me.wolfyscript.utilities.util.eval.operators.Operator;
-import me.wolfyscript.utilities.util.eval.value_providers.ValueProvider;
-import me.wolfyscript.utilities.util.eval.value_providers.ValueProviderConditioned;
-import me.wolfyscript.utilities.util.eval.value_providers.ValueProviderFloatConst;
-import me.wolfyscript.utilities.util.eval.value_providers.ValueProviderFloatVar;
-import me.wolfyscript.utilities.util.eval.value_providers.ValueProviderIntegerConst;
-import me.wolfyscript.utilities.util.eval.value_providers.ValueProviderIntegerVar;
-import me.wolfyscript.utilities.util.eval.value_providers.ValueProviderStringConst;
-import me.wolfyscript.utilities.util.eval.value_providers.ValueProviderStringVar;
+import com.wolfyscript.utilities.eval.operator.ComparisonOperatorEqual;
+import com.wolfyscript.utilities.eval.operator.ComparisonOperatorGreater;
+import com.wolfyscript.utilities.eval.operator.ComparisonOperatorGreaterEqual;
+import com.wolfyscript.utilities.eval.operator.ComparisonOperatorLess;
+import com.wolfyscript.utilities.eval.operator.ComparisonOperatorLessEqual;
+import com.wolfyscript.utilities.eval.operator.ComparisonOperatorNotEqual;
+import com.wolfyscript.utilities.eval.operator.LogicalOperatorAnd;
+import com.wolfyscript.utilities.eval.operator.LogicalOperatorNot;
+import com.wolfyscript.utilities.eval.operator.LogicalOperatorOr;
+import com.wolfyscript.utilities.eval.operator.Operator;
+import com.wolfyscript.utilities.eval.value_provider.ValueProvider;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderConditioned;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderFloatConst;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderFloatVar;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderIntegerConst;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderIntegerVar;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderStringConst;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderStringVar;
 import me.wolfyscript.utilities.util.inventory.CreativeModeTab;
 import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
-import me.wolfyscript.utilities.util.json.jackson.KeyedTypeIdResolver;
-import me.wolfyscript.utilities.util.json.jackson.annotations.OptionalKeyReference;
-import me.wolfyscript.utilities.util.json.jackson.annotations.OptionalValueDeserializer;
-import me.wolfyscript.utilities.util.json.jackson.annotations.OptionalValueSerializer;
+import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
+import com.wolfyscript.utilities.json.annotations.OptionalKeyReference;
+import com.wolfyscript.utilities.json.annotations.OptionalValueDeserializer;
+import com.wolfyscript.utilities.json.annotations.OptionalValueSerializer;
 import me.wolfyscript.utilities.util.json.jackson.serialization.APIReferenceSerialization;
 import me.wolfyscript.utilities.util.json.jackson.serialization.ColorSerialization;
 import me.wolfyscript.utilities.util.json.jackson.serialization.DustOptionsSerialization;
@@ -278,18 +278,18 @@ public final class WolfyCoreBukkit extends WUPlugin {
         // Initialise all the Registers
         getLogger().info("Register JSON Operators");
         var operators = getRegistries().getOperators();
-        operators.register(BoolOperatorConst.KEY, BoolOperatorConst.class);
+        operators.register(BoolOperatorConst.class);
         // Compare operators
-        operators.register(ComparisonOperatorEqual.KEY, ComparisonOperatorEqual.class);
-        operators.register(ComparisonOperatorNotEqual.KEY, ComparisonOperatorNotEqual.class);
-        operators.register(ComparisonOperatorGreater.KEY, ComparisonOperatorGreater.class);
-        operators.register(ComparisonOperatorGreaterEqual.KEY, ComparisonOperatorGreaterEqual.class);
-        operators.register(ComparisonOperatorLess.KEY, ComparisonOperatorLess.class);
-        operators.register(ComparisonOperatorLessEqual.KEY, ComparisonOperatorLessEqual.class);
+        operators.register(ComparisonOperatorEqual.class);
+        operators.register(ComparisonOperatorNotEqual.class);
+        operators.register(ComparisonOperatorGreater.class);
+        operators.register(ComparisonOperatorGreaterEqual.class);
+        operators.register(ComparisonOperatorLess.class);
+        operators.register(ComparisonOperatorLessEqual.class);
         // Logical
-        operators.register(LogicalOperatorAnd.KEY, LogicalOperatorAnd.class);
-        operators.register(LogicalOperatorOr.KEY, LogicalOperatorOr.class);
-        operators.register(LogicalOperatorNot.KEY, LogicalOperatorNot.class);
+        operators.register(LogicalOperatorAnd.class);
+        operators.register(LogicalOperatorOr.class);
+        operators.register(LogicalOperatorNot.class);
 
         getLogger().info("Register JSON Value Providers");
         var valueProviders = getRegistries().getValueProviders();
@@ -381,26 +381,26 @@ public final class WolfyCoreBukkit extends WUPlugin {
 
         getLogger().info("Register NBT Query Nodes");
         var nbtQueryNodes = getRegistries().getNbtQueryNodes();
-        nbtQueryNodes.register(QueryNodeCompound.TYPE, QueryNodeCompound.class);
-        nbtQueryNodes.register(QueryNodeBoolean.TYPE, QueryNodeBoolean.class);
+        nbtQueryNodes.register(QueryNodeCompound.class);
+        nbtQueryNodes.register(QueryNodeBoolean.class);
         //Primitives
-        nbtQueryNodes.register(QueryNodeByte.TYPE, QueryNodeByte.class);
-        nbtQueryNodes.register(QueryNodeShort.TYPE, QueryNodeShort.class);
-        nbtQueryNodes.register(QueryNodeInt.TYPE, QueryNodeInt.class);
-        nbtQueryNodes.register(QueryNodeLong.TYPE, QueryNodeLong.class);
-        nbtQueryNodes.register(QueryNodeDouble.TYPE, QueryNodeDouble.class);
-        nbtQueryNodes.register(QueryNodeFloat.TYPE, QueryNodeFloat.class);
-        nbtQueryNodes.register(QueryNodeString.TYPE, QueryNodeString.class);
+        nbtQueryNodes.register(QueryNodeByte.class);
+        nbtQueryNodes.register(QueryNodeShort.class);
+        nbtQueryNodes.register(QueryNodeInt.class);
+        nbtQueryNodes.register(QueryNodeLong.class);
+        nbtQueryNodes.register(QueryNodeDouble.class);
+        nbtQueryNodes.register(QueryNodeFloat.class);
+        nbtQueryNodes.register(QueryNodeString.class);
         //Arrays
-        nbtQueryNodes.register(QueryNodeByteArray.TYPE, QueryNodeByteArray.class);
-        nbtQueryNodes.register(QueryNodeIntArray.TYPE, QueryNodeIntArray.class);
+        nbtQueryNodes.register(QueryNodeByteArray.class);
+        nbtQueryNodes.register(QueryNodeIntArray.class);
         //Lists
-        nbtQueryNodes.register(QueryNodeListInt.TYPE, QueryNodeListInt.class);
-        nbtQueryNodes.register(QueryNodeListLong.TYPE, QueryNodeListLong.class);
-        nbtQueryNodes.register(QueryNodeListDouble.TYPE, QueryNodeListDouble.class);
-        nbtQueryNodes.register(QueryNodeListFloat.TYPE, QueryNodeListFloat.class);
-        nbtQueryNodes.register(QueryNodeListString.TYPE, QueryNodeListString.class);
-        nbtQueryNodes.register(QueryNodeListCompound.TYPE, QueryNodeListCompound.class);
+        nbtQueryNodes.register(QueryNodeListInt.class);
+        nbtQueryNodes.register(QueryNodeListLong.class);
+        nbtQueryNodes.register(QueryNodeListDouble.class);
+        nbtQueryNodes.register(QueryNodeListFloat.class);
+        nbtQueryNodes.register(QueryNodeListString.class);
+        nbtQueryNodes.register(QueryNodeListCompound.class);
 
         // Register the Registries to resolve type references in JSON
         KeyedTypeIdResolver.registerTypeRegistry(CustomItemData.class, registries.getCustomItemDataTypeRegistry());

@@ -19,7 +19,7 @@
 package me.wolfyscript.utilities.compatibility;
 
 import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -122,7 +122,7 @@ public abstract class PluginIntegrationAbstract implements PluginIntegration {
     }
 
     @Override
-    public <T extends PluginAdapter> T getAdapter(Class<T> type, NamespacedKey key) {
+    public <T extends PluginAdapter> T getAdapter(Class<T> type, BukkitNamespacedKey key) {
         return core.getCompatibilityManager().getPlugins().getAdapter(pluginName, type, key);
     }
 

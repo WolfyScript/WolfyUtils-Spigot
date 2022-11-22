@@ -21,7 +21,7 @@ package me.wolfyscript.utilities.util.particles.animators;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.math.MathUtil;
 import me.wolfyscript.utilities.util.particles.ParticleEffect;
 import me.wolfyscript.utilities.util.particles.shapes.Shape;
@@ -41,7 +41,7 @@ import java.util.Objects;
  */
 public class AnimatorVectorPath extends Animator {
 
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("vector_path");
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("vector_path");
 
     private final Shape shape;
     private final Map<Double, Vector> path;

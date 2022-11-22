@@ -21,7 +21,7 @@ package me.wolfyscript.utilities.api.network.messages;
 import io.netty.buffer.Unpooled;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.nms.network.MCByteBuf;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -37,11 +37,11 @@ import java.util.Optional;
  */
 public class Message implements PluginMessageListener {
 
-    private final NamespacedKey channelTag;
+    private final BukkitNamespacedKey channelTag;
     private final WolfyUtilities wolfyUtils;
     private final MessageConsumer decoder;
 
-    public Message(NamespacedKey key, WolfyUtilities wolfyUtils, @Nullable MessageConsumer decoder) {
+    public Message(BukkitNamespacedKey key, WolfyUtilities wolfyUtils, @Nullable MessageConsumer decoder) {
         this.channelTag = key;
         this.wolfyUtils = wolfyUtils;
         this.decoder = decoder;

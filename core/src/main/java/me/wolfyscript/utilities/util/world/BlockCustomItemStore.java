@@ -23,9 +23,10 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.wolfyscript.utilities.NamespacedKey;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -88,7 +89,7 @@ public class BlockCustomItemStore {
         public BlockCustomItemStore deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
             JsonNode node = p.readValueAsTree();
             if (node.has("key")) {
-                var customItemKey = NamespacedKey.of(node.path("key").asText());
+                var customItemKey = BukkitNamespacedKey.of(node.path("key").asText());
                 if (customItemKey != null) {
                     return new BlockCustomItemStore(customItemKey, null);
                 }

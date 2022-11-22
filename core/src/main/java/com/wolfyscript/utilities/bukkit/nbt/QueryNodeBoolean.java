@@ -25,29 +25,30 @@ package com.wolfyscript.utilities.bukkit.nbt;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wolfyscript.utilities.KeyedStaticId;
+import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.eval.context.EvalContext;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTList;
 import de.tr7zw.changeme.nbtapi.NBTType;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 
 import java.util.Optional;
-import me.wolfyscript.utilities.util.eval.context.EvalContext;
-import me.wolfyscript.utilities.util.eval.operators.BoolOperator;
+import com.wolfyscript.utilities.eval.operator.BoolOperator;
 
+@KeyedStaticId(key = "bool")
 public class QueryNodeBoolean extends QueryNode<Object> {
-
-    public static final NamespacedKey TYPE = NamespacedKey.wolfyutilties("boolean");
 
     private final BoolOperator value;
 
     @JsonCreator
-    public QueryNodeBoolean(@JsonProperty("value") BoolOperator value, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
-        super(TYPE, key, parentPath);
+    public QueryNodeBoolean(@JacksonInject WolfyUtils wolfyUtils, @JsonProperty("value") BoolOperator value, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
+        super(wolfyUtils, key, parentPath);
         this.value = value;
     }
 
     private QueryNodeBoolean(QueryNodeBoolean other) {
-        super(TYPE, other.key, other.parentPath);
+        super(other.wolfyUtils, other.key, other.parentPath);
         this.value = other.value;
     }
 

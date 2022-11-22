@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.util;
+package com.wolfyscript.utilities.bukkit;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
+import com.wolfyscript.utilities.NamespacedKey;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import org.bukkit.plugin.Plugin;
@@ -42,16 +43,16 @@ import java.util.regex.Pattern;
  * It consists of a unique namespace and a key. (The same key can exist in different namespaces) <br>
  * <br>
  * Usually the namespace should be the plugins' (lowercase) name and identifies resources as part of that plugin.<br>
- * e.g. when registering data using the {@link me.wolfyscript.utilities.registry.IRegistry}, etc.<br>
- * In those cases the {@link #NamespacedKey(Plugin, String)} constructor should be used.
+ * e.g. when registering data using the {@link com.wolfyscript.utilities.common.registry.Registry}, etc.<br>
+ * In those cases the {@link #BukkitNamespacedKey(Plugin, String)} constructor should be used.
  * <br>
  * They can however be used inside a plugin itself with non-plugin namespaces, when resources are only accessible internally.<br>
  * e.g. {@link me.wolfyscript.utilities.api.inventory.gui.GuiWindow} where the namespace is the {@link me.wolfyscript.utilities.api.inventory.gui.GuiCluster}s' id and the key the GuiWindows's id, etc.<br>
- * In those cases the {@link #NamespacedKey(String, String)} constructor can be used.
+ * In those cases the {@link #BukkitNamespacedKey(String, String)} constructor can be used.
  *
  */
-@JsonDeserialize(using = NamespacedKey.Deserializer.class, keyUsing = NamespacedKey.KeyDeserializer.class)
-public class NamespacedKey implements Comparable<NamespacedKey> {
+@JsonDeserialize(using = BukkitNamespacedKey.Deserializer.class, keyUsing = BukkitNamespacedKey.KeyDeserializer.class)
+public class BukkitNamespacedKey implements NamespacedKey, Comparable<BukkitNamespacedKey> {
 
     public static final String WOLFYUTILITIES = "wolfyutilities";
 
@@ -71,7 +72,7 @@ public class NamespacedKey implements Comparable<NamespacedKey> {
      * @param namespace The namespace, that fits the pattern [a-z0-9._-]
      * @param key       The key that fits the pattern [a-z0-9/._-]
      */
-    public NamespacedKey(String namespace, String key) {
+    public BukkitNamespacedKey(String namespace, String key) {
         Preconditions.checkArgument(namespace != null && VALID_NAMESPACE.matcher(namespace).matches(), "Invalid namespace. Must be [a-z0-9._-]: %s", namespace);
         this.key = new Key(key.toLowerCase(Locale.ROOT));
         this.namespace = namespace;
@@ -86,7 +87,7 @@ public class NamespacedKey implements Comparable<NamespacedKey> {
      * @param plugin The plugin that this data belongs to
      * @param key    The key that fits the pattern [a-z0-9/._-]
      */
-    public NamespacedKey(@NotNull Plugin plugin, @NotNull String key) {
+    public BukkitNamespacedKey(@NotNull Plugin plugin, @NotNull String key) {
         Preconditions.checkArgument(plugin != null, "Plugin cannot be null");
         Preconditions.checkArgument(key != null, "Key cannot be null");
         this.hasPlugin = true;
@@ -133,12 +134,12 @@ public class NamespacedKey implements Comparable<NamespacedKey> {
      * @return The NamespacedKey of the String or null, if the String doesn't contain a ":".
      */
     @Nullable
-    public static NamespacedKey of(@Nullable String namespaceKey) {
+    public static BukkitNamespacedKey of(@Nullable String namespaceKey) {
         if (namespaceKey == null || namespaceKey.isEmpty()) return null;
         String[] parts = namespaceKey.split(":", 2);
         if (parts.length == 0) return null;
         if (parts.length > 1) {
-            return new NamespacedKey(parts[0].toLowerCase(Locale.ROOT), parts[1].toLowerCase(Locale.ROOT));
+            return new BukkitNamespacedKey(parts[0].toLowerCase(Locale.ROOT), parts[1].toLowerCase(Locale.ROOT));
         } else {
             return wolfyutilties(parts[0]);
         }
@@ -160,14 +161,14 @@ public class NamespacedKey implements Comparable<NamespacedKey> {
      * @param namespacedKey The bukkit NamespacedKey.
      * @return A new NamespacedKey with the same namespace and key as the Bukkit representation.
      */
-    public static NamespacedKey fromBukkit(org.bukkit.NamespacedKey namespacedKey) {
-        return new NamespacedKey(namespacedKey.getNamespace(), namespacedKey.getKey());
+    public static BukkitNamespacedKey fromBukkit(org.bukkit.NamespacedKey namespacedKey) {
+        return new BukkitNamespacedKey(namespacedKey.getNamespace(), namespacedKey.getKey());
     }
 
     /**
      * Creates a new Bukkit NamespacedKey with the plugins' name as the namespace.
      *
-     * @deprecated A NamespacedKey should be constructed with the plugins' namespace right away (see {@link #NamespacedKey(Plugin, String)}), which makes this method redundant! Use {@link #bukkit()} instead!
+     * @deprecated A NamespacedKey should be constructed with the plugins' namespace right away (see {@link #BukkitNamespacedKey(Plugin, String)}), which makes this method redundant! Use {@link #bukkit()} instead!
      * @param plugin The plugin
      * @return The new constructed NamespacedKey
      */
@@ -179,7 +180,7 @@ public class NamespacedKey implements Comparable<NamespacedKey> {
     /**
      * Creates a new Bukkit NamespacedKey with the "wolfyutilities" namespace.
      *
-     * @deprecated A NamespacedKey should be constructed with the plugins' namespace right away (see {@link #NamespacedKey(Plugin, String)}), which makes this method redundant! Use {@link #bukkit()} instead!
+     * @deprecated A NamespacedKey should be constructed with the plugins' namespace right away (see {@link #BukkitNamespacedKey(Plugin, String)}), which makes this method redundant! Use {@link #bukkit()} instead!
      * @return The new constructed NamespacedKey
      */
     @Deprecated
@@ -187,8 +188,8 @@ public class NamespacedKey implements Comparable<NamespacedKey> {
         return toBukkit(WolfyUtilities.getWUPlugin());
     }
 
-    public static NamespacedKey wolfyutilties(String key) {
-        return new NamespacedKey(WolfyUtilCore.getInstance(), key);
+    public static BukkitNamespacedKey wolfyutilties(String key) {
+        return new BukkitNamespacedKey(WolfyUtilCore.getInstance(), key);
     }
 
     public boolean hasPlugin() {
@@ -198,7 +199,7 @@ public class NamespacedKey implements Comparable<NamespacedKey> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof NamespacedKey that)) return false;
+        if (!(o instanceof BukkitNamespacedKey that)) return false;
         return Objects.equals(namespace, that.namespace) &&
                 Objects.equals(key, that.key);
     }
@@ -222,7 +223,7 @@ public class NamespacedKey implements Comparable<NamespacedKey> {
     }
 
     @Override
-    public int compareTo(@NotNull NamespacedKey namespacedKey) {
+    public int compareTo(@NotNull BukkitNamespacedKey namespacedKey) {
         int namespaceDifference = getNamespace().compareTo(namespacedKey.getNamespace());
         return namespaceDifference == 0 ? getKey().compareTo(namespacedKey.getKey()) : namespaceDifference;
     }
@@ -240,7 +241,7 @@ public class NamespacedKey implements Comparable<NamespacedKey> {
      * </pre>
      */
     @ApiStatus.AvailableSince(value = "3.16.1.0")
-    public static final class Key {
+    public static final class Key implements NamespacedKey.Key {
 
         private final String folder;
         private final String object;
@@ -353,19 +354,19 @@ public class NamespacedKey implements Comparable<NamespacedKey> {
         }
     }
 
-    static class Deserializer extends JsonDeserializer<NamespacedKey> {
+    static class Deserializer extends JsonDeserializer<BukkitNamespacedKey> {
 
         @Override
-        public NamespacedKey deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
-            return NamespacedKey.of(jsonParser.readValueAs(String.class));
+        public BukkitNamespacedKey deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+            return BukkitNamespacedKey.of(jsonParser.readValueAs(String.class));
         }
     }
 
     static class KeyDeserializer extends com.fasterxml.jackson.databind.KeyDeserializer {
 
         @Override
-        public NamespacedKey deserializeKey(String s, DeserializationContext deserializationContext) throws IOException {
-            return NamespacedKey.of(s);
+        public BukkitNamespacedKey deserializeKey(String s, DeserializationContext deserializationContext) throws IOException {
+            return BukkitNamespacedKey.of(s);
         }
     }
 }

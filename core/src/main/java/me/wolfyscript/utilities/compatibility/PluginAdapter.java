@@ -18,7 +18,7 @@
 
 package me.wolfyscript.utilities.compatibility;
 
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 
 /**
  * These adapters are used for easier management of plugin dependent classes.<br>
@@ -27,13 +27,13 @@ import me.wolfyscript.utilities.util.NamespacedKey;
  */
 public abstract class PluginAdapter {
 
-    private final NamespacedKey key;
+    private final BukkitNamespacedKey key;
 
-    protected PluginAdapter(NamespacedKey namespacedKey) {
+    protected PluginAdapter(BukkitNamespacedKey namespacedKey) {
         this.key = namespacedKey;
     }
 
-    public final NamespacedKey getNamespacedKey() {
+    public final BukkitNamespacedKey getNamespacedKey() {
         return key;
     }
 

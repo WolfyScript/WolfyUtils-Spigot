@@ -25,7 +25,7 @@ import io.netty.util.ByteProcessor;
 import me.wolfyscript.utilities.api.nms.nbt.NBTCompound;
 import me.wolfyscript.utilities.api.nms.network.MCByteBuf;
 import me.wolfyscript.utilities.api.nms.v1_19_R1.nbt.NBTTagCompoundImpl;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
@@ -187,12 +187,12 @@ public class MCByteBufImpl implements MCByteBuf {
     }
 
     @Override
-    public NamespacedKey readNamespacedKey() {
-        return NamespacedKey.of(this.byteBuf.readResourceLocation().toString());
+    public BukkitNamespacedKey readNamespacedKey() {
+        return BukkitNamespacedKey.of(this.byteBuf.readResourceLocation().toString());
     }
 
     @Override
-    public MCByteBuf writeNamespacedKey(NamespacedKey namespacedKey) {
+    public MCByteBuf writeNamespacedKey(BukkitNamespacedKey namespacedKey) {
         this.byteBuf.writeResourceLocation(ResourceLocation.tryParse(namespacedKey.toString()));
         return this;
     }

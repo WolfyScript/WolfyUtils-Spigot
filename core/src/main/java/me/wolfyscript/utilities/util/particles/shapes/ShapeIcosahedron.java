@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.math.MathUtil;
 import me.wolfyscript.utilities.util.math.Triangle;
 import org.bukkit.util.Vector;
@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 
 public class ShapeIcosahedron extends Shape {
 
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("icosahedron");
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("icosahedron");
     public static final double X = 0.525731112119133606f;
     public static final double Z = 0.850650808352039932f;
     /**

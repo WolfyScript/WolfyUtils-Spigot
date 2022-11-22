@@ -20,7 +20,7 @@ package me.wolfyscript.utilities.util.particles.animators;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.particles.ParticleEffect;
 import me.wolfyscript.utilities.util.particles.shapes.Shape;
 import me.wolfyscript.utilities.util.particles.timer.Timer;
@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class AnimatorShape extends Animator {
 
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("shape");
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("shape");
 
     private final Shape shape;
 

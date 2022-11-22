@@ -21,7 +21,7 @@ package me.wolfyscript.utilities.util.particles.shapes;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.util.Vector;
 
 import java.util.function.Consumer;
@@ -29,7 +29,7 @@ import java.util.function.Function;
 
 public class ShapeCircle extends Shape {
 
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("circle");
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("circle");
 
     private final double radius;
     private int resolution;

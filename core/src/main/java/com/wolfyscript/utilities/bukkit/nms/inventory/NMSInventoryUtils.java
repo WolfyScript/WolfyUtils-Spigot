@@ -4,7 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Optional;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.Reflection;
 import org.bukkit.inventory.Inventory;
 
@@ -39,7 +39,7 @@ public class NMSInventoryUtils {
         }
     }
 
-    public static void setCurrentRecipe(Inventory inventory, NamespacedKey recipeId) {
+    public static void setCurrentRecipe(Inventory inventory, BukkitNamespacedKey recipeId) {
         if (inventory == null) return;
         if (CRAFT_INVENTORY_CLASS.isInstance(inventory)) {
             try {

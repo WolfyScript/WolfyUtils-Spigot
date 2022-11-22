@@ -18,13 +18,11 @@
 
 package me.wolfyscript.utilities.api.inventory.custom_items.actions;
 
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.DataPlayer;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.Event;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 
 public abstract class EventPlayer<T extends DataPlayer> extends Event<T> {
 
-    protected EventPlayer(NamespacedKey key, Class<T> dataType) {
+    protected EventPlayer(BukkitNamespacedKey key, Class<T> dataType) {
         super(key, dataType);
     }
 

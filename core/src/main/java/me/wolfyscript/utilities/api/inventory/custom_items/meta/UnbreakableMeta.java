@@ -19,12 +19,12 @@
 package me.wolfyscript.utilities.api.inventory.custom_items.meta;
 
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.inventory.item_builder.ItemBuilder;
 
 public class UnbreakableMeta extends Meta {
 
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("unbreakable");
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("unbreakable");
 
     public UnbreakableMeta() {
         super(KEY);

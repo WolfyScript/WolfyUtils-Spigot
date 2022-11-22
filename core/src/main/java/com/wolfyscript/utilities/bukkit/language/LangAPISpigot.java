@@ -6,9 +6,8 @@ import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import me.wolfyscript.utilities.api.inventory.gui.button.ButtonState;
 import me.wolfyscript.utilities.api.language.Language;
 import me.wolfyscript.utilities.api.language.LanguageAPI;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.chat.ChatColor;
-import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 
@@ -157,7 +156,7 @@ public class LangAPISpigot extends LanguageAPI {
         return readKey(key, node -> ChatColor.convert(node.asText()));
     }
 
-    public String getButtonName(@NotNull NamespacedKey window, String buttonKey) {
+    public String getButtonName(@NotNull BukkitNamespacedKey window, String buttonKey) {
         return BukkitComponentSerializer.legacy().serialize(getComponent(String.format(ButtonState.BUTTON_WINDOW_KEY + ButtonState.NAME_KEY, window.getNamespace(), window.getKey(), buttonKey)));
     }
 
@@ -165,7 +164,7 @@ public class LangAPISpigot extends LanguageAPI {
         return BukkitComponentSerializer.legacy().serialize(getComponent(String.format(ButtonState.BUTTON_CLUSTER_KEY + ButtonState.NAME_KEY, clusterId, buttonKey)));
     }
 
-    public List<String> getButtonLore(@NotNull NamespacedKey window, String buttonKey) {
+    public List<String> getButtonLore(@NotNull BukkitNamespacedKey window, String buttonKey) {
         return getComponents(String.format(ButtonState.BUTTON_WINDOW_KEY + ButtonState.NAME_KEY, window.getNamespace(), window.getKey(), buttonKey)).stream().map(component -> BukkitComponentSerializer.legacy().serialize(component)).collect(Collectors.toList());
     }
 

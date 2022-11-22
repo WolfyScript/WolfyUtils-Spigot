@@ -24,10 +24,10 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
-import me.wolfyscript.utilities.util.Keyed;
-import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.json.jackson.KeyedTypeIdResolver;
-import me.wolfyscript.utilities.util.json.jackson.KeyedTypeResolver;
+import com.wolfyscript.utilities.Keyed;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
+import com.wolfyscript.utilities.json.KeyedTypeResolver;
 import me.wolfyscript.utilities.util.particles.ParticleEffect;
 import me.wolfyscript.utilities.util.particles.timer.Timer;
 import org.bukkit.Location;
@@ -47,9 +47,9 @@ import org.jetbrains.annotations.Nullable;
 @JsonPropertyOrder(value = {"key"})
 public abstract class Animator implements Keyed {
 
-    private final NamespacedKey key;
+    private final BukkitNamespacedKey key;
 
-    protected Animator(NamespacedKey key) {
+    protected Animator(BukkitNamespacedKey key) {
         this.key = key;
     }
 
@@ -96,7 +96,7 @@ public abstract class Animator implements Keyed {
 
     @JsonIgnore
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public BukkitNamespacedKey getNamespacedKey() {
         return key;
     }
 }

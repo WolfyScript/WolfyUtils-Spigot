@@ -19,9 +19,7 @@
 package me.wolfyscript.utilities.api.inventory.custom_items.actions;
 
 import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.DataPlayerEvent;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayer;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -31,7 +29,7 @@ import java.util.List;
 
 public class EventPlayerInteract extends EventPlayer<me.wolfyscript.utilities.api.inventory.custom_items.actions.DataPlayerEvent<PlayerInteractEvent>> {
 
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("player/interact");
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("player/interact");
 
     private List<Action> eventAction = List.of(Action.RIGHT_CLICK_AIR);
     private List<EquipmentSlot> hand = List.of(EquipmentSlot.HAND);

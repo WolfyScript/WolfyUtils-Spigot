@@ -19,7 +19,7 @@
 package me.wolfyscript.utilities.util.particles.timer;
 
 import com.google.common.base.Preconditions;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 
 import java.util.Random;
 
@@ -28,7 +28,7 @@ import java.util.Random;
  */
 public class TimerRandom extends Timer {
 
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("random");
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("random");
 
     private final long seed;
     private final double multiplier;

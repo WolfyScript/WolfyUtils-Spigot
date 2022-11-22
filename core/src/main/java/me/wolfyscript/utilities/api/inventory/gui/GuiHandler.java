@@ -19,14 +19,13 @@
 package me.wolfyscript.utilities.api.inventory.gui;
 
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
-import com.wolfyscript.utilities.common.WolfyUtils;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.gui.button.Button;
 import me.wolfyscript.utilities.api.inventory.gui.button.ButtonAction;
 import me.wolfyscript.utilities.api.inventory.gui.button.ButtonRender;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -173,9 +172,9 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      * Reloads the specified {@link GuiWindow}<br>
      * This will remove the latest window in history and reopen the specified {@link GuiWindow}.<br>
      *
-     * @param windowKey The {@link NamespacedKey} of the window, to reload and replace the active window with.
+     * @param windowKey The {@link BukkitNamespacedKey} of the window, to reload and replace the active window with.
      */
-    public void reloadWindow(NamespacedKey windowKey) {
+    public void reloadWindow(BukkitNamespacedKey windowKey) {
         List<GuiWindow<C>> history = getHistory(invAPI.getGuiCluster(windowKey.getNamespace()));
         history.remove(history.get(0));
         openWindow(windowKey);
@@ -333,7 +332,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      * @param windowKey The key of the {@link GuiWindow}.
      */
     public void openWindow(String windowKey) {
-        openWindow(new NamespacedKey(getCluster().getId(), windowKey));
+        openWindow(new BukkitNamespacedKey(getCluster().getId(), windowKey));
     }
 
     /**
@@ -342,7 +341,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      *
      * @param windowNamespaceKey The key of the {@link GuiWindow}.
      */
-    public void openWindow(@NotNull NamespacedKey windowNamespaceKey) {
+    public void openWindow(@NotNull BukkitNamespacedKey windowNamespaceKey) {
         openWindow(invAPI.getGuiWindow(windowNamespaceKey));
     }
 
@@ -531,7 +530,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
     final Button<C> getButton(GuiWindow<C> guiWindow, int slot) {
         String id = customCache.getButtons(guiWindow).get(slot);
         if (id != null && id.contains(":")) {
-            return invAPI.getButton(NamespacedKey.of(id));
+            return invAPI.getButton(BukkitNamespacedKey.of(id));
         }
         return guiWindow.getButton(id);
     }

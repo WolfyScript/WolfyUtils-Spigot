@@ -19,15 +19,12 @@
 package me.wolfyscript.utilities.api.inventory.custom_items.actions;
 
 import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.Action;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.DataLocation;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.DataPlayer;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.particles.ParticleAnimation;
 
 public class ActionParticleAnimation extends Action<me.wolfyscript.utilities.api.inventory.custom_items.actions.DataLocation> {
 
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("location/particle_animation");
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("location/particle_animation");
 
     private ParticleAnimation animation;
 

@@ -19,9 +19,7 @@
 package me.wolfyscript.utilities.api.inventory.custom_items.actions;
 
 import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.DataPlayerEvent;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayer;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -33,7 +31,7 @@ public abstract class EventPlayerInteractEntityAbstract<T extends PlayerInteract
     private List<EquipmentSlot> hand = List.of(EquipmentSlot.HAND);
     private List<EntityType> entityType = List.of();
 
-    public EventPlayerInteractEntityAbstract(NamespacedKey key) {
+    public EventPlayerInteractEntityAbstract(BukkitNamespacedKey key) {
         super(key, (Class<me.wolfyscript.utilities.api.inventory.custom_items.actions.DataPlayerEvent<T>>)(Object) me.wolfyscript.utilities.api.inventory.custom_items.actions.DataPlayerEvent.class);
     }
 

@@ -31,6 +31,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.items.CustomBlockSettings;
 import com.wolfyscript.utilities.bukkit.items.CustomItemData;
@@ -57,9 +58,9 @@ import me.wolfyscript.utilities.api.inventory.custom_items.references.WolfyUtili
 import me.wolfyscript.utilities.compatibility.plugins.ItemsAdderIntegration;
 import me.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomStack;
 import me.wolfyscript.utilities.compatibility.plugins.itemsadder.ItemsAdderRef;
-import me.wolfyscript.utilities.registry.Registries;
-import me.wolfyscript.utilities.util.Keyed;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
+import com.wolfyscript.utilities.Keyed;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.inventory.InventoryUtils;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import me.wolfyscript.utilities.util.inventory.item_builder.AbstractItemBuilder;
@@ -87,7 +88,7 @@ import org.jetbrains.annotations.Nullable;
  * The {@link APIReference} can be any kind of reference, a simple {@link ItemStack} ({@link VanillaRef}) or an item from another API.
  * </p>
  * <p>
- * For most additional features the CustomItem has to be registered into the {@link Registries#getCustomItems()}.
+ * For most additional features the CustomItem has to be registered into the {@link BukkitRegistries#getCustomItems()}.
  * <br>
  * To make sure the CustomItem can be detected later on, it must be created via any of the {@link #create()} methods.
  * <br>
@@ -212,7 +213,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
                     node.fields().forEachRemaining(entry -> {
                         if (entry.getValue() instanceof ObjectNode entryVal) {
                             String key = entry.getKey().toLowerCase(Locale.ROOT);
-                            NamespacedKey namespacedKey = key.contains(":") ? NamespacedKey.of(key) : NamespacedKey.wolfyutilties(key);
+                            BukkitNamespacedKey namespacedKey = key.contains(":") ? BukkitNamespacedKey.of(key) : BukkitNamespacedKey.wolfyutilties(key);
                             if (namespacedKey != null) {
                                 entryVal.put("key", String.valueOf(namespacedKey));
                                 Meta meta = JacksonUtil.getObjectMapper().convertValue(entryVal, Meta.class);
@@ -373,12 +374,12 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
 
     /**
      * @param itemMeta The ItemMeta to get the key from.
-     * @return The CustomItems {@link NamespacedKey} from the ItemMeta; or null if the ItemMeta doesn't contain a key.
+     * @return The CustomItems {@link BukkitNamespacedKey} from the ItemMeta; or null if the ItemMeta doesn't contain a key.
      */
     public static NamespacedKey getKeyOfItemMeta(ItemMeta itemMeta) {
         var container = itemMeta.getPersistentDataContainer();
         if (container.has(PERSISTENT_KEY_TAG, PersistentDataType.STRING)) {
-            return NamespacedKey.of(container.get(PERSISTENT_KEY_TAG, PersistentDataType.STRING));
+            return BukkitNamespacedKey.of(container.get(PERSISTENT_KEY_TAG, PersistentDataType.STRING));
         }
         return null;
     }
@@ -1380,11 +1381,11 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     private void setCustomDataMap(JsonNode dataNode) {
         if (dataNode == null || dataNode.isNull()) return;
         WolfyUtilCore core = WolfyUtilCore.getInstance();
-        Registries registries = core.getRegistries();
+        BukkitRegistries registries = core.getRegistries();
         Iterator<Map.Entry<String, JsonNode>> itr = dataNode.fields();
         while (itr.hasNext()) {
             Map.Entry<String, JsonNode> entry = itr.next();
-            var namespacedKey = entry.getKey().contains(":") ? NamespacedKey.of(entry.getKey()) : /* Backwards compatibility */ registries.getCustomItemData().keySet().parallelStream().filter(key -> key.getKey().equals(entry.getKey())).findFirst().orElse(null);
+            var namespacedKey = entry.getKey().contains(":") ? BukkitNamespacedKey.of(entry.getKey()) : /* Backwards compatibility */ registries.getCustomItemData().keySet().parallelStream().filter(key -> key.getKey().equals(entry.getKey())).findFirst().orElse(null);
             if (namespacedKey != null) {
                 CustomData.Provider<?> provider = registries.getCustomItemData().get(namespacedKey);
                 if (provider != null) {
@@ -1437,7 +1438,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
                 ParticleLocation loc = ParticleLocation.valueOf(entry.getKey());
                 JsonNode value = entry.getValue();
                 if (value.isObject() && value.has("effect")) {
-                    var animation = WolfyUtilCore.getInstance().getRegistries().getParticleAnimations().get(JacksonUtil.getObjectMapper().convertValue(value.get("effect"), NamespacedKey.class));
+                    var animation = WolfyUtilCore.getInstance().getRegistries().getParticleAnimations().get(JacksonUtil.getObjectMapper().convertValue(value.get("effect"), BukkitNamespacedKey.class));
                     if (animation != null) {
                         loc.applyOldPlayerAnimation(playerSettings, animation);
                     }

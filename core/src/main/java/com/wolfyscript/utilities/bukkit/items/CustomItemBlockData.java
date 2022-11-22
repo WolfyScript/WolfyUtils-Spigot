@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.ChunkStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
@@ -11,7 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.events.CustomItemBreakEvent;
 import me.wolfyscript.utilities.util.particles.ParticleLocation;
 import me.wolfyscript.utilities.util.particles.ParticleUtils;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class CustomItemBlockData extends CustomBlockData {
 
-    public static final NamespacedKey ID = new NamespacedKey(NamespacedKey.WOLFYUTILITIES, "custom_item");
+    public static final NamespacedKey ID = new BukkitNamespacedKey(BukkitNamespacedKey.WOLFYUTILITIES, "custom_item");
 
     @JsonIgnore
     private final WolfyUtilCore core;
@@ -51,7 +52,7 @@ public class CustomItemBlockData extends CustomBlockData {
         this.core = other.core;
         this.chunkStorage = other.chunkStorage;
         this.pos = other.pos;
-        this.item = new NamespacedKey(other.getNamespacedKey().getNamespace(), other.getNamespacedKey().getKey());
+        this.item = new BukkitNamespacedKey(other.getNamespacedKey().getNamespace(), other.getNamespacedKey().getKey());
         this.particleAnimationID = null;
     }
 
