@@ -28,14 +28,14 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.eval.context.EvalContext;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTList;
 import de.tr7zw.changeme.nbtapi.NBTType;
-import me.wolfyscript.utilities.util.NamespacedKey;
 
 import java.util.List;
 import java.util.Optional;
-import me.wolfyscript.utilities.util.eval.context.EvalContext;
 
 public abstract class QueryNodeList<VAL> extends QueryNode<NBTList<VAL>> {
 
@@ -44,15 +44,15 @@ public abstract class QueryNodeList<VAL> extends QueryNode<NBTList<VAL>> {
     private final List<Element<VAL>> elements;
 
     @JsonCreator
-    public QueryNodeList(NamespacedKey type, @JsonProperty("elements") List<Element<VAL>> elements, @JacksonInject("key") String key, @JacksonInject("parent_path") String path, NBTType elementType, Class<VAL> elementClass) {
-        super(type, key, path);
+    public QueryNodeList(@JacksonInject WolfyUtils wolfyUtils, @JsonProperty("elements") List<Element<VAL>> elements, @JacksonInject("key") String key, @JacksonInject("parent_path") String path, NBTType elementType, Class<VAL> elementClass) {
+        super(wolfyUtils, key, path);
         this.elementType = elementClass;
         this.nbtType = elementType;
         this.elements = elements;
     }
 
     protected QueryNodeList(QueryNodeList<VAL> other) {
-        super(other.type, other.key, other.parentPath);
+        super(other.wolfyUtils, other.key, other.parentPath);
         this.nbtType = other.nbtType;
         this.elementType = other.elementType;
         this.elements = other.elements.stream().map(Element::copy).toList();

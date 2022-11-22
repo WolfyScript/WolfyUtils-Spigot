@@ -18,7 +18,7 @@
 
 package me.wolfyscript.utilities.util.particles.shapes;
 
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.math.MathUtil;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +33,7 @@ import java.util.function.Consumer;
  */
 public class ShapeComplexRotation extends Shape {
 
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("complex/rotation");
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("complex/rotation");
 
     private final Vector angleMultiplier;
     private final Vector angle;

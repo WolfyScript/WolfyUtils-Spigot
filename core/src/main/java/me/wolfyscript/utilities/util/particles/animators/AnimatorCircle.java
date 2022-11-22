@@ -21,7 +21,7 @@ package me.wolfyscript.utilities.util.particles.animators;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.math.MathUtil;
 import me.wolfyscript.utilities.util.particles.ParticleEffect;
 import me.wolfyscript.utilities.util.particles.shapes.ShapeCircle;
@@ -39,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
 @Deprecated
 public class AnimatorCircle extends Animator {
 
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("circle");
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("circle");
 
     private final int radius;
     private Vector angleDeg;

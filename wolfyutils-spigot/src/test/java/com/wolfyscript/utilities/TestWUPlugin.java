@@ -22,7 +22,7 @@ import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.main.WUPlugin;
-import me.wolfyscript.utilities.registry.Registries;
+import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -56,7 +56,7 @@ public class TestWUPlugin {
 
     @Test
     public void checkRegistries() {
-        Registries registries = plugin.getRegistries();
+        BukkitRegistries registries = plugin.getRegistries();
         var customItems = registries.getCustomItems();
         Assertions.assertNotNull(customItems);
         var customItemData = registries.getCustomItemData();

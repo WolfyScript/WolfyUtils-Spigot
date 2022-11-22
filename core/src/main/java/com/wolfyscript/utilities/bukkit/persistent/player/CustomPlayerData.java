@@ -8,11 +8,11 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import java.util.Optional;
 import java.util.UUID;
-import me.wolfyscript.utilities.registry.Registries;
-import me.wolfyscript.utilities.util.Keyed;
-import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.json.jackson.KeyedTypeIdResolver;
-import me.wolfyscript.utilities.util.json.jackson.KeyedTypeResolver;
+import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
+import com.wolfyscript.utilities.Keyed;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
+import com.wolfyscript.utilities.json.KeyedTypeResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -21,7 +21,7 @@ import org.bukkit.entity.Player;
  * <br>
  * How to create custom data:<br>
  * - Extend this class<br>
- * - Register class into Registry {@link Registries#getCustomPlayerData()}
+ * - Register class into Registry {@link BukkitRegistries#getCustomPlayerData()}
  *
  */
 @JsonTypeResolver(KeyedTypeResolver.class)
@@ -31,13 +31,13 @@ import org.bukkit.entity.Player;
 public abstract class CustomPlayerData implements Keyed {
 
     @JsonProperty("id")
-    private final NamespacedKey id;
+    private final BukkitNamespacedKey id;
 
     /**
      * The default constructor that must get the id of the custom data type.
      * @param id The id of the custom data type.
      */
-    protected CustomPlayerData(NamespacedKey id) {
+    protected CustomPlayerData(BukkitNamespacedKey id) {
         this.id = id;
     }
 
@@ -71,7 +71,7 @@ public abstract class CustomPlayerData implements Keyed {
 
     @JsonIgnore
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public BukkitNamespacedKey getNamespacedKey() {
         return id;
     }
 

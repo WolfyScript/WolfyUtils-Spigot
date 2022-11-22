@@ -18,7 +18,7 @@
 
 package com.wolfyscript.utilities.util;
 
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -26,21 +26,21 @@ public class TestNamespacedKey {
 
     @Test
     public void checkNamespaceAndKey() {
-        NamespacedKey namespacedKey = new NamespacedKey("test_namespace", "test_key");
+        BukkitNamespacedKey namespacedKey = new BukkitNamespacedKey("test_namespace", "test_key");
         Assertions.assertEquals("test_namespace", namespacedKey.getNamespace());
         Assertions.assertEquals("test_key", namespacedKey.getKey());
 
-        NamespacedKey namespacedKey1 = new NamespacedKey("namespace", "root/folder/subfolder/obj");
+        BukkitNamespacedKey namespacedKey1 = new BukkitNamespacedKey("namespace", "root/folder/subfolder/obj");
         Assertions.assertEquals("namespace", namespacedKey1.getNamespace());
-        NamespacedKey.Key key = namespacedKey1.getKeyComponent();
+        BukkitNamespacedKey.Key key = namespacedKey1.getKeyComponent();
         Assertions.assertEquals("root", key.getRoot());
         Assertions.assertEquals("root/folder/subfolder", key.getFolder());
         Assertions.assertEquals("obj", key.getObject());
         Assertions.assertEquals("root/folder/subfolder/obj", key.toString());
         Assertions.assertEquals("root/folder/subfolder:obj", key.toString(":"));
 
-        NamespacedKey namespacedKey2 = new NamespacedKey("namespace", "obj");
-        NamespacedKey.Key key2 = namespacedKey2.getKeyComponent();
+        BukkitNamespacedKey namespacedKey2 = new BukkitNamespacedKey("namespace", "obj");
+        BukkitNamespacedKey.Key key2 = namespacedKey2.getKeyComponent();
         Assertions.assertEquals("", key2.getRoot());
         Assertions.assertEquals("", key2.getFolder());
         Assertions.assertEquals("obj", key2.toString());
@@ -49,8 +49,8 @@ public class TestNamespacedKey {
         Assertions.assertEquals(":obj", key2.toString(":", true));
         Assertions.assertEquals("/obj", key2.toString("/", true));
 
-        NamespacedKey namespacedKey3 = new NamespacedKey("namespace", "root/obj");
-        NamespacedKey.Key key3 = namespacedKey3.getKeyComponent();
+        BukkitNamespacedKey namespacedKey3 = new BukkitNamespacedKey("namespace", "root/obj");
+        BukkitNamespacedKey.Key key3 = namespacedKey3.getKeyComponent();
         Assertions.assertEquals("root", key3.getRoot());
         Assertions.assertEquals("root", key3.getFolder());
         Assertions.assertEquals("root/obj", key3.toString());

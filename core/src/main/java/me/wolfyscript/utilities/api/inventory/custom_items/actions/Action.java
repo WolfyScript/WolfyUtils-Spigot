@@ -25,11 +25,11 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.util.Keyed;
-import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.json.jackson.KeyedTypeIdResolver;
-import me.wolfyscript.utilities.util.json.jackson.KeyedTypeResolver;
-import me.wolfyscript.utilities.util.json.jackson.annotations.OptionalKeyReference;
+import com.wolfyscript.utilities.Keyed;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
+import com.wolfyscript.utilities.json.KeyedTypeResolver;
+import com.wolfyscript.utilities.json.annotations.OptionalKeyReference;
 
 @JsonTypeResolver(KeyedTypeResolver.class)
 @JsonTypeIdResolver(KeyedTypeIdResolver.class)
@@ -39,11 +39,11 @@ import me.wolfyscript.utilities.util.json.jackson.annotations.OptionalKeyReferen
 @OptionalKeyReference(serializeAsKey = false, registryKey = "wolfyutilities:custom_item/actions/values")
 public abstract class Action<T extends Data> implements Keyed {
 
-    private final NamespacedKey key;
+    private final BukkitNamespacedKey key;
     @JsonIgnore
     protected final Class<T> dataType;
 
-    protected Action(NamespacedKey key, Class<T> dataType) {
+    protected Action(BukkitNamespacedKey key, Class<T> dataType) {
         this.key = key;
         this.dataType = dataType;
     }
@@ -52,7 +52,7 @@ public abstract class Action<T extends Data> implements Keyed {
 
     @JsonIgnore
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public BukkitNamespacedKey getNamespacedKey() {
         return key;
     }
 

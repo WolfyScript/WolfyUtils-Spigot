@@ -16,11 +16,14 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.registry;
+package com.wolfyscript.utilities.bukkit.registry;
 
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.common.registry.AbstractRegistry;
+import java.util.HashMap;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.WolfyUtilitiesRef;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -30,10 +33,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class RegistryCustomItem extends RegistrySimple<CustomItem> {
+public class RegistryCustomItem extends AbstractRegistry<Map<NamespacedKey, CustomItem>, CustomItem> {
 
-    RegistryCustomItem(Registries registries) {
-        super(new NamespacedKey(registries.getCore(), "custom_items"), registries);
+    RegistryCustomItem(BukkitRegistries registries) {
+        super(registries.getCore().getWolfyUtils().getIdentifiers().getWolfyUtilsNamespaced("custom_items"), HashMap::new, registries);
     }
 
     public List<String> getNamespaces() {
@@ -72,10 +75,10 @@ public class RegistryCustomItem extends RegistrySimple<CustomItem> {
 
     /**
      * @param itemMeta The ItemMeta to get the key from.
-     * @return The CustomItems {@link NamespacedKey} from the ItemMeta; or null if the ItemMeta doesn't contain a key.
+     * @return The CustomItems {@link BukkitNamespacedKey} from the ItemMeta; or null if the ItemMeta doesn't contain a key.
      */
     private Optional<NamespacedKey> getKeyOfItemMeta(ItemMeta itemMeta) {
-        return itemMeta == null ? Optional.empty() : Optional.ofNullable(NamespacedKey.of(itemMeta.getPersistentDataContainer().get(CustomItem.PERSISTENT_KEY_TAG, PersistentDataType.STRING)));
+        return itemMeta == null ? Optional.empty() : Optional.ofNullable(BukkitNamespacedKey.of(itemMeta.getPersistentDataContainer().get(CustomItem.PERSISTENT_KEY_TAG, PersistentDataType.STRING)));
     }
 
     /**

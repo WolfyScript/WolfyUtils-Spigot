@@ -26,7 +26,7 @@ import com.google.common.collect.Multimap;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.actions.Data;
 import me.wolfyscript.utilities.api.inventory.custom_items.actions.Event;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 public class ActionSettings {
 
     @JsonIgnore
-    private Multimap<NamespacedKey, Event<?>> indexedEvents;
+    private Multimap<BukkitNamespacedKey, Event<?>> indexedEvents;
 
     public ActionSettings() {
         this.indexedEvents = HashMultimap.create();
@@ -55,11 +55,11 @@ public class ActionSettings {
         return Collections.unmodifiableCollection(indexedEvents.values());
     }
 
-    public <T extends Data> List<Event<T>> getEvents(NamespacedKey key, Class<T> dataType) {
+    public <T extends Data> List<Event<T>> getEvents(BukkitNamespacedKey key, Class<T> dataType) {
         return indexedEvents.get(key).stream().filter(actionEvent -> dataType.equals(actionEvent.getDataType())).map(actionEvent -> (Event<T>) actionEvent).collect(Collectors.toList());
     }
 
-    public <T extends Data> void callEvent(NamespacedKey key, T data) {
+    public <T extends Data> void callEvent(BukkitNamespacedKey key, T data) {
         getEvents(key, (Class<T>) data.getClass()).forEach(event -> event.call(WolfyUtilCore.getInstance(), data));
     }
 }

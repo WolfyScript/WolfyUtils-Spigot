@@ -24,7 +24,7 @@ import me.wolfyscript.utilities.api.inventory.gui.GuiCluster;
 import me.wolfyscript.utilities.api.inventory.gui.GuiWindow;
 import me.wolfyscript.utilities.api.inventory.gui.InventoryAPI;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -55,7 +55,7 @@ public class ButtonState<C extends CustomCache> {
 
     private WolfyUtilities wolfyUtilities;
     private String clusterID = null;
-    private NamespacedKey windowID = null;
+    private BukkitNamespacedKey windowID = null;
     private String key;
     private final ItemStack presetIcon;
     private ItemStack icon;
@@ -87,7 +87,7 @@ public class ButtonState<C extends CustomCache> {
     }
 
     @Deprecated
-    public ButtonState(NamespacedKey buttonKey, ItemStack presetIcon) {
+    public ButtonState(BukkitNamespacedKey buttonKey, ItemStack presetIcon) {
         Preconditions.checkArgument(buttonKey != null, "Cannot create ButtonState with missing key!");
         Preconditions.checkArgument(presetIcon != null, "Cannot create ButtonState with missing icon! Provided icon: " + presetIcon);
         this.key = buttonKey.getKey();
@@ -96,7 +96,7 @@ public class ButtonState<C extends CustomCache> {
     }
 
     @Deprecated
-    public ButtonState(NamespacedKey buttonKey, Material presetIcon) {
+    public ButtonState(BukkitNamespacedKey buttonKey, Material presetIcon) {
         this(buttonKey, new ItemStack(presetIcon));
     }
 
@@ -196,7 +196,7 @@ public class ButtonState<C extends CustomCache> {
      * @deprecated Old usage! Use the {@link Builder} via {@link #of(GuiWindow, String)} or {@link #of(GuiCluster, String)} instead.
      */
     @Deprecated
-    public ButtonState(NamespacedKey buttonKey, ItemStack presetIcon, @Nullable ButtonRender<C> render) {
+    public ButtonState(BukkitNamespacedKey buttonKey, ItemStack presetIcon, @Nullable ButtonRender<C> render) {
         this(buttonKey, presetIcon, null, render);
     }
 
@@ -204,7 +204,7 @@ public class ButtonState<C extends CustomCache> {
      * @deprecated Old usage! Use the {@link Builder} via {@link #of(GuiWindow, String)} or {@link #of(GuiCluster, String)} instead.
      */
     @Deprecated
-    public ButtonState(NamespacedKey buttonKey, ItemStack presetIcon, @Nullable ButtonAction<C> action) {
+    public ButtonState(BukkitNamespacedKey buttonKey, ItemStack presetIcon, @Nullable ButtonAction<C> action) {
         this(buttonKey, presetIcon, action, null);
     }
 
@@ -212,7 +212,7 @@ public class ButtonState<C extends CustomCache> {
      * @deprecated Old usage! Use the {@link Builder} via {@link #of(GuiWindow, String)} or {@link #of(GuiCluster, String)} instead.
      */
     @Deprecated
-    public ButtonState(NamespacedKey buttonKey, ItemStack presetIcon, @Nullable ButtonAction<C> action, @Nullable ButtonRender<C> render) {
+    public ButtonState(BukkitNamespacedKey buttonKey, ItemStack presetIcon, @Nullable ButtonAction<C> action, @Nullable ButtonRender<C> render) {
         this(buttonKey, presetIcon, action, null, render);
     }
 
@@ -220,7 +220,7 @@ public class ButtonState<C extends CustomCache> {
      * @deprecated Old usage! Use the {@link Builder} via {@link #of(GuiWindow, String)} or {@link #of(GuiCluster, String)} instead.
      */
     @Deprecated
-    public ButtonState(NamespacedKey buttonKey, ItemStack presetIcon, @Nullable ButtonAction<C> action, @Nullable ButtonPreRender<C> prepareRender, @Nullable ButtonRender<C> render) {
+    public ButtonState(BukkitNamespacedKey buttonKey, ItemStack presetIcon, @Nullable ButtonAction<C> action, @Nullable ButtonPreRender<C> prepareRender, @Nullable ButtonRender<C> render) {
         this(buttonKey, presetIcon, action, null, prepareRender, render);
     }
 
@@ -228,7 +228,7 @@ public class ButtonState<C extends CustomCache> {
      * @deprecated Old usage! Use the {@link Builder} via {@link #of(GuiWindow, String)} or {@link #of(GuiCluster, String)} instead.
      */
     @Deprecated
-    public ButtonState(NamespacedKey buttonKey, ItemStack presetIcon, @Nullable ButtonAction<C> action, @Nullable ButtonPostAction<C> postAction, @Nullable ButtonPreRender<C> prepareRender, @Nullable ButtonRender<C> render) {
+    public ButtonState(BukkitNamespacedKey buttonKey, ItemStack presetIcon, @Nullable ButtonAction<C> action, @Nullable ButtonPostAction<C> postAction, @Nullable ButtonPreRender<C> prepareRender, @Nullable ButtonRender<C> render) {
         this.action = action;
         this.postAction = postAction;
         this.prepareRender = prepareRender;
@@ -242,7 +242,7 @@ public class ButtonState<C extends CustomCache> {
      * @deprecated Old usage! Use the {@link Builder} via {@link #of(GuiWindow, String)} or {@link #of(GuiCluster, String)} instead.
      */
     @Deprecated
-    public ButtonState(NamespacedKey buttonKey, Material presetIcon, @Nullable ButtonRender<C> render) {
+    public ButtonState(BukkitNamespacedKey buttonKey, Material presetIcon, @Nullable ButtonRender<C> render) {
         this(buttonKey, presetIcon, null, render);
     }
 
@@ -250,7 +250,7 @@ public class ButtonState<C extends CustomCache> {
      * @deprecated Old usage! Use the {@link Builder} via {@link #of(GuiWindow, String)} or {@link #of(GuiCluster, String)} instead.
      */
     @Deprecated
-    public ButtonState(NamespacedKey buttonKey, Material presetIcon, @Nullable ButtonAction<C> action) {
+    public ButtonState(BukkitNamespacedKey buttonKey, Material presetIcon, @Nullable ButtonAction<C> action) {
         this(buttonKey, presetIcon, action, null);
     }
 
@@ -258,7 +258,7 @@ public class ButtonState<C extends CustomCache> {
      * @deprecated Old usage! Use the {@link Builder} via {@link #of(GuiWindow, String)} or {@link #of(GuiCluster, String)} instead.
      */
     @Deprecated
-    public ButtonState(NamespacedKey buttonKey, Material presetIcon, @Nullable ButtonAction<C> action, @Nullable ButtonRender<C> render) {
+    public ButtonState(BukkitNamespacedKey buttonKey, Material presetIcon, @Nullable ButtonAction<C> action, @Nullable ButtonRender<C> render) {
         this(buttonKey, presetIcon, action, null, render);
     }
 
@@ -266,7 +266,7 @@ public class ButtonState<C extends CustomCache> {
      * @deprecated Old usage! Use the {@link Builder} via {@link #of(GuiWindow, String)} or {@link #of(GuiCluster, String)} instead.
      */
     @Deprecated
-    public ButtonState(NamespacedKey buttonKey, Material presetIcon, @Nullable ButtonAction<C> action, @Nullable ButtonPreRender<C> prepareRender, @Nullable ButtonRender<C> render) {
+    public ButtonState(BukkitNamespacedKey buttonKey, Material presetIcon, @Nullable ButtonAction<C> action, @Nullable ButtonPreRender<C> prepareRender, @Nullable ButtonRender<C> render) {
         this(buttonKey, presetIcon, action, null, prepareRender, render);
     }
 
@@ -274,12 +274,12 @@ public class ButtonState<C extends CustomCache> {
      * @deprecated Old usage! Use the {@link Builder} via {@link #of(GuiWindow, String)} or {@link #of(GuiCluster, String)} instead.
      */
     @Deprecated
-    public ButtonState(NamespacedKey buttonKey, Material presetIcon, @Nullable ButtonAction<C> action, @Nullable ButtonPostAction<C> postAction, @Nullable ButtonPreRender<C> prepareRender, @Nullable ButtonRender<C> render) {
+    public ButtonState(BukkitNamespacedKey buttonKey, Material presetIcon, @Nullable ButtonAction<C> action, @Nullable ButtonPostAction<C> postAction, @Nullable ButtonPreRender<C> prepareRender, @Nullable ButtonRender<C> render) {
         this(buttonKey, new ItemStack(presetIcon), action, postAction, prepareRender, render);
     }
 
     /**
-     * @deprecated Use {@link #ButtonState(NamespacedKey, ItemStack)} instead!
+     * @deprecated Use {@link #ButtonState(BukkitNamespacedKey, ItemStack)} instead!
      */
     @Deprecated
     public ButtonState(String clusterID, String key, ItemStack presetIcon) {
@@ -287,7 +287,7 @@ public class ButtonState<C extends CustomCache> {
     }
 
     /**
-     * @deprecated Use {@link #ButtonState(NamespacedKey, ItemStack, ButtonRender)} instead!
+     * @deprecated Use {@link #ButtonState(BukkitNamespacedKey, ItemStack, ButtonRender)} instead!
      */
     @Deprecated
     public ButtonState(String clusterID, String key, ItemStack presetIcon, @Nullable ButtonRender<C> render) {
@@ -295,7 +295,7 @@ public class ButtonState<C extends CustomCache> {
     }
 
     /**
-     * @deprecated Use {@link #ButtonState(NamespacedKey, ItemStack, ButtonAction)} instead!
+     * @deprecated Use {@link #ButtonState(BukkitNamespacedKey, ItemStack, ButtonAction)} instead!
      */
     @Deprecated
     public ButtonState(String clusterID, String key, ItemStack presetIcon, @Nullable ButtonAction<C> action) {
@@ -303,7 +303,7 @@ public class ButtonState<C extends CustomCache> {
     }
 
     /**
-     * @deprecated Use {@link #ButtonState(NamespacedKey, ItemStack, ButtonAction, ButtonRender)} instead!
+     * @deprecated Use {@link #ButtonState(BukkitNamespacedKey, ItemStack, ButtonAction, ButtonRender)} instead!
      */
     @Deprecated
     public ButtonState(String clusterID, String key, ItemStack presetIcon, @Nullable ButtonAction<C> action, @Nullable ButtonRender<C> render) {
@@ -311,7 +311,7 @@ public class ButtonState<C extends CustomCache> {
     }
 
     /**
-     * @deprecated Use {@link #ButtonState(NamespacedKey, ItemStack, ButtonAction, ButtonPreRender, ButtonRender)} instead!
+     * @deprecated Use {@link #ButtonState(BukkitNamespacedKey, ItemStack, ButtonAction, ButtonPreRender, ButtonRender)} instead!
      */
     @Deprecated
     public ButtonState(String clusterID, String key, ItemStack presetIcon, @Nullable ButtonAction<C> action, @Nullable ButtonPreRender<C> prepareRender, @Nullable ButtonRender<C> render) {
@@ -319,7 +319,7 @@ public class ButtonState<C extends CustomCache> {
     }
 
     /**
-     * @deprecated Use {@link #ButtonState(NamespacedKey, ItemStack, ButtonAction, ButtonPostAction, ButtonPreRender, ButtonRender)} instead!
+     * @deprecated Use {@link #ButtonState(BukkitNamespacedKey, ItemStack, ButtonAction, ButtonPostAction, ButtonPreRender, ButtonRender)} instead!
      */
     @Deprecated
     public ButtonState(String clusterID, String key, ItemStack presetIcon, @Nullable ButtonAction<C> action, @Nullable ButtonPostAction<C> postAction, @Nullable ButtonPreRender<C> prepareRender, @Nullable ButtonRender<C> render) {
@@ -333,7 +333,7 @@ public class ButtonState<C extends CustomCache> {
     }
 
     /**
-     * @deprecated Use {@link #ButtonState(NamespacedKey, Material)} instead!
+     * @deprecated Use {@link #ButtonState(BukkitNamespacedKey, Material)} instead!
      */
     @Deprecated
     public ButtonState(String clusterID, String key, Material presetIcon) {
@@ -341,7 +341,7 @@ public class ButtonState<C extends CustomCache> {
     }
 
     /**
-     * @deprecated Use {@link #ButtonState(NamespacedKey, Material, ButtonRender)} instead!
+     * @deprecated Use {@link #ButtonState(BukkitNamespacedKey, Material, ButtonRender)} instead!
      */
     @Deprecated
     public ButtonState(String clusterID, String key, Material presetIcon, @Nullable ButtonRender<C> render) {
@@ -349,7 +349,7 @@ public class ButtonState<C extends CustomCache> {
     }
 
     /**
-     * @deprecated Use {@link #ButtonState(NamespacedKey, Material, ButtonAction)} instead!
+     * @deprecated Use {@link #ButtonState(BukkitNamespacedKey, Material, ButtonAction)} instead!
      */
     @Deprecated
     public ButtonState(String clusterID, String key, Material presetIcon, @Nullable ButtonAction<C> action) {
@@ -357,7 +357,7 @@ public class ButtonState<C extends CustomCache> {
     }
 
     /**
-     * @deprecated Use {@link #ButtonState(NamespacedKey, Material, ButtonAction, ButtonRender)} instead!
+     * @deprecated Use {@link #ButtonState(BukkitNamespacedKey, Material, ButtonAction, ButtonRender)} instead!
      */
     @Deprecated
     public ButtonState(String clusterID, String key, Material presetIcon, @Nullable ButtonAction<C> action, @Nullable ButtonRender<C> render) {
@@ -365,7 +365,7 @@ public class ButtonState<C extends CustomCache> {
     }
 
     /**
-     * @deprecated Use {@link #ButtonState(NamespacedKey, Material, ButtonAction, ButtonPreRender, ButtonRender)} instead!
+     * @deprecated Use {@link #ButtonState(BukkitNamespacedKey, Material, ButtonAction, ButtonPreRender, ButtonRender)} instead!
      */
     @Deprecated
     public ButtonState(String clusterID, String key, Material presetIcon, @Nullable ButtonAction<C> action, @Nullable ButtonPreRender<C> prepareRender, @Nullable ButtonRender<C> render) {
@@ -373,7 +373,7 @@ public class ButtonState<C extends CustomCache> {
     }
 
     /**
-     * @deprecated Use {@link #ButtonState(NamespacedKey, Material, ButtonAction, ButtonPostAction, ButtonPreRender, ButtonRender)} instead!
+     * @deprecated Use {@link #ButtonState(BukkitNamespacedKey, Material, ButtonAction, ButtonPostAction, ButtonPreRender, ButtonRender)} instead!
      */
     @Deprecated
     public ButtonState(String clusterID, String key, Material presetIcon, @Nullable ButtonAction<C> action, @Nullable ButtonPostAction<C> postAction, @Nullable ButtonPreRender<C> prepareRender, @Nullable ButtonRender<C> render) {
@@ -619,7 +619,7 @@ public class ButtonState<C extends CustomCache> {
          * @param buttonKey The namespaced key of the button.
          * @return This button state builder for chaining.
          */
-        public Builder<C> key(NamespacedKey buttonKey) {
+        public Builder<C> key(BukkitNamespacedKey buttonKey) {
             String clusterID = buttonKey.getNamespace();
             this.cluster = invApi.getGuiCluster(clusterID);
             Preconditions.checkArgument(this.cluster != null, "Error setting key of ButtonState: Cluster \"" + clusterID + "\" does not exist!");
@@ -731,7 +731,7 @@ public class ButtonState<C extends CustomCache> {
             if (cluster == null) {
                 state = new ButtonState<>(key, icon);
             } else {
-                state = new ButtonState<>(new NamespacedKey(cluster.getId(), key), icon);
+                state = new ButtonState<>(new BukkitNamespacedKey(cluster.getId(), key), icon);
             }
             state.prepareRender = preRender;
             state.buttonRender = render;

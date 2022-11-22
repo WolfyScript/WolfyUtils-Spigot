@@ -18,13 +18,13 @@
 
 package me.wolfyscript.utilities.messages;
 
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 
 public interface Messages {
 
     String KEY = "wolfyutils";
-    NamespacedKey CONNECT_REQUEST = new NamespacedKey(KEY, "connection/request");
-    NamespacedKey CONNECT_INFO = new NamespacedKey(KEY, "connection/info");
+    BukkitNamespacedKey CONNECT_REQUEST = new BukkitNamespacedKey(KEY, "connection/request");
+    BukkitNamespacedKey CONNECT_INFO = new BukkitNamespacedKey(KEY, "connection/info");
 
 
 }

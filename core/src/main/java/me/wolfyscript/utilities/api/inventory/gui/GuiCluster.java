@@ -26,12 +26,11 @@ import me.wolfyscript.utilities.api.inventory.gui.button.buttons.ItemInputButton
 import me.wolfyscript.utilities.api.inventory.gui.button.buttons.MultipleChoiceButton;
 import me.wolfyscript.utilities.api.inventory.gui.button.buttons.ToggleButton;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,7 +47,7 @@ public abstract class GuiCluster<C extends CustomCache> extends GuiMenuComponent
     private final String id;
     private final Map<String, GuiWindow<C>> guiWindows;
 
-    private NamespacedKey entry;
+    private BukkitNamespacedKey entry;
 
     protected GuiCluster(InventoryAPI<C> inventoryAPI, String id) {
         super(inventoryAPI);
@@ -69,7 +68,7 @@ public abstract class GuiCluster<C extends CustomCache> extends GuiMenuComponent
      *
      * @return The namespaced key of the entrypoint window.
      */
-    public NamespacedKey getEntry() {
+    public BukkitNamespacedKey getEntry() {
         return entry;
     }
 
@@ -78,7 +77,7 @@ public abstract class GuiCluster<C extends CustomCache> extends GuiMenuComponent
      *
      * @param entry The namespaced key of the {@link GuiWindow}. See {@link GuiWindow#getNamespacedKey()}
      */
-    protected void setEntry(NamespacedKey entry) {
+    protected void setEntry(BukkitNamespacedKey entry) {
         this.entry = entry;
     }
 

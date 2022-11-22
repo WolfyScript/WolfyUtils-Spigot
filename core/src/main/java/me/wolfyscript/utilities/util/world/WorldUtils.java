@@ -22,7 +22,7 @@ import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import java.nio.file.Files;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -98,7 +98,7 @@ public class WorldUtils {
                 loadMap.forEach((key, value) -> {
                     var location = stringToLocation(key);
                     if (location != null) {
-                        worldCustomItemStore.setStore(location, new BlockCustomItemStore(NamespacedKey.of(value), null));
+                        worldCustomItemStore.setStore(location, new BlockCustomItemStore(BukkitNamespacedKey.of(value), null));
                     }
                 });
             } catch (IOException | ClassNotFoundException e) {

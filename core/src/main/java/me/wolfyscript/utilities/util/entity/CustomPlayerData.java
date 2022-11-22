@@ -22,7 +22,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -33,7 +33,7 @@ import java.util.Map;
 @Deprecated
 public abstract class CustomPlayerData {
 
-    static Map<NamespacedKey, Provider<?>> providers = new HashMap<>();
+    static Map<BukkitNamespacedKey, Provider<?>> providers = new HashMap<>();
 
     /**
      * Each class that extends this needs to have a default constructor to set the default values.
@@ -71,25 +71,25 @@ public abstract class CustomPlayerData {
      */
     public static class Provider<T extends CustomPlayerData> {
 
-        private final NamespacedKey namespacedKey;
+        private final BukkitNamespacedKey namespacedKey;
         private final Class<T> dataClass;
 
         /**
          * Creates a new provider for the {@link CustomData} of the specified class.
          * This Provider requires a unique namespace and key, so it doesn't interfere with other data.
          *
-         * @param namespacedKey Unique {@link NamespacedKey} to identify this provider and it's data!
+         * @param namespacedKey Unique {@link BukkitNamespacedKey} to identify this provider and it's data!
          * @param dataClass     Class of the overridden {@link CustomData} class.
          */
-        public Provider(NamespacedKey namespacedKey, Class<T> dataClass) {
+        public Provider(BukkitNamespacedKey namespacedKey, Class<T> dataClass) {
             this.namespacedKey = namespacedKey;
             this.dataClass = dataClass;
         }
 
         /**
-         * @return The {@link NamespacedKey} of this Provider. This method and the {@link CustomData#getNamespacedKey()} should always return the same value!
+         * @return The {@link BukkitNamespacedKey} of this Provider. This method and the {@link CustomData#getNamespacedKey()} should always return the same value!
          */
-        public NamespacedKey getNamespacedKey() {
+        public BukkitNamespacedKey getNamespacedKey() {
             return namespacedKey;
         }
 

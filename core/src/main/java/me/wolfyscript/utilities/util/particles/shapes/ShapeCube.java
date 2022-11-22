@@ -21,14 +21,14 @@ package me.wolfyscript.utilities.util.particles.shapes;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.common.base.Preconditions;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.util.Vector;
 
 import java.util.function.Consumer;
 
 public class ShapeCube extends Shape {
 
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("cube");
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("cube");
 
     private final double radius;
     private int pointsPerSide;

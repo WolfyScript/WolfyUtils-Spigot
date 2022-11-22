@@ -1,12 +1,12 @@
 package com.wolfyscript.utilities.bukkit.nms.item.crafting;
 
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 
 public class FunctionalRecipeBuilderSmoking extends FunctionalRecipeBuilderCooking {
 
-    public FunctionalRecipeBuilderSmoking(NamespacedKey key, ItemStack result, RecipeChoice ingredient) {
+    public FunctionalRecipeBuilderSmoking(BukkitNamespacedKey key, ItemStack result, RecipeChoice ingredient) {
         super(key, result, ingredient);
     }
 

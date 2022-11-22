@@ -25,11 +25,11 @@ package com.wolfyscript.utilities.bukkit.nbt;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.eval.context.EvalContext;
+import com.wolfyscript.utilities.json.annotations.KeyedBaseType;
 import de.tr7zw.changeme.nbtapi.NBTType;
-import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.eval.context.EvalContext;
-import me.wolfyscript.utilities.util.eval.value_providers.ValueProvider;
-import me.wolfyscript.utilities.util.json.jackson.annotations.KeyedBaseType;
+import com.wolfyscript.utilities.eval.value_provider.ValueProvider;
 
 import java.util.Objects;
 
@@ -39,13 +39,13 @@ public abstract class QueryNodePrimitive<VAL> extends QueryNode<VAL> {
     protected final ValueProvider<VAL> value;
 
     @JsonCreator
-    protected QueryNodePrimitive(NamespacedKey type, ValueProvider<VAL> value, @JacksonInject("key") String key, @JacksonInject("path") String parentPath) {
-        super(type, key, parentPath);
+    protected QueryNodePrimitive(@JacksonInject WolfyUtils wolfyUtils, ValueProvider<VAL> value, @JacksonInject("key") String key, @JacksonInject("path") String parentPath) {
+        super(wolfyUtils, key, parentPath);
         this.value = value;
     }
 
     protected QueryNodePrimitive(QueryNodePrimitive<VAL> other) {
-        super(other.type, other.key, other.parentPath);
+        super(other.wolfyUtils, other.key, other.parentPath);
         this.nbtType = other.nbtType;
         this.value = other.value;
     }

@@ -16,15 +16,19 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.registry;
+package com.wolfyscript.utilities.bukkit.registry;
 
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.common.registry.AbstractRegistry;
+import java.util.HashMap;
+import java.util.Map;
 import me.wolfyscript.utilities.util.particles.ParticleEffect;
 
-public class RegistryParticleEffect extends RegistrySimple<ParticleEffect> {
+public class RegistryParticleEffect extends AbstractRegistry<Map<NamespacedKey, ParticleEffect>, ParticleEffect> {
 
-    RegistryParticleEffect(Registries registries) {
-        super(new NamespacedKey(registries.getCore(), "particle_effects"), registries, ParticleEffect.class);
+    RegistryParticleEffect(BukkitRegistries registries) {
+        super(registries.getCore().getWolfyUtils().getIdentifiers().getWolfyUtilsNamespaced("particle_effects"), HashMap::new, registries, ParticleEffect.class);
     }
 
     @Override

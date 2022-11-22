@@ -19,7 +19,7 @@
 package me.wolfyscript.utilities.util.particles.timer;
 
 import com.google.common.base.Preconditions;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 
 /**
  * Provides an increasing value by a fraction of PI.<br>
@@ -28,7 +28,7 @@ import me.wolfyscript.utilities.util.NamespacedKey;
  */
 public class TimerPi extends Timer {
 
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("pi_fraction");
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("pi_fraction");
 
     private double fraction;
 

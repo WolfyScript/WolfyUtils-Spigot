@@ -16,25 +16,25 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.util.eval.context;
+package com.wolfyscript.utilities.bukkit.registry;
 
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.common.registry.AbstractRegistry;
 import java.util.HashMap;
 import java.util.Map;
+import me.wolfyscript.utilities.util.particles.ParticleAnimation;
 
-public class EvalContext {
+public class RegistryParticleAnimation extends AbstractRegistry<Map<NamespacedKey, ParticleAnimation>, ParticleAnimation> {
 
-    private final Map<String, Object> variables;
-
-    public EvalContext() {
-        this.variables = new HashMap<>();
+    RegistryParticleAnimation(BukkitRegistries registries) {
+        super(registries.getCore().getWolfyUtils().getIdentifiers().getWolfyUtilsNamespaced("particle_animations"), HashMap::new, registries, ParticleAnimation.class);
     }
 
-    public Object getVariable(String variableName) {
-        return variables.get(variableName);
-    }
-
-    public void setVariable(String name, Object value) {
-        variables.put(name, value);
+    @Override
+    public void register(NamespacedKey namespacedKey, ParticleAnimation value) {
+        super.register(namespacedKey, value);
+        value.setKey(namespacedKey);
     }
 
 }

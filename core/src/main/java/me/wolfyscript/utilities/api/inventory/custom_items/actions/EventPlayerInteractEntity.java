@@ -18,13 +18,12 @@
 
 package me.wolfyscript.utilities.api.inventory.custom_items.actions;
 
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayerInteractEntityAbstract;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 
 public class EventPlayerInteractEntity extends EventPlayerInteractEntityAbstract<PlayerInteractAtEntityEvent> {
 
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("player/interact_entity");
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("player/interact_entity");
 
     public EventPlayerInteractEntity() {
         super(KEY);

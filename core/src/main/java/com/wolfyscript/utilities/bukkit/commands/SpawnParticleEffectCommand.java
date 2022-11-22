@@ -18,9 +18,10 @@
 
 package com.wolfyscript.utilities.bukkit.commands;
 
+import com.wolfyscript.utilities.NamespacedKey;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.chat.Chat;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.particles.ParticleEffect;
 import me.wolfyscript.utilities.util.particles.animators.AnimatorSphere;
 import me.wolfyscript.utilities.util.particles.timer.TimerLinear;
@@ -58,7 +59,7 @@ public class SpawnParticleEffectCommand implements CommandExecutor, TabCompleter
                         var block = player.getTargetBlockExact(10);
                         if (block != null) {
                             var particleEffect = new ParticleEffect(Particle.FLAME);
-                            particleEffect.setKey(NamespacedKey.wolfyutilties("test"));
+                            particleEffect.setKey(BukkitNamespacedKey.wolfyutilties("test"));
                             particleEffect.setTimeSupplier(new TimerLinear(0.1, 40));
                             particleEffect.setAnimator(new AnimatorSphere(2));
                             particleEffect.spawn(block);

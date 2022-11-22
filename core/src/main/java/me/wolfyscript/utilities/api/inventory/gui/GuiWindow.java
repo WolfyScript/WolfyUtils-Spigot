@@ -32,7 +32,7 @@ import me.wolfyscript.utilities.api.inventory.gui.button.buttons.ToggleButton;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
 import me.wolfyscript.utilities.compatibility.plugins.PlaceholderAPIIntegration;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.Pair;
 import me.wolfyscript.utilities.util.chat.ChatColor;
 import me.wolfyscript.utilities.util.reflection.InventoryUpdate;
@@ -75,7 +75,7 @@ import java.util.Locale;
 public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<C> implements Listener {
 
     private final GuiCluster<C> cluster;
-    private final NamespacedKey namespacedKey;
+    private final BukkitNamespacedKey namespacedKey;
     private boolean forceSyncUpdate;
     private int titleUpdatePeriod = -1;
     private int titleUpdateDelay = 20;
@@ -88,7 +88,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
 
     /**
      * @param cluster The parent {@link GuiCluster} of this window.
-     * @param key     The key for this window. This must be comply with the {@link NamespacedKey} key pattern!
+     * @param key     The key for this window. This must be comply with the {@link BukkitNamespacedKey} key pattern!
      * @param size    The size of the window. Must be a multiple of 9 and less or equal to 54.
      */
     protected GuiWindow(GuiCluster<C> cluster, String key, int size) {
@@ -97,7 +97,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
 
     /**
      * @param cluster         The parent {@link GuiCluster} of this window.
-     * @param key             The key for this window. This must be comply with the {@link NamespacedKey} key pattern!
+     * @param key             The key for this window. This must be comply with the {@link BukkitNamespacedKey} key pattern!
      * @param size            The size of the window. Must be a multiple of 9 and less or equal to 54.
      * @param forceSyncUpdate If the window should only allow sync code and no async code.
      */
@@ -107,7 +107,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
 
     /**
      * @param cluster       The parent {@link GuiCluster} of this window.
-     * @param key           The key for this window. This must be comply with the {@link NamespacedKey} key pattern!
+     * @param key           The key for this window. This must be comply with the {@link BukkitNamespacedKey} key pattern!
      * @param inventoryType The type of the window.
      */
     protected GuiWindow(GuiCluster<C> cluster, String key, InventoryType inventoryType) {
@@ -116,7 +116,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
 
     /**
      * @param cluster         The parent {@link GuiCluster} of this window.
-     * @param key             The key for this window. This must be comply with the {@link NamespacedKey} key pattern!
+     * @param key             The key for this window. This must be comply with the {@link BukkitNamespacedKey} key pattern!
      * @param inventoryType   The type of the window.
      * @param forceSyncUpdate If the window should only allow sync code and no async code.
      */
@@ -127,7 +127,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
     private GuiWindow(GuiCluster<C> cluster, String key, InventoryType inventoryType, int size, boolean forceSyncUpdate) {
         super(cluster.getInventoryAPI());
         this.cluster = cluster;
-        this.namespacedKey = new NamespacedKey(cluster.getId(), key);
+        this.namespacedKey = new BukkitNamespacedKey(cluster.getId(), key);
         this.buttonBuilder = new WindowButtonBuilder();
         this.inventoryType = inventoryType;
         this.size = size;
@@ -308,7 +308,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      *
      * @return The NamespacedKey of this Window, consisting of the cluster key and this window key.
      */
-    public final NamespacedKey getNamespacedKey() {
+    public final BukkitNamespacedKey getNamespacedKey() {
         return namespacedKey;
     }
 

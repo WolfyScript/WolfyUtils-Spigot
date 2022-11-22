@@ -18,26 +18,29 @@
 
 package me.wolfyscript.utilities.api.inventory.tags;
 
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.common.registry.AbstractRegistry;
+import java.util.HashMap;
+import java.util.Map;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.registry.Registries;
-import me.wolfyscript.utilities.registry.RegistrySimple;
-import me.wolfyscript.utilities.util.Keyed;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
+import com.wolfyscript.utilities.Keyed;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.jetbrains.annotations.Nullable;
 
-public class Tags<T extends Keyed> extends RegistrySimple<CustomTag<T>> {
+public class Tags<T extends Keyed> extends AbstractRegistry<Map<NamespacedKey, CustomTag<T>>, CustomTag<T>> {
 
     @Deprecated
     public Tags() {
-        super(new NamespacedKey(WolfyUtilCore.getInstance(), "custom_tags"), WolfyUtilCore.getInstance().getRegistries());
+        super(new BukkitNamespacedKey(WolfyUtilCore.getInstance(), "custom_tags"), HashMap::new, WolfyUtilCore.getInstance().getRegistries());
     }
 
-    public Tags(Registries registries) {
-        super(new NamespacedKey(registries.getCore(), "custom_tags"), registries);
+    public Tags(BukkitRegistries registries) {
+        super(registries.getCore().getWolfyUtils().getIdentifiers().getWolfyUtilsNamespaced("custom_tags"), HashMap::new, registries);
     }
 
     @Nullable
-    public CustomTag<T> getTag(NamespacedKey namespacedKey) {
+    public CustomTag<T> getTag(BukkitNamespacedKey namespacedKey) {
         return get(namespacedKey);
     }
 

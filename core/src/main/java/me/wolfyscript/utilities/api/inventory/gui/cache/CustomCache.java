@@ -19,7 +19,7 @@
 package me.wolfyscript.utilities.api.inventory.gui.cache;
 
 import me.wolfyscript.utilities.api.inventory.gui.GuiWindow;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -29,7 +29,7 @@ import java.util.TreeMap;
 public class CustomCache {
 
     private final Map<GuiWindow<?>, Map<Integer, String>> cachedButtons;
-    private final Map<NamespacedKey, Map<String, Object>> windows;
+    private final Map<BukkitNamespacedKey, Map<String, Object>> windows;
 
     protected CustomCache() {
         this.cachedButtons = new HashMap<>();

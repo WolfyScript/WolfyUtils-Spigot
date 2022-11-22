@@ -24,7 +24,7 @@ import me.wolfyscript.utilities.api.inventory.gui.button.ButtonType;
 import me.wolfyscript.utilities.api.inventory.gui.button.buttons.ItemInputButton;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -89,7 +89,7 @@ public class InventoryAPI<C extends CustomCache> implements Listener {
         return getGuiCluster(clusterID) != null;
     }
 
-    public GuiWindow<C> getGuiWindow(NamespacedKey namespacedKey) {
+    public GuiWindow<C> getGuiWindow(BukkitNamespacedKey namespacedKey) {
         GuiCluster<C> cluster = getGuiCluster(namespacedKey.getNamespace());
         return cluster != null ? cluster.getGuiWindow(namespacedKey.getKey()) : null;
     }
@@ -102,7 +102,7 @@ public class InventoryAPI<C extends CustomCache> implements Listener {
         getGuiHandler(player).openCluster(clusterID);
     }
 
-    public void openGui(Player player, NamespacedKey namespacedKey) {
+    public void openGui(Player player, BukkitNamespacedKey namespacedKey) {
         getGuiHandler(player).openWindow(namespacedKey);
     }
 
@@ -199,7 +199,7 @@ public class InventoryAPI<C extends CustomCache> implements Listener {
      * @param namespacedKey The namespaced key of the Button.
      * @return Button of the corresponding namespaced key
      */
-    public Button<C> getButton(NamespacedKey namespacedKey) {
+    public Button<C> getButton(BukkitNamespacedKey namespacedKey) {
         if (namespacedKey == null) return null;
         GuiCluster<C> cluster = getGuiCluster(namespacedKey.getNamespace());
         return cluster != null ? cluster.getButton(namespacedKey.getKey()) : null;

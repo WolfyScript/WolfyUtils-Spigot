@@ -18,7 +18,7 @@
 
 package me.wolfyscript.utilities.util.particles.animators;
 
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.particles.ParticleEffect;
 import me.wolfyscript.utilities.util.particles.shapes.ShapeSphere;
 import me.wolfyscript.utilities.util.particles.timer.Timer;
@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 @Deprecated
 public class AnimatorSphere extends Animator {
 
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("sphere");
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("sphere");
 
     private final int radius;
 

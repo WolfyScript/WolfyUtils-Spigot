@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -33,15 +33,15 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * Links to items of WolfyUtilities and saves the specified {@link NamespacedKey}
+ * Links to items of WolfyUtilities and saves the specified {@link BukkitNamespacedKey}
  */
 public class WolfyUtilitiesRef extends APIReference {
 
     private static final org.bukkit.NamespacedKey CUSTOM_ITEM_KEY = new org.bukkit.NamespacedKey(WolfyUtilities.getWUPlugin(), "custom_item");
 
-    private final NamespacedKey namespacedKey;
+    private final BukkitNamespacedKey namespacedKey;
 
-    public WolfyUtilitiesRef(NamespacedKey namespacedKey) {
+    public WolfyUtilitiesRef(BukkitNamespacedKey namespacedKey) {
         this.namespacedKey = namespacedKey;
     }
 
@@ -50,7 +50,7 @@ public class WolfyUtilitiesRef extends APIReference {
         this.namespacedKey = wolfyUtilitiesRef.namespacedKey;
     }
 
-    public NamespacedKey getNamespacedKey() {
+    public BukkitNamespacedKey getNamespacedKey() {
         return namespacedKey;
     }
 
@@ -77,7 +77,7 @@ public class WolfyUtilitiesRef extends APIReference {
             if (itemMeta != null) {
                 var container = itemMeta.getPersistentDataContainer();
                 if (container.has(CUSTOM_ITEM_KEY, PersistentDataType.STRING)) {
-                    return Objects.equals(this.namespacedKey, NamespacedKey.of(container.get(CUSTOM_ITEM_KEY, PersistentDataType.STRING)));
+                    return Objects.equals(this.namespacedKey, BukkitNamespacedKey.of(container.get(CUSTOM_ITEM_KEY, PersistentDataType.STRING)));
                 }
             }
         }
@@ -122,7 +122,7 @@ public class WolfyUtilitiesRef extends APIReference {
             if (itemMeta != null) {
                 var container = itemMeta.getPersistentDataContainer();
                 if (container.has(CUSTOM_ITEM_KEY, PersistentDataType.STRING)) {
-                    return new WolfyUtilitiesRef(NamespacedKey.of(container.get(CUSTOM_ITEM_KEY, PersistentDataType.STRING)));
+                    return new WolfyUtilitiesRef(BukkitNamespacedKey.of(container.get(CUSTOM_ITEM_KEY, PersistentDataType.STRING)));
                 }
             }
             return null;
@@ -130,7 +130,7 @@ public class WolfyUtilitiesRef extends APIReference {
 
         @Override
         public @Nullable WolfyUtilitiesRef parse(JsonNode element) {
-            return new WolfyUtilitiesRef(NamespacedKey.of(element.asText()));
+            return new WolfyUtilitiesRef(BukkitNamespacedKey.of(element.asText()));
         }
     }
 }

@@ -7,10 +7,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import com.wolfyscript.utilities.Copyable;
-import me.wolfyscript.utilities.util.Keyed;
-import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.json.jackson.KeyedTypeIdResolver;
-import me.wolfyscript.utilities.util.json.jackson.KeyedTypeResolver;
+import com.wolfyscript.utilities.Keyed;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
+import com.wolfyscript.utilities.json.KeyedTypeResolver;
 
 /**
  * This is the direct replacement for the old {@link me.wolfyscript.utilities.api.inventory.custom_items.CustomData}
@@ -23,15 +23,15 @@ import me.wolfyscript.utilities.util.json.jackson.KeyedTypeResolver;
 public abstract class CustomItemData implements Keyed, Copyable<CustomItemData> {
 
     @JsonProperty("id")
-    private final NamespacedKey id;
+    private final BukkitNamespacedKey id;
 
-    protected CustomItemData(NamespacedKey id) {
+    protected CustomItemData(BukkitNamespacedKey id) {
         this.id = id;
     }
 
     @JsonIgnore
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public BukkitNamespacedKey getNamespacedKey() {
         return id;
     }
 

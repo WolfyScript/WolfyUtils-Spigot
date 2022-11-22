@@ -19,7 +19,7 @@
 package me.wolfyscript.utilities.util.particles.shapes;
 
 import com.google.common.base.Preconditions;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +34,7 @@ import java.util.function.Consumer;
  */
 public class ShapeComplexCompound extends Shape {
 
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("complex/compound");
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("complex/compound");
 
     private final List<Shape> shapes;
 

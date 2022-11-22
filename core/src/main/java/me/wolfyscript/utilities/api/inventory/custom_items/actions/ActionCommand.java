@@ -20,10 +20,8 @@ package me.wolfyscript.utilities.api.inventory.custom_items.actions;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.Action;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.DataPlayer;
 import me.wolfyscript.utilities.compatibility.plugins.PlaceholderAPIIntegration;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -32,7 +30,7 @@ import java.util.List;
 
 public class ActionCommand extends Action<DataPlayer> {
 
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("player/command");
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("player/command");
 
     @JsonIgnore
     private final PlaceholderAPIIntegration papi;

@@ -5,14 +5,14 @@ import com.wolfyscript.utilities.KeyedStaticId;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.particles.ParticleUtils;
 import org.bukkit.inventory.EquipmentSlot;
 
 @KeyedStaticId(value = "wolfyutilities:particles/effects")
 public class PlayerParticleEffectData extends CustomPlayerData {
 
-    public static final NamespacedKey ID = NamespacedKey.wolfyutilties("particles/effects");
+    public static final BukkitNamespacedKey ID = BukkitNamespacedKey.wolfyutilties("particles/effects");
 
     private final Map<EquipmentSlot, UUID> effectsPerSlot = new EnumMap<>(EquipmentSlot.class);
 

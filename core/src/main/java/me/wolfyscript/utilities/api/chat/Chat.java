@@ -19,14 +19,12 @@
 package me.wolfyscript.utilities.api.chat;
 
 import com.wolfyscript.utilities.common.WolfyUtils;
-import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.gui.GuiCluster;
 import me.wolfyscript.utilities.api.inventory.gui.GuiWindow;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -136,7 +134,7 @@ public abstract class Chat extends com.wolfyscript.utilities.common.chat.Chat {
     public abstract void sendKey(Player player, GuiCluster<?> guiCluster, String msgKey);
 
     @Deprecated
-    public abstract void sendKey(Player player, @NotNull NamespacedKey windowKey, String msgKey);
+    public abstract void sendKey(Player player, @NotNull BukkitNamespacedKey windowKey, String msgKey);
 
     /**
      * Sends a global message of the Cluster to the player.
@@ -158,7 +156,7 @@ public abstract class Chat extends com.wolfyscript.utilities.common.chat.Chat {
      * @param msgKey The key of the messages to send.
      */
     @Deprecated
-    public abstract void sendKey(Player player, NamespacedKey namespacedKey, String msgKey, Pair<String, String>... replacements);
+    public abstract void sendKey(Player player, BukkitNamespacedKey namespacedKey, String msgKey, Pair<String, String>... replacements);
 
     public abstract ClickEvent executable(Player player, boolean discard, ClickAction action);
 

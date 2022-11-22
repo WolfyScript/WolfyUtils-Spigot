@@ -22,7 +22,7 @@ import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.gui.button.Button;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -121,12 +121,12 @@ public class GuiUpdate<C extends CustomCache> {
     /**
      * Set a globally Button registered in a {@link GuiCluster}.
      * <br><br>
-     * <strong>It is recommended to save {@link NamespacedKey}s of Buttons as constants in their corresponding {@link GuiCluster} to prevent magic values!</strong>
+     * <strong>It is recommended to save {@link BukkitNamespacedKey}s of Buttons as constants in their corresponding {@link GuiCluster} to prevent magic values!</strong>
      *
      * @param slot          The slot the Button should be rendered in.
      * @param namespacedKey The NamespacedKey of the button. The namespace is the cluster key and the key is the button id.
      */
-    public void setButton(int slot, NamespacedKey namespacedKey) {
+    public void setButton(int slot, BukkitNamespacedKey namespacedKey) {
         Button<C> button = inventoryAPI.getButton(namespacedKey);
         if (button != null) {
             guiHandler.setButton(guiWindow, slot, namespacedKey.toString());
@@ -140,11 +140,11 @@ public class GuiUpdate<C extends CustomCache> {
      * @param slot       The slot the Button should be rendered in.
      * @param clusterKey The cluster key.
      * @param buttonId   The button id.
-     * @deprecated You can easily do mistakes using this method. It is recommended to use constants in your {@link GuiCluster} to save the {@link NamespacedKey}s and use {@link #setButton(int, NamespacedKey)} instead!
+     * @deprecated You can easily do mistakes using this method. It is recommended to use constants in your {@link GuiCluster} to save the {@link BukkitNamespacedKey}s and use {@link #setButton(int, BukkitNamespacedKey)} instead!
      */
     @Deprecated
     public void setButton(int slot, String clusterKey, String buttonId) {
-        setButton(slot, new NamespacedKey(clusterKey, buttonId));
+        setButton(slot, new BukkitNamespacedKey(clusterKey, buttonId));
     }
 
     /**
@@ -170,7 +170,7 @@ public class GuiUpdate<C extends CustomCache> {
     public void setLocalOrGlobalButton(int slot, String id) {
         Button<C> button = guiWindow.getButton(id);
         if (button == null) {
-            button = inventoryAPI.getButton(new NamespacedKey(guiWindow.getNamespacedKey().getNamespace(), id));
+            button = inventoryAPI.getButton(new BukkitNamespacedKey(guiWindow.getNamespacedKey().getNamespace(), id));
         }
         if (button != null) {
             guiHandler.setButton(guiWindow, slot, id);

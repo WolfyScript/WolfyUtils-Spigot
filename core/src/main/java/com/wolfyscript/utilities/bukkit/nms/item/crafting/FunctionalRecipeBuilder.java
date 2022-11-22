@@ -1,13 +1,13 @@
 package com.wolfyscript.utilities.bukkit.nms.item.crafting;
 
 import com.google.common.base.Preconditions;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class FunctionalRecipeBuilder<T extends Inventory> {
 
-    protected final NamespacedKey key;
+    protected final BukkitNamespacedKey key;
 
     protected RecipeMatcher<T> recipeMatcher;
     protected RecipeAssembler<T> recipeAssembler;
@@ -15,11 +15,11 @@ public abstract class FunctionalRecipeBuilder<T extends Inventory> {
 
     protected String group = "";
 
-    public FunctionalRecipeBuilder(NamespacedKey key) {
+    public FunctionalRecipeBuilder(BukkitNamespacedKey key) {
         this.key = key;
     }
 
-    public NamespacedKey getKey() {
+    public BukkitNamespacedKey getKey() {
         return key;
     }
 

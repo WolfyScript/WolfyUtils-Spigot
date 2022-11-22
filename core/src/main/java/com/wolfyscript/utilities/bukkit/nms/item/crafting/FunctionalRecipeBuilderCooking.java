@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
@@ -16,7 +16,7 @@ public abstract class FunctionalRecipeBuilderCooking extends FunctionalRecipeBui
     private float experience = 1f;
     private int cookingTime = 60;
 
-    public FunctionalRecipeBuilderCooking(NamespacedKey key, ItemStack result, RecipeChoice ingredient) {
+    public FunctionalRecipeBuilderCooking(BukkitNamespacedKey key, ItemStack result, RecipeChoice ingredient) {
         super(key);
         this.result = result;
         this.ingredient = ingredient;
@@ -55,7 +55,7 @@ public abstract class FunctionalRecipeBuilderCooking extends FunctionalRecipeBui
     public void createAndRegister() {
         try {
             Constructor<?> constructor = FunctionalRecipeGenerator.getFunctionalRecipeClass(getType()).getConstructor(
-                    NamespacedKey.class, RecipeMatcher.class, RecipeAssembler.class, RecipeRemainingItemsFunction.class, String.class, RecipeChoice.class, ItemStack.class, Float.TYPE, Integer.TYPE
+                    BukkitNamespacedKey.class, RecipeMatcher.class, RecipeAssembler.class, RecipeRemainingItemsFunction.class, String.class, RecipeChoice.class, ItemStack.class, Float.TYPE, Integer.TYPE
             );
             FunctionalRecipe<Inventory> recipe = (FunctionalRecipe<Inventory>) constructor.newInstance(key, recipeMatcher, recipeAssembler, remainingItemsFunction, group, ingredient, result, experience, cookingTime);
             FunctionalRecipeGenerator.addRecipeToRecipeManager(recipe);

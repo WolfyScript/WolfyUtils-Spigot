@@ -25,7 +25,7 @@ import javassist.Modifier;
 import javassist.NotFoundException;
 import javassist.bytecode.SignatureAttribute;
 import me.wolfyscript.utilities.api.nms.inventory.InjectGUIInventory;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.Reflection;
 import me.wolfyscript.utilities.util.version.MinecraftVersions;
 import org.apache.commons.lang3.text.StrSubstitutor;
@@ -219,7 +219,7 @@ public class FunctionalRecipeGenerator {
         generatedRecipeClass.setSuperclass(originalRecipeClass);
 
         // private final NamespacedKey recipeID;
-        CtField recipeIDField = new CtField(classPool.get(NamespacedKey.class.getName()), "recipeID", generatedRecipeClass);
+        CtField recipeIDField = new CtField(classPool.get(BukkitNamespacedKey.class.getName()), "recipeID", generatedRecipeClass);
         recipeIDField.setModifiers(Modifier.setPrivate(Modifier.FINAL)); // private final
         generatedRecipeClass.addField(recipeIDField);
         // private final RecipeMatcher matcher;
@@ -304,7 +304,7 @@ public class FunctionalRecipeGenerator {
             signatureBuilder.append(funcRecipeClass).append('(');
 
             // NamespacedKey var0,
-            signatureBuilder.append(NamespacedKey.class.getName()).append(" var0").append(", ");
+            signatureBuilder.append(BukkitNamespacedKey.class.getName()).append(" var0").append(", ");
             // RecipeMatcher var1
             signatureBuilder.append(RecipeMatcher.class.getName()).append(" var1").append(", ");
             // RecipeAssembler var1

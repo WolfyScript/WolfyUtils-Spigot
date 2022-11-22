@@ -1,5 +1,6 @@
 package me.wolfyscript.utilities.util.eval.context;
 
+import com.wolfyscript.utilities.eval.context.EvalContext;
 import org.bukkit.entity.Player;
 
 public class EvalContextPlayer extends EvalContext {

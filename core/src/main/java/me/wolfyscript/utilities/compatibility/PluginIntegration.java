@@ -20,7 +20,7 @@ package me.wolfyscript.utilities.compatibility;
 
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 
 public interface PluginIntegration {
 
@@ -77,5 +77,5 @@ public interface PluginIntegration {
      * @param <T> The PluginAdapter type.
      * @return The adapter of the specified key; or null if it doesn't exist or doesn't match the type.
      */
-    <T extends PluginAdapter> T getAdapter(Class<T> type, NamespacedKey key);
+    <T extends PluginAdapter> T getAdapter(Class<T> type, BukkitNamespacedKey key);
 }

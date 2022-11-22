@@ -19,14 +19,14 @@
 package me.wolfyscript.utilities.api.inventory.custom_items.meta;
 
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.inventory.item_builder.ItemBuilder;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class DamageMeta extends Meta {
 
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("damage");
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("damage");
 
     public DamageMeta() {
         super(KEY);

@@ -19,14 +19,14 @@
 package me.wolfyscript.utilities.util.particles.timer;
 
 import com.google.common.base.Preconditions;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 
 /**
  * Provides a linear increasing value by a specified increment.<br>
  */
 public class TimerLinear extends Timer {
 
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("linear");
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("linear");
 
     private double increment;
 

@@ -1,5 +1,7 @@
 package com.wolfyscript.utilities.bukkit;
 
+import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
+import com.wolfyscript.utilities.common.Identifiers;
 import com.wolfyscript.utilities.common.WolfyCore;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.chat.Chat;
@@ -15,7 +17,6 @@ import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
 import me.wolfyscript.utilities.api.language.LanguageAPI;
 import me.wolfyscript.utilities.api.network.messages.MessageAPI;
 import me.wolfyscript.utilities.api.nms.NMSUtil;
-import me.wolfyscript.utilities.registry.Registries;
 import me.wolfyscript.utilities.util.exceptions.InvalidCacheTypeException;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -36,6 +37,7 @@ public class WolfyUtilsBukkit extends WolfyUtils {
     private final BookUtil bookUtil;
     private final MessageAPI messageAPI;
     private final NMSUtil nmsUtil;
+    private final Identifiers identifiers;
 
     private String dataBasePrefix;
     private final ConfigAPI configAPI;
@@ -56,6 +58,7 @@ public class WolfyUtilsBukkit extends WolfyUtils {
         this.dataBasePrefix = getName().toLowerCase(Locale.ROOT) + "_";
         this.configAPI = new ConfigAPI((WolfyUtilities) this);
         this.inventoryAPI = new InventoryAPI<>(plugin, (WolfyUtilities) this, cacheType);
+        this.identifiers = new BukkitIdentifiers(this);
         this.initialize = init;
     }
 
@@ -69,7 +72,7 @@ public class WolfyUtilsBukkit extends WolfyUtils {
         return core;
     }
 
-    public Registries getRegistries() {
+    public BukkitRegistries getRegistries() {
         return core.getRegistries();
     }
 
@@ -95,6 +98,11 @@ public class WolfyUtilsBukkit extends WolfyUtils {
     @Override
     public Chat getChat() {
         return chat;
+    }
+
+    @Override
+    public Identifiers getIdentifiers() {
+        return identifiers;
     }
 
     /**

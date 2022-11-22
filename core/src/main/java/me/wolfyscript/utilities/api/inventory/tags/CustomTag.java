@@ -18,19 +18,19 @@
 
 package me.wolfyscript.utilities.api.inventory.tags;
 
-import me.wolfyscript.utilities.util.Keyed;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.Keyed;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class CustomTag<T extends Keyed> implements Keyed {
 
-    private final NamespacedKey namespacedKey;
+    private final BukkitNamespacedKey namespacedKey;
 
     protected final Set<T> values;
 
-    public CustomTag(NamespacedKey namespacedKey) {
+    public CustomTag(BukkitNamespacedKey namespacedKey) {
         this.namespacedKey = namespacedKey;
         this.values = new HashSet<>();
     }
@@ -51,7 +51,7 @@ public class CustomTag<T extends Keyed> implements Keyed {
         return values.contains(value);
     }
 
-    public NamespacedKey getNamespacedKey() {
+    public BukkitNamespacedKey getNamespacedKey() {
         return namespacedKey;
     }
 

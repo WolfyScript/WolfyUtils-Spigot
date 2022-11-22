@@ -20,12 +20,12 @@ package me.wolfyscript.utilities.compatibility.plugins.placeholderapi.value_prov
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.eval.context.EvalContext;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.eval.context.EvalContext;
 
 public class ValueProviderFloatPAPI extends ValueProviderPlaceholderAPI<Float> {
 
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("float/papi");
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("float/papi");
 
     @JsonCreator
     protected ValueProviderFloatPAPI(@JsonProperty("value") String value) {

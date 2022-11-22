@@ -22,7 +22,7 @@ import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.gui.GuiCluster;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.Pair;
 import me.wolfyscript.utilities.util.chat.ChatColor;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
@@ -175,7 +175,7 @@ public abstract class ChatImplOld extends me.wolfyscript.utilities.api.chat.Chat
 
     @Deprecated
     @Override
-    public void sendKey(Player player, @NotNull NamespacedKey windowKey, String msgKey) {
+    public void sendKey(Player player, @NotNull BukkitNamespacedKey windowKey, String msgKey) {
         sendMessage(player, translated("inventories." + windowKey.getNamespace() + "." + windowKey.getKey() + ".messages." + msgKey, true));
     }
 
@@ -189,7 +189,7 @@ public abstract class ChatImplOld extends me.wolfyscript.utilities.api.chat.Chat
     @Deprecated
     @SafeVarargs
     @Override
-    public final void sendKey(Player player, NamespacedKey namespacedKey, String msgKey, Pair<String, String>... replacements) {
+    public final void sendKey(Player player, BukkitNamespacedKey namespacedKey, String msgKey, Pair<String, String>... replacements) {
         sendMessage(player, translated("inventories." + namespacedKey.getNamespace() + "." + namespacedKey.getKey() + ".messages." + msgKey, true, getTemplates(replacements)));
     }
 

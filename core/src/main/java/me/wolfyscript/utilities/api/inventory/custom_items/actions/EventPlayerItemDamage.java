@@ -18,14 +18,12 @@
 
 package me.wolfyscript.utilities.api.inventory.custom_items.actions;
 
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.DataPlayerEvent;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayer;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 
 public class EventPlayerItemDamage extends EventPlayer<me.wolfyscript.utilities.api.inventory.custom_items.actions.DataPlayerEvent<PlayerItemDamageEvent>> {
 
-    public static final NamespacedKey KEY = NamespacedKey.wolfyutilties("player/item_damage");
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("player/item_damage");
 
     protected EventPlayerItemDamage() {
         super(KEY, (Class<me.wolfyscript.utilities.api.inventory.custom_items.actions.DataPlayerEvent<PlayerItemDamageEvent>>)(Object) DataPlayerEvent.class);

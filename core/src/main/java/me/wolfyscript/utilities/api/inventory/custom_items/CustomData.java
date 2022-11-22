@@ -24,14 +24,15 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.wolfyscript.utilities.NamespacedKey;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import me.wolfyscript.utilities.util.Keyed;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.Keyed;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 
 /**
  * @deprecated Replaced by {@link com.wolfyscript.utilities.bukkit.items.CustomItemData}
@@ -46,7 +47,7 @@ public abstract class CustomData implements Keyed {
      * This is the main constructor of this class and must not be changed in it's parameters!
      * If you do change it you also need to override the {@link Provider#createData()} method as it uses the NamespacedKey constructor by default!
      *
-     * @param namespacedKey The {@link NamespacedKey} of this CustomData. Parsed to this class from the {@link Provider}.
+     * @param namespacedKey The {@link BukkitNamespacedKey} of this CustomData. Parsed to this class from the {@link Provider}.
      */
     protected CustomData(NamespacedKey namespacedKey) {
         this.namespacedKey = namespacedKey;
@@ -122,7 +123,7 @@ public abstract class CustomData implements Keyed {
          * Creates a new provider for the {@link CustomData} of the specified class.
          * This Provider requires a unique namespace and key, so it doesn't interfere with other data.
          *
-         * @param namespacedKey   Unique {@link NamespacedKey} to identify this provider and it's data!
+         * @param namespacedKey   Unique {@link BukkitNamespacedKey} to identify this provider and it's data!
          * @param customDataClass Class of the overridden {@link CustomData} class.
          */
         public Provider(NamespacedKey namespacedKey, Class<T> customDataClass) {
@@ -131,7 +132,7 @@ public abstract class CustomData implements Keyed {
         }
 
         /**
-         * @return The {@link NamespacedKey} of this Provider. This method and the {@link CustomData#getNamespacedKey()} should always return the same value!
+         * @return The {@link BukkitNamespacedKey} of this Provider. This method and the {@link CustomData#getNamespacedKey()} should always return the same value!
          */
         public NamespacedKey getNamespacedKey() {
             return namespacedKey;

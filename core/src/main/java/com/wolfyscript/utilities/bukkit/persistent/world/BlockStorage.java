@@ -2,13 +2,13 @@ package com.wolfyscript.utilities.bukkit.persistent.world;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.InjectableValues;
+import com.wolfyscript.utilities.NamespacedKey;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -92,7 +92,7 @@ public class BlockStorage {
         var dataPersistent = getPersistentData();
         for (Map.Entry<NamespacedKey, CustomBlockData> entry : data.entrySet()) {
             try {
-                dataPersistent.set(entry.getKey().bukkit(), PersistentDataType.STRING, objectMapper.writeValueAsString(entry.getValue()));
+                dataPersistent.set(((BukkitNamespacedKey) entry.getKey()).bukkit(), PersistentDataType.STRING, objectMapper.writeValueAsString(entry.getValue()));
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
@@ -105,7 +105,7 @@ public class BlockStorage {
         var objectMapper = core.getWolfyUtils().getJacksonMapperUtil().getGlobalMapper();
         var dataPersistent = getPersistentData();
         for (org.bukkit.NamespacedKey key : dataPersistent.getKeys()) {
-            NamespacedKey wuKey = NamespacedKey.fromBukkit(key);
+            NamespacedKey wuKey = BukkitNamespacedKey.fromBukkit(key);
             String customDataString = dataPersistent.get(key, PersistentDataType.STRING);
             CustomBlockData blockData = null;
             try {

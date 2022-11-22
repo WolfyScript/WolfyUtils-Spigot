@@ -2,15 +2,16 @@ package com.wolfyscript.utilities.bukkit.persistent.player;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.InjectableValues;
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.registry.Registries;
-import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -105,19 +106,19 @@ public class PlayerStorage {
      * In case the value is not yet loaded into the cache it deserializes it from the persistent data container.<br>
      * If the persistent data container is not available, which is the case when the player is offline, it returns an empty Optional.<br>
      *
-     * @param dataType The type of the data. Must be registered in {@link Registries#getCustomPlayerData()}!
+     * @param dataType The type of the data. Must be registered in {@link BukkitRegistries#getCustomPlayerData()}!
      * @param <T>      The type of the data.
      * @return The data of the specified type; or empty Optional when not available.
      */
     public <T extends CustomPlayerData> Optional<T> getData(Class<T> dataType) {
         NamespacedKey dataID = core.getRegistries().getCustomPlayerData().getKey(dataType);
         T dataResult = dataType.cast(CACHED_DATA.get(dataID));
-        if (dataResult == null) {
+        if (dataID instanceof BukkitNamespacedKey bukkitDataID && dataResult == null) {
             // If there isn't any cached data yet
             Optional<T> data = getPersistentDataContainer().map(container -> {
                 var dataContainer = container.getOrDefault(DATA_KEY, PersistentDataType.TAG_CONTAINER, container.getAdapterContext().newPersistentDataContainer());
                 var objectMapper = core.getWolfyUtils().getJacksonMapperUtil().getGlobalMapper();
-                org.bukkit.NamespacedKey key = dataID.bukkit();
+                org.bukkit.NamespacedKey key = bukkitDataID.bukkit();
                 if (dataContainer.has(key, PersistentDataType.STRING)) {
                     try {
                         return objectMapper.reader(new InjectableValues.Std()
@@ -141,7 +142,7 @@ public class PlayerStorage {
     /**
      * Removes the data saved under the specified id.
      *
-     * @param dataType The type of the data. Must be registered in {@link Registries#getCustomPlayerData()}!
+     * @param dataType The type of the data. Must be registered in {@link BukkitRegistries#getCustomPlayerData()}!
      * @param <T>      The type of the data.
      * @return The removed data value; or null if nothing was removed.
      */
@@ -153,7 +154,9 @@ public class PlayerStorage {
         }
         getPersistentDataContainer().ifPresent(container -> {
             var dataContainer = container.getOrDefault(DATA_KEY, PersistentDataType.TAG_CONTAINER, container.getAdapterContext().newPersistentDataContainer());
-            dataContainer.remove(dataID.bukkit());
+            if (dataID instanceof BukkitNamespacedKey bukkitDataID) {
+                dataContainer.remove(bukkitDataID.bukkit());
+            }
             container.set(DATA_KEY, PersistentDataType.TAG_CONTAINER, dataContainer);
         });
         return prev;
@@ -165,7 +168,7 @@ public class PlayerStorage {
      * @param dataID The id of the data.
      * @return The removed data value; or null if nothing was removed.
      */
-    public CustomPlayerData removeData(NamespacedKey dataID) {
+    public CustomPlayerData removeData(BukkitNamespacedKey dataID) {
         return removeData(core.getRegistries().getCustomPlayerData().get(dataID));
     }
 
@@ -188,7 +191,9 @@ public class PlayerStorage {
             var objectMapper = core.getWolfyUtils().getJacksonMapperUtil().getGlobalMapper();
             for (Map.Entry<NamespacedKey, CustomPlayerData> dataEntry : CACHED_DATA.entrySet()) {
                 try {
-                    dataContainer.set(dataEntry.getKey().bukkit(), PersistentDataType.STRING, objectMapper.writeValueAsString(dataEntry.getValue()));
+                    if (dataEntry.getKey() instanceof BukkitNamespacedKey bukkitDataID) {
+                        dataContainer.set(bukkitDataID.bukkit(), PersistentDataType.STRING, objectMapper.writeValueAsString(dataEntry.getValue()));
+                    }
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
