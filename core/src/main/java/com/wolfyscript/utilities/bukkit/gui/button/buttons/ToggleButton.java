@@ -16,15 +16,15 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.api.inventory.gui.button.buttons;
+package com.wolfyscript.utilities.bukkit.gui.button.buttons;
 
-import me.wolfyscript.utilities.api.inventory.gui.GuiCluster;
-import me.wolfyscript.utilities.api.inventory.gui.GuiHandler;
-import me.wolfyscript.utilities.api.inventory.gui.GuiWindow;
-import me.wolfyscript.utilities.api.inventory.gui.button.Button;
-import me.wolfyscript.utilities.api.inventory.gui.button.ButtonState;
-import me.wolfyscript.utilities.api.inventory.gui.button.ButtonType;
-import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
+import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
+import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
+import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
+import com.wolfyscript.utilities.bukkit.gui.button.Button;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonState;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonType;
+import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
 import me.wolfyscript.utilities.util.Pair;
 import org.bukkit.entity.Player;

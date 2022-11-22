@@ -19,8 +19,8 @@
 package me.wolfyscript.utilities.api.chat;
 
 import com.wolfyscript.utilities.common.WolfyUtils;
-import me.wolfyscript.utilities.api.inventory.gui.GuiCluster;
-import me.wolfyscript.utilities.api.inventory.gui.GuiWindow;
+import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
+import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.Pair;
 import net.kyori.adventure.text.Component;

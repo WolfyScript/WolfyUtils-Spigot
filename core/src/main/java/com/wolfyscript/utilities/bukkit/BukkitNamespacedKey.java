@@ -26,6 +26,8 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
+import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import org.bukkit.plugin.Plugin;
@@ -47,7 +49,7 @@ import java.util.regex.Pattern;
  * In those cases the {@link #BukkitNamespacedKey(Plugin, String)} constructor should be used.
  * <br>
  * They can however be used inside a plugin itself with non-plugin namespaces, when resources are only accessible internally.<br>
- * e.g. {@link me.wolfyscript.utilities.api.inventory.gui.GuiWindow} where the namespace is the {@link me.wolfyscript.utilities.api.inventory.gui.GuiCluster}s' id and the key the GuiWindows's id, etc.<br>
+ * e.g. {@link GuiWindow} where the namespace is the {@link GuiCluster}s' id and the key the GuiWindows's id, etc.<br>
  * In those cases the {@link #BukkitNamespacedKey(String, String)} constructor can be used.
  *
  */

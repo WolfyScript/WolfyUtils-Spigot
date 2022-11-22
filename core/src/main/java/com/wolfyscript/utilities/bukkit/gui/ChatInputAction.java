@@ -16,9 +16,9 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.api.inventory.gui;
+package com.wolfyscript.utilities.bukkit.gui;
 
-import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
+import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import org.bukkit.entity.Player;
 
 public interface ChatInputAction<C extends CustomCache> {

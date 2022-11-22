@@ -16,14 +16,14 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.api.inventory.gui.button;
+package com.wolfyscript.utilities.bukkit.gui.button;
 
 import com.google.common.base.Preconditions;
 import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.api.inventory.gui.GuiCluster;
-import me.wolfyscript.utilities.api.inventory.gui.GuiWindow;
-import me.wolfyscript.utilities.api.inventory.gui.InventoryAPI;
-import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
+import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
+import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
+import com.wolfyscript.utilities.bukkit.gui.InventoryAPI;
+import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import net.kyori.adventure.text.Component;
@@ -547,9 +547,9 @@ public class ButtonState<C extends CustomCache> {
      * You can get an instance of this builder via {@link ButtonState#of(GuiWindow, String)} or {@link ButtonState#of(GuiCluster, String)}.<br>
      * It can also be accessed via the button builders:
      * <ul>
-     *     <li>{@linkplain me.wolfyscript.utilities.api.inventory.gui.button.buttons.ActionButton.Builder#state(Consumer)}</li>
-     *     <li>{@linkplain  me.wolfyscript.utilities.api.inventory.gui.button.buttons.ToggleButton.Builder#enabledState(Consumer)} or {@linkplain me.wolfyscript.utilities.api.inventory.gui.button.buttons.ToggleButton.Builder#disabledState(Consumer)}</li>
-     *     <li>{@linkplain me.wolfyscript.utilities.api.inventory.gui.button.buttons.MultipleChoiceButton.Builder#addState(Consumer)}</li>
+     *     <li>{@linkplain com.wolfyscript.utilities.bukkit.gui.button.buttons.ActionButton.Builder#state(Consumer)}</li>
+     *     <li>{@linkplain  com.wolfyscript.utilities.bukkit.gui.button.buttons.ToggleButton.Builder#enabledState(Consumer)} or {@linkplain com.wolfyscript.utilities.bukkit.gui.button.buttons.ToggleButton.Builder#disabledState(Consumer)}</li>
+     *     <li>{@linkplain com.wolfyscript.utilities.bukkit.gui.button.buttons.MultipleChoiceButton.Builder#addState(Consumer)}</li>
      * </ul>
      * When the instance is provided via the Button builder, then the default key is equal to the button key.
      * </p>

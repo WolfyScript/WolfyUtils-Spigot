@@ -16,20 +16,20 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.api.inventory.gui;
+package com.wolfyscript.utilities.bukkit.gui;
 
 import com.wolfyscript.utilities.bukkit.TagResolverUtil;
 import me.wolfyscript.utilities.api.chat.Chat;
 import me.wolfyscript.utilities.api.chat.ClickAction;
 import me.wolfyscript.utilities.api.chat.ClickData;
-import me.wolfyscript.utilities.api.inventory.gui.button.Button;
-import me.wolfyscript.utilities.api.inventory.gui.button.buttons.ActionButton;
-import me.wolfyscript.utilities.api.inventory.gui.button.buttons.ChatInputButton;
-import me.wolfyscript.utilities.api.inventory.gui.button.buttons.DummyButton;
-import me.wolfyscript.utilities.api.inventory.gui.button.buttons.ItemInputButton;
-import me.wolfyscript.utilities.api.inventory.gui.button.buttons.MultipleChoiceButton;
-import me.wolfyscript.utilities.api.inventory.gui.button.buttons.ToggleButton;
-import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
+import com.wolfyscript.utilities.bukkit.gui.button.Button;
+import com.wolfyscript.utilities.bukkit.gui.button.buttons.ActionButton;
+import com.wolfyscript.utilities.bukkit.gui.button.buttons.ChatInputButton;
+import com.wolfyscript.utilities.bukkit.gui.button.buttons.DummyButton;
+import com.wolfyscript.utilities.bukkit.gui.button.buttons.ItemInputButton;
+import com.wolfyscript.utilities.bukkit.gui.button.buttons.MultipleChoiceButton;
+import com.wolfyscript.utilities.bukkit.gui.button.buttons.ToggleButton;
+import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.PlaceholderAPIIntegration;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;

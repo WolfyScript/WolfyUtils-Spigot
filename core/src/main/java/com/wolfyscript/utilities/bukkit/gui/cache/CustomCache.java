@@ -16,9 +16,9 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.api.inventory.gui.cache;
+package com.wolfyscript.utilities.bukkit.gui.cache;
 
-import me.wolfyscript.utilities.api.inventory.gui.GuiWindow;
+import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,8 +50,8 @@ public class CustomCache {
     }
 
     /**
-     * @param window The {@link GuiWindow} to get the cache {@link me.wolfyscript.utilities.api.inventory.gui.button.Button}s from.
-     * @return the cached {@link me.wolfyscript.utilities.api.inventory.gui.button.Button}s of the specified {@link GuiWindow}.
+     * @param window The {@link GuiWindow} to get the cache {@link com.wolfyscript.utilities.bukkit.gui.button.Button}s from.
+     * @return the cached {@link com.wolfyscript.utilities.bukkit.gui.button.Button}s of the specified {@link GuiWindow}.
      */
     @NotNull
     public Map<Integer, String> getButtons(GuiWindow<?> window) {

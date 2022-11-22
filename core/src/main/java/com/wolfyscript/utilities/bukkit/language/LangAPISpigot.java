@@ -3,7 +3,7 @@ package com.wolfyscript.utilities.bukkit.language;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
-import me.wolfyscript.utilities.api.inventory.gui.button.ButtonState;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonState;
 import me.wolfyscript.utilities.api.language.Language;
 import me.wolfyscript.utilities.api.language.LanguageAPI;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;

@@ -21,7 +21,7 @@ package me.wolfyscript.utilities.api.chat;
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.api.inventory.gui.GuiCluster;
+import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import me.wolfyscript.utilities.util.Pair;
 import me.wolfyscript.utilities.util.chat.ChatColor;

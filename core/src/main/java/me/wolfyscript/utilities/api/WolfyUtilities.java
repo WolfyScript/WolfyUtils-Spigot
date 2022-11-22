@@ -23,8 +23,7 @@ import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import me.wolfyscript.utilities.api.chat.Chat;
 import me.wolfyscript.utilities.api.config.ConfigAPI;
 import me.wolfyscript.utilities.api.config.YamlConfiguration;
-import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
-import me.wolfyscript.utilities.util.inventory.ItemUtils;
+import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 

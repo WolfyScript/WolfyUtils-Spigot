@@ -18,22 +18,15 @@
 
 package me.wolfyscript.utilities.api.nms;
 
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import javassist.CannotCompileException;
-import javassist.ClassPool;
-import javassist.NotFoundException;
-import me.wolfyscript.utilities.api.inventory.gui.GuiHandler;
-import me.wolfyscript.utilities.api.inventory.gui.GuiWindow;
-import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
+import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
+import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
+import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
 import me.wolfyscript.utilities.api.nms.inventory.InjectGUIInventory;
 import me.wolfyscript.utilities.util.inventory.CreativeModeTab;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 
 public abstract class InventoryUtil extends UtilComponent {
 

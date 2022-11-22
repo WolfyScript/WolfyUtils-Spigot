@@ -18,6 +18,7 @@
 
 package me.wolfyscript.utilities.api.network.database.sql;
 
+import com.wolfyscript.utilities.common.WolfyUtils;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 
 import java.sql.Connection;
@@ -31,7 +32,7 @@ public class SQLDataBase {
 
     private static final String DATABASE_DRIVER = "com.mysql.jdbc.Driver";
 
-    private final WolfyUtilities api;
+    private final WolfyUtils api;
 
     private Connection connection;
 
@@ -41,7 +42,7 @@ public class SQLDataBase {
     private final String maxPool;
     private Properties properties;
 
-    public SQLDataBase(WolfyUtilities api, String host, String database, String username, String password, int port) {
+    public SQLDataBase(WolfyUtils api, String host, String database, String username, String password, int port) {
         this.api = api;
         this.username = username;
         this.password = password;
@@ -117,7 +118,7 @@ public class SQLDataBase {
         }
     }
 
-    public WolfyUtilities getApi() {
+    public WolfyUtils getApi() {
         return api;
     }
 }

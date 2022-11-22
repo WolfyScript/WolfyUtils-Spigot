@@ -20,9 +20,9 @@ import javassist.LoaderClassPath;
 import javassist.Modifier;
 import javassist.NotFoundException;
 import javassist.bytecode.SignatureAttribute;
-import me.wolfyscript.utilities.api.inventory.gui.GuiHandler;
-import me.wolfyscript.utilities.api.inventory.gui.GuiWindow;
-import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
+import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
+import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
+import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import me.wolfyscript.utilities.api.nms.inventory.generated.PermissionReference;
 import me.wolfyscript.utilities.util.Reflection;
 import org.bukkit.event.inventory.InventoryType;
@@ -112,10 +112,10 @@ public class InjectGUIInventory {
 
         classPool.importPackage("net.minecraft.server." + Reflection.getVersion());
         classPool.importPackage("me.wolfyscript.utilities.api.inventory.gui");
-        classPool.importPackage("me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache");
+        classPool.importPackage("com.wolfyscript.utilities.bukkit.gui.cache.CustomCache");
         classPool.importPackage("me.wolfyscript.utilities.api.nms.inventory.GUIInventory");
-        classPool.importPackage("me.wolfyscript.utilities.api.inventory.gui.GuiWindow");
-        classPool.importPackage("me.wolfyscript.utilities.api.inventory.gui.GuiHandler");
+        classPool.importPackage("com.wolfyscript.utilities.bukkit.gui.GuiWindow");
+        classPool.importPackage("com.wolfyscript.utilities.bukkit.gui.GuiHandler");
         classPool.importPackage(GENERATOR_PACKAGE);
 
         SignatureAttribute.ClassSignature classSignature = new SignatureAttribute.ClassSignature(
