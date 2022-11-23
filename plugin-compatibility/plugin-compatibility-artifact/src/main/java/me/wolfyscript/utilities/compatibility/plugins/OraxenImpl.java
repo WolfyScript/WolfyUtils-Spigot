@@ -18,11 +18,16 @@
 
 package me.wolfyscript.utilities.compatibility.plugins;
 
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import io.th0rgal.oraxen.OraxenPlugin;
 import me.wolfyscript.utilities.annotations.WUPluginIntegration;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
+import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.oraxen.OraxenRefImpl;
+import me.wolfyscript.utilities.compatibility.plugins.oraxen.OraxenRefOldImpl;
 import org.bukkit.plugin.Plugin;
 
 @WUPluginIntegration(pluginName = OraxenIntegration.KEY)
@@ -34,7 +39,11 @@ public class OraxenImpl extends PluginIntegrationAbstract implements OraxenInteg
 
     @Override
     public void init(Plugin plugin) {
-        core.registerAPIReference(new OraxenRefImpl.Parser());
+        if (!WolfyUtilities.hasClass("io.th0rgal.oraxen.api.OraxenItems")) {
+            core.registerAPIReference(new OraxenRefOldImpl.Parser());
+        } else {
+            core.registerAPIReference(new OraxenRefImpl.Parser());
+        }
     }
 
     @Override
@@ -44,6 +53,6 @@ public class OraxenImpl extends PluginIntegrationAbstract implements OraxenInteg
 
     @Override
     public boolean isAPIReferenceIncluded(APIReference reference) {
-        return reference instanceof OraxenRefImpl;
+        return reference instanceof OraxenRefOldImpl;
     }
 }
