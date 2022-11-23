@@ -20,7 +20,7 @@ package com.wolfyscript.utilities.bukkit.compatibility;
 
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
-import com.wolfyscript.utilities.bukkit.items.references.APIReference;
+import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 
 public interface PluginIntegration {
 

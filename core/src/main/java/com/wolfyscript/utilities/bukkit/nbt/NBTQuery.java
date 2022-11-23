@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
+import com.wolfyscript.utilities.json.jackson.JacksonUtil;
 
 public class NBTQuery {
 

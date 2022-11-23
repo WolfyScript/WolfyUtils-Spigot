@@ -21,12 +21,12 @@ package com.wolfyscript.utilities.bukkit.config;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.wolfyscript.utilities.json.jackson.JacksonUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -19,7 +19,7 @@
 package com.wolfyscript.utilities.bukkit.listeners.custom_item;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.items.CustomItem;
+import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;

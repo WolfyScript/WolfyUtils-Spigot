@@ -23,7 +23,7 @@ import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import com.wolfyscript.utilities.bukkit.nms.api.inventory.InjectGUIInventory;
-import me.wolfyscript.utilities.util.inventory.CreativeModeTab;
+import com.wolfyscript.utilities.bukkit.world.inventory.CreativeModeTab;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;

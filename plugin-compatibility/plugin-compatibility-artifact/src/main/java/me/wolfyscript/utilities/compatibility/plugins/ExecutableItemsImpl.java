@@ -4,7 +4,7 @@ import com.ssomar.score.api.executableitems.ExecutableItemsAPI;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.ExecutableItemsIntegration;
 import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
-import com.wolfyscript.utilities.bukkit.items.references.APIReference;
+import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.executableitems.ExecutableItemsRef;
 import org.bukkit.plugin.Plugin;

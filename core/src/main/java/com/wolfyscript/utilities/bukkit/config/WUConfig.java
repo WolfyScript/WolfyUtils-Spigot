@@ -19,7 +19,7 @@
 package com.wolfyscript.utilities.bukkit.config;
 
 import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
-import com.wolfyscript.utilities.bukkit.items.references.APIReference;
+import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 
 public class WUConfig extends YamlConfiguration {
 

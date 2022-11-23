@@ -19,15 +19,15 @@
 package com.wolfyscript.utilities.bukkit.listeners;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.items.ArmorType;
-import com.wolfyscript.utilities.bukkit.items.CustomItem;
+import com.wolfyscript.utilities.bukkit.world.items.ArmorType;
+import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import com.wolfyscript.utilities.bukkit.events.ArmorEquipEvent;
 import com.wolfyscript.utilities.bukkit.events.EventFactory;
-import me.wolfyscript.utilities.util.inventory.InventoryUtils;
-import me.wolfyscript.utilities.util.inventory.ItemUtils;
+import com.wolfyscript.utilities.bukkit.world.inventory.InventoryUtils;
+import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;

@@ -18,10 +18,10 @@
 
 package com.wolfyscript.utilities.bukkit.chat;
 
+import com.wolfyscript.utilities.common.chat.ChatEvent;
 import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Nullable;
-import me.wolfyscript.utilities.api.chat.ChatEvent;
 
 @Deprecated
 public class ClickData {

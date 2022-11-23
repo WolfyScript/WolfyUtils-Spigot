@@ -3,7 +3,7 @@ package me.wolfyscript.utilities.api.nms.v1_16_R3;
 
 import com.wolfyscript.utilities.bukkit.nms.api.InventoryUtil;
 import com.wolfyscript.utilities.bukkit.nms.api.NMSUtil;
-import me.wolfyscript.utilities.util.inventory.CreativeModeTab;
+import com.wolfyscript.utilities.bukkit.world.inventory.CreativeModeTab;
 import net.minecraft.server.v1_16_R3.Item;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;

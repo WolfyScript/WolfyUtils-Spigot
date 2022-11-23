@@ -25,7 +25,7 @@ import com.willfp.eco.core.items.Items;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.eco.EcoRef;
 import java.io.IOException;
 import java.util.Objects;
-import com.wolfyscript.utilities.bukkit.items.references.APIReference;
+import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;

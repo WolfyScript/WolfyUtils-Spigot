@@ -22,7 +22,7 @@ import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.common.registry.AbstractRegistry;
 import java.util.HashMap;
 import java.util.Map;
-import com.wolfyscript.utilities.bukkit.particles.ParticleAnimation;
+import com.wolfyscript.utilities.bukkit.world.particles.ParticleAnimation;
 
 public class RegistryParticleAnimation extends AbstractRegistry<Map<NamespacedKey, ParticleAnimation>, ParticleAnimation> {
 

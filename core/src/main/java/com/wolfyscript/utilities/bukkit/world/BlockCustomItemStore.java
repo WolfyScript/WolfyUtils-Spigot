@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
-import com.wolfyscript.utilities.bukkit.items.CustomItem;
+import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
 import java.io.IOException;
 import java.util.UUID;
 import org.jetbrains.annotations.NotNull;

@@ -24,7 +24,7 @@ import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.mythicmobs.MythicMobsRef;
 import java.io.IOException;
 import java.util.Objects;
-import com.wolfyscript.utilities.bukkit.items.references.APIReference;
+import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTItem;
 import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagString;
 import org.bukkit.inventory.ItemStack;

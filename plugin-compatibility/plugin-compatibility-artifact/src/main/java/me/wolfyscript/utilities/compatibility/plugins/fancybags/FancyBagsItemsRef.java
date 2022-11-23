@@ -9,7 +9,7 @@ import java.io.IOException;
 import me.chickenstyle.backpack.Backpack;
 import me.chickenstyle.backpack.Utils;
 import me.chickenstyle.backpack.configs.CustomBackpacks;
-import com.wolfyscript.utilities.bukkit.items.references.APIReference;
+import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.plugins.FancyBagsImpl;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;

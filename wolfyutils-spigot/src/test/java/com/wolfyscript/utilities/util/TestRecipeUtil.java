@@ -18,7 +18,6 @@
 
 package com.wolfyscript.utilities.util;
 
-import me.wolfyscript.utilities.util.RecipeUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

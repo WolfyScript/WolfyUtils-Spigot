@@ -33,7 +33,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import com.wolfyscript.utilities.bukkit.chat.ChatColor;
-import me.wolfyscript.utilities.util.inventory.ItemUtils;
+import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;

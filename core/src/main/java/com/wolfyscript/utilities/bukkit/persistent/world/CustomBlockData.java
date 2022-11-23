@@ -10,6 +10,7 @@ import com.wolfyscript.utilities.Keyed;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
 import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
+import com.wolfyscript.utilities.bukkit.world.items.CustomItemBlockData;
 import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
 import com.wolfyscript.utilities.json.KeyedTypeResolver;
 
@@ -31,7 +32,7 @@ import com.wolfyscript.utilities.json.KeyedTypeResolver;
  * </ul>
  * That can be injected using the {@link com.fasterxml.jackson.annotation.JacksonInject} annotation.<br>
  * <br>
- * One of the default data, that stores the CustomItems on blocks is {@link com.wolfyscript.utilities.bukkit.items.CustomItemBlockData}
+ * One of the default data, that stores the CustomItems on blocks is {@link CustomItemBlockData}
  */
 @JsonTypeResolver(KeyedTypeResolver.class)
 @JsonTypeIdResolver(KeyedTypeIdResolver.class)

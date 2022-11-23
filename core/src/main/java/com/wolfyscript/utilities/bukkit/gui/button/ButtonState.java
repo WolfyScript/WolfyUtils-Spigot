@@ -28,7 +28,7 @@ import com.wolfyscript.utilities.bukkit.gui.InventoryAPI;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import java.util.List;
 import java.util.function.Consumer;
-import me.wolfyscript.utilities.util.inventory.ItemUtils;
+import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Material;

@@ -18,7 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.chat;
 
-import me.wolfyscript.utilities.api.chat.ChatEvent;
+import com.wolfyscript.utilities.common.chat.ChatEvent;
 
 @Deprecated
 public class ClickEvent implements ChatEvent<net.md_5.bungee.api.chat.ClickEvent.Action, String> {

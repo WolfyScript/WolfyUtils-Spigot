@@ -20,7 +20,7 @@ package com.wolfyscript.utilities.bukkit.chat;
 
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.common.WolfyUtils;
-import me.wolfyscript.utilities.api.chat.ClickActionCallback;
+import com.wolfyscript.utilities.common.chat.ClickActionCallback;
 import org.bukkit.entity.Player;
 
 public interface ClickAction extends ClickActionCallback {

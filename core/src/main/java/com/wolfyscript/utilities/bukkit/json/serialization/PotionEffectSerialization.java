@@ -20,7 +20,7 @@ package com.wolfyscript.utilities.bukkit.json.serialization;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
+import com.wolfyscript.utilities.json.jackson.JacksonUtil;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 

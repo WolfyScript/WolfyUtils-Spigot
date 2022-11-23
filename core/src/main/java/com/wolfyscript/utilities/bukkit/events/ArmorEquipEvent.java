@@ -18,10 +18,10 @@
 
 package com.wolfyscript.utilities.bukkit.events;
 
-import com.wolfyscript.utilities.bukkit.items.ArmorType;
-import com.wolfyscript.utilities.bukkit.items.CustomItem;
-import com.wolfyscript.utilities.bukkit.entity.PlayerUtils;
-import me.wolfyscript.utilities.util.inventory.ItemUtils;
+import com.wolfyscript.utilities.bukkit.world.items.ArmorType;
+import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
+import com.wolfyscript.utilities.bukkit.world.entity.PlayerUtils;
+import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;

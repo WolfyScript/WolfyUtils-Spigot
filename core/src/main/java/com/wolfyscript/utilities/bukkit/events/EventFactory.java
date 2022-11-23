@@ -18,8 +18,8 @@
 
 package com.wolfyscript.utilities.bukkit.events;
 
-import com.wolfyscript.utilities.bukkit.items.ArmorType;
-import com.wolfyscript.utilities.bukkit.items.CustomItem;
+import com.wolfyscript.utilities.bukkit.world.items.ArmorType;
+import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

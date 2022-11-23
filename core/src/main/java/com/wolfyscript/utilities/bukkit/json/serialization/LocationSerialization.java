@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import java.util.UUID;
-import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
+import com.wolfyscript.utilities.json.jackson.JacksonUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 

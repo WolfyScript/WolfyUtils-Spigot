@@ -20,8 +20,8 @@ package com.wolfyscript.utilities.bukkit.registry;
 
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.items.CustomItem;
-import com.wolfyscript.utilities.bukkit.items.references.WolfyUtilitiesRef;
+import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
+import com.wolfyscript.utilities.bukkit.world.items.references.WolfyUtilitiesRef;
 import com.wolfyscript.utilities.common.registry.AbstractRegistry;
 import java.util.HashMap;
 import java.util.List;

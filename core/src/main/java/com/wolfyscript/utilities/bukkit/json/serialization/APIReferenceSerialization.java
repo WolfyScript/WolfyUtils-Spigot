@@ -21,11 +21,11 @@ package com.wolfyscript.utilities.bukkit.json.serialization;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.collect.Streams;
-import com.wolfyscript.utilities.bukkit.items.CustomItem;
-import com.wolfyscript.utilities.bukkit.items.references.APIReference;
-import com.wolfyscript.utilities.bukkit.items.references.VanillaRef;
+import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
+import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
+import com.wolfyscript.utilities.bukkit.world.items.references.VanillaRef;
+import com.wolfyscript.utilities.json.jackson.JacksonUtil;
 import java.util.stream.Collectors;
-import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 

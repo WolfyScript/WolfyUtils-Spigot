@@ -28,7 +28,7 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.zip.GZIPInputStream;
-import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
+import com.wolfyscript.utilities.json.jackson.JacksonUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.util.io.BukkitObjectInputStream;

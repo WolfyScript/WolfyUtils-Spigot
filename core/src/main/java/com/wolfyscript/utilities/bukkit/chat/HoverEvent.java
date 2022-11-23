@@ -19,7 +19,7 @@
 package com.wolfyscript.utilities.bukkit.chat;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import me.wolfyscript.utilities.api.chat.ChatEvent;
+import com.wolfyscript.utilities.common.chat.ChatEvent;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.inventory.ItemStack;

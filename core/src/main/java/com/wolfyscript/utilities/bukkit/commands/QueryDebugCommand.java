@@ -24,7 +24,7 @@ import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import java.io.File;
 import java.util.List;
-import me.wolfyscript.utilities.util.inventory.ItemUtils;
+import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
