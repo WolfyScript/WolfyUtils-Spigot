@@ -1,7 +1,7 @@
 package me.wolfyscript.utilities.api.nms.v1_17_R1.nbt;
 
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagFloat;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagType;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagFloat;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagType;
 import net.minecraft.nbt.FloatTag;
 
 public class NBTTagFloatImpl extends NBTNumberImpl<FloatTag> implements NBTTagFloat {

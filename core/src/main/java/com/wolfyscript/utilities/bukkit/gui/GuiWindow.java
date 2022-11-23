@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import com.wolfyscript.utilities.bukkit.chat.ClickAction;
 import com.wolfyscript.utilities.bukkit.chat.ClickData;
-import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
+import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import me.wolfyscript.utilities.util.Pair;
 import com.wolfyscript.utilities.bukkit.chat.ChatColor;
 import me.wolfyscript.utilities.util.reflection.InventoryUpdate;

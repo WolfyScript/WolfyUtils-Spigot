@@ -1,9 +1,9 @@
 package me.wolfyscript.utilities.api.nms.v1_16_R2;
 
 import io.netty.buffer.ByteBuf;
-import me.wolfyscript.utilities.api.nms.NMSUtil;
-import me.wolfyscript.utilities.api.nms.NetworkUtil;
-import me.wolfyscript.utilities.api.nms.network.MCByteBuf;
+import com.wolfyscript.utilities.bukkit.nms.api.NMSUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.NetworkUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.network.MCByteBuf;
 import me.wolfyscript.utilities.api.nms.v1_16_R2.network.MCByteBufImpl;
 
 public class NetworkUtilImpl extends NetworkUtil {

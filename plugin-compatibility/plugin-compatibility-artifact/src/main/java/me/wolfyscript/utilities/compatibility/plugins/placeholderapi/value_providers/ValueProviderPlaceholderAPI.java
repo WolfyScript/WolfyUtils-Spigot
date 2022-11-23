@@ -23,7 +23,7 @@ import com.wolfyscript.utilities.eval.context.EvalContext;
 import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.PlaceholderAPIIntegration;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.context.EvalContextPlayer;
+import com.wolfyscript.utilities.bukkit.eval.context.EvalContextPlayer;
 import com.wolfyscript.utilities.eval.value_provider.AbstractValueProvider;
 
 public abstract class ValueProviderPlaceholderAPI<V> extends AbstractValueProvider<V> {

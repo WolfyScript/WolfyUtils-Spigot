@@ -8,7 +8,7 @@ import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoragePlaceEvent
 import com.wolfyscript.utilities.bukkit.items.CustomItem;
 import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
 import com.wolfyscript.utilities.bukkit.persistent.world.ChunkStorage;
-import me.wolfyscript.utilities.util.events.CustomItemPlaceEvent;
+import com.wolfyscript.utilities.bukkit.events.CustomItemPlaceEvent;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

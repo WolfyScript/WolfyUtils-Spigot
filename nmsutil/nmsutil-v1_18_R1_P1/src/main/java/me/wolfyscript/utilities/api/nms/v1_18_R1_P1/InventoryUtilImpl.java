@@ -18,8 +18,8 @@
 
 package me.wolfyscript.utilities.api.nms.v1_18_R1_P1;
 
-import me.wolfyscript.utilities.api.nms.InventoryUtil;
-import me.wolfyscript.utilities.api.nms.NMSUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.InventoryUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.NMSUtil;
 import me.wolfyscript.utilities.util.inventory.CreativeModeTab;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_18_R1.util.CraftMagicNumbers;

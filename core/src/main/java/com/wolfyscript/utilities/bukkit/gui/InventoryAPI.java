@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
+import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

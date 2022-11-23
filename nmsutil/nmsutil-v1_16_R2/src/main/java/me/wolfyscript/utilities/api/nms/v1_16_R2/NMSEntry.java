@@ -1,7 +1,7 @@
 package me.wolfyscript.utilities.api.nms.v1_16_R2;
 
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
-import me.wolfyscript.utilities.api.nms.NMSUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.NMSUtil;
 import org.bukkit.plugin.Plugin;
 
 public class NMSEntry extends NMSUtil {

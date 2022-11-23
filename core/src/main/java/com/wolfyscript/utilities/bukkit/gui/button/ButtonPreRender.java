@@ -21,7 +21,7 @@ package com.wolfyscript.utilities.bukkit.gui.button;
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.button.buttons.ItemInputButton;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
-import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
+import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

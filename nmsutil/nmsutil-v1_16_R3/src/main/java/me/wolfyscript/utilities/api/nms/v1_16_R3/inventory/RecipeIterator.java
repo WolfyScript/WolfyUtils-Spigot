@@ -1,6 +1,6 @@
 package me.wolfyscript.utilities.api.nms.v1_16_R3.inventory;
 
-import me.wolfyscript.utilities.api.nms.inventory.RecipeType;
+import com.wolfyscript.utilities.bukkit.nms.api.inventory.RecipeType;
 import net.minecraft.server.v1_16_R3.IRecipe;
 import net.minecraft.server.v1_16_R3.MinecraftServer;
 import net.minecraft.server.v1_16_R3.Recipes;

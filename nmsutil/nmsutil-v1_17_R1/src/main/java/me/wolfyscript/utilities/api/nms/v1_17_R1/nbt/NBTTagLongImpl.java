@@ -1,7 +1,7 @@
 package me.wolfyscript.utilities.api.nms.v1_17_R1.nbt;
 
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagLong;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagType;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagLong;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagType;
 import net.minecraft.nbt.LongTag;
 
 public class NBTTagLongImpl extends NBTNumberImpl<LongTag> implements NBTTagLong {

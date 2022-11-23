@@ -1,13 +1,13 @@
 package com.wolfyscript.utilities.bukkit.nms.fallback;
 
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
-import me.wolfyscript.utilities.api.nms.BlockUtil;
-import me.wolfyscript.utilities.api.nms.InventoryUtil;
-import me.wolfyscript.utilities.api.nms.ItemUtil;
-import me.wolfyscript.utilities.api.nms.NBTUtil;
-import me.wolfyscript.utilities.api.nms.NMSUtil;
-import me.wolfyscript.utilities.api.nms.NetworkUtil;
-import me.wolfyscript.utilities.api.nms.RecipeUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.BlockUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.InventoryUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.ItemUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.NBTUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.NMSUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.NetworkUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.RecipeUtil;
 import me.wolfyscript.utilities.util.version.ServerVersion;
 import org.apache.commons.lang3.NotImplementedException;
 

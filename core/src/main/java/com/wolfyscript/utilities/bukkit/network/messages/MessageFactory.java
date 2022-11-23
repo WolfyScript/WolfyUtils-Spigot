@@ -20,7 +20,7 @@ package com.wolfyscript.utilities.bukkit.network.messages;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
-import me.wolfyscript.utilities.api.nms.network.MCByteBuf;
+import com.wolfyscript.utilities.bukkit.nms.api.network.MCByteBuf;
 import org.bukkit.entity.Player;
 
 public class MessageFactory {

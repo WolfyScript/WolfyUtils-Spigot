@@ -18,8 +18,8 @@
 
 package me.wolfyscript.utilities.api.nms.v1_19_R1.nbt;
 
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagByteArray;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagType;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagByteArray;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagType;
 import net.minecraft.nbt.ByteArrayTag;
 
 public class NBTTagByteArrayImpl extends NBTBaseImpl<ByteArrayTag> implements NBTTagByteArray {

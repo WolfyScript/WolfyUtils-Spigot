@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
+import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;

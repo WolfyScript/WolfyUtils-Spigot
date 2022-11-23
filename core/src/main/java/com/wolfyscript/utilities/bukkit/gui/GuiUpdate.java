@@ -25,7 +25,7 @@ import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
-import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
+import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

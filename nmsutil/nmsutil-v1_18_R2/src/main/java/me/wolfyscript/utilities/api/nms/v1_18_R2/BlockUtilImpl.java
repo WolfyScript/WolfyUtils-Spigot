@@ -18,9 +18,9 @@
 
 package me.wolfyscript.utilities.api.nms.v1_18_R2;
 
-import me.wolfyscript.utilities.api.nms.BlockUtil;
-import me.wolfyscript.utilities.api.nms.NMSUtil;
-import me.wolfyscript.utilities.api.nms.block.NMSBrewingStand;
+import com.wolfyscript.utilities.bukkit.nms.api.BlockUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.NMSUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.block.NMSBrewingStand;
 import org.bukkit.block.BrewingStand;
 
 public class BlockUtilImpl extends BlockUtil {

@@ -32,7 +32,7 @@ import com.wolfyscript.utilities.bukkit.gui.button.ButtonType;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import java.io.IOException;
 import java.util.function.Consumer;
-import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
+import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryInteractEvent;

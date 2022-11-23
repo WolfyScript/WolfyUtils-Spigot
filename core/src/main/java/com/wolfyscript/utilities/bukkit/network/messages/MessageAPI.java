@@ -22,7 +22,7 @@ import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import java.util.HashMap;
 import java.util.Map;
-import me.wolfyscript.utilities.api.nms.network.MCByteBuf;
+import com.wolfyscript.utilities.bukkit.nms.api.network.MCByteBuf;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 

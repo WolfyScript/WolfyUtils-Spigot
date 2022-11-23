@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
+import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import com.wolfyscript.utilities.bukkit.chat.ChatColor;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import net.kyori.adventure.text.minimessage.MiniMessage;

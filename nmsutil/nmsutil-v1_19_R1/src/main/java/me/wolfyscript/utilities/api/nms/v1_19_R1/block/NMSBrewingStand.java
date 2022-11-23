@@ -24,7 +24,7 @@ import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_19_R1.block.CraftBrewingStand;
 
-public class NMSBrewingStand extends CraftBrewingStand implements me.wolfyscript.utilities.api.nms.block.NMSBrewingStand {
+public class NMSBrewingStand extends CraftBrewingStand implements com.wolfyscript.utilities.bukkit.nms.api.block.NMSBrewingStand {
 
     public NMSBrewingStand(BrewingStand brewingStand) {
         super(brewingStand.getWorld(), (BrewingStandBlockEntity) ((CraftWorld)brewingStand.getWorld()).getHandle().getBlockEntity(((CraftBlock) brewingStand.getBlock()).getPosition()));

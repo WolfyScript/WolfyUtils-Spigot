@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
+import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.Inventory;

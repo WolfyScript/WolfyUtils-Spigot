@@ -1,7 +1,7 @@
 package com.wolfyscript.utilities.bukkit.nms.fallback;
 
-import me.wolfyscript.utilities.api.nms.InventoryUtil;
-import me.wolfyscript.utilities.api.nms.NMSUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.InventoryUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.NMSUtil;
 import me.wolfyscript.utilities.util.version.ServerVersion;
 import org.apache.commons.lang3.NotImplementedException;
 

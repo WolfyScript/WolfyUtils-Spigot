@@ -1,15 +1,15 @@
 package me.wolfyscript.utilities.api.nms.v1_16_R2;
 
-import me.wolfyscript.utilities.api.nms.NMSUtil;
-import me.wolfyscript.utilities.api.nms.inventory.RecipeType;
+import com.wolfyscript.utilities.bukkit.nms.api.RecipeUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.NMSUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.inventory.RecipeType;
 import me.wolfyscript.utilities.api.nms.v1_16_R2.inventory.RecipeIterator;
 import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
-import java.util.function.BiFunction;
 
-public class RecipeUtilImpl extends me.wolfyscript.utilities.api.nms.RecipeUtil {
+public class RecipeUtilImpl extends RecipeUtil {
 
     protected RecipeUtilImpl(NMSUtil nmsUtil) {
         super(nmsUtil);

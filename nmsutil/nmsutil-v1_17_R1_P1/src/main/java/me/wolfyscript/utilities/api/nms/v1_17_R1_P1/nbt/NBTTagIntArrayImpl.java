@@ -1,7 +1,7 @@
 package me.wolfyscript.utilities.api.nms.v1_17_R1_P1.nbt;
 
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagIntArray;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagType;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagIntArray;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagType;
 import net.minecraft.nbt.IntArrayTag;
 
 public class NBTTagIntArrayImpl extends NBTBaseImpl<IntArrayTag> implements NBTTagIntArray {

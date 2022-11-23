@@ -12,7 +12,7 @@ import com.wolfyscript.utilities.bukkit.persistent.world.ChunkStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import java.util.Optional;
 import java.util.UUID;
-import me.wolfyscript.utilities.util.events.CustomItemBreakEvent;
+import com.wolfyscript.utilities.bukkit.events.CustomItemBreakEvent;
 import me.wolfyscript.utilities.util.particles.ParticleLocation;
 import me.wolfyscript.utilities.util.particles.ParticleUtils;
 import org.bukkit.Bukkit;

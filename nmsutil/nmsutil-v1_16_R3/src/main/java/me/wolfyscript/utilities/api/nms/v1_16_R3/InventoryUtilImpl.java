@@ -1,8 +1,8 @@
 package me.wolfyscript.utilities.api.nms.v1_16_R3;
 
 
-import me.wolfyscript.utilities.api.nms.InventoryUtil;
-import me.wolfyscript.utilities.api.nms.NMSUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.InventoryUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.NMSUtil;
 import me.wolfyscript.utilities.util.inventory.CreativeModeTab;
 import net.minecraft.server.v1_16_R3.Item;
 import org.bukkit.Material;

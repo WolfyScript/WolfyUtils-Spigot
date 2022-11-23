@@ -1,7 +1,7 @@
 package me.wolfyscript.utilities.api.nms.v1_16_R3.nbt;
 
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagLongArray;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagType;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagLongArray;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagType;
 
 public class NBTTagLongArrayImpl extends NBTBaseImpl<net.minecraft.server.v1_16_R3.NBTTagLongArray> implements NBTTagLongArray {
 

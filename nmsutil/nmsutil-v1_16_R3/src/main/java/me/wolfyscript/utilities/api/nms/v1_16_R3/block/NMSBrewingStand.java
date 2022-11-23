@@ -3,7 +3,7 @@ package me.wolfyscript.utilities.api.nms.v1_16_R3.block;
 import org.bukkit.block.BrewingStand;
 import org.bukkit.craftbukkit.v1_16_R3.block.CraftBrewingStand;
 
-public class NMSBrewingStand extends CraftBrewingStand implements me.wolfyscript.utilities.api.nms.block.NMSBrewingStand {
+public class NMSBrewingStand extends CraftBrewingStand implements com.wolfyscript.utilities.bukkit.nms.api.block.NMSBrewingStand {
 
     public NMSBrewingStand(BrewingStand brewingStand) {
         super(brewingStand.getBlock());

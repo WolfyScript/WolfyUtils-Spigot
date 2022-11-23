@@ -22,7 +22,7 @@ import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.button.buttons.ItemInputButton;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import java.io.IOException;
-import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
+import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.ItemStack;
