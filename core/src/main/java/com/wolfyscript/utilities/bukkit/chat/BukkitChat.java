@@ -23,7 +23,6 @@ import me.wolfyscript.utilities.api.chat.ClickEvent;
 import me.wolfyscript.utilities.api.chat.HoverEvent;
 import me.wolfyscript.utilities.api.chat.PlayerAction;
 import me.wolfyscript.utilities.util.Pair;
-import me.wolfyscript.utilities.util.chat.ChatColor;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;

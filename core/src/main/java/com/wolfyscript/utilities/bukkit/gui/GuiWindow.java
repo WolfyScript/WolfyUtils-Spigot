@@ -38,7 +38,7 @@ import me.wolfyscript.utilities.api.chat.ClickAction;
 import me.wolfyscript.utilities.api.chat.ClickData;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
 import me.wolfyscript.utilities.util.Pair;
-import me.wolfyscript.utilities.util.chat.ChatColor;
+import com.wolfyscript.utilities.bukkit.chat.ChatColor;
 import me.wolfyscript.utilities.util.reflection.InventoryUpdate;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;

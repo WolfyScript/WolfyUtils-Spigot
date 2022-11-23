@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.util.chat;
+package com.wolfyscript.utilities.bukkit.chat;
 
 import java.util.regex.Pattern;
 import me.wolfyscript.utilities.util.version.MinecraftVersions;

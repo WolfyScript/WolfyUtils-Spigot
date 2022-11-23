@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import me.wolfyscript.utilities.api.language.Language;
 import me.wolfyscript.utilities.api.language.LanguageAPI;
-import me.wolfyscript.utilities.util.chat.ChatColor;
+import com.wolfyscript.utilities.bukkit.chat.ChatColor;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 

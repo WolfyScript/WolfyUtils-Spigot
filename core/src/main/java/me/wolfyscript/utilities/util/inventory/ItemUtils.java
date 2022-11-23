@@ -22,7 +22,7 @@ import com.wolfyscript.utilities.bukkit.items.ArmorType;
 import com.wolfyscript.utilities.bukkit.items.CustomItem;
 import java.util.LinkedList;
 import java.util.List;
-import me.wolfyscript.utilities.util.chat.ChatColor;
+import com.wolfyscript.utilities.bukkit.chat.ChatColor;
 import me.wolfyscript.utilities.util.inventory.item_builder.ItemBuilder;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;

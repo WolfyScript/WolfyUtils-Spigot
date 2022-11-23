@@ -20,7 +20,7 @@ package me.wolfyscript.utilities.api.chat;
 
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import java.util.UUID;
-import me.wolfyscript.utilities.util.chat.ChatColor;
+import com.wolfyscript.utilities.bukkit.chat.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 
