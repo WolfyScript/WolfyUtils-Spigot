@@ -36,11 +36,11 @@ import com.wolfyscript.utilities.common.registry.RegistrySimple;
 import com.wolfyscript.utilities.common.registry.TypeRegistry;
 import com.wolfyscript.utilities.common.registry.UniqueTypeRegistrySimple;
 import me.wolfyscript.utilities.api.inventory.tags.Tags;
-import me.wolfyscript.utilities.util.particles.ParticleAnimation;
-import me.wolfyscript.utilities.util.particles.ParticleEffect;
-import me.wolfyscript.utilities.util.particles.animators.Animator;
-import me.wolfyscript.utilities.util.particles.shapes.Shape;
-import me.wolfyscript.utilities.util.particles.timer.Timer;
+import com.wolfyscript.utilities.bukkit.particles.ParticleAnimation;
+import com.wolfyscript.utilities.bukkit.particles.ParticleEffect;
+import com.wolfyscript.utilities.bukkit.particles.animators.Animator;
+import com.wolfyscript.utilities.bukkit.particles.shapes.Shape;
+import com.wolfyscript.utilities.bukkit.particles.timer.Timer;
 import org.jetbrains.annotations.NotNull;
 
 /**

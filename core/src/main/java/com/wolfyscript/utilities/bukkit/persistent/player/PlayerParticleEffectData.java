@@ -6,7 +6,7 @@ import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
-import me.wolfyscript.utilities.util.particles.ParticleUtils;
+import com.wolfyscript.utilities.bukkit.particles.ParticleUtils;
 import org.bukkit.inventory.EquipmentSlot;
 
 @KeyedStaticId(value = "wolfyutilities:particles/effects")

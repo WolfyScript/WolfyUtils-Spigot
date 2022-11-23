@@ -16,24 +16,32 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.bukkit.registry;
+package com.wolfyscript.utilities.bukkit.particles.pos;
 
-import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.common.registry.AbstractRegistry;
-import java.util.HashMap;
-import java.util.Map;
-import com.wolfyscript.utilities.bukkit.particles.ParticleEffect;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 
-public class RegistryParticleEffect extends AbstractRegistry<Map<NamespacedKey, ParticleEffect>, ParticleEffect> {
+public class ParticlePosEntity extends ParticlePos {
 
-    RegistryParticleEffect(BukkitRegistries registries) {
-        super(registries.getCore().getWolfyUtils().getIdentifiers().getWolfyUtilsNamespaced("particle_effects"), HashMap::new, registries, ParticleEffect.class);
+    private final Entity entity;
+
+    public ParticlePosEntity(Entity entity) {
+        super();
+        this.entity = entity;
+    }
+
+    public ParticlePosEntity(ParticlePosEntity pos) {
+        super(pos);
+        this.entity = pos.entity;
     }
 
     @Override
-    public void register(NamespacedKey namespacedKey, ParticleEffect value) {
-        super.register(namespacedKey, value);
-        value.setKey(namespacedKey);
+    public Location getLocation() {
+        return entity.getLocation().add(getOffset());
     }
 
+    @Override
+    public ParticlePosEntity shallowCopy() {
+        return new ParticlePosEntity(this);
+    }
 }

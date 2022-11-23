@@ -20,7 +20,7 @@ package com.wolfyscript.utilities.bukkit.items.actions;
 
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
-import me.wolfyscript.utilities.util.particles.ParticleAnimation;
+import com.wolfyscript.utilities.bukkit.particles.ParticleAnimation;
 
 public class ActionParticleAnimation extends Action<com.wolfyscript.utilities.bukkit.items.actions.DataLocation> {
 

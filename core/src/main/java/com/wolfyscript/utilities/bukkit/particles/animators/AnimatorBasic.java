@@ -16,24 +16,31 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.bukkit.registry;
+package com.wolfyscript.utilities.bukkit.particles.animators;
 
-import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.common.registry.AbstractRegistry;
-import java.util.HashMap;
-import java.util.Map;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.particles.ParticleEffect;
+import com.wolfyscript.utilities.bukkit.particles.timer.Timer;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
-public class RegistryParticleEffect extends AbstractRegistry<Map<NamespacedKey, ParticleEffect>, ParticleEffect> {
+/**
+ * This basic animator doesn't actually animate anything. It spawns the effect at the specified location (origin).
+ */
+public class AnimatorBasic extends Animator {
 
-    RegistryParticleEffect(BukkitRegistries registries) {
-        super(registries.getCore().getWolfyUtils().getIdentifiers().getWolfyUtilsNamespaced("particle_effects"), HashMap::new, registries, ParticleEffect.class);
+    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("basic");
+
+    public AnimatorBasic() {
+        super(KEY);
     }
 
     @Override
-    public void register(NamespacedKey namespacedKey, ParticleEffect value) {
-        super.register(namespacedKey, value);
-        value.setKey(namespacedKey);
+    public void draw(Timer.Runner timer, ParticleEffect effect, Location origin, @Nullable Player player) {
+        timer.increase();
+        spawnParticle(effect, origin, player);
     }
+
 
 }

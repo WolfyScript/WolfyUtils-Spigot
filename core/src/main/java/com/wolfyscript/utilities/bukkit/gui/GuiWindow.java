@@ -39,7 +39,7 @@ import com.wolfyscript.utilities.bukkit.chat.ClickData;
 import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import me.wolfyscript.utilities.util.Pair;
 import com.wolfyscript.utilities.bukkit.chat.ChatColor;
-import me.wolfyscript.utilities.util.reflection.InventoryUpdate;
+import com.wolfyscript.utilities.bukkit.nms.inventory.InventoryUpdate;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
