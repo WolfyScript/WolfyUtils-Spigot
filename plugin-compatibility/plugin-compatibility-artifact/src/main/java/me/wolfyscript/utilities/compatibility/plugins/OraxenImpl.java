@@ -18,9 +18,6 @@
 
 package me.wolfyscript.utilities.compatibility.plugins;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
-import io.th0rgal.oraxen.OraxenPlugin;
 import me.wolfyscript.utilities.annotations.WUPluginIntegration;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
