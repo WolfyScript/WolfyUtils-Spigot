@@ -1,4 +1,4 @@
-package me.wolfyscript.utilities.util.eval.context;
+package com.wolfyscript.utilities.bukkit.context;
 
 import com.wolfyscript.utilities.eval.context.EvalContext;
 import org.bukkit.entity.Player;
