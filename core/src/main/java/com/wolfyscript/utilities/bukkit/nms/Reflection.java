@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.util;
+package com.wolfyscript.utilities.bukkit.nms;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

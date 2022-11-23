@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.util.entity;
+package com.wolfyscript.utilities.bukkit.entity;
 
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import java.util.HashMap;

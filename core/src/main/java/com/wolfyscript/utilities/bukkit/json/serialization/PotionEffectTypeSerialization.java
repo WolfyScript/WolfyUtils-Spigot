@@ -16,25 +16,22 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.util.protection;
+package com.wolfyscript.utilities.bukkit.json.serialization;
 
-import com.griefcraft.lwc.LWC;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
+import org.bukkit.potion.PotionEffectType;
 
-public class LWCUtil {
+public class PotionEffectTypeSerialization {
 
-    //LWC Utils! Only tested for the LWC fork by Brokkonaut!
-
-    private static final LWC lwc = LWC.getInstance();
-
-    public static boolean hasPermToInteract(Player player, Entity entity) {
-        return lwc.canAccessProtection(player, entity.getLocation().getBlock());
-    }
-
-    public static boolean canAccessprotection(Player player, Block block) {
-        return lwc.canAccessProtection(player, block);
+    public static void create(SimpleModule module) {
+        JacksonUtil.addSerializerAndDeserializer(module, PotionEffectType.class, (potionEffectType, gen, serializerProvider) -> {
+            gen.writeString(potionEffectType.getName());
+        }, (p, deserializationContext) -> {
+            JsonNode node = p.readValueAsTree();
+            return PotionEffectType.getByName(node.asText());
+        });
     }
 
 }

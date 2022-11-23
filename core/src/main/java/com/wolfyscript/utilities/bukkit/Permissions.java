@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.api;
+package com.wolfyscript.utilities.bukkit;
 
 import com.wolfyscript.utilities.common.WolfyUtils;
 import org.bukkit.Bukkit;

@@ -22,7 +22,7 @@ import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.nms.fallback.FallbackNMSEntry;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
-import me.wolfyscript.utilities.util.Reflection;
+import com.wolfyscript.utilities.bukkit.nms.Reflection;
 import me.wolfyscript.utilities.util.version.ServerVersion;
 import org.bukkit.plugin.Plugin;
 

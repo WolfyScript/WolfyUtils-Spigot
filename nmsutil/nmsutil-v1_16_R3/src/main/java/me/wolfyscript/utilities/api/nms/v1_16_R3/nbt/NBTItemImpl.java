@@ -3,7 +3,7 @@ package me.wolfyscript.utilities.api.nms.v1_16_R3.nbt;
 import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTBase;
 import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTCompound;
 import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTItem;
-import me.wolfyscript.utilities.util.Reflection;
+import com.wolfyscript.utilities.bukkit.nms.Reflection;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;

@@ -16,30 +16,25 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.util;
+package com.wolfyscript.utilities.bukkit.compatibility.plugins.util;
 
+import com.griefcraft.lwc.LWC;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
-import java.util.Random;
-import org.bukkit.util.Vector;
+public class LWCUtil {
 
-public class RandomUtils {
+    //LWC Utils! Only tested for the LWC fork by Brokkonaut!
 
-    private RandomUtils() {
+    private static final LWC lwc = LWC.getInstance();
+
+    public static boolean hasPermToInteract(Player player, Entity entity) {
+        return lwc.canAccessProtection(player, entity.getLocation().getBlock());
     }
 
-    public static final Random random = new Random(System.currentTimeMillis());
-
-    public static Vector getRandomVector() {
-        double x = random.nextDouble() * 2 - 1;
-        double y = random.nextDouble() * 2 - 1;
-        double z = random.nextDouble() * 2 - 1;
-        return (new Vector(x, y, z)).normalize();
+    public static boolean canAccessprotection(Player player, Block block) {
+        return lwc.canAccessProtection(player, block);
     }
 
-    public static Vector getRandomCircleVector() {
-        double rnd = random.nextDouble() * 2.0D * Math.PI;
-        double x = Math.cos(rnd);
-        double z = Math.sin(rnd);
-        return new Vector(x, 0.0D, z);
-    }
 }

@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import me.wolfyscript.utilities.util.entity.PlayerUtils;
+import com.wolfyscript.utilities.bukkit.entity.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;

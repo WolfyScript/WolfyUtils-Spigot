@@ -14,7 +14,6 @@ import com.wolfyscript.utilities.common.WolfyUtils;
 import java.io.File;
 import java.util.Locale;
 import java.util.logging.Logger;
-import me.wolfyscript.utilities.api.Permissions;
 import me.wolfyscript.utilities.api.language.LanguageAPI;
 import com.wolfyscript.utilities.bukkit.nms.api.NMSUtil;
 import me.wolfyscript.utilities.util.exceptions.InvalidCacheTypeException;

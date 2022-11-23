@@ -16,22 +16,33 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.util.json.jackson.serialization;
+package com.wolfyscript.utilities.bukkit.json.serialization;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
-import org.bukkit.potion.PotionEffectType;
+import org.bukkit.Color;
 
-public class PotionEffectTypeSerialization {
+public class ColorSerialization {
 
-    public static void create(SimpleModule module) {
-        JacksonUtil.addSerializerAndDeserializer(module, PotionEffectType.class, (potionEffectType, gen, serializerProvider) -> {
-            gen.writeString(potionEffectType.getName());
+    public static void create(SimpleModule module){
+        JacksonUtil.addSerializerAndDeserializer(module, Color.class, (value, gen, serializerProvider) -> {
+            gen.writeStartObject();
+            gen.writeNumberField("red", value.getRed());
+            gen.writeNumberField("green", value.getGreen());
+            gen.writeNumberField("blue", value.getBlue());
+            gen.writeEndObject();
         }, (p, deserializationContext) -> {
             JsonNode node = p.readValueAsTree();
-            return PotionEffectType.getByName(node.asText());
+            if (node.isObject()) {
+                int red = node.get("red").asInt();
+                int green = node.get("green").asInt();
+                int blue = node.get("blue").asInt();
+                return Color.fromBGR(blue, green, red);
+            }
+            WolfyCoreBukkit.getInstance().getWolfyUtils().getConsole().warn("Error Deserializing Color! Invalid Color object!");
+            return null;
         });
     }
-
 }

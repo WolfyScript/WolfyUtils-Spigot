@@ -16,32 +16,31 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.util.json.jackson.serialization;
+package com.wolfyscript.utilities.bukkit.json.serialization;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import org.bukkit.Color;
+import org.bukkit.Particle;
 
-public class ColorSerialization {
+public class DustOptionsSerialization {
 
-    public static void create(SimpleModule module){
-        JacksonUtil.addSerializerAndDeserializer(module, Color.class, (value, gen, serializerProvider) -> {
+    public static void create(SimpleModule module) {
+        JacksonUtil.addSerializerAndDeserializer(module, Particle.DustOptions.class, (dustOptions, gen, s) -> {
             gen.writeStartObject();
-            gen.writeNumberField("red", value.getRed());
-            gen.writeNumberField("green", value.getGreen());
-            gen.writeNumberField("blue", value.getBlue());
+            gen.writeNumberField("size", dustOptions.getSize());
+            gen.writeObjectField("color", dustOptions.getColor());
             gen.writeEndObject();
-        }, (p, deserializationContext) -> {
+        }, (p, ctxt) -> {
             JsonNode node = p.readValueAsTree();
             if (node.isObject()) {
-                int red = node.get("red").asInt();
-                int green = node.get("green").asInt();
-                int blue = node.get("blue").asInt();
-                return Color.fromBGR(blue, green, red);
+                float size = node.get("size").floatValue();
+                Color color = p.getCodec().treeToValue(node.get("color"), Color.class);
+                return new Particle.DustOptions(color, size);
             }
-            WolfyCoreBukkit.getInstance().getWolfyUtils().getConsole().warn("Error Deserializing Color! Invalid Color object!");
+            WolfyCoreBukkit.getInstance().getWolfyUtils().getConsole().warn("Error Deserializing DustOptions! Invalid DustOptions object!");
             return null;
         });
     }
