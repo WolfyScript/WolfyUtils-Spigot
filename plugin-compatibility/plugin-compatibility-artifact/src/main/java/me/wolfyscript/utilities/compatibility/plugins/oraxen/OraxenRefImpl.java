@@ -21,7 +21,7 @@ package me.wolfyscript.utilities.compatibility.plugins.oraxen;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import io.th0rgal.oraxen.items.OraxenItems;
+import io.th0rgal.oraxen.api.OraxenItems;
 import java.io.IOException;
 import java.util.Objects;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
@@ -41,9 +41,9 @@ public class OraxenRefImpl extends APIReference implements OraxenRef {
         this.itemID = itemID;
     }
 
-    public OraxenRefImpl(OraxenRefImpl oraxenRefImpl) {
-        super(oraxenRefImpl);
-        this.itemID = oraxenRefImpl.itemID;
+    public OraxenRefImpl(OraxenRefImpl oraxenRefOldImpl) {
+        super(oraxenRefOldImpl);
+        this.itemID = oraxenRefOldImpl.itemID;
     }
 
     @Override
