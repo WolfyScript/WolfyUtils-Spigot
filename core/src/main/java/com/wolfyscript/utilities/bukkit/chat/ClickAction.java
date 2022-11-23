@@ -16,10 +16,11 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.api.chat;
+package com.wolfyscript.utilities.bukkit.chat;
 
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.common.WolfyUtils;
+import me.wolfyscript.utilities.api.chat.ClickActionCallback;
 import org.bukkit.entity.Player;
 
 public interface ClickAction extends ClickActionCallback {

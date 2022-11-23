@@ -16,11 +16,12 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.api.chat;
+package com.wolfyscript.utilities.bukkit.chat;
 
 import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Nullable;
+import me.wolfyscript.utilities.api.chat.ChatEvent;
 
 @Deprecated
 public class ClickData {

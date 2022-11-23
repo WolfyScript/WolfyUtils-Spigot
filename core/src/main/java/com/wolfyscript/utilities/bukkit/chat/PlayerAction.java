@@ -16,11 +16,10 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.api.chat;
+package com.wolfyscript.utilities.bukkit.chat;
 
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import java.util.UUID;
-import com.wolfyscript.utilities.bukkit.chat.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 

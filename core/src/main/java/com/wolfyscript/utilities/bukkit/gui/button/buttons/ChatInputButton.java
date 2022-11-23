@@ -29,7 +29,7 @@ import com.wolfyscript.utilities.bukkit.gui.button.ButtonRender;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonState;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import java.io.IOException;
-import me.wolfyscript.utilities.api.chat.ClickData;
+import com.wolfyscript.utilities.bukkit.chat.ClickData;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
