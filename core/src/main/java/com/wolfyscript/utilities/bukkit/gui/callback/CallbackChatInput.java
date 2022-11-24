@@ -22,6 +22,10 @@ import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import org.bukkit.entity.Player;
 
+/**
+ *
+ * @param <C>
+ */
 public interface CallbackChatInput<C extends CustomCache> {
 
     boolean onChat(GuiHandler<C> guiHandler, Player player, String msg, String[] args);

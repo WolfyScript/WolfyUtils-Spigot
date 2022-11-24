@@ -19,6 +19,7 @@
 package com.wolfyscript.utilities.bukkit.gui.callback;
 
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
+import com.wolfyscript.utilities.bukkit.gui.button.Button;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import java.util.Optional;
 import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
@@ -45,7 +46,7 @@ public interface CallbackButtonRender<C extends CustomCache> {
      * @param slot         The slot in which the button is rendered.
      * @return The itemStack that should be set into the GUI.
      */
-    UpdateResult render(C cache, GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, ItemStack itemStack, int slot);
+    UpdateResult run(C cache, GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, Button<C> button, ItemStack itemStack, int slot);
 
     /**
      * Contains the data that is used to render the button.

@@ -39,8 +39,7 @@ public class ButtonDummy<C extends CustomCache> extends ButtonAction<C> {
     }
 
     public boolean execute(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, int slot, InventoryInteractEvent event) throws IOException {
-        //NOTHING
-        return true;
+        return true; // This is a dummy button. Always cancel the interaction!
     }
 
     public static class Builder<C extends CustomCache> extends AbstractBuilder<C, ButtonDummy<C>, Builder<C>> {

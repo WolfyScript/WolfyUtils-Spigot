@@ -19,6 +19,7 @@
 package com.wolfyscript.utilities.bukkit.gui.callback;
 
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
+import com.wolfyscript.utilities.bukkit.gui.button.Button;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonItemInput;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import java.io.IOException;
@@ -48,6 +49,6 @@ public interface CallbackButtonPostAction<C extends CustomCache> {
      * @param event      The previous event of the click that caused the update. Can be a InventoryClickEvent or InventoryDragEvent
      * @throws IOException if an error occurs on the execution.
      */
-    void run(C cache, GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot, InventoryInteractEvent event) throws IOException;
+    void run(C cache, GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, Button<C> button, ItemStack itemStack, int slot, InventoryInteractEvent event) throws IOException;
 
 }

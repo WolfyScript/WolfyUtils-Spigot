@@ -87,7 +87,7 @@ public class ButtonToggle<C extends CustomCache> extends Button<C> {
     public void postExecute(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot, InventoryInteractEvent event) throws IOException {
         ButtonState<C> state = getState(guiHandler);
         if (state.getPostAction() != null) {
-            state.getPostAction().run(guiHandler.getCustomCache(), guiHandler, player, inventory, itemStack, slot, event);
+            state.getPostAction().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, itemStack, slot, event);
         }
     }
 
@@ -104,7 +104,7 @@ public class ButtonToggle<C extends CustomCache> extends Button<C> {
         settings.put(guiHandler, state);
         ButtonState<C> buttonState = state ? states.getKey() : states.getValue();
         if (buttonState.getPrepareRender() != null) {
-            buttonState.getPrepareRender().prepare(guiHandler.getCustomCache(), guiHandler, player, inventory, itemStack, slot, help);
+            buttonState.getPrepareRender().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, itemStack, slot, help);
         }
     }
 

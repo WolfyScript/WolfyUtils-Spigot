@@ -106,7 +106,7 @@ public abstract class Button<C extends CustomCache> {
 
     protected void applyItem(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, ButtonState<C> state, ItemStack item, int slot) {
         //No longer set default templates, that should be purely managed by the plugin.
-        CallbackButtonRender.UpdateResult updateResult = state.getRenderAction().render(guiHandler.getCustomCache(), guiHandler, player, guiInventory, item, slot);
+        CallbackButtonRender.UpdateResult updateResult = state.getRenderAction().run(guiHandler.getCustomCache(), guiHandler, player, guiInventory, this, item, slot);
         Optional<ItemStack> customStack = updateResult.getCustomStack();
         if (customStack.isPresent()) {
             updateResult.getTagResolver().ifPresentOrElse(tagResolver -> inventory.setItem(slot, ItemUtils.replaceNameAndLore(MiniMessage.miniMessage(), customStack.get(), tagResolver)), () -> inventory.setItem(slot, customStack.get()));

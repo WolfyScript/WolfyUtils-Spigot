@@ -96,7 +96,7 @@ public class ButtonMultipleChoice<C extends CustomCache> extends Button<C> {
         if (states != null && setting < states.size()) {
             ButtonState<C> btnState = states.get(setting);
             if (btnState.getPostAction() != null) {
-                btnState.getPostAction().run(guiHandler.getCustomCache(), guiHandler, player, inventory, itemStack, slot, event);
+                btnState.getPostAction().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, itemStack, slot, event);
             }
         }
     }
@@ -105,7 +105,7 @@ public class ButtonMultipleChoice<C extends CustomCache> extends Button<C> {
     public void preRender(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot, boolean help) {
         int setting = stateFunction.run(guiHandler.getCustomCache(), guiHandler, player, inventory, slot);
         if (states != null && states.size() > setting && states.get(setting).getPrepareRender() != null) {
-            states.get(setting).getPrepareRender().prepare(guiHandler.getCustomCache(), guiHandler, player, inventory, itemStack, slot, help);
+            states.get(setting).getPrepareRender().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, itemStack, slot, help);
         }
     }
 
