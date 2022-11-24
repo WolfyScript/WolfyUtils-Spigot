@@ -21,7 +21,7 @@ package me.wolfyscript.utilities.compatibility.plugins.oraxen;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import io.th0rgal.oraxen.api.OraxenItems;
+import io.th0rgal.oraxen.items.OraxenItems;
 import java.io.IOException;
 import java.util.Objects;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
@@ -32,16 +32,16 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Links to Oraxen and saves the specified id of the item.
  */
-public class OraxenRefImpl extends APIReference implements OraxenRef {
+public class OraxenRefOldImpl extends APIReference implements OraxenRef {
 
     private final String itemID;
 
-    public OraxenRefImpl(String itemID) {
+    public OraxenRefOldImpl(String itemID) {
         super();
         this.itemID = itemID;
     }
 
-    public OraxenRefImpl(OraxenRefImpl oraxenRefOldImpl) {
+    public OraxenRefOldImpl(OraxenRefOldImpl oraxenRefOldImpl) {
         super(oraxenRefOldImpl);
         this.itemID = oraxenRefOldImpl.itemID;
     }
@@ -81,9 +81,9 @@ public class OraxenRefImpl extends APIReference implements OraxenRef {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof OraxenRefImpl oraxenRefImpl)) return false;
+        if (!(o instanceof OraxenRefOldImpl oraxenRefOldImpl)) return false;
         if (!super.equals(o)) return false;
-        return Objects.equals(itemID, oraxenRefImpl.itemID);
+        return Objects.equals(itemID, oraxenRefOldImpl.itemID);
     }
 
     @Override
@@ -92,28 +92,28 @@ public class OraxenRefImpl extends APIReference implements OraxenRef {
     }
 
     @Override
-    public OraxenRefImpl clone() {
-        return new OraxenRefImpl(this);
+    public OraxenRefOldImpl clone() {
+        return new OraxenRefOldImpl(this);
     }
 
-    public static class Parser extends PluginParser<OraxenRefImpl> {
+    public static class Parser extends PluginParser<OraxenRefOldImpl> {
 
         public Parser() {
             super("Oraxen", "oraxen");
         }
 
         @Override
-        public @Nullable OraxenRefImpl construct(ItemStack itemStack) {
+        public @Nullable OraxenRefOldImpl construct(ItemStack itemStack) {
             String itemId = OraxenItems.getIdByItem(itemStack);
             if (itemId != null && !itemId.isEmpty()) {
-                return new OraxenRefImpl(itemId);
+                return new OraxenRefOldImpl(itemId);
             }
             return null;
         }
 
         @Override
-        public @Nullable OraxenRefImpl parse(JsonNode element) {
-            return new OraxenRefImpl(element.asText());
+        public @Nullable OraxenRefOldImpl parse(JsonNode element) {
+            return new OraxenRefOldImpl(element.asText());
         }
     }
 }
