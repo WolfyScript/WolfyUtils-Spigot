@@ -29,7 +29,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import com.wolfyscript.utilities.bukkit.nms.Reflection;
-import me.wolfyscript.utilities.util.version.ServerVersion;
+import com.wolfyscript.utilities.versioning.ServerVersion;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;

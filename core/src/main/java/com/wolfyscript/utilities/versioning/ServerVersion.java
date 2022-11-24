@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.util.version;
+package com.wolfyscript.utilities.versioning;
 
 public class ServerVersion {
 

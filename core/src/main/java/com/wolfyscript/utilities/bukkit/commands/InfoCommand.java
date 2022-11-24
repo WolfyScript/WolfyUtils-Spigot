@@ -20,7 +20,7 @@ package com.wolfyscript.utilities.bukkit.commands;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import java.util.List;
-import me.wolfyscript.utilities.util.version.ServerVersion;
+import com.wolfyscript.utilities.versioning.ServerVersion;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;

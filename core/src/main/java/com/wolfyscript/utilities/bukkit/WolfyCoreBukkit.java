@@ -148,7 +148,7 @@ import com.wolfyscript.utilities.bukkit.world.particles.timer.Timer;
 import com.wolfyscript.utilities.bukkit.world.particles.timer.TimerLinear;
 import com.wolfyscript.utilities.bukkit.world.particles.timer.TimerPi;
 import com.wolfyscript.utilities.bukkit.world.particles.timer.TimerRandom;
-import me.wolfyscript.utilities.util.version.ServerVersion;
+import com.wolfyscript.utilities.versioning.ServerVersion;
 import com.wolfyscript.utilities.bukkit.world.WorldUtils;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;

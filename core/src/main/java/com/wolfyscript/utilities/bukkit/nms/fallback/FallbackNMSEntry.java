@@ -8,7 +8,7 @@ import com.wolfyscript.utilities.bukkit.nms.api.NBTUtil;
 import com.wolfyscript.utilities.bukkit.nms.api.NMSUtil;
 import com.wolfyscript.utilities.bukkit.nms.api.NetworkUtil;
 import com.wolfyscript.utilities.bukkit.nms.api.RecipeUtil;
-import me.wolfyscript.utilities.util.version.ServerVersion;
+import com.wolfyscript.utilities.versioning.ServerVersion;
 import org.apache.commons.lang3.NotImplementedException;
 
 /**

@@ -23,7 +23,7 @@ import com.wolfyscript.utilities.bukkit.nms.fallback.FallbackNMSEntry;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import com.wolfyscript.utilities.bukkit.nms.Reflection;
-import me.wolfyscript.utilities.util.version.ServerVersion;
+import com.wolfyscript.utilities.versioning.ServerVersion;
 import org.bukkit.plugin.Plugin;
 
 public abstract class NMSUtil {

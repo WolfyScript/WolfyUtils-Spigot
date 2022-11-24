@@ -19,8 +19,8 @@
 package com.wolfyscript.utilities.bukkit.chat;
 
 import java.util.regex.Pattern;
-import me.wolfyscript.utilities.util.version.MinecraftVersions;
-import me.wolfyscript.utilities.util.version.ServerVersion;
+import com.wolfyscript.utilities.versioning.MinecraftVersions;
+import com.wolfyscript.utilities.versioning.ServerVersion;
 import org.jetbrains.annotations.Nullable;
 
 @Deprecated

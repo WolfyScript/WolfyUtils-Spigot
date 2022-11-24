@@ -27,7 +27,7 @@ import javassist.NotFoundException;
 import javassist.bytecode.SignatureAttribute;
 import com.wolfyscript.utilities.bukkit.nms.api.inventory.InjectGUIInventory;
 import com.wolfyscript.utilities.bukkit.nms.Reflection;
-import me.wolfyscript.utilities.util.version.MinecraftVersions;
+import com.wolfyscript.utilities.versioning.MinecraftVersions;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
