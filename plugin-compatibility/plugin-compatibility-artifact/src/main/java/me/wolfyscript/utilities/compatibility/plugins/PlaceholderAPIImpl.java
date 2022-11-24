@@ -18,11 +18,12 @@
 
 package me.wolfyscript.utilities.compatibility.plugins;
 
+import com.wolfyscript.utilities.bukkit.compatibility.plugins.PlaceholderAPIIntegration;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.events.ExpansionsLoadedEvent;
-import me.wolfyscript.utilities.annotations.WUPluginIntegration;
-import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
+import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
+import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.placeholderapi.value_providers.ValueProviderFloatPAPI;
 import me.wolfyscript.utilities.compatibility.plugins.placeholderapi.value_providers.ValueProviderIntegerPAPI;
 import me.wolfyscript.utilities.compatibility.plugins.placeholderapi.value_providers.ValueProviderStringPAPI;

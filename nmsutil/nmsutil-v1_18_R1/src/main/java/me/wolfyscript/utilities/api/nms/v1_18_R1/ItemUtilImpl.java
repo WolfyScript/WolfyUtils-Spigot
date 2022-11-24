@@ -19,8 +19,8 @@
 package me.wolfyscript.utilities.api.nms.v1_18_R1;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import me.wolfyscript.utilities.api.nms.ItemUtil;
-import me.wolfyscript.utilities.api.nms.NMSUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.ItemUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.NMSUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.TagParser;

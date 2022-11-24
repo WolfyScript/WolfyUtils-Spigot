@@ -1,11 +1,11 @@
 package com.wolfyscript.utilities.bukkit.nms.inventory;
 
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Optional;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import me.wolfyscript.utilities.util.Reflection;
+import com.wolfyscript.utilities.bukkit.nms.Reflection;
 import org.bukkit.inventory.Inventory;
 
 public class NMSInventoryUtils {

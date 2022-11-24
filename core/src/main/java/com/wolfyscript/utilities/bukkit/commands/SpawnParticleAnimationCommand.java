@@ -19,17 +19,22 @@
 package com.wolfyscript.utilities.bukkit.commands;
 
 import com.wolfyscript.utilities.NamespacedKey;
-import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.api.chat.Chat;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import me.wolfyscript.utilities.util.particles.ParticleAnimation;
-import me.wolfyscript.utilities.util.particles.ParticleEffect;
-import me.wolfyscript.utilities.util.particles.ParticleUtils;
-import me.wolfyscript.utilities.util.particles.animators.AnimatorBasic;
-import me.wolfyscript.utilities.util.particles.animators.AnimatorCircle;
-import me.wolfyscript.utilities.util.particles.animators.AnimatorSphere;
-import me.wolfyscript.utilities.util.particles.timer.TimerLinear;
-import me.wolfyscript.utilities.util.particles.timer.TimerPi;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+import javax.annotation.Nonnull;
+import com.wolfyscript.utilities.bukkit.world.particles.ParticleAnimation;
+import com.wolfyscript.utilities.bukkit.world.particles.ParticleEffect;
+import com.wolfyscript.utilities.bukkit.world.particles.ParticleUtils;
+import com.wolfyscript.utilities.bukkit.world.particles.animators.AnimatorBasic;
+import com.wolfyscript.utilities.bukkit.world.particles.animators.AnimatorCircle;
+import com.wolfyscript.utilities.bukkit.world.particles.animators.AnimatorSphere;
+import com.wolfyscript.utilities.bukkit.world.particles.timer.TimerLinear;
+import com.wolfyscript.utilities.bukkit.world.particles.timer.TimerPi;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -42,23 +47,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.bukkit.util.Vector;
 
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-
 public class SpawnParticleAnimationCommand implements CommandExecutor, TabCompleter {
 
     private final List<String> COMMANDS = Arrays.asList("spawn", "stop");
 
-    private final WolfyUtilities wolfyUtilities;
-    private final Chat chat;
+    private final WolfyUtilsBukkit wolfyUtilities;
+    private final BukkitChat chat;
 
-    public SpawnParticleAnimationCommand(WolfyUtilities wolfyUtilities) {
-        this.wolfyUtilities = wolfyUtilities;
-        this.chat = wolfyUtilities.getChat();
+    public SpawnParticleAnimationCommand(WolfyUtilsBukkit wolfyUtils) {
+        this.wolfyUtilities = wolfyUtils;
+        this.chat = wolfyUtils.getChat();
     }
 
     @Override

@@ -19,19 +19,18 @@
 package com.wolfyscript.utilities.bukkit.registry;
 
 import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
+import com.wolfyscript.utilities.bukkit.world.items.references.WolfyUtilitiesRef;
 import com.wolfyscript.utilities.common.registry.AbstractRegistry;
 import java.util.HashMap;
-import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
-import me.wolfyscript.utilities.api.inventory.custom_items.references.WolfyUtilitiesRef;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 public class RegistryCustomItem extends AbstractRegistry<Map<NamespacedKey, CustomItem>, CustomItem> {
 

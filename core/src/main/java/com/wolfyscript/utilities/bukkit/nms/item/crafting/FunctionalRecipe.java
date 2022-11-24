@@ -2,13 +2,12 @@ package com.wolfyscript.utilities.bukkit.nms.item.crafting;
 
 import com.wolfyscript.utilities.Keyed;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import java.util.List;
+import java.util.Optional;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.List;
-import java.util.Optional;
 
 public interface FunctionalRecipe<T extends Inventory> extends Keyed {
 

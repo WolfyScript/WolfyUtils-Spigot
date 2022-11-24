@@ -31,17 +31,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.eval.context.EvalContext;
+import com.wolfyscript.utilities.eval.operator.BoolOperatorConst;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTType;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import com.wolfyscript.utilities.eval.operator.BoolOperatorConst;
 
 @KeyedStaticId(key = "compound")
 public class QueryNodeCompound extends QueryNode<NBTCompound> {

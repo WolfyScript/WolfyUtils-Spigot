@@ -2,15 +2,11 @@ package com.wolfyscript.utilities.bukkit.language;
 
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
-import me.wolfyscript.utilities.api.inventory.gui.button.ButtonState;
-import me.wolfyscript.utilities.api.language.Language;
-import me.wolfyscript.utilities.api.language.LanguageAPI;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import me.wolfyscript.utilities.util.chat.ChatColor;
-import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
-import org.jetbrains.annotations.NotNull;
-
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonState;
+import com.wolfyscript.utilities.common.language.LanguageAPI;
+import com.wolfyscript.utilities.language.Language;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,6 +18,9 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import com.wolfyscript.utilities.bukkit.chat.ChatColor;
+import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
+import org.jetbrains.annotations.NotNull;
 
 public class LangAPISpigot extends LanguageAPI {
 

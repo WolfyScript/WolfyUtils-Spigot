@@ -26,17 +26,16 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.NamespacedKey;
-import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.api.WolfyUtilities;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
+import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
+import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Pattern;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The NamespacedKey is used to manage and identify resources and prevent conflicts with for example plugins.<br>
@@ -47,7 +46,7 @@ import java.util.regex.Pattern;
  * In those cases the {@link #BukkitNamespacedKey(Plugin, String)} constructor should be used.
  * <br>
  * They can however be used inside a plugin itself with non-plugin namespaces, when resources are only accessible internally.<br>
- * e.g. {@link me.wolfyscript.utilities.api.inventory.gui.GuiWindow} where the namespace is the {@link me.wolfyscript.utilities.api.inventory.gui.GuiCluster}s' id and the key the GuiWindows's id, etc.<br>
+ * e.g. {@link GuiWindow} where the namespace is the {@link GuiCluster}s' id and the key the GuiWindows's id, etc.<br>
  * In those cases the {@link #BukkitNamespacedKey(String, String)} constructor can be used.
  *
  */
@@ -185,7 +184,7 @@ public class BukkitNamespacedKey implements NamespacedKey, Comparable<BukkitName
      */
     @Deprecated
     public org.bukkit.NamespacedKey toBukkit() {
-        return toBukkit(WolfyUtilities.getWUPlugin());
+        return toBukkit(WolfyCoreBukkit.getInstance());
     }
 
     public static BukkitNamespacedKey wolfyutilties(String key) {

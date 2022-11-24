@@ -1,7 +1,7 @@
 package me.wolfyscript.utilities.api.nms.v1_16_R2.nbt;
 
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagInt;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagType;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagInt;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagType;
 
 public class NBTTagIntImpl extends NBTNumberImpl<net.minecraft.server.v1_16_R2.NBTTagInt> implements NBTTagInt {
 

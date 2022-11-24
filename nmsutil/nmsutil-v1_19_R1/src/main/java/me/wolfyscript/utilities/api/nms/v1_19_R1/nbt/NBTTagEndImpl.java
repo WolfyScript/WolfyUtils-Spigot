@@ -18,8 +18,8 @@
 
 package me.wolfyscript.utilities.api.nms.v1_19_R1.nbt;
 
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagEnd;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagType;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagEnd;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagType;
 import net.minecraft.nbt.EndTag;
 
 public class NBTTagEndImpl extends NBTBaseImpl<EndTag> implements NBTTagEnd {

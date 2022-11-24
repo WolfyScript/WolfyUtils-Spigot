@@ -20,8 +20,8 @@ package com.wolfyscript.utilities;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
-import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.main.WUPlugin;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
 import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -32,12 +32,12 @@ import org.junit.jupiter.api.Test;
 public class TestWUPlugin {
 
     private static ServerMock server;
-    private static WUPlugin plugin;
+    private static WolfyCoreBukkit plugin;
 
     @BeforeAll
     public static void load() {
         server = MockBukkit.mock();
-        plugin = MockBukkit.load(WUPlugin.class);
+        plugin = MockBukkit.load(WolfyCoreBukkit.class);
     }
 
     @AfterAll
@@ -51,7 +51,7 @@ public class TestWUPlugin {
         Assertions.assertNotNull(WolfyUtilCore.getInstance());
         Assertions.assertNotNull(plugin.getRegistries());
         Assertions.assertNotNull(plugin.getCompatibilityManager());
-        Assertions.assertNotNull(plugin.getWolfyUtilities());
+        Assertions.assertNotNull(plugin.getWolfyUtils());
     }
 
     @Test

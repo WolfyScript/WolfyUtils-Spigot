@@ -18,7 +18,15 @@
 
 package com.wolfyscript.utilities.bukkit.registry;
 
-import com.wolfyscript.utilities.bukkit.items.CustomItemData;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.bukkit.world.items.CustomData;
+import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
+import com.wolfyscript.utilities.bukkit.world.items.CustomItemData;
+import com.wolfyscript.utilities.bukkit.world.items.actions.Action;
+import com.wolfyscript.utilities.bukkit.world.items.actions.Event;
+import com.wolfyscript.utilities.bukkit.world.items.meta.Meta;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
 import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
@@ -27,21 +35,12 @@ import com.wolfyscript.utilities.common.registry.Registry;
 import com.wolfyscript.utilities.common.registry.RegistrySimple;
 import com.wolfyscript.utilities.common.registry.TypeRegistry;
 import com.wolfyscript.utilities.common.registry.UniqueTypeRegistrySimple;
-import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.api.inventory.custom_items.CustomData;
-import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.Action;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.Event;
-import me.wolfyscript.utilities.api.inventory.custom_items.meta.Meta;
-import me.wolfyscript.utilities.api.inventory.tags.Tags;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import me.wolfyscript.utilities.util.particles.ParticleAnimation;
-import me.wolfyscript.utilities.util.particles.ParticleEffect;
-import me.wolfyscript.utilities.util.particles.animators.Animator;
-import me.wolfyscript.utilities.util.particles.shapes.Shape;
-import me.wolfyscript.utilities.util.particles.timer.Timer;
-
+import com.wolfyscript.utilities.bukkit.tags.Tags;
+import com.wolfyscript.utilities.bukkit.world.particles.ParticleAnimation;
+import com.wolfyscript.utilities.bukkit.world.particles.ParticleEffect;
+import com.wolfyscript.utilities.bukkit.world.particles.animators.Animator;
+import com.wolfyscript.utilities.bukkit.world.particles.shapes.Shape;
+import com.wolfyscript.utilities.bukkit.world.particles.timer.Timer;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -54,7 +53,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * <strong>Get an instance:</strong>
  * <ul>
- *     <li>(<b>Recommended</b>) via your API instance {@link WolfyUtilities#getRegistries()}</li>
+ *     <li>(<b>Recommended</b>) via your API instance {@link WolfyUtilsBukkit#getRegistries()}</li>
  *     <li>via static method {@link WolfyUtilCore#getInstance()} & {@link WolfyUtilCore#getRegistries()} (This should only be used in cases where you have no access to your API instance!)</li>
  * </ul>
  */

@@ -19,11 +19,10 @@
 package com.wolfyscript.utilities.bukkit.registry;
 
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.common.registry.AbstractRegistry;
 import java.util.HashMap;
 import java.util.Map;
-import me.wolfyscript.utilities.util.particles.ParticleAnimation;
+import com.wolfyscript.utilities.bukkit.world.particles.ParticleAnimation;
 
 public class RegistryParticleAnimation extends AbstractRegistry<Map<NamespacedKey, ParticleAnimation>, ParticleAnimation> {
 

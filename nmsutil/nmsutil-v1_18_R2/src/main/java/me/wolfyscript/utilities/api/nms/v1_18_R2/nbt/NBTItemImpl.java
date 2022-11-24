@@ -18,10 +18,10 @@
 
 package me.wolfyscript.utilities.api.nms.v1_18_R2.nbt;
 
-import me.wolfyscript.utilities.api.nms.nbt.NBTBase;
-import me.wolfyscript.utilities.api.nms.nbt.NBTCompound;
-import me.wolfyscript.utilities.api.nms.nbt.NBTItem;
-import me.wolfyscript.utilities.util.Reflection;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTBase;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTCompound;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTItem;
+import com.wolfyscript.utilities.bukkit.nms.Reflection;
 import net.minecraft.nbt.CompoundTag;
 import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;

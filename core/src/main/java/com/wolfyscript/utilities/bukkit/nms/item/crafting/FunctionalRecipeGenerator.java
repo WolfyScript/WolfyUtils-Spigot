@@ -1,5 +1,6 @@
 package com.wolfyscript.utilities.bukkit.nms.item.crafting;
 
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -24,10 +25,9 @@ import javassist.LoaderClassPath;
 import javassist.Modifier;
 import javassist.NotFoundException;
 import javassist.bytecode.SignatureAttribute;
-import me.wolfyscript.utilities.api.nms.inventory.InjectGUIInventory;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import me.wolfyscript.utilities.util.Reflection;
-import me.wolfyscript.utilities.util.version.MinecraftVersions;
+import com.wolfyscript.utilities.bukkit.nms.api.inventory.InjectGUIInventory;
+import com.wolfyscript.utilities.bukkit.nms.Reflection;
+import com.wolfyscript.utilities.versioning.MinecraftVersions;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -357,7 +357,7 @@ public class FunctionalRecipeGenerator {
             bodyBuilder.append("    this.remainingItems = var3;\n");
             bodyBuilder.append('}');
 
-            CtConstructor generatedConstructor = CtNewConstructor.make(signatureBuilder.toString() + bodyBuilder.toString(), generatedRecipeClass);
+            CtConstructor generatedConstructor = CtNewConstructor.make(signatureBuilder.toString() + bodyBuilder, generatedRecipeClass);
             generatedRecipeClass.addConstructor(generatedConstructor);
         }
 

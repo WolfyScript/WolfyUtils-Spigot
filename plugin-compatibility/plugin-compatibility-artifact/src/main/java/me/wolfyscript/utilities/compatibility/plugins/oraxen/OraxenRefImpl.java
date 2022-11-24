@@ -21,11 +21,12 @@ package me.wolfyscript.utilities.compatibility.plugins.oraxen;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.wolfyscript.utilities.bukkit.compatibility.plugins.oraxen.OraxenRef;
 import io.th0rgal.oraxen.items.OraxenItems;
 import java.io.IOException;
 import java.util.Objects;
-import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
-import me.wolfyscript.utilities.util.inventory.ItemUtils;
+import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
+import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 

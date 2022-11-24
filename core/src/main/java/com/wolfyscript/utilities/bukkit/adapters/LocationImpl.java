@@ -8,5 +8,4 @@ public class LocationImpl extends BukkitRefAdapter<org.bukkit.Location> implemen
         super(bukkitRef);
     }
 
-
 }

@@ -18,8 +18,8 @@
 
 package me.wolfyscript.utilities.api.nms.v1_18_R1;
 
-import me.wolfyscript.utilities.api.nms.NBTTag;
-import me.wolfyscript.utilities.api.nms.nbt.*;
+import com.wolfyscript.utilities.bukkit.nms.api.NBTTag;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.*;
 import me.wolfyscript.utilities.api.nms.v1_18_R1.nbt.*;
 
 public class NBTTagImpl extends NBTTag {

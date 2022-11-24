@@ -18,8 +18,8 @@
 
 package me.wolfyscript.utilities.api.nms.v1_19_R1.nbt;
 
-import me.wolfyscript.utilities.api.nms.nbt.NBTBase;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagType;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTBase;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagType;
 import net.minecraft.nbt.Tag;
 
 public class NBTTagTypes {

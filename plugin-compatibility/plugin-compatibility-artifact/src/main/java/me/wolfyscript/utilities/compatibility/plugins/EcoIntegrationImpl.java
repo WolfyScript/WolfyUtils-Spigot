@@ -20,10 +20,11 @@ package me.wolfyscript.utilities.compatibility.plugins;
 
 import com.willfp.eco.core.items.CustomItem;
 import com.willfp.eco.core.items.Items;
-import me.wolfyscript.utilities.annotations.WUPluginIntegration;
-import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
-import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
+import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
+import com.wolfyscript.utilities.bukkit.compatibility.plugins.EcoIntegration;
+import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
+import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.eco.EcoRefImpl;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
