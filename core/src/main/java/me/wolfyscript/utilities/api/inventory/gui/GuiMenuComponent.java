@@ -228,7 +228,7 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
      *
      * @param <C> The type of the custom cache.
      */
-    protected interface ButtonBuilder<C extends CustomCache> {
+    public interface ButtonBuilder<C extends CustomCache> {
 
         /**
          * Gets a new builder for a {@link ChatInputButton<C>}.
