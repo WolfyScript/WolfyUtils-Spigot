@@ -18,6 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.gui.button.buttons;
 
+import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
 import com.wolfyscript.utilities.bukkit.chat.IBukkitChat;
 import com.wolfyscript.utilities.bukkit.gui.ChatInputAction;
 import com.wolfyscript.utilities.bukkit.gui.ChatTabComplete;
@@ -47,177 +48,16 @@ public class ChatInputButton<C extends CustomCache> extends ActionButton<C> {
     private ChatTabComplete<C> tabComplete;
     private Component msg = null;
     private final boolean deprecated;
-    private ClickData clickData = null;
 
-    @Deprecated
-    public ChatInputButton(String id, ButtonState<C> buttonState) {
+    ChatInputButton(String id, ButtonState<C> buttonState) {
         super(id, buttonState);
         this.deprecated = false;
     }
 
-    //region Deprecated constructors
-
-    @Deprecated
-    public ChatInputButton(String id, ButtonState<C> buttonState, String msg, ChatInputAction<C> action) {
-        this(id, buttonState, msg, action, null);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, ButtonState<C> buttonState, String msg, ChatInputAction<C> action, ChatTabComplete<C> tabComplete) {
-        super(id, buttonState);
-        this.action = action;
-        this.tabComplete = tabComplete;
-        this.msg = BukkitComponentSerializer.legacy().deserialize(msg);
-        this.deprecated = true;
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, ItemStack itemStack, String msg, ChatInputAction<C> action) {
-        this(id, new ButtonState<>(id, itemStack), msg, action);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, ItemStack itemStack, String msg, ChatInputAction<C> action, ChatTabComplete<C> tabComplete) {
-        this(id, new ButtonState<>(id, itemStack), msg, action, tabComplete);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, ItemStack itemStack, ButtonAction<C> btnAction, String msg, ChatInputAction<C> action) {
-        this(id, new ButtonState<>(id, itemStack, btnAction), msg, action);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, ItemStack itemStack, ButtonRender<C> render, String msg, ChatInputAction<C> action) {
-        this(id, new ButtonState<>(id, itemStack, render), msg, action);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, ItemStack itemStack, ButtonAction<C> btnAction, ButtonRender<C> render, String msg, ChatInputAction<C> action) {
-        this(id, new ButtonState<>(id, itemStack, btnAction, render), msg, action);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, ButtonState<C> buttonState, ChatInputAction<C> action) {
-        this(id, buttonState, action, null);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, ButtonState<C> buttonState, ChatInputAction<C> action, ChatTabComplete<C> tabComplete) {
-        super(id, buttonState);
-        this.action = action;
-        this.tabComplete = tabComplete;
-        this.deprecated = true;
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, ItemStack itemStack, ChatInputAction<C> action) {
-        this(id, new ButtonState<>(id, itemStack), action);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, ItemStack itemStack, ChatInputAction<C> action, ChatTabComplete<C> tabComplete) {
-        this(id, new ButtonState<>(id, itemStack), action, tabComplete);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, ItemStack itemStack, ButtonAction<C> btnAction, ChatInputAction<C> action) {
-        this(id, new ButtonState<>(id, itemStack, btnAction), action);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, ItemStack itemStack, ButtonRender<C> render, ChatInputAction<C> action) {
-        this(id, new ButtonState<>(id, itemStack, render), action);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, ItemStack itemStack, ButtonAction<C> btnAction, ButtonRender<C> render, ChatInputAction<C> action) {
-        this(id, new ButtonState<>(id, itemStack, btnAction, render), action);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, Material material, ChatInputAction<C> action) {
-        this(id, new ButtonState<>(id, material), action);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, Material material, ChatInputAction<C> action, ChatTabComplete<C> tabComplete) {
-        this(id, new ButtonState<>(id, material), action, tabComplete);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, Material material, ButtonAction<C> btnAction, ChatInputAction<C> action) {
-        this(id, new ButtonState<>(id, material, btnAction), action);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, Material material, ButtonRender<C> render, ChatInputAction<C> action) {
-        this(id, new ButtonState<>(id, material, render), action);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, Material material, ButtonAction<C> btnAction, ButtonRender<C> render, ChatInputAction<C> action) {
-        this(id, new ButtonState<>(id, material, btnAction, render), action);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, ButtonState<C> buttonState, ClickData clickData, ChatInputAction<C> action) {
-        this(id, buttonState, clickData, action, null);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, ButtonState<C> buttonState, ClickData clickData, ChatInputAction<C> chatInput, ChatTabComplete<C> tabComplete) {
-        super(id, buttonState);
-        this.action = chatInput;
-        this.tabComplete = tabComplete;
-        this.clickData = clickData;
-        this.deprecated = true;
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, ItemStack itemStack, ClickData clickData, ChatInputAction<C> action) {
-        this(id, new ButtonState<>(id, itemStack), clickData, action);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, ItemStack itemStack, ButtonRender<C> render, ClickData clickData, ChatInputAction<C> action) {
-        this(id, new ButtonState<>(id, itemStack, render), clickData, action);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, ItemStack itemStack, ButtonAction<C> btnAction, ClickData clickData, ChatInputAction<C> action) {
-        this(id, new ButtonState<>(id, itemStack, btnAction), clickData, action);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, ItemStack itemStack, ButtonAction<C> btnAction, ButtonRender<C> render, ClickData clickData, ChatInputAction<C> action) {
-        this(id, new ButtonState<>(id, itemStack, btnAction, render), clickData, action);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, Material material, ClickData clickData, ChatInputAction<C> action) {
-        this(id, new ButtonState<>(id, material), clickData, action);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, Material material, ButtonRender<C> render, ClickData clickData, ChatInputAction<C> action) {
-        this(id, new ButtonState<>(id, material, render), clickData, action);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, Material material, ButtonAction<C> btnAction, ClickData clickData, ChatInputAction<C> action) {
-        this(id, new ButtonState<>(id, material, btnAction), clickData, action);
-    }
-
-    @Deprecated
-    public ChatInputButton(String id, Material material, ButtonAction<C> btnAction, ButtonRender<C> render, ClickData clickData, ChatInputAction<C> action) {
-        this(id, new ButtonState<>(id, material, btnAction, render), clickData, action);
-    }
-    //endregion
-
     @Override
     public void init(GuiWindow<C> guiWindow) {
         super.init(guiWindow);
-        if (msg == null && clickData == null) {
+        if (msg == null) {
             this.msg = guiWindow.getChat().translated(String.format(ButtonState.BUTTON_WINDOW_KEY + ".message", guiWindow.getCluster().getId(), guiWindow.getNamespacedKey().getKey(), getId()), deprecated);
         }
     }
@@ -225,7 +65,7 @@ public class ChatInputButton<C extends CustomCache> extends ActionButton<C> {
     @Override
     public void init(GuiCluster<C> guiCluster) {
         super.init(guiCluster);
-        if (msg == null && clickData == null) {
+        if (msg == null) {
             this.msg = guiCluster.getChat().translated(String.format(ButtonState.BUTTON_CLUSTER_KEY + ".message", guiCluster.getId(), getId()), deprecated);
         }
     }
@@ -236,11 +76,8 @@ public class ChatInputButton<C extends CustomCache> extends ActionButton<C> {
         if (super.execute(guiHandler, player, inventory, slot, event)) {
             guiHandler.setChatTabComplete(tabComplete);
             guiHandler.setChatInputAction(action);
-            IBukkitChat chat = guiHandler.getApi().getChat();
             if (msg != null) {
-                chat.sendMessage(guiHandler.getPlayer(), msg);
-            } else if (clickData != null) {
-                chat.sendActionMessage(guiHandler.getPlayer(), clickData);
+                guiHandler.getWolfyUtils().getChat().sendMessage(guiHandler.getPlayer(), msg);
             }
             guiHandler.close();
         }

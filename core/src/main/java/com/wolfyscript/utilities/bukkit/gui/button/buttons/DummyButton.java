@@ -39,28 +39,8 @@ import org.bukkit.inventory.ItemStack;
  */
 public class DummyButton<C extends CustomCache> extends ActionButton<C> {
 
-    public DummyButton(String id, ButtonState<C> state) {
+    DummyButton(String id, ButtonState<C> state) {
         super(id, ButtonType.DUMMY, state);
-    }
-
-    public DummyButton(String id) {
-        super(id, ButtonType.DUMMY, null);
-    }
-
-    public DummyButton(String id, ItemStack itemStack) {
-        this(id, new ButtonState<>(id, itemStack));
-    }
-
-    public DummyButton(String id, Material material) {
-        this(id, new ButtonState<>(id, material));
-    }
-
-    public DummyButton(String id, ItemStack itemStack, ButtonRender<C> render) {
-        this(id, new ButtonState<>(id, itemStack, render));
-    }
-
-    public DummyButton(String id, Material material, ButtonRender<C> render) {
-        this(id, new ButtonState<>(id, material, render));
     }
 
     public boolean execute(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, int slot, InventoryInteractEvent event) throws IOException {

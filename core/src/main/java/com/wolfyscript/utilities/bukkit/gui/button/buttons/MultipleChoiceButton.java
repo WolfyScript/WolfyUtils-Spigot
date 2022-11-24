@@ -57,30 +57,11 @@ public class MultipleChoiceButton<C extends CustomCache> extends Button<C> {
      * @param stateFunction The {@link StateFunction} to set the state of the Button depending on the player, cached data, etc.
      * @param states        The {@link ButtonState}s that this Button will cycle through.
      */
-    @SafeVarargs
-    public MultipleChoiceButton(String id, StateFunction<C> stateFunction, @NotNull ButtonState<C>... states) {
-        this(id, stateFunction, Arrays.asList(states));
-    }
-
-    /**
-     * @param id            The id of the Button
-     * @param stateFunction The {@link StateFunction} to set the state of the Button depending on the player, cached data, etc.
-     * @param states        The {@link ButtonState}s that this Button will cycle through.
-     */
-    private MultipleChoiceButton(String id, StateFunction<C> stateFunction, @NotNull List<ButtonState<C>> states) {
+    MultipleChoiceButton(String id, StateFunction<C> stateFunction, @NotNull List<ButtonState<C>> states) {
         super(id, ButtonType.CHOICES);
         this.states = states;
         settings = new HashMap<>();
         this.stateFunction = stateFunction == null ? (cache, guiHandler, player, inventory, slot) -> settings.getOrDefault(guiHandler, 0) : stateFunction;
-    }
-
-    /**
-     * @param id     The id of the Button
-     * @param states The {@link ButtonState}s that this Button will cycle through.
-     */
-    @SafeVarargs
-    public MultipleChoiceButton(String id, @NotNull ButtonState<C>... states) {
-        this(id, null, states);
     }
 
     @Override

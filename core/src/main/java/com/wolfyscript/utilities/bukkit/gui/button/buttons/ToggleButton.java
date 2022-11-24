@@ -58,41 +58,12 @@ public class ToggleButton<C extends CustomCache> extends Button<C> {
      * @param state         The {@link ButtonState} that is rendered if the state is true.
      * @param state2        The {@link ButtonState} that is rendered if the state is false.
      */
-    public ToggleButton(String id, boolean defaultState, @Nullable ToggleButton.StateFunction<C> stateFunction, @NotNull ButtonState<C> state, @NotNull ButtonState<C> state2) {
+    ToggleButton(String id, boolean defaultState, @Nullable ToggleButton.StateFunction<C> stateFunction, @NotNull ButtonState<C> state, @NotNull ButtonState<C> state2) {
         super(id, ButtonType.TOGGLE);
         this.defaultState = defaultState;
         states = new Pair<>(state, state2);
         settings = new HashMap<>();
         this.stateFunction = stateFunction == null ? (cache, guiHandler, player, inventory, slot) -> settings.getOrDefault(guiHandler, defaultState) : stateFunction;
-    }
-
-    /**
-     * @param id           The id of the Button
-     * @param defaultState The state to use when the Button is first rendered and haven't been clicked before.
-     * @param state        The {@link ButtonState} that is rendered if the state is true.
-     * @param state2       The {@link ButtonState} that is rendered if the state is false.
-     */
-    public ToggleButton(String id, boolean defaultState, @NotNull ButtonState<C> state, @NotNull ButtonState<C> state2) {
-        this(id, defaultState, null, state, state2);
-    }
-
-    /**
-     * @param id            The id of the Button
-     * @param stateFunction The {@link StateFunction} to set the state of the Button depending on the player, cached data, etc.
-     * @param state         The {@link ButtonState} that is rendered if the state is true.
-     * @param state2        The {@link ButtonState} that is rendered if the state is false.
-     */
-    public ToggleButton(String id, @Nullable ToggleButton.StateFunction<C> stateFunction, @NotNull ButtonState<C> state, @NotNull ButtonState<C> state2) {
-        this(id, false, stateFunction, state, state2);
-    }
-
-    /**
-     * @param id     The id of the Button
-     * @param state  The {@link ButtonState} that is rendered if the state is true.
-     * @param state2 The {@link ButtonState} that is rendered if the state is false.
-     */
-    public ToggleButton(String id, @NotNull ButtonState<C> state, @NotNull ButtonState<C> state2) {
-        this(id, false, null, state, state2);
     }
 
     public void setState(GuiHandler<C> guiHandler, boolean enabled) {

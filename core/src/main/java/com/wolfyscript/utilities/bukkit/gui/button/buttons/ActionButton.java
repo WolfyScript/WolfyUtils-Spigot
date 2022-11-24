@@ -76,48 +76,8 @@ public class ActionButton<C extends CustomCache> extends Button<C> {
         this.state = state;
     }
 
-    public ActionButton(String id, ButtonState<C> state) {
+    ActionButton(String id, ButtonState<C> state) {
         this(id, ButtonType.NORMAL, state);
-    }
-
-    public ActionButton(String id, ItemStack itemStack) {
-        this(id, new ButtonState<>(id, itemStack));
-    }
-
-    public ActionButton(String id, ItemStack itemStack, @Nullable ButtonAction<C> action) {
-        this(id, itemStack, action, null);
-    }
-
-    public ActionButton(String id, ItemStack itemStack, @Nullable ButtonRender<C> render) {
-        this(id, itemStack, null, render);
-    }
-
-    public ActionButton(String id, ItemStack itemStack, @Nullable ButtonAction<C> action, @Nullable ButtonRender<C> render) {
-        this(id, itemStack, action, null, render, null);
-    }
-
-    public ActionButton(String id, ItemStack itemStack, @Nullable ButtonAction<C> action, @Nullable ButtonPostAction<C> postAction, @Nullable ButtonRender<C> render, @Nullable ButtonPreRender<C> preRender) {
-        this(id, new ButtonState<>(id, itemStack, action, postAction, preRender, render));
-    }
-
-    public ActionButton(String id, Material material) {
-        this(id, new ButtonState<>(id, material));
-    }
-
-    public ActionButton(String id, Material material, @Nullable ButtonAction<C> action) {
-        this(id, material, action, null);
-    }
-
-    public ActionButton(String id, Material material, @Nullable ButtonRender<C> render) {
-        this(id, material, null, render);
-    }
-
-    public ActionButton(String id, Material material, @Nullable ButtonAction<C> action, @Nullable ButtonRender<C> render) {
-        this(id, new ButtonState<>(id, material, action, render));
-    }
-
-    public ActionButton(String id, Material material, @Nullable ButtonAction<C> action, @Nullable ButtonPostAction<C> postAction, @Nullable ButtonRender<C> render, @Nullable ButtonPreRender<C> preRender) {
-        this(id, new ButtonState<>(id, material, action, postAction, preRender, render));
     }
 
     @Override

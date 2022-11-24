@@ -46,41 +46,9 @@ public class ItemInputButton<C extends CustomCache> extends ActionButton<C> {
 
     private final Map<GuiHandler<C>, ItemStack> content;
 
-    public ItemInputButton(String id, ButtonState<C> state) {
+    ItemInputButton(String id, ButtonState<C> state) {
         super(id, ButtonType.ITEM_SLOT, state);
         this.content = new HashMap<>();
-    }
-
-    public ItemInputButton(String id, ItemStack itemStack) {
-        this(id, new ButtonState<>(id, itemStack));
-    }
-
-    public ItemInputButton(String id, Material material) {
-        this(id, new ButtonState<>(id, material));
-    }
-
-    public ItemInputButton(String id, ItemStack itemStack, ButtonAction<C> action) {
-        this(id, new ButtonState<>(id, itemStack, action));
-    }
-
-    public ItemInputButton(String id, ItemStack itemStack, ButtonRender<C> render) {
-        this(id, new ButtonState<>(id, itemStack, render));
-    }
-
-    public ItemInputButton(String id, ItemStack itemStack, ButtonAction<C> action, ButtonRender<C> render) {
-        this(id, new ButtonState<>(id, itemStack, action, render));
-    }
-
-    public ItemInputButton(String id, Material material, ButtonAction<C> action) {
-        this(id, new ButtonState<>(id, material, action));
-    }
-
-    public ItemInputButton(String id, Material material, ButtonRender<C> render) {
-        this(id, new ButtonState<>(id, material, render));
-    }
-
-    public ItemInputButton(String id, Material material, ButtonAction<C> action, ButtonRender<C> render) {
-        this(id, new ButtonState<>(id, material, action, render));
     }
 
     @Override
