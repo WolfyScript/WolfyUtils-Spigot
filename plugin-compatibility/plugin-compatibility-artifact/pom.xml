@@ -95,6 +95,7 @@
             <groupId>com.github.oraxen</groupId>
             <artifactId>oraxen</artifactId>
             <version>-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <!-- Mythic Plugins -->
         <dependency>
