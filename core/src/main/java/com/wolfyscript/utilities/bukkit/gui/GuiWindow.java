@@ -23,13 +23,14 @@ import com.wolfyscript.utilities.bukkit.TagResolverUtil;
 import com.wolfyscript.utilities.bukkit.chat.IBukkitChat;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.PlaceholderAPIIntegration;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
-import com.wolfyscript.utilities.bukkit.gui.button.buttons.ActionButton;
-import com.wolfyscript.utilities.bukkit.gui.button.buttons.ChatInputButton;
-import com.wolfyscript.utilities.bukkit.gui.button.buttons.DummyButton;
-import com.wolfyscript.utilities.bukkit.gui.button.buttons.ItemInputButton;
-import com.wolfyscript.utilities.bukkit.gui.button.buttons.MultipleChoiceButton;
-import com.wolfyscript.utilities.bukkit.gui.button.buttons.ToggleButton;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonAction;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonChatInput;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonDummy;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonItemInput;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonMultipleChoice;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonToggle;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
+import com.wolfyscript.utilities.bukkit.gui.callback.CallbackChatInput;
 import com.wolfyscript.utilities.tuple.Pair;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -258,7 +259,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
     }
 
     private void update(GUIInventory<C> inventory, GuiHandler<C> guiHandler, HashMap<Integer, Button<C>> postExecuteBtns, InventoryInteractEvent event, boolean openInventory) {
-        Bukkit.getScheduler().runTask(guiHandler.getApi().getPlugin(), () -> {
+        Bukkit.getScheduler().runTask(guiHandler.getWolfyUtils().getPlugin(), () -> {
             GuiUpdate<C> guiUpdate = new GuiUpdate<>(inventory, guiHandler, this);
             guiUpdate.postExecuteButtons(postExecuteBtns, event);
             callUpdate(guiHandler, guiUpdate, openInventory);
@@ -346,11 +347,11 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      *
      * @param guiHandler  The {@link GuiHandler} it should be opened for.
      * @param msg         The message that should be sent to the player.
-     * @param inputAction The {@link ChatInputAction} to be executed when the player types in the chat.
-     * @deprecated This uses the legacy chat format. <b>Use {@link #openChat(GuiHandler, Component, ChatInputAction)} instead!</b>
+     * @param inputAction The {@link CallbackChatInput} to be executed when the player types in the chat.
+     * @deprecated This uses the legacy chat format. <b>Use {@link #openChat(GuiHandler, Component, CallbackChatInput)} instead!</b>
      */
     @Deprecated
-    public void openChat(GuiHandler<C> guiHandler, String msg, ChatInputAction<C> inputAction) {
+    public void openChat(GuiHandler<C> guiHandler, String msg, CallbackChatInput<C> inputAction) {
         guiHandler.setChatInputAction(inputAction);
         guiHandler.close();
         getChat().sendMessage(guiHandler.getPlayer(), msg);
@@ -364,11 +365,11 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      * @param guiCluster  The {@link GuiCluster} of the message.
      * @param msgKey      The key of the message.
      * @param guiHandler  The {@link GuiHandler} it should be opened for.
-     * @param inputAction The {@link ChatInputAction} to be executed when the player types in the chat.
-     * @deprecated This uses the legacy chat format. <b>Use {@link #openChat(GuiHandler, Component, ChatInputAction)} instead!</b>
+     * @param inputAction The {@link CallbackChatInput} to be executed when the player types in the chat.
+     * @deprecated This uses the legacy chat format. <b>Use {@link #openChat(GuiHandler, Component, CallbackChatInput)} instead!</b>
      */
     @Deprecated
-    public void openChat(GuiCluster<C> guiCluster, String msgKey, GuiHandler<C> guiHandler, ChatInputAction<C> inputAction) {
+    public void openChat(GuiCluster<C> guiCluster, String msgKey, GuiHandler<C> guiHandler, CallbackChatInput<C> inputAction) {
         guiHandler.setChatInputAction(inputAction);
         guiHandler.close();
         var chat = wolfyUtilities.getChat();
@@ -382,11 +383,11 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      *
      * @param msgKey      The key of the message.
      * @param guiHandler  the {@link GuiHandler} it should be opened for.
-     * @param inputAction The {@link ChatInputAction} to be executed when the player types in the chat.
-     * @deprecated This uses the legacy chat format. <b>Use {@link #openChat(GuiHandler, Component, ChatInputAction)} instead!</b>
+     * @param inputAction The {@link CallbackChatInput} to be executed when the player types in the chat.
+     * @deprecated This uses the legacy chat format. <b>Use {@link #openChat(GuiHandler, Component, CallbackChatInput)} instead!</b>
      */
     @Deprecated
-    public void openChat(String msgKey, GuiHandler<C> guiHandler, ChatInputAction<C> inputAction) {
+    public void openChat(String msgKey, GuiHandler<C> guiHandler, CallbackChatInput<C> inputAction) {
         guiHandler.setChatInputAction(inputAction);
         guiHandler.close();
         getChat().sendKey(guiHandler.getPlayer(), getNamespacedKey(), msgKey);
@@ -398,12 +399,12 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      *
      * @param guiHandler  The {@link GuiHandler} it should be opened for.
      * @param clickData   The {@link ClickData} to be send to the player.
-     * @param inputAction The {@link ChatInputAction} to be executed when the player types in the chat.
-     * @see #openChat(GuiHandler, Component, ChatInputAction)
-     * @deprecated This uses the legacy chat format. <b>Use {@link #openChat(GuiHandler, Component, ChatInputAction)} instead!</b> For callback execution on text click use {@link IBukkitChat#executable(Player, boolean, ClickAction)}
+     * @param inputAction The {@link CallbackChatInput} to be executed when the player types in the chat.
+     * @see #openChat(GuiHandler, Component, CallbackChatInput)
+     * @deprecated This uses the legacy chat format. <b>Use {@link #openChat(GuiHandler, Component, CallbackChatInput)} instead!</b> For callback execution on text click use {@link IBukkitChat#executable(Player, boolean, ClickAction)}
      */
     @Deprecated
-    public void openActionChat(GuiHandler<C> guiHandler, ClickData clickData, ChatInputAction<C> inputAction) {
+    public void openActionChat(GuiHandler<C> guiHandler, ClickData clickData, CallbackChatInput<C> inputAction) {
         guiHandler.setChatInputAction(inputAction);
         guiHandler.close();
         getChat().sendActionMessage(guiHandler.getPlayer(), clickData);
@@ -510,7 +511,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      * ForceSyncUpdate will make sure that no async code is executed on the GUI update
      * and will also open the Inventory one tick after the initial update request, instead of being opened after the async update.
      * <br>
-     * It should be enabled when using {@link ItemInputButton}
+     * It should be enabled when using {@link ButtonItemInput}
      * to make sure that no item could be duplicated, because of tick lag!
      *
      * @return If the forced sync feature is enabled.
@@ -523,7 +524,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      * ForceSyncUpdate will make sure that no async code is executed on the GUI update
      * and will also open the Inventory one tick after the initial update request, instead of being opened after the async update.
      * <br>
-     * It should be enabled when using {@link ItemInputButton}
+     * It should be enabled when using {@link ButtonItemInput}
      * to make sure that no item could be duplicated, because of tick lag!
      *
      * @param forceSyncUpdate New forced sync value.
@@ -578,33 +579,33 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
     protected class WindowButtonBuilder implements ButtonBuilder<C> {
 
         @Override
-        public ChatInputButton.Builder<C> chatInput(String id) {
-            return new ChatInputButton.Builder<>(GuiWindow.this, id);
+        public ButtonChatInput.Builder<C> chatInput(String id) {
+            return new ButtonChatInput.Builder<>(GuiWindow.this, id);
         }
 
         @Override
-        public ActionButton.Builder<C> action(String id) {
-            return new ActionButton.Builder<>(GuiWindow.this, id);
+        public ButtonAction.Builder<C> action(String id) {
+            return new ButtonAction.Builder<>(GuiWindow.this, id);
         }
 
         @Override
-        public DummyButton.Builder<C> dummy(String id) {
-            return new DummyButton.Builder<>(GuiWindow.this, id);
+        public ButtonDummy.Builder<C> dummy(String id) {
+            return new ButtonDummy.Builder<>(GuiWindow.this, id);
         }
 
         @Override
-        public ItemInputButton.Builder<C> itemInput(String id) {
-            return new ItemInputButton.Builder<>(GuiWindow.this, id);
+        public ButtonItemInput.Builder<C> itemInput(String id) {
+            return new ButtonItemInput.Builder<>(GuiWindow.this, id);
         }
 
         @Override
-        public ToggleButton.Builder<C> toggle(String id) {
-            return new ToggleButton.Builder<>(GuiWindow.this, id);
+        public ButtonToggle.Builder<C> toggle(String id) {
+            return new ButtonToggle.Builder<>(GuiWindow.this, id);
         }
 
         @Override
-        public MultipleChoiceButton.Builder<C> multiChoice(String id) {
-            return new MultipleChoiceButton.Builder<>(GuiWindow.this, id);
+        public ButtonMultipleChoice.Builder<C> multiChoice(String id) {
+            return new ButtonMultipleChoice.Builder<>(GuiWindow.this, id);
         }
     }
 

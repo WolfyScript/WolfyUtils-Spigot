@@ -18,11 +18,12 @@
 
 package com.wolfyscript.utilities.bukkit.gui;
 
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonType;
-import com.wolfyscript.utilities.bukkit.gui.button.buttons.ItemInputButton;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonItemInput;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -32,16 +33,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -91,11 +88,6 @@ public class InventoryAPI<C extends CustomCache> implements Listener {
     public GuiWindow<C> getGuiWindow(BukkitNamespacedKey namespacedKey) {
         GuiCluster<C> cluster = getGuiCluster(namespacedKey.getNamespace());
         return cluster != null ? cluster.getGuiWindow(namespacedKey.getKey()) : null;
-    }
-
-    @Deprecated
-    public WolfyUtilsBukkit getWolfyUtilities() {
-        return wolfyUtilities;
     }
 
     public WolfyUtilsBukkit getWolfyUtils() {
@@ -203,7 +195,7 @@ public class InventoryAPI<C extends CustomCache> implements Listener {
      * @param namespacedKey The namespaced key of the Button.
      * @return Button of the corresponding namespaced key
      */
-    public Button<C> getButton(BukkitNamespacedKey namespacedKey) {
+    public Button<C> getButton(NamespacedKey namespacedKey) {
         if (namespacedKey == null) return null;
         GuiCluster<C> cluster = getGuiCluster(namespacedKey.getNamespace());
         return cluster != null ? cluster.getButton(namespacedKey.getKey()) : null;
@@ -239,7 +231,7 @@ public class InventoryAPI<C extends CustomCache> implements Listener {
             if (event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
                 for (Map.Entry<Integer, String> buttonEntry : guiHandler.getCustomCache().getButtons(guiWindow).entrySet()) {
                     Button<C> button = guiWindow.getButton(buttonEntry.getValue());
-                    if (button instanceof ItemInputButton) {
+                    if (button instanceof ButtonItemInput) {
                         buttons.put(buttonEntry.getKey(), button);
                         if (executeButton(button, guiHandler, (Player) event.getWhoClicked(), inventory, buttonEntry.getKey(), event)) {
                             event.setCancelled(true);
@@ -289,25 +281,6 @@ public class InventoryAPI<C extends CustomCache> implements Listener {
         } catch (IOException e) {
             e.printStackTrace();
             return true;
-        }
-    }
-
-    /**
-     * Checks if the player sending the message has active chat events. If he has, it's executed!
-     * It cancels the event and passes the message into the /wui command.
-     * <strong>It is recommended to use the /wui command instead of typing directly into the chat.</strong>
-     */
-    @Deprecated(forRemoval = true)
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onPreChat(AsyncPlayerChatEvent event) {
-        if (hasGuiHandler(event.getPlayer())) {
-            GuiHandler<C> guiHandler = getGuiHandler(event.getPlayer());
-            if (guiHandler.isChatEventActive()) {
-                final String message = event.getMessage();
-                //Wraps normal written message into command to be executed
-                Bukkit.getScheduler().runTask(getPlugin(), () -> Bukkit.dispatchCommand(event.getPlayer(), "wui " + message));
-                event.setCancelled(true);
-            }
         }
     }
 

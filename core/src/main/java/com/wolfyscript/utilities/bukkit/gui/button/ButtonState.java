@@ -26,6 +26,10 @@ import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import com.wolfyscript.utilities.bukkit.gui.InventoryAPI;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
+import com.wolfyscript.utilities.bukkit.gui.callback.CallbackButtonAction;
+import com.wolfyscript.utilities.bukkit.gui.callback.CallbackButtonPostAction;
+import com.wolfyscript.utilities.bukkit.gui.callback.CallbackButtonPreRender;
+import com.wolfyscript.utilities.bukkit.gui.callback.CallbackButtonRender;
 import java.util.List;
 import java.util.function.Consumer;
 import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
@@ -40,9 +44,9 @@ import org.jetbrains.annotations.Nullable;
  * <br>
  * It contains the ItemStack and language keys required to render the Item in the inventory.
  * <p>
- * The rendering can be manipulated using the {@link ButtonRender} method that returns the ItemStack that will be rendered.
+ * The rendering can be manipulated using the {@link CallbackButtonRender} method that returns the ItemStack that will be rendered.
  * <p>
- * To execute code on a Button click you need to use the {@link ButtonAction} method, which is called each time the button is clicked.
+ * To execute code on a Button click you need to use the {@link CallbackButtonAction} method, which is called each time the button is clicked.
  *
  * @param <C> The type of the {@link CustomCache}
  */
@@ -59,10 +63,10 @@ public class ButtonState<C extends CustomCache> {
     private String key;
     private final ItemStack presetIcon;
     private ItemStack icon;
-    private ButtonAction<C> action;
-    private ButtonRender<C> buttonRender;
-    private ButtonPreRender<C> prepareRender;
-    private ButtonPostAction<C> postAction;
+    private CallbackButtonAction<C> action;
+    private CallbackButtonRender<C> buttonRender;
+    private CallbackButtonPreRender<C> prepareRender;
+    private CallbackButtonPostAction<C> postAction;
 
     public static <C extends CustomCache> Builder<C> of(GuiWindow<C> window, String key) {
         return new Builder<>(window, key);
@@ -72,8 +76,7 @@ public class ButtonState<C extends CustomCache> {
         return new Builder<>(cluster, key);
     }
 
-    @Deprecated
-    public ButtonState(String key, ItemStack presetIcon) {
+    ButtonState(String key, ItemStack presetIcon) {
         Preconditions.checkArgument(key != null && !key.isBlank(), "Cannot create ButtonState with missing key!");
         Preconditions.checkArgument(presetIcon != null, "Cannot create ButtonState with missing icon! Provided icon: " + presetIcon);
         this.key = key;
@@ -81,13 +84,7 @@ public class ButtonState<C extends CustomCache> {
         this.presetIcon = presetIcon;
     }
 
-    @Deprecated
-    public ButtonState(String key, Material presetIcon) {
-        this(key, new ItemStack(presetIcon));
-    }
-
-    @Deprecated
-    public ButtonState(NamespacedKey buttonKey, ItemStack presetIcon) {
+    ButtonState(NamespacedKey buttonKey, ItemStack presetIcon) {
         Preconditions.checkArgument(buttonKey != null, "Cannot create ButtonState with missing key!");
         Preconditions.checkArgument(presetIcon != null, "Cannot create ButtonState with missing icon! Provided icon: " + presetIcon);
         this.key = buttonKey.getKey();
@@ -95,13 +92,8 @@ public class ButtonState<C extends CustomCache> {
         this.presetIcon = presetIcon;
     }
 
-    @Deprecated
-    public ButtonState(NamespacedKey buttonKey, Material presetIcon) {
-        this(buttonKey, new ItemStack(presetIcon));
-    }
-
     public void init(GuiCluster<C> cluster) {
-        this.wolfyUtilities = cluster.getWolfyUtilities();
+        this.wolfyUtilities = cluster.getWolfyUtils();
         //For backwards compatibility!
         if (this.clusterID == null) {
             this.clusterID = cluster.getId();
@@ -205,44 +197,20 @@ public class ButtonState<C extends CustomCache> {
         return wolfyUtilities.getLanguageAPI().getComponents(String.format(BUTTON_WINDOW_KEY + LORE_KEY, window.getNamespacedKey().getNamespace(), window.getNamespacedKey().getKey(), key), true, templates);
     }
 
-    public ButtonAction<C> getAction() {
+    public CallbackButtonAction<C> getAction() {
         return action;
     }
 
-    @Deprecated
-    public ButtonState<C> setAction(ButtonAction<C> action) {
-        this.action = action;
-        return this;
-    }
-
-    public ButtonRender<C> getRenderAction() {
+    public CallbackButtonRender<C> getRenderAction() {
         return buttonRender;
     }
 
-    @Deprecated
-    public ButtonState<C> setRenderAction(ButtonRender<C> renderAction) {
-        this.buttonRender = renderAction;
-        return this;
-    }
-
-    public ButtonPreRender<C> getPrepareRender() {
+    public CallbackButtonPreRender<C> getPrepareRender() {
         return prepareRender;
     }
 
-    @Deprecated
-    public ButtonState<C> setPrepareRender(ButtonPreRender<C> prepareRender) {
-        this.prepareRender = prepareRender;
-        return this;
-    }
-
-    public ButtonPostAction<C> getPostAction() {
+    public CallbackButtonPostAction<C> getPostAction() {
         return postAction;
-    }
-
-    @Deprecated
-    public ButtonState<C> setPostAction(ButtonPostAction<C> postAction) {
-        this.postAction = postAction;
-        return this;
     }
 
     /**
@@ -251,9 +219,9 @@ public class ButtonState<C extends CustomCache> {
      * You can get an instance of this builder via {@link ButtonState#of(GuiWindow, String)} or {@link ButtonState#of(GuiCluster, String)}.<br>
      * It can also be accessed via the button builders:
      * <ul>
-     *     <li>{@linkplain com.wolfyscript.utilities.bukkit.gui.button.buttons.ActionButton.Builder#state(Consumer)}</li>
-     *     <li>{@linkplain  com.wolfyscript.utilities.bukkit.gui.button.buttons.ToggleButton.Builder#enabledState(Consumer)} or {@linkplain com.wolfyscript.utilities.bukkit.gui.button.buttons.ToggleButton.Builder#disabledState(Consumer)}</li>
-     *     <li>{@linkplain com.wolfyscript.utilities.bukkit.gui.button.buttons.MultipleChoiceButton.Builder#addState(Consumer)}</li>
+     *     <li>{@linkplain ButtonAction.Builder#state(Consumer)}</li>
+     *     <li>{@linkplain  ButtonToggle.Builder#enabledState(Consumer)} or {@linkplain ButtonToggle.Builder#disabledState(Consumer)}</li>
+     *     <li>{@linkplain ButtonMultipleChoice.Builder#addState(Consumer)}</li>
      * </ul>
      * When the instance is provided via the Button builder, then the default key is equal to the button key.
      * </p>
@@ -268,10 +236,10 @@ public class ButtonState<C extends CustomCache> {
         private GuiCluster<C> cluster;
         private String key;
         private ItemStack icon;
-        private ButtonAction<C> action;
-        private ButtonRender<C> render;
-        private ButtonPreRender<C> preRender;
-        private ButtonPostAction<C> postAction;
+        private CallbackButtonAction<C> action;
+        private CallbackButtonRender<C> render;
+        private CallbackButtonPreRender<C> preRender;
+        private CallbackButtonPostAction<C> postAction;
 
         private Builder(GuiWindow<C> window, String key) {
             this(window.getCluster().getInventoryAPI(), window.getWolfyUtils(), key);
@@ -374,21 +342,8 @@ public class ButtonState<C extends CustomCache> {
          * @param action The action callback.
          * @return This button state for chaining.
          */
-        public Builder<C> action(@Nullable ButtonAction<C> action) {
+        public Builder<C> action(@Nullable CallbackButtonAction<C> action) {
             this.action = action;
-            return this;
-        }
-
-        /**
-         * Sets the render callback, that is called when the button is rendered.
-         *
-         * @deprecated Use the new {@link #render(CallbackButtonRender)} instead! The new callback provides a better solution for tags.
-         * @param buttonRender The render callback.
-         * @return This button state for chaining.
-         */
-        @Deprecated
-        public Builder<C> render(@Nullable ButtonRender<C> buttonRender) {
-            this.render = buttonRender;
             return this;
         }
 
@@ -409,7 +364,7 @@ public class ButtonState<C extends CustomCache> {
          * @param prepareRender The pre-render callback.
          * @return This button state for chaining.
          */
-        public Builder<C> preRender(@Nullable ButtonPreRender<C> prepareRender) {
+        public Builder<C> preRender(@Nullable CallbackButtonPreRender<C> prepareRender) {
             this.preRender = prepareRender;
             return this;
         }
@@ -420,7 +375,7 @@ public class ButtonState<C extends CustomCache> {
          * @param postAction The post-action callback.
          * @return This button state for chaining.
          */
-        public Builder<C> postAction(@Nullable ButtonPostAction<C> postAction) {
+        public Builder<C> postAction(@Nullable CallbackButtonPostAction<C> postAction) {
             this.postAction = postAction;
             return this;
         }

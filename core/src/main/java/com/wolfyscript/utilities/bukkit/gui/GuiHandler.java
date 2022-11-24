@@ -21,9 +21,11 @@ package com.wolfyscript.utilities.bukkit.gui;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonAction;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonRender;
+import com.wolfyscript.utilities.bukkit.gui.callback.CallbackButtonAction;
+import com.wolfyscript.utilities.bukkit.gui.callback.CallbackButtonRender;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
+import com.wolfyscript.utilities.bukkit.gui.callback.CallbackChatInput;
+import com.wolfyscript.utilities.bukkit.gui.callback.CallbackChatTabComplete;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +53,7 @@ import org.jetbrains.annotations.Nullable;
  *     <li>{@link CustomCache}</li>
  *     <li>Active {@link GuiCluster}</li>
  *     <li>The GUI history</li>
- *     <li>Possible active {@link ChatInputAction} and {@link ChatTabComplete}</li>
+ *     <li>Possible active {@link CallbackChatInput} and {@link CallbackChatTabComplete}</li>
  *     <li>Other necessary data.</li>
  * </ul>
  * <br>
@@ -64,8 +66,8 @@ public class GuiHandler<C extends CustomCache> implements Listener {
     private final InventoryAPI<C> invAPI;
     private final UUID uuid;
     private final Map<GuiCluster<C>, List<GuiWindow<C>>> clusterHistory;
-    private ChatInputAction<C> chatInputAction = null;
-    private ChatTabComplete<C> chatTabComplete = null;
+    private CallbackChatInput<C> chatInputAction = null;
+    private CallbackChatTabComplete<C> chatTabComplete = null;
     private GuiCluster<C> cluster = null;
     private boolean isWindowOpen = false;
     private boolean helpEnabled = false;
@@ -93,17 +95,6 @@ public class GuiHandler<C extends CustomCache> implements Listener {
     }
 
     /**
-     * Gets the WolfyUtilities instance that belongs to this GuiHandler.
-     *
-     * @return The WolfyUtilities instance.
-     * @deprecated Use {@link #getWolfyUtils()} instead.
-     */
-    @Deprecated
-    public WolfyUtilsBukkit getApi() {
-        return api;
-    }
-
-    /**
      * Gets the WolfyUtils instance that this GuiHandler belongs to.
      *
      * @return The WolfyUtilities instance.
@@ -123,7 +114,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
 
     /**
      * This method only returns null if the player is offline or not found!<br>
-     * If called directly in {@link GuiWindow#onUpdateSync(GuiUpdate)}, {@link GuiWindow#onUpdateAsync(GuiUpdate)}, {@link ButtonAction}, {@link ButtonRender}, etc. the player should always be available.<br>
+     * If called directly in {@link GuiWindow#onUpdateSync(GuiUpdate)}, {@link GuiWindow#onUpdateAsync(GuiUpdate)}, {@link CallbackButtonAction}, {@link CallbackButtonRender}, etc. the player should always be available.<br>
      * <strong>However, if called a few ticks later or in a scheduler, the returned value might be null, as the player might have disconnected.</strong>
      *
      * @return The active player of this handler, or null if the players is not found/offline.
@@ -147,16 +138,6 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      */
     public GuiCluster<C> getCluster() {
         return cluster;
-    }
-
-    /**
-     * Changes the current active {@link GuiCluster}
-     * @param currentGuiCluster The new active cluster.
-     * @deprecated This method should not be used, as it causes issues with the active {@link GuiWindow}s, etc.! Instead, make use of {@link #openCluster(String)} or {@link #openCluster(GuiCluster)}!
-     */
-    @Deprecated(forRemoval = true)
-    public void setCluster(GuiCluster<C> currentGuiCluster) {
-        this.cluster = currentGuiCluster;
     }
 
     /**
@@ -298,17 +279,6 @@ public class GuiHandler<C extends CustomCache> implements Listener {
     }
 
     /**
-     * Gets the complete history of all clusters.
-     *
-     * @return The complete history of all clusters.
-     * @deprecated This method will be removed in future versions. Use {@link #getHistory(GuiCluster)} instead.
-     */
-    @Deprecated(since = "4.16.6.1", forRemoval = true)
-    public Map<GuiCluster<C>, List<GuiWindow<C>>> getClusterHistory() {
-        return clusterHistory;
-    }
-
-    /**
      * Gets the history of the specified cluster.<br>
      * <b>It is not guaranteed that changes are reflected in the original List!</b>
      *
@@ -407,61 +377,61 @@ public class GuiHandler<C extends CustomCache> implements Listener {
     }
 
     /**
-     * @return If there is currently an active {@link ChatInputAction}, that will be called on chat input.
+     * @return If there is currently an active {@link CallbackChatInput}, that will be called on chat input.
      */
     public boolean isChatEventActive() {
         return getChatInputAction() != null;
     }
 
     /**
-     * @return The active {@link ChatInputAction} or null if not active.
+     * @return The active {@link CallbackChatInput} or null if not active.
      */
     @Nullable
-    public ChatInputAction<C> getChatInputAction() {
+    public CallbackChatInput<C> getChatInputAction() {
         return chatInputAction;
     }
 
     /**
-     * Set the {@link ChatInputAction} to be called on next chat input.
+     * Set the {@link CallbackChatInput} to be called on next chat input.
      *
-     * @param chatInputAction The new {@link ChatInputAction}
+     * @param chatInputAction The new {@link CallbackChatInput}
      */
-    public void setChatInputAction(ChatInputAction<C> chatInputAction) {
+    public void setChatInputAction(CallbackChatInput<C> chatInputAction) {
         this.chatInputAction = chatInputAction;
     }
 
     /**
-     * @return The active {@link ChatTabComplete} or null if not active.
+     * @return The active {@link CallbackChatTabComplete} or null if not active.
      */
     @Nullable
-    public ChatTabComplete<C> getChatTabComplete() {
+    public CallbackChatTabComplete<C> getChatTabComplete() {
         return chatTabComplete;
     }
 
     /**
-     * Set the {@link ChatTabComplete} to be used on the next Chat Input.
-     * Requires a {@link ChatInputAction} to be called!
+     * Set the {@link CallbackChatTabComplete} to be used on the next Chat Input.
+     * Requires a {@link CallbackChatInput} to be called!
      *
-     * @param chatTabComplete The new {@link ChatTabComplete}
+     * @param chatTabComplete The new {@link CallbackChatTabComplete}
      */
-    public void setChatTabComplete(ChatTabComplete<C> chatTabComplete) {
+    public void setChatTabComplete(CallbackChatTabComplete<C> chatTabComplete) {
         this.chatTabComplete = chatTabComplete;
     }
 
     /**
-     * @return If there is currently an active {@link ChatInputAction}, that will be used for the next chat input.
+     * @return If there is currently an active {@link CallbackChatInput}, that will be used for the next chat input.
      */
     public boolean hasChatTabComplete() {
         return chatTabComplete != null;
     }
 
     /**
-     * Sets both the {@link ChatInputAction} as well as the {@link ChatTabComplete}.
+     * Sets both the {@link CallbackChatInput} as well as the {@link CallbackChatTabComplete}.
      *
-     * @param chatInputAction The new {@link ChatInputAction}
-     * @param chatTabComplete The new {@link ChatTabComplete}
+     * @param chatInputAction The new {@link CallbackChatInput}
+     * @param chatTabComplete The new {@link CallbackChatTabComplete}
      */
-    public void setChatInput(@Nullable ChatInputAction<C> chatInputAction, @Nullable ChatTabComplete<C> chatTabComplete) {
+    public void setChatInput(@Nullable CallbackChatInput<C> chatInputAction, @Nullable CallbackChatTabComplete<C> chatTabComplete) {
         setChatInputAction(chatInputAction);
         setChatTabComplete(chatTabComplete);
     }
@@ -472,14 +442,6 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      */
     public void cancelChatInput() {
         setChatInput(null, null);
-    }
-
-    /**
-     * @deprecated Name is misleading with the introduction of additional ChatTabComplete
-     */
-    @Deprecated
-    public void cancelChatInputAction() {
-        cancelChatInput();
     }
 
     /**

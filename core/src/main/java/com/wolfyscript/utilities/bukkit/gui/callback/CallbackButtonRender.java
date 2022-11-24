@@ -16,11 +16,10 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.bukkit.gui.button;
+package com.wolfyscript.utilities.bukkit.gui.callback;
 
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
-import java.util.HashMap;
 import java.util.Optional;
 import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -31,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @param <C> The type of the {@link CustomCache}
  */
-public interface CallbackButtonRender<C extends CustomCache> extends ButtonRender<C> {
+public interface CallbackButtonRender<C extends CustomCache> {
 
     /**
      * Run when the button is rendered into the GUI.
@@ -47,11 +46,6 @@ public interface CallbackButtonRender<C extends CustomCache> extends ButtonRende
      * @return The itemStack that should be set into the GUI.
      */
     UpdateResult render(C cache, GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, ItemStack itemStack, int slot);
-
-    @Deprecated
-    default ItemStack render(HashMap<String, Object> values, C cache, GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, ItemStack itemStack, int slot, boolean helpEnabled) {
-        return render(cache, guiHandler, player, guiInventory, itemStack, slot).getItemStack();
-    }
 
     /**
      * Contains the data that is used to render the button.

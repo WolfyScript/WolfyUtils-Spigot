@@ -18,6 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.gui;
 
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
@@ -125,25 +126,12 @@ public class GuiUpdate<C extends CustomCache> {
      * @param slot          The slot the Button should be rendered in.
      * @param namespacedKey The NamespacedKey of the button. The namespace is the cluster key and the key is the button id.
      */
-    public void setButton(int slot, BukkitNamespacedKey namespacedKey) {
+    public void setButton(int slot, NamespacedKey namespacedKey) {
         Button<C> button = inventoryAPI.getButton(namespacedKey);
         if (button != null) {
             guiHandler.setButton(guiWindow, slot, namespacedKey.toString());
             renderButton(button, guiHandler, player, slot, guiHandler.isHelpEnabled());
         }
-    }
-
-    /**
-     * Used for easier access of buttons, but can be quite inefficient if you have the same buttons multiple times.
-     *
-     * @param slot       The slot the Button should be rendered in.
-     * @param clusterKey The cluster key.
-     * @param buttonId   The button id.
-     * @deprecated You can easily do mistakes using this method. It is recommended to use constants in your {@link GuiCluster} to save the {@link BukkitNamespacedKey}s and use {@link #setButton(int, BukkitNamespacedKey)} instead!
-     */
-    @Deprecated
-    public void setButton(int slot, String clusterKey, String buttonId) {
-        setButton(slot, new BukkitNamespacedKey(clusterKey, buttonId));
     }
 
     /**

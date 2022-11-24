@@ -20,20 +20,20 @@ package com.wolfyscript.utilities.bukkit.gui.button;
 
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.bukkit.chat.ChatColor;
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import com.wolfyscript.utilities.bukkit.gui.InventoryAPI;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
+import com.wolfyscript.utilities.bukkit.gui.callback.CallbackButtonRender;
+import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
+import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
-import com.wolfyscript.utilities.bukkit.chat.ChatColor;
-import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
@@ -104,40 +104,22 @@ public abstract class Button<C extends CustomCache> {
         return id;
     }
 
-    protected void applyItem(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, ButtonState<C> state, ItemStack item, int slot, boolean help) {
-        if (state.getRenderAction() instanceof CallbackButtonRender<C> renderTemplates) {
-            //No longer set default templates, that should be purely managed by the plugin.
-            CallbackButtonRender.UpdateResult updateResult = renderTemplates.render(guiHandler.getCustomCache(), guiHandler, player, guiInventory, item, slot);
-            Optional<ItemStack> customStack = updateResult.getCustomStack();
-            if (customStack.isPresent()) {
-                updateResult.getTagResolver().ifPresentOrElse(tagResolver -> inventory.setItem(slot, ItemUtils.replaceNameAndLore(MiniMessage.miniMessage(), customStack.get(), tagResolver)), () -> inventory.setItem(slot, customStack.get()));
-            } else {
-                inventory.setItem(slot, state.constructIcon(updateResult.getTagResolver().orElseGet(TagResolver::empty)));
-            }
+    protected void applyItem(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, ButtonState<C> state, ItemStack item, int slot) {
+        //No longer set default templates, that should be purely managed by the plugin.
+        CallbackButtonRender.UpdateResult updateResult = state.getRenderAction().render(guiHandler.getCustomCache(), guiHandler, player, guiInventory, item, slot);
+        Optional<ItemStack> customStack = updateResult.getCustomStack();
+        if (customStack.isPresent()) {
+            updateResult.getTagResolver().ifPresentOrElse(tagResolver -> inventory.setItem(slot, ItemUtils.replaceNameAndLore(MiniMessage.miniMessage(), customStack.get(), tagResolver)), () -> inventory.setItem(slot, customStack.get()));
         } else {
-            //Using the legacy placeholder system, with backwards compatibility of the new system.
-            HashMap<String, Object> values = new HashMap<>();
-            values.put("%plugin.version%", guiHandler.getApi().getPlugin().getDescription().getVersion());
-            if (guiHandler.getWindow() != null) {
-                values.put("%wolfyutilities.help%", guiHandler.getWindow().getHelpInformation());
-            }
-            if (state.getRenderAction() != null) {
-                item = state.getRenderAction().render(values, guiHandler.getCustomCache(), guiHandler, player, guiInventory, item, slot, help);
-            }
-            //Legacy key replacements.
-            inventory.setItem(slot, replaceKeysWithValue(item, values.entrySet().stream().collect(Collectors.toMap(entry -> "<" + guiHandler.getApi().getChat().convertOldPlaceholder(entry.getKey()) + ">", entry -> String.valueOf(entry.getValue())))));
+            inventory.setItem(slot, state.constructIcon(updateResult.getTagResolver().orElseGet(TagResolver::empty)));
         }
-    }
-
-    protected void applyItem(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, ButtonState<C> state, int slot, boolean help) {
-        applyItem(guiHandler, player, guiInventory, inventory, state, state.getIcon(), slot, help);
     }
 
     /**
      * Legacy method to replace placeholders in the ItemStack lore and name.
      *
      * @param itemStack The ItemStack
-     * @param values The placeholder keys and values.
+     * @param values    The placeholder keys and values.
      * @return The ItemStack with replaced lore and name.
      */
     @Deprecated
@@ -216,7 +198,7 @@ public abstract class Button<C extends CustomCache> {
         public void register() {
             B button = create();
             if (window != null) {
-               window.registerButton(button);
+                window.registerButton(button);
             } else if (cluster != null) {
                 cluster.registerButton(button);
             }

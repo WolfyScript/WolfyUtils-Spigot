@@ -16,14 +16,11 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.bukkit.gui.button.buttons;
+package com.wolfyscript.utilities.bukkit.gui.button;
 
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
-import com.wolfyscript.utilities.bukkit.gui.button.Button;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonState;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonType;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import com.wolfyscript.utilities.tuple.Pair;
 import java.io.IOException;
@@ -44,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @param <C> The type of the {@link CustomCache}
  */
-public class ToggleButton<C extends CustomCache> extends Button<C> {
+public class ButtonToggle<C extends CustomCache> extends Button<C> {
 
     private final Pair<ButtonState<C>, ButtonState<C>> states;
     private final boolean defaultState;
@@ -58,7 +55,7 @@ public class ToggleButton<C extends CustomCache> extends Button<C> {
      * @param state         The {@link ButtonState} that is rendered if the state is true.
      * @param state2        The {@link ButtonState} that is rendered if the state is false.
      */
-    ToggleButton(String id, boolean defaultState, @Nullable ToggleButton.StateFunction<C> stateFunction, @NotNull ButtonState<C> state, @NotNull ButtonState<C> state2) {
+    ButtonToggle(String id, boolean defaultState, @Nullable ButtonToggle.StateFunction<C> stateFunction, @NotNull ButtonState<C> state, @NotNull ButtonState<C> state2) {
         super(id, ButtonType.TOGGLE);
         this.defaultState = defaultState;
         states = new Pair<>(state, state2);
@@ -96,7 +93,7 @@ public class ToggleButton<C extends CustomCache> extends Button<C> {
 
     @Override
     public boolean execute(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, int slot, InventoryInteractEvent event) throws IOException {
-        boolean result = getState(guiHandler).getAction().execute(guiHandler.getCustomCache(), guiHandler, player, inventory, this, slot, event);
+        boolean result = getState(guiHandler).getAction().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, slot, event);
         settings.put(guiHandler, !settings.getOrDefault(guiHandler, defaultState));
         return result;
     }
@@ -113,13 +110,14 @@ public class ToggleButton<C extends CustomCache> extends Button<C> {
 
     @Override
     public void render(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, ItemStack itemStack, int slot, boolean help) {
-        applyItem(guiHandler, player, guiInventory, inventory, getState(guiHandler), slot, help);
+        ButtonState<C> activeState = getState(guiHandler);
+        applyItem(guiHandler, player, guiInventory, inventory, activeState, activeState.getIcon(), slot);
     }
 
     public interface StateFunction<C extends CustomCache> {
 
         /**
-         * Used to set the state for the {@link ToggleButton} depending on data from the cache or player, etc.
+         * Used to set the state for the {@link ButtonToggle} depending on data from the cache or player, etc.
          *
          * @param cache      The current cache of the GuiHandler
          * @param guiHandler The current GuiHandler.
@@ -132,7 +130,7 @@ public class ToggleButton<C extends CustomCache> extends Button<C> {
 
     }
 
-    public static class Builder<C extends CustomCache> extends Button.Builder<C, ToggleButton<C>, Builder<C>> {
+    public static class Builder<C extends CustomCache> extends Button.Builder<C, ButtonToggle<C>, Builder<C>> {
 
         protected boolean defaultState;
         protected StateFunction<C> stateFunction;
@@ -140,13 +138,13 @@ public class ToggleButton<C extends CustomCache> extends Button<C> {
         protected ButtonState.Builder<C> disabledStateBuilder;
 
         public Builder(GuiWindow<C> window, String id) {
-            super(window, id, (Class<ToggleButton<C>>) (Object) ToggleButton.class);
+            super(window, id, (Class<ButtonToggle<C>>) (Object) ButtonToggle.class);
             this.enabledStateBuilder = ButtonState.of(window, id);
             this.disabledStateBuilder = ButtonState.of(window, id);
         }
 
         public Builder(GuiCluster<C> cluster, String id) {
-            super(cluster, id, (Class<ToggleButton<C>>) (Object) ToggleButton.class);
+            super(cluster, id, (Class<ButtonToggle<C>>) (Object) ButtonToggle.class);
             this.enabledStateBuilder = ButtonState.of(cluster, id);
             this.disabledStateBuilder = ButtonState.of(cluster, id);
         }
@@ -172,8 +170,8 @@ public class ToggleButton<C extends CustomCache> extends Button<C> {
         }
 
         @Override
-        public ToggleButton<C> create() {
-            return new ToggleButton<>(key, defaultState, stateFunction, enabledStateBuilder.create(), disabledStateBuilder.create());
+        public ButtonToggle<C> create() {
+            return new ButtonToggle<>(key, defaultState, stateFunction, enabledStateBuilder.create(), disabledStateBuilder.create());
         }
     }
 }

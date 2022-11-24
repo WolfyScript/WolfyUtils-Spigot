@@ -16,40 +16,31 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.bukkit.gui.button.buttons;
+package com.wolfyscript.utilities.bukkit.gui.button;
 
-import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
-import com.wolfyscript.utilities.bukkit.chat.IBukkitChat;
-import com.wolfyscript.utilities.bukkit.gui.ChatInputAction;
-import com.wolfyscript.utilities.bukkit.gui.ChatTabComplete;
+import com.wolfyscript.utilities.bukkit.gui.callback.CallbackChatInput;
+import com.wolfyscript.utilities.bukkit.gui.callback.CallbackChatTabComplete;
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonAction;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonRender;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonState;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import java.io.IOException;
-import com.wolfyscript.utilities.bukkit.chat.ClickData;
 import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
-import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryInteractEvent;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * @param <C> The type of the {@link CustomCache}
  */
-public class ChatInputButton<C extends CustomCache> extends ActionButton<C> {
+public class ButtonChatInput<C extends CustomCache> extends ButtonAction<C> {
 
-    private ChatInputAction<C> action;
-    private ChatTabComplete<C> tabComplete;
+    private CallbackChatInput<C> action;
+    private CallbackChatTabComplete<C> tabComplete;
     private Component msg = null;
     private final boolean deprecated;
 
-    ChatInputButton(String id, ButtonState<C> buttonState) {
+    ButtonChatInput(String id, ButtonState<C> buttonState) {
         super(id, buttonState);
         this.deprecated = false;
     }
@@ -85,26 +76,26 @@ public class ChatInputButton<C extends CustomCache> extends ActionButton<C> {
         return true; //The click is always cancelled.
     }
 
-    public static class Builder<C extends CustomCache> extends AbstractBuilder<C, ChatInputButton<C>, Builder<C>> {
+    public static class Builder<C extends CustomCache> extends AbstractBuilder<C, ButtonChatInput<C>, Builder<C>> {
 
-        private ChatInputAction<C> action = null;
-        private ChatTabComplete<C> tabComplete = null;
+        private CallbackChatInput<C> action = null;
+        private CallbackChatTabComplete<C> tabComplete = null;
         private Component msg = null;
 
         public Builder(GuiWindow<C> window, String id) {
-            super(window, id, (Class<ChatInputButton<C>>) (Object) ChatInputButton.class);
+            super(window, id, (Class<ButtonChatInput<C>>) (Object) ButtonChatInput.class);
         }
 
         public Builder(GuiCluster<C> cluster, String id) {
-            super(cluster, id, (Class<ChatInputButton<C>>) (Object) ChatInputButton.class);
+            super(cluster, id, (Class<ButtonChatInput<C>>) (Object) ButtonChatInput.class);
         }
 
-        public Builder<C> inputAction(ChatInputAction<C> inputAction) {
+        public Builder<C> inputAction(CallbackChatInput<C> inputAction) {
             this.action = inputAction;
             return inst();
         }
 
-        public Builder<C> tabComplete(ChatTabComplete<C> tabComplete) {
+        public Builder<C> tabComplete(CallbackChatTabComplete<C> tabComplete) {
             this.tabComplete = tabComplete;
             return inst();
         }
@@ -115,8 +106,8 @@ public class ChatInputButton<C extends CustomCache> extends ActionButton<C> {
         }
 
         @Override
-        public ChatInputButton<C> create() {
-            var button = new ChatInputButton<>(key, stateBuilder.create());
+        public ButtonChatInput<C> create() {
+            var button = new ButtonChatInput<>(key, stateBuilder.create());
             button.msg = msg;
             button.action = action;
             button.tabComplete = tabComplete;

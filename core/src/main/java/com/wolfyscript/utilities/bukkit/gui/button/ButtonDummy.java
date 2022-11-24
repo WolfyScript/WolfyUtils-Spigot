@@ -16,30 +16,25 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.bukkit.gui.button.buttons;
+package com.wolfyscript.utilities.bukkit.gui.button;
 
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonRender;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonState;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonType;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import java.io.IOException;
 import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryInteractEvent;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * This Button acts as a dummy, it will not run the action, even if you set one for the ButtonState!
  *
  * @param <C> The type of the {@link CustomCache}
  */
-public class DummyButton<C extends CustomCache> extends ActionButton<C> {
+public class ButtonDummy<C extends CustomCache> extends ButtonAction<C> {
 
-    DummyButton(String id, ButtonState<C> state) {
+    ButtonDummy(String id, ButtonState<C> state) {
         super(id, ButtonType.DUMMY, state);
     }
 
@@ -48,19 +43,19 @@ public class DummyButton<C extends CustomCache> extends ActionButton<C> {
         return true;
     }
 
-    public static class Builder<C extends CustomCache> extends AbstractBuilder<C, DummyButton<C>, Builder<C>> {
+    public static class Builder<C extends CustomCache> extends AbstractBuilder<C, ButtonDummy<C>, Builder<C>> {
 
         public Builder(GuiWindow<C> window, String id) {
-            super(window, id, (Class<DummyButton<C>>) (Object) DummyButton.class);
+            super(window, id, (Class<ButtonDummy<C>>) (Object) ButtonDummy.class);
         }
 
         public Builder(GuiCluster<C> cluster, String id) {
-            super(cluster, id, (Class<DummyButton<C>>) (Object) DummyButton.class);
+            super(cluster, id, (Class<ButtonDummy<C>>) (Object) ButtonDummy.class);
         }
 
         @Override
-        public DummyButton<C> create() {
-            return new DummyButton<>(key, stateBuilder.create());
+        public ButtonDummy<C> create() {
+            return new ButtonDummy<>(key, stateBuilder.create());
         }
     }
 
