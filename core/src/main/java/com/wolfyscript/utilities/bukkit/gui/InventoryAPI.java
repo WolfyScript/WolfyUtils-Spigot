@@ -85,7 +85,7 @@ public class InventoryAPI<C extends CustomCache> implements Listener {
         return getGuiCluster(clusterID) != null;
     }
 
-    public GuiWindow<C> getGuiWindow(BukkitNamespacedKey namespacedKey) {
+    public GuiWindow<C> getGuiWindow(NamespacedKey namespacedKey) {
         GuiCluster<C> cluster = getGuiCluster(namespacedKey.getNamespace());
         return cluster != null ? cluster.getGuiWindow(namespacedKey.getKey()) : null;
     }
@@ -98,7 +98,7 @@ public class InventoryAPI<C extends CustomCache> implements Listener {
         getGuiHandler(player).openCluster(clusterID);
     }
 
-    public void openGui(Player player, BukkitNamespacedKey namespacedKey) {
+    public void openGui(Player player, NamespacedKey namespacedKey) {
         getGuiHandler(player).openWindow(namespacedKey);
     }
 

@@ -18,6 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.chat;
 
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
@@ -126,7 +127,7 @@ public interface IBukkitChat {
     void sendKey(Player player, GuiCluster<?> guiCluster, String msgKey);
 
     @Deprecated
-    void sendKey(Player player, @NotNull BukkitNamespacedKey windowKey, String msgKey);
+    void sendKey(Player player, @NotNull NamespacedKey windowKey, String msgKey);
 
     /**
      * Sends a global message of the Cluster to the player.
@@ -148,7 +149,7 @@ public interface IBukkitChat {
      * @param msgKey The key of the messages to send.
      */
     @Deprecated
-    void sendKey(Player player, BukkitNamespacedKey namespacedKey, String msgKey, Pair<String, String>... replacements);
+    void sendKey(Player player, NamespacedKey namespacedKey, String msgKey, Pair<String, String>... replacements);
 
     ClickEvent executable(Player player, boolean discard, ClickAction action);
 

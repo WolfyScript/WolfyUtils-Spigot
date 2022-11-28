@@ -18,6 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.gui;
 
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
@@ -153,7 +154,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      *
      * @param windowKey The {@link BukkitNamespacedKey} of the window, to reload and replace the active window with.
      */
-    public void reloadWindow(BukkitNamespacedKey windowKey) {
+    public void reloadWindow(NamespacedKey windowKey) {
         List<GuiWindow<C>> history = getHistory(invAPI.getGuiCluster(windowKey.getNamespace()));
         history.remove(history.get(0));
         openWindow(windowKey);
@@ -309,7 +310,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      *
      * @param windowNamespaceKey The key of the {@link GuiWindow}.
      */
-    public void openWindow(@NotNull BukkitNamespacedKey windowNamespaceKey) {
+    public void openWindow(@NotNull NamespacedKey windowNamespaceKey) {
         openWindow(invAPI.getGuiWindow(windowNamespaceKey));
     }
 

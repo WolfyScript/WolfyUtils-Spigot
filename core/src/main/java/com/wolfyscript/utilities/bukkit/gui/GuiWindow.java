@@ -18,6 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.gui;
 
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.TagResolverUtil;
 import com.wolfyscript.utilities.bukkit.chat.IBukkitChat;
@@ -75,7 +76,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<C> implements Listener {
 
     private final GuiCluster<C> cluster;
-    private final BukkitNamespacedKey namespacedKey;
+    private final NamespacedKey namespacedKey;
     private boolean forceSyncUpdate;
     private int titleUpdatePeriod = -1;
     private int titleUpdateDelay = 20;
@@ -308,7 +309,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      *
      * @return The NamespacedKey of this Window, consisting of the cluster key and this window key.
      */
-    public final BukkitNamespacedKey getNamespacedKey() {
+    public final NamespacedKey getNamespacedKey() {
         return namespacedKey;
     }
 

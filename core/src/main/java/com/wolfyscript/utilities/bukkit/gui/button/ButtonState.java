@@ -59,7 +59,7 @@ public class ButtonState<C extends CustomCache> {
 
     private WolfyUtilsBukkit wolfyUtilities;
     private String clusterID = null;
-    private BukkitNamespacedKey windowID = null;
+    private NamespacedKey windowID = null;
     private String key;
     private final ItemStack presetIcon;
     private ItemStack icon;
@@ -291,7 +291,7 @@ public class ButtonState<C extends CustomCache> {
          * @param buttonKey The namespaced key of the button.
          * @return This button state builder for chaining.
          */
-        public Builder<C> key(BukkitNamespacedKey buttonKey) {
+        public Builder<C> key(NamespacedKey buttonKey) {
             String clusterID = buttonKey.getNamespace();
             this.cluster = invApi.getGuiCluster(clusterID);
             Preconditions.checkArgument(this.cluster != null, "Error setting key of ButtonState: Cluster \"" + clusterID + "\" does not exist!");

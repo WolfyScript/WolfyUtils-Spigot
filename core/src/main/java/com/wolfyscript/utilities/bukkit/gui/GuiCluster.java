@@ -18,6 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.gui;
 
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonAction;
@@ -46,7 +47,7 @@ public abstract class GuiCluster<C extends CustomCache> extends GuiMenuComponent
     private final String id;
     private final Map<String, GuiWindow<C>> guiWindows;
 
-    private BukkitNamespacedKey entry;
+    private NamespacedKey entry;
 
     protected GuiCluster(InventoryAPI<C> inventoryAPI, String id) {
         super(inventoryAPI);
@@ -67,7 +68,7 @@ public abstract class GuiCluster<C extends CustomCache> extends GuiMenuComponent
      *
      * @return The namespaced key of the entrypoint window.
      */
-    public BukkitNamespacedKey getEntry() {
+    public NamespacedKey getEntry() {
         return entry;
     }
 
@@ -76,7 +77,7 @@ public abstract class GuiCluster<C extends CustomCache> extends GuiMenuComponent
      *
      * @param entry The namespaced key of the {@link GuiWindow}. See {@link GuiWindow#getNamespacedKey()}
      */
-    protected void setEntry(BukkitNamespacedKey entry) {
+    protected void setEntry(NamespacedKey entry) {
         this.entry = entry;
     }
 
