@@ -53,7 +53,7 @@ import java.util.Optional;
 @JsonTypeResolver(KeyedTypeResolver.class)
 @JsonTypeIdResolver(KeyedTypeIdResolver.class)
 @OptionalValueDeserializer(deserializer = QueryNode.OptionalValueDeserializer.class, delegateObjectDeserializer = true)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, property = "type", defaultImpl = QueryNodeCompound.class)
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonPropertyOrder(value = {"type"})
 public abstract class QueryNode<VAL> implements Keyed {
