@@ -100,6 +100,10 @@
     </distributionManagement>
 
     <repositories>
+        <repository>
+            <id>sk89q-repo</id>
+            <url>https://maven.enginehub.org/repo/</url>
+        </repository>
         <!--
         WolfyScript private repo
         This repository requires you to have credentials to access private plugins.
