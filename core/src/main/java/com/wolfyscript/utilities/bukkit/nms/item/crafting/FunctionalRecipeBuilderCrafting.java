@@ -1,5 +1,6 @@
 package com.wolfyscript.utilities.bukkit.nms.item.crafting;
 
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import java.util.Optional;
 import org.bukkit.inventory.CraftingInventory;
@@ -9,7 +10,7 @@ public abstract class FunctionalRecipeBuilderCrafting extends FunctionalRecipeBu
 
     protected ItemStack result;
 
-    public FunctionalRecipeBuilderCrafting(BukkitNamespacedKey key, ItemStack result) {
+    public FunctionalRecipeBuilderCrafting(NamespacedKey key, ItemStack result) {
         super(key);
         this.result = result;
         this.recipeMatcher = null;
@@ -21,7 +22,7 @@ public abstract class FunctionalRecipeBuilderCrafting extends FunctionalRecipeBu
         return result;
     }
 
-    public BukkitNamespacedKey getKey() {
+    public NamespacedKey getKey() {
         return key;
     }
 
