@@ -24,7 +24,6 @@ public class WolfyUtilsItemReference extends ItemReference {
 
     @JsonCreator
     public WolfyUtilsItemReference(@JacksonInject WolfyUtils wolfyUtils, @JsonProperty("itemID") NamespacedKey itemID) {
-        //TODO: Inject WolfyCore instance!
         super(wolfyUtils);
         this.itemID = itemID;
     }

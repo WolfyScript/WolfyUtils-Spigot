@@ -115,33 +115,4 @@ public abstract class ItemReference implements Keyed, Copyable<ItemReference> {
 
     }
 
-    /**
-     * Parser used to receive the correct {@link ItemReference} from {@link ItemStack}s.
-     *
-     * @param <T> The type of the {@link ItemReference}
-     */
-    public abstract static class AbstractParser<T extends ItemReference> implements Keyed {
-
-        protected final NamespacedKey id;
-        protected final int priority;
-        final Class<T> type;
-
-        protected AbstractParser(NamespacedKey id, int priority, Class<T> type) {
-            this.id = id;
-            this.priority = priority;
-            this.type = type;
-        }
-
-        public abstract Optional<T> parseFromStack(WolfyUtils wolfyUtils, ItemStack stack);
-
-        public int getPriority() {
-            return priority;
-        }
-
-        @Override
-        public NamespacedKey getNamespacedKey() {
-            return id;
-        }
-    }
-
 }

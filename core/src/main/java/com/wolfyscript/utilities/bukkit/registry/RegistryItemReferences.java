@@ -20,8 +20,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class RegistryItemReferences extends UniqueTypeRegistrySimple<ItemReference> {
 
-    private final Map<NamespacedKey, ItemReference.AbstractParser<?>> parserMap = new HashMap<>();
-    private List<ItemReference.AbstractParser<?>> priorityIndexedParsers = new ArrayList<>();
+    private final Map<NamespacedKey, ItemReferenceParserSettings.Creator.AbstractParser<?>> parserMap = new HashMap<>();
+    private List<ItemReferenceParserSettings.Creator.AbstractParser<?>> priorityIndexedParsers = new ArrayList<>();
 
     public RegistryItemReferences(Registries registries) {
         super(new BukkitNamespacedKey((WolfyCoreBukkit) registries.getCore(), "item_references"), registries);
@@ -33,7 +33,7 @@ public class RegistryItemReferences extends UniqueTypeRegistrySimple<ItemReferen
             Objects.requireNonNull(key, "Can't register value " + value.getName() + " because key is null!");
             Preconditions.checkState(!this.map.containsKey(key), "namespaced key '%s' already has an associated value!", key);
             map.put(key, value);
-            ItemReference.AbstractParser<?> parser = ItemReferenceParserSettings.Creator.constructParser(key, value);
+            ItemReferenceParserSettings.Creator.AbstractParser<?> parser = ItemReferenceParserSettings.Creator.constructParser(key, value);
             parserMap.put(key, parser);
             reIndexParsers();
         }
@@ -48,7 +48,7 @@ public class RegistryItemReferences extends UniqueTypeRegistrySimple<ItemReferen
             reIndexParsers();
         }
         Optional<? extends ItemReference> reference;
-        for (ItemReference.AbstractParser<?> parser : priorityIndexedParsers) {
+        for (ItemReferenceParserSettings.Creator.AbstractParser<?> parser : priorityIndexedParsers) {
             reference = parser.parseFromStack(wolfyUtils, stack);
             if (reference.isPresent()) {
                 return reference.get();
@@ -58,6 +58,6 @@ public class RegistryItemReferences extends UniqueTypeRegistrySimple<ItemReferen
     }
 
     private void reIndexParsers() {
-        priorityIndexedParsers = parserMap.values().stream().filter(Objects::nonNull).sorted(Comparator.comparingInt(ItemReference.AbstractParser::getPriority)).toList();
+        priorityIndexedParsers = parserMap.values().stream().filter(Objects::nonNull).sorted(Comparator.comparingInt(ItemReferenceParserSettings.Creator.AbstractParser::getPriority)).toList();
     }
 }

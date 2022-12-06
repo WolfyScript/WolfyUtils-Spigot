@@ -2,6 +2,7 @@ package com.wolfyscript.utilities.bukkit.world.items.reference;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.wolfyscript.utilities.Keyed;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.common.WolfyUtils;
@@ -39,7 +40,7 @@ public @interface ItemReferenceParserSettings {
 
     class Creator {
 
-        public static <R extends ItemReference> ItemReference.AbstractParser<R> constructParser(NamespacedKey id, Class<R> itemReferenceType) {
+        public static <R extends ItemReference> AbstractParser<R> constructParser(NamespacedKey id, Class<R> itemReferenceType) {
             ItemReferenceParserSettings annotation = itemReferenceType.getAnnotation(ItemReferenceParserSettings.class);
             if (annotation == null) {
                 // Annotation is not specified! No parser!
@@ -49,7 +50,7 @@ public @interface ItemReferenceParserSettings {
                 // Specified Custom Parse class!
                 try {
                     Constructor<?> constructor = annotation.parser().getConstructor();
-                    ItemReference.AbstractParser<?> unTypedParser = (ItemReference.AbstractParser<?>) constructor.newInstance();
+                    AbstractParser<?> unTypedParser = (AbstractParser<?>) constructor.newInstance();
                     if (unTypedParser.type != itemReferenceType) {
                         // Invalid type!
                         return null;
@@ -60,14 +61,14 @@ public @interface ItemReferenceParserSettings {
                     final String plugin = annotation.plugin();
 
                     if (plugin == null) {
-                        return new ItemReference.AbstractParser<>(id, priority, itemReferenceType) {
+                        return new AbstractParser<>(id, priority, itemReferenceType) {
                             @Override
                             public Optional<R> parseFromStack(WolfyUtils wolfyUtils, ItemStack stack) {
                                 return parser.parseFromStack(wolfyUtils, stack);
                             }
                         };
                     }
-                    return new ItemReference.AbstractParser<>(id, priority, itemReferenceType) {
+                    return new AbstractParser<>(id, priority, itemReferenceType) {
                         @Override
                         public Optional<R> parseFromStack(WolfyUtils wolfyUtils, ItemStack stack) {
                             if (!((WolfyCoreBukkit)wolfyUtils.getCore()).getCompatibilityManager().getPlugins().isPluginEnabled(plugin)) {
@@ -86,6 +87,35 @@ public @interface ItemReferenceParserSettings {
                 return null;
             }
             return null;
+        }
+
+        /**
+         * Parser used to receive the correct {@link ItemReference} from {@link ItemStack}s.
+         *
+         * @param <T> The type of the {@link ItemReference}
+         */
+        public abstract static class AbstractParser<T extends ItemReference> implements Keyed {
+
+            protected final NamespacedKey id;
+            protected final int priority;
+            final Class<T> type;
+
+            protected AbstractParser(NamespacedKey id, int priority, Class<T> type) {
+                this.id = id;
+                this.priority = priority;
+                this.type = type;
+            }
+
+            public abstract Optional<T> parseFromStack(WolfyUtils wolfyUtils, ItemStack stack);
+
+            public int getPriority() {
+                return priority;
+            }
+
+            @Override
+            public NamespacedKey getNamespacedKey() {
+                return id;
+            }
         }
 
     }
