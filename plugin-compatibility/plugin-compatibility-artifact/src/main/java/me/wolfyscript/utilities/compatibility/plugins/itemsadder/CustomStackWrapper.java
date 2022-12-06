@@ -18,6 +18,7 @@
 
 package me.wolfyscript.utilities.compatibility.plugins.itemsadder;
 
+import com.wolfyscript.utilities.bukkit.compatibility.plugins.itemsadder.CustomStack;
 import java.util.Optional;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;

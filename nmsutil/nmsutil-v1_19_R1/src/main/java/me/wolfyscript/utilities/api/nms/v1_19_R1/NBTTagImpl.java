@@ -18,20 +18,20 @@
 
 package me.wolfyscript.utilities.api.nms.v1_19_R1;
 
-import me.wolfyscript.utilities.api.nms.NBTTag;
-import me.wolfyscript.utilities.api.nms.nbt.NBTCompound;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagByte;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagByteArray;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagDouble;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagEnd;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagFloat;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagInt;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagIntArray;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagList;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagLong;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagLongArray;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagShort;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagString;
+import com.wolfyscript.utilities.bukkit.nms.api.NBTTag;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTCompound;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagByte;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagByteArray;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagDouble;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagEnd;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagFloat;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagInt;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagIntArray;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagList;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagLong;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagLongArray;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagShort;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagString;
 import me.wolfyscript.utilities.api.nms.v1_19_R1.nbt.NBTTagByteArrayImpl;
 import me.wolfyscript.utilities.api.nms.v1_19_R1.nbt.NBTTagByteImpl;
 import me.wolfyscript.utilities.api.nms.v1_19_R1.nbt.NBTTagCompoundImpl;

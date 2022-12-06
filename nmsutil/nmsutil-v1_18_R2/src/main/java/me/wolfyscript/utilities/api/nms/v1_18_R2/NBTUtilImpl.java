@@ -18,9 +18,9 @@
 
 package me.wolfyscript.utilities.api.nms.v1_18_R2;
 
-import me.wolfyscript.utilities.api.nms.NBTUtil;
-import me.wolfyscript.utilities.api.nms.NMSUtil;
-import me.wolfyscript.utilities.api.nms.nbt.NBTItem;
+import com.wolfyscript.utilities.bukkit.nms.api.NBTUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.NMSUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTItem;
 import me.wolfyscript.utilities.api.nms.v1_18_R2.nbt.NBTItemImpl;
 import org.bukkit.inventory.ItemStack;
 

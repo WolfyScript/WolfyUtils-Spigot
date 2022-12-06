@@ -18,8 +18,8 @@
 
 package me.wolfyscript.utilities.api.nms.v1_18_R2.nbt;
 
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagShort;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagType;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagShort;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagType;
 import net.minecraft.nbt.ShortTag;
 
 public class NBTTagShortImpl extends NBTNumberImpl<ShortTag> implements NBTTagShort {

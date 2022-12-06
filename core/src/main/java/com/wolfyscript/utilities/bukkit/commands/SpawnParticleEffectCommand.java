@@ -18,12 +18,16 @@
 
 package com.wolfyscript.utilities.bukkit.commands;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.api.chat.Chat;
-import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.particles.ParticleEffect;
-import me.wolfyscript.utilities.util.particles.animators.AnimatorSphere;
-import me.wolfyscript.utilities.util.particles.timer.TimerLinear;
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import com.wolfyscript.utilities.bukkit.world.particles.ParticleEffect;
+import com.wolfyscript.utilities.bukkit.world.particles.animators.AnimatorSphere;
+import com.wolfyscript.utilities.bukkit.world.particles.timer.TimerLinear;
 import org.bukkit.Particle;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -33,20 +37,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 public class SpawnParticleEffectCommand implements CommandExecutor, TabCompleter {
 
     private final List<String> COMMANDS = List.of("spawn");
 
-    private final WolfyUtilities wolfyUtilities;
-    private final Chat chat;
+    private final WolfyUtilsBukkit wolfyUtils;
+    private final BukkitChat chat;
 
-    public SpawnParticleEffectCommand(WolfyUtilities wolfyUtilities) {
-        this.wolfyUtilities = wolfyUtilities;
-        this.chat = wolfyUtilities.getChat();
+    public SpawnParticleEffectCommand(WolfyUtilsBukkit wolfyUtils) {
+        this.wolfyUtils = wolfyUtils;
+        this.chat = wolfyUtils.getChat();
     }
 
     @Override
@@ -54,11 +54,11 @@ public class SpawnParticleEffectCommand implements CommandExecutor, TabCompleter
         if (commandSender instanceof Player player) {
             if (args.length > 0) {
                 if (args[0].equalsIgnoreCase("spawn")) {
-                    if (wolfyUtilities.getPermissions().hasPermission(commandSender, "wolfyutilities.command.particle_effect.spawn")) {
+                    if (wolfyUtils.getPermissions().hasPermission(commandSender, "wolfyutilities.command.particle_effect.spawn")) {
                         var block = player.getTargetBlockExact(10);
                         if (block != null) {
                             var particleEffect = new ParticleEffect(Particle.FLAME);
-                            particleEffect.setKey(NamespacedKey.wolfyutilties("test"));
+                            particleEffect.setKey(BukkitNamespacedKey.wolfyutilties("test"));
                             particleEffect.setTimeSupplier(new TimerLinear(0.1, 40));
                             particleEffect.setAnimator(new AnimatorSphere(2));
                             particleEffect.spawn(block);
@@ -73,14 +73,14 @@ public class SpawnParticleEffectCommand implements CommandExecutor, TabCompleter
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         List<String> results = new ArrayList<>();
-        if (wolfyUtilities.getPermissions().hasPermission(commandSender, "wolfyutilities.command.particle_effect.complete")) {
+        if (wolfyUtils.getPermissions().hasPermission(commandSender, "wolfyutilities.command.particle_effect.complete")) {
             if (commandSender instanceof Player player) {
                 if (args.length > 1) {
                     if (args[0].equalsIgnoreCase("spawn")) {
                         switch (args.length) {
                             case 2:
                                 List<String> effects = new ArrayList<>();
-                                for (NamespacedKey namespacedKey : wolfyUtilities.getRegistries().getParticleEffects().keySet()) {
+                                for (NamespacedKey namespacedKey : wolfyUtils.getRegistries().getParticleEffects().keySet()) {
                                     effects.add(namespacedKey.toString());
                                 }
                                 StringUtil.copyPartialMatches(args[1], effects, results);

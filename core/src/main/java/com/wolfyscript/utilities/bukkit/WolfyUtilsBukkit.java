@@ -1,27 +1,24 @@
 package com.wolfyscript.utilities.bukkit;
 
-import com.wolfyscript.utilities.common.WolfyCore;
-import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.common.chat.Chat;
+import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
+import com.wolfyscript.utilities.bukkit.config.ConfigAPI;
+import com.wolfyscript.utilities.bukkit.console.Console;
+import com.wolfyscript.utilities.bukkit.gui.InventoryAPI;
+import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
+import com.wolfyscript.utilities.bukkit.world.items.BookUtil;
 import com.wolfyscript.utilities.bukkit.language.LangAPISpigot;
-import me.wolfyscript.utilities.api.Permissions;
-import me.wolfyscript.utilities.api.WolfyUtilities;
-import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
-import me.wolfyscript.utilities.api.config.ConfigAPI;
-import me.wolfyscript.utilities.api.console.Console;
-import me.wolfyscript.utilities.api.inventory.BookUtil;
-import me.wolfyscript.utilities.api.inventory.gui.InventoryAPI;
-import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
-import me.wolfyscript.utilities.api.language.LanguageAPI;
-import me.wolfyscript.utilities.api.network.messages.MessageAPI;
-import me.wolfyscript.utilities.api.nms.NMSUtil;
-import me.wolfyscript.utilities.registry.Registries;
-import me.wolfyscript.utilities.util.exceptions.InvalidCacheTypeException;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
-
+import com.wolfyscript.utilities.bukkit.network.messages.MessageAPI;
+import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
+import com.wolfyscript.utilities.common.Identifiers;
+import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.common.language.LanguageAPI;
+import com.wolfyscript.utilities.exceptions.InvalidCacheTypeException;
 import java.io.File;
 import java.util.Locale;
+import java.util.logging.Logger;
+import com.wolfyscript.utilities.bukkit.nms.api.NMSUtil;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 
 public class WolfyUtilsBukkit extends WolfyUtils {
 
@@ -29,13 +26,14 @@ public class WolfyUtilsBukkit extends WolfyUtils {
 
     private final Plugin plugin;
 
-    private final Chat chat;
+    private final BukkitChat chat;
     private final LanguageAPI languageAPI;
     private final Console console;
     private final Permissions permissions;
     private final BookUtil bookUtil;
     private final MessageAPI messageAPI;
     private final NMSUtil nmsUtil;
+    private final Identifiers identifiers;
 
     private String dataBasePrefix;
     private final ConfigAPI configAPI;
@@ -43,19 +41,28 @@ public class WolfyUtilsBukkit extends WolfyUtils {
 
     private final boolean initialize;
 
-    protected WolfyUtilsBukkit(WolfyCoreBukkit core, Plugin plugin, Class<? extends CustomCache> cacheType, boolean init) {
+    WolfyUtilsBukkit(WolfyCoreBukkit core, Plugin plugin, Class<? extends CustomCache> customCacheClass) {
+        this(core, plugin, customCacheClass, false);
+    }
+
+    WolfyUtilsBukkit(WolfyCoreBukkit core, Plugin plugin, boolean init) {
+        this(core, plugin, CustomCache.class, init);
+    }
+
+    WolfyUtilsBukkit(WolfyCoreBukkit core, Plugin plugin, Class<? extends CustomCache> cacheType, boolean init) {
         this.core = core;
         this.plugin = plugin;
         this.languageAPI = new LangAPISpigot(this);
-        this.chat = new ChatImpl(this);
-        this.console = new Console((WolfyUtilities) this);
+        this.chat = new BukkitChat(this);
+        this.console = new Console(this);
         this.permissions = new Permissions(this);
-        this.bookUtil = new BookUtil((WolfyUtilities) this);
-        this.messageAPI = new MessageAPI((WolfyUtilities) this);
-        this.nmsUtil = NMSUtil.create((WolfyUtilities) this);
+        this.bookUtil = new BookUtil(this);
+        this.messageAPI = new MessageAPI(this);
+        this.nmsUtil = NMSUtil.create(this);
         this.dataBasePrefix = getName().toLowerCase(Locale.ROOT) + "_";
-        this.configAPI = new ConfigAPI((WolfyUtilities) this);
-        this.inventoryAPI = new InventoryAPI<>(plugin, (WolfyUtilities) this, cacheType);
+        this.configAPI = new ConfigAPI(this);
+        this.inventoryAPI = new InventoryAPI<>(plugin, this, cacheType);
+        this.identifiers = new BukkitIdentifiers(this);
         this.initialize = init;
     }
 
@@ -65,11 +72,11 @@ public class WolfyUtilsBukkit extends WolfyUtils {
     }
 
     @Override
-    public WolfyCore getCore() {
+    public WolfyCoreBukkit getCore() {
         return core;
     }
 
-    public Registries getRegistries() {
+    public BukkitRegistries getRegistries() {
         return core.getRegistries();
     }
 
@@ -83,6 +90,11 @@ public class WolfyUtilsBukkit extends WolfyUtils {
         return plugin.getDataFolder();
     }
 
+    @Override
+    public Logger getLogger() {
+        return plugin.getLogger();
+    }
+
     /**
      * @return The {@link LanguageAPI} instance.
      * @see LanguageAPI More information about the Language API
@@ -93,8 +105,13 @@ public class WolfyUtilsBukkit extends WolfyUtils {
     }
 
     @Override
-    public Chat getChat() {
+    public BukkitChat getChat() {
         return chat;
+    }
+
+    @Override
+    public Identifiers getIdentifiers() {
+        return identifiers;
     }
 
     /**
@@ -184,7 +201,7 @@ public class WolfyUtilsBukkit extends WolfyUtils {
         if (hasInventoryAPI() && type.isInstance(inventoryAPI.getCacheInstance())) {
             return (InventoryAPI<T>) inventoryAPI;
         } else if (!hasInventoryAPI()) {
-            InventoryAPI<T> newInventoryAPI = new InventoryAPI<>(plugin, (WolfyUtilities) this, type);
+            InventoryAPI<T> newInventoryAPI = new InventoryAPI<>(plugin, this, type);
             inventoryAPI = newInventoryAPI;
             return newInventoryAPI;
         }

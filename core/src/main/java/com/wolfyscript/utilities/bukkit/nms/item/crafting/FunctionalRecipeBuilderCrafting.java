@@ -1,7 +1,8 @@
 package com.wolfyscript.utilities.bukkit.nms.item.crafting;
 
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import java.util.Optional;
-import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 

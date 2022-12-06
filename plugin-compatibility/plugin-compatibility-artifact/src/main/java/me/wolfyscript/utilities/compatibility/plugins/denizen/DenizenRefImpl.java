@@ -6,10 +6,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import java.util.Objects;
-import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
+import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.plugins.DenizenIntegrationImpl;
-import me.wolfyscript.utilities.util.inventory.ItemUtils;
+import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 

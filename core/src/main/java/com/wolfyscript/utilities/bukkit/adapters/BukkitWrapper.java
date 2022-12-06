@@ -2,6 +2,7 @@ package com.wolfyscript.utilities.bukkit.adapters;
 
 import com.wolfyscript.utilities.common.adapters.Entity;
 import com.wolfyscript.utilities.common.adapters.Location;
+import com.wolfyscript.utilities.common.adapters.Player;
 import com.wolfyscript.utilities.common.adapters.World;
 
 public class BukkitWrapper {
@@ -16,5 +17,9 @@ public class BukkitWrapper {
 
     public static World adapt(org.bukkit.World world) {
         return new WorldImpl(world);
+    }
+
+    public static Player adapt(org.bukkit.entity.Player player) {
+        return new PlayerImpl(player);
     }
 }

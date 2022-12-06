@@ -1,8 +1,8 @@
 package me.wolfyscript.utilities.api.nms.v1_16_R2;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import me.wolfyscript.utilities.api.nms.ItemUtil;
-import me.wolfyscript.utilities.api.nms.NMSUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.ItemUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.NMSUtil;
 import net.minecraft.server.v1_16_R2.ItemStack;
 import net.minecraft.server.v1_16_R2.MojangsonParser;
 import net.minecraft.server.v1_16_R2.NBTCompressedStreamTools;

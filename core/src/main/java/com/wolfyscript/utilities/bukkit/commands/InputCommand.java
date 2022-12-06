@@ -19,8 +19,10 @@
 package com.wolfyscript.utilities.bukkit.commands;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.api.inventory.gui.GuiHandler;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
+import java.util.List;
+import java.util.Objects;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -28,9 +30,6 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Objects;
 
 public class InputCommand implements TabExecutor {
 
@@ -44,10 +43,10 @@ public class InputCommand implements TabExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof Player player) {
             plugin.getAPIList().parallelStream()
-                    .filter(WolfyUtilities::hasInventoryAPI)
+                    .filter(WolfyUtilsBukkit::hasInventoryAPI)
                     .map(wolfyUtilities -> wolfyUtilities.getInventoryAPI().getGuiHandler(player))
                     .filter(GuiHandler::isChatEventActive)
-                    .forEach(guiHandler -> Bukkit.getScheduler().runTask(WolfyUtilities.getWUPlugin(), () -> {
+                    .forEach(guiHandler -> Bukkit.getScheduler().runTask(plugin, () -> {
                         //Handles ChatInput
                         if (!guiHandler.onChat(player, String.join(" ", args).trim(), args)) {
                             guiHandler.setChatInputAction(null);
@@ -65,7 +64,7 @@ public class InputCommand implements TabExecutor {
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         if (sender instanceof Player player) {
             return plugin.getAPIList().stream()
-                    .filter(WolfyUtilities::hasInventoryAPI)
+                    .filter(WolfyUtilsBukkit::hasInventoryAPI)
                     .map(wolfyUtilities -> wolfyUtilities.getInventoryAPI().getGuiHandler(player))
                     .filter(guiHandler -> guiHandler.isChatEventActive() && guiHandler.hasChatTabComplete())
                     .map(guiHandler -> guiHandler.getChatTabComplete().onTabComplete(guiHandler, player, args)).filter(Objects::nonNull).findFirst().orElse(null);

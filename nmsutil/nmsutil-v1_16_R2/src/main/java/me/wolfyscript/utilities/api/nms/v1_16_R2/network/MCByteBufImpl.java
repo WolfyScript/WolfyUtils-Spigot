@@ -4,10 +4,10 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.Unpooled;
 import io.netty.util.ByteProcessor;
-import me.wolfyscript.utilities.api.nms.nbt.NBTCompound;
-import me.wolfyscript.utilities.api.nms.network.MCByteBuf;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTCompound;
+import com.wolfyscript.utilities.bukkit.nms.api.network.MCByteBuf;
 import me.wolfyscript.utilities.api.nms.v1_16_R2.nbt.NBTTagCompoundImpl;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import net.minecraft.server.v1_16_R2.MinecraftKey;
 import net.minecraft.server.v1_16_R2.PacketDataSerializer;
 import org.bukkit.craftbukkit.v1_16_R2.inventory.CraftItemStack;
@@ -169,12 +169,12 @@ public class MCByteBufImpl implements MCByteBuf {
     }
 
     @Override
-    public NamespacedKey readNamespacedKey() {
-        return NamespacedKey.of(this.byteBuf.p().toString());
+    public BukkitNamespacedKey readNamespacedKey() {
+        return BukkitNamespacedKey.of(this.byteBuf.p().toString());
     }
 
     @Override
-    public MCByteBuf writeNamespacedKey(NamespacedKey namespacedKey) {
+    public MCByteBuf writeNamespacedKey(BukkitNamespacedKey namespacedKey) {
         this.byteBuf.a(MinecraftKey.a(namespacedKey.toString()));
         return this;
     }

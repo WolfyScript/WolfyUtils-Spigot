@@ -1,7 +1,7 @@
 package me.wolfyscript.utilities.api.nms.v1_16_R3.nbt;
 
-import me.wolfyscript.utilities.api.nms.nbt.NBTBase;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagType;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTBase;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;

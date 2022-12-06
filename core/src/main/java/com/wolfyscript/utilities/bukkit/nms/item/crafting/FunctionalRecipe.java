@@ -1,13 +1,13 @@
 package com.wolfyscript.utilities.bukkit.nms.item.crafting;
 
-import me.wolfyscript.utilities.util.Keyed;
+import com.wolfyscript.utilities.Keyed;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import java.util.List;
+import java.util.Optional;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.List;
-import java.util.Optional;
 
 public interface FunctionalRecipe<T extends Inventory> extends Keyed {
 
@@ -23,7 +23,7 @@ public interface FunctionalRecipe<T extends Inventory> extends Keyed {
         } catch (RuntimeException e) {
             Bukkit.getLogger().severe("Error occurred when checking recipe! Removing " + getNamespacedKey() + "");
             e.printStackTrace();
-            Bukkit.removeRecipe(getNamespacedKey().bukkit());
+            Bukkit.removeRecipe(((BukkitNamespacedKey) getNamespacedKey()).bukkit());
         }
         return false;
     }
@@ -34,7 +34,7 @@ public interface FunctionalRecipe<T extends Inventory> extends Keyed {
         } catch (RuntimeException e) {
             Bukkit.getLogger().severe("Error occurred when assembling recipe! Removing " + getNamespacedKey() + "");
             e.printStackTrace();
-            Bukkit.removeRecipe(getNamespacedKey().bukkit());
+            Bukkit.removeRecipe(((BukkitNamespacedKey) getNamespacedKey()).bukkit());
         }
         return Optional.empty();
     }
@@ -45,7 +45,7 @@ public interface FunctionalRecipe<T extends Inventory> extends Keyed {
         } catch (RuntimeException e) {
             Bukkit.getLogger().severe("Error occurred when consuming recipe! Removing " + getNamespacedKey() + "");
             e.printStackTrace();
-            Bukkit.removeRecipe(getNamespacedKey().bukkit());
+            Bukkit.removeRecipe(((BukkitNamespacedKey) getNamespacedKey()).bukkit());
         }
         return Optional.empty();
     }

@@ -6,11 +6,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
-import me.wolfyscript.utilities.registry.Registries;
-import me.wolfyscript.utilities.util.Keyed;
-import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.json.jackson.KeyedTypeIdResolver;
-import me.wolfyscript.utilities.util.json.jackson.KeyedTypeResolver;
+import com.wolfyscript.utilities.Keyed;
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
+import com.wolfyscript.utilities.bukkit.world.items.CustomItemBlockData;
+import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
+import com.wolfyscript.utilities.json.KeyedTypeResolver;
 
 /**
  * This data is used to store persistent data on Blocks.<br>
@@ -18,19 +20,19 @@ import me.wolfyscript.utilities.util.json.jackson.KeyedTypeResolver;
  * In order to save it the {@link CustomBlockData} is serialized into a JsonString using Jackson.<br>
  * The String is then saved into the {@link org.bukkit.persistence.PersistentDataContainer} with the id ({@link org.bukkit.NamespacedKey}) as the key.<br>
  * <br>
- * <strong>To make use of the implementation it must be registered via {@link Registries#getCustomBlockData()}!</strong>
+ * <strong>To make use of the implementation it must be registered via {@link BukkitRegistries#getCustomBlockData()}!</strong>
  * <br>
- * On Deserialization the key is used to find the registered data type (See {@link Registries#getCustomBlockData()})<br>
+ * On Deserialization the key is used to find the registered data type (See {@link BukkitRegistries#getCustomBlockData()})<br>
  * The String content is then deserialized to that type using Jackson.<br>
  * There are injectable values that can be used in the constructor to get access to the Core, ChunkStorage, Position, etc.<br>
  * <ul>
- *     <li>{@link me.wolfyscript.utilities.api.WolfyUtilCore}</li>
+ *     <li>{@link WolfyUtilCore}</li>
  *     <li>{@link ChunkStorage}</li>
  *     <li>{@link org.bukkit.util.Vector}</li>
  * </ul>
  * That can be injected using the {@link com.fasterxml.jackson.annotation.JacksonInject} annotation.<br>
  * <br>
- * One of the default data, that stores the CustomItems on blocks is {@link com.wolfyscript.utilities.bukkit.items.CustomItemBlockData}
+ * One of the default data, that stores the CustomItems on blocks is {@link CustomItemBlockData}
  */
 @JsonTypeResolver(KeyedTypeResolver.class)
 @JsonTypeIdResolver(KeyedTypeIdResolver.class)

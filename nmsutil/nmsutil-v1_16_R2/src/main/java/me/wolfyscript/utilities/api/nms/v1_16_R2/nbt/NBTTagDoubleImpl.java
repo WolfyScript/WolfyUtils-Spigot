@@ -1,7 +1,7 @@
 package me.wolfyscript.utilities.api.nms.v1_16_R2.nbt;
 
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagDouble;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagType;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagDouble;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagType;
 
 public class NBTTagDoubleImpl extends NBTNumberImpl<net.minecraft.server.v1_16_R2.NBTTagDouble> implements NBTTagDouble {
 

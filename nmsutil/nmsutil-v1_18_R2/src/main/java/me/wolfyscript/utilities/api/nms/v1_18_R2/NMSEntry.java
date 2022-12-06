@@ -18,8 +18,8 @@
 
 package me.wolfyscript.utilities.api.nms.v1_18_R2;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.api.nms.NMSUtil;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.bukkit.nms.api.NMSUtil;
 import org.bukkit.plugin.Plugin;
 
 public class NMSEntry extends NMSUtil {
@@ -29,7 +29,7 @@ public class NMSEntry extends NMSUtil {
      *
      * @param wolfyUtilities
      */
-    public NMSEntry(WolfyUtilities wolfyUtilities) {
+    public NMSEntry(WolfyUtilsBukkit wolfyUtilities) {
         super(wolfyUtilities);
         this.blockUtil = new BlockUtilImpl(this);
         this.itemUtil = new ItemUtilImpl(this);

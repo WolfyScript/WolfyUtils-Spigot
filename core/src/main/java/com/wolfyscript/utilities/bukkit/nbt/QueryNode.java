@@ -22,12 +22,6 @@
 
 package com.wolfyscript.utilities.bukkit.nbt;
 
-import com.fasterxml.jackson.databind.InjectableValues;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import de.tr7zw.changeme.nbtapi.NBTCompound;
-import de.tr7zw.changeme.nbtapi.NBTList;
-import de.tr7zw.changeme.nbtapi.NBTType;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonGetter;
@@ -35,31 +29,38 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
-import me.wolfyscript.utilities.util.Keyed;
-import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.eval.context.EvalContext;
-import me.wolfyscript.utilities.util.json.jackson.KeyedTypeIdResolver;
-import me.wolfyscript.utilities.util.json.jackson.KeyedTypeResolver;
-import me.wolfyscript.utilities.util.json.jackson.ValueDeserializer;
-import me.wolfyscript.utilities.util.json.jackson.annotations.OptionalValueDeserializer;
-
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.wolfyscript.utilities.Keyed;
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.eval.context.EvalContext;
+import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
+import com.wolfyscript.utilities.json.KeyedTypeResolver;
+import com.wolfyscript.utilities.json.ValueDeserializer;
+import com.wolfyscript.utilities.json.annotations.OptionalValueDeserializer;
+import de.tr7zw.changeme.nbtapi.NBTCompound;
+import de.tr7zw.changeme.nbtapi.NBTList;
+import de.tr7zw.changeme.nbtapi.NBTType;
 import java.io.IOException;
 import java.util.Optional;
 
 @JsonTypeResolver(KeyedTypeResolver.class)
 @JsonTypeIdResolver(KeyedTypeIdResolver.class)
 @OptionalValueDeserializer(deserializer = QueryNode.OptionalValueDeserializer.class, delegateObjectDeserializer = true)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, property = "type", defaultImpl = QueryNodeCompound.class)
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonPropertyOrder(value = {"type"})
 public abstract class QueryNode<VAL> implements Keyed {
 
     private static final String ERROR_MISMATCH = "Mismatched NBT types! Requested type: %s but found type %s, at node %s.%s";
+
+    protected final WolfyUtils wolfyUtils;
 
     protected final NamespacedKey type;
     @JsonIgnore
@@ -69,8 +70,9 @@ public abstract class QueryNode<VAL> implements Keyed {
     @JsonIgnore
     protected NBTType nbtType = NBTType.NBTTagEnd;
 
-    protected QueryNode(NamespacedKey type, @JacksonInject("key") String key, @JacksonInject("path") String parentPath) {
-        this.type = type;
+    protected QueryNode(@JacksonInject WolfyUtils wolfyUtils, @JacksonInject("key") String key, @JacksonInject("path") String parentPath) {
+        this.wolfyUtils = wolfyUtils;
+        this.type = wolfyUtils.getIdentifiers().getNamespaced(getClass());
         this.parentPath = parentPath;
         this.key = key;
     }
@@ -169,29 +171,30 @@ public abstract class QueryNode<VAL> implements Keyed {
         }
 
         @Override
-        public QueryNode<?> deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException, JsonProcessingException {
+        public QueryNode<?> deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException {
             if (jsonParser.isExpectedStartObjectToken()) {
                 return null;
             }
             var token = jsonParser.currentToken();
             JsonNode node = null;
+            var regNBTQueries = WolfyCoreBukkit.getInstance().getRegistries().getNbtQueryNodes();
             NamespacedKey type = switch (token) {
                 case VALUE_STRING -> {
                     node = jsonParser.readValueAsTree();
                     var text = node.asText();
                     yield switch (!text.isBlank() ? text.charAt(text.length() - 1) : '0') {
-                        case 'b', 'B' -> QueryNodeByte.TYPE;
-                        case 's', 'S' -> QueryNodeShort.TYPE;
-                        case 'i', 'I' -> QueryNodeInt.TYPE;
-                        case 'l', 'L' -> QueryNodeLong.TYPE;
-                        case 'f', 'F' -> QueryNodeFloat.TYPE;
-                        case 'd', 'D' -> QueryNodeDouble.TYPE;
-                        default -> QueryNodeString.TYPE;
+                        case 'b', 'B' -> regNBTQueries.getKey(QueryNodeByte.class);
+                        case 's', 'S' -> regNBTQueries.getKey(QueryNodeShort.class);
+                        case 'i', 'I' -> regNBTQueries.getKey(QueryNodeInt.class);
+                        case 'l', 'L' -> regNBTQueries.getKey(QueryNodeLong.class);
+                        case 'f', 'F' -> regNBTQueries.getKey(QueryNodeFloat.class);
+                        case 'd', 'D' -> regNBTQueries.getKey(QueryNodeDouble.class);
+                        default -> regNBTQueries.getKey(QueryNodeString.class);
                     };
                 }
-                case VALUE_NUMBER_INT -> QueryNodeInt.TYPE;
-                case VALUE_NUMBER_FLOAT -> QueryNodeDouble.TYPE;
-                case VALUE_FALSE, VALUE_TRUE -> QueryNodeBoolean.TYPE;
+                case VALUE_NUMBER_INT -> regNBTQueries.getKey(QueryNodeInt.class);
+                case VALUE_NUMBER_FLOAT -> regNBTQueries.getKey(QueryNodeDouble.class);
+                case VALUE_FALSE, VALUE_TRUE -> regNBTQueries.getKey(QueryNodeBoolean.class);
                 default -> null;
             };
             if (type == null) return null;

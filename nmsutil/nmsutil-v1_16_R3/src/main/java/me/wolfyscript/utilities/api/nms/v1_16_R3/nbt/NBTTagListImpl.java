@@ -1,9 +1,9 @@
 package me.wolfyscript.utilities.api.nms.v1_16_R3.nbt;
 
-import me.wolfyscript.utilities.api.nms.nbt.NBTBase;
-import me.wolfyscript.utilities.api.nms.nbt.NBTCompound;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagList;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagType;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTBase;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTCompound;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagList;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagType;
 
 public class NBTTagListImpl extends NBTBaseImpl<net.minecraft.server.v1_16_R3.NBTTagList> implements NBTTagList {
 

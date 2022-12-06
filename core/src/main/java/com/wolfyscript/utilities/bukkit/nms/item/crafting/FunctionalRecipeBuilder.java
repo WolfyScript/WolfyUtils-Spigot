@@ -1,7 +1,7 @@
 package com.wolfyscript.utilities.bukkit.nms.item.crafting;
 
 import com.google.common.base.Preconditions;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.NamespacedKey;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.Nullable;
 

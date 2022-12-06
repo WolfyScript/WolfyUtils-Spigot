@@ -28,44 +28,43 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.wolfyscript.utilities.KeyedStaticId;
+import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.eval.context.EvalContext;
+import com.wolfyscript.utilities.eval.operator.BoolOperatorConst;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTType;
-import me.wolfyscript.utilities.util.NamespacedKey;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import me.wolfyscript.utilities.util.eval.context.EvalContext;
-import com.wolfyscript.utilities.eval.operator.BoolOperatorConst;
 
+@KeyedStaticId(key = "compound")
 public class QueryNodeCompound extends QueryNode<NBTCompound> {
 
-    public static final NamespacedKey TYPE = NamespacedKey.wolfyutilties("compound");
-
-    private boolean preservePath = true;
+    protected boolean preservePath = true;
     //If include is true it includes this node with each and every child node.
-    private boolean includeAll = false;
+    protected boolean includeAll = false;
     //If includes has values it includes this node with the specified child nodes.
-    private Map<String, Boolean> includes;
+    protected Map<String, Boolean> includes;
     //Checks and verifies the child nodes. This node is only included if all the child nodes are valid.
-    private Map<String, QueryNode<?>> required;
+    protected Map<String, QueryNode<?>> required;
     //Child nodes to proceed to next. This is useful for further child compound tag settings.
     @JsonIgnore
-    private Map<String, QueryNode<?>> children;
+    protected Map<String, QueryNode<?>> children;
 
-    public QueryNodeCompound(@JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
-        super(TYPE, key, parentPath);
+    public QueryNodeCompound(@JacksonInject WolfyUtils wolfyUtils, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
+        super(wolfyUtils, key, parentPath);
         this.nbtType = NBTType.NBTTagCompound;
         this.includes = new HashMap<>();
         this.required = new HashMap<>();
         this.children = new HashMap<>();
     }
 
-    private QueryNodeCompound(QueryNodeCompound other) {
-        super(TYPE, other.key, other.parentPath);
+    protected QueryNodeCompound(QueryNodeCompound other) {
+        super(other.wolfyUtils, other.key, other.parentPath);
         this.nbtType = NBTType.NBTTagCompound;
         this.includes = new HashMap<>(other.includes);
         this.preservePath = other.preservePath;
@@ -143,6 +142,17 @@ public class QueryNodeCompound extends QueryNode<NBTCompound> {
     public void applyValue(String path, String key, EvalContext context, NBTCompound value, NBTCompound resultContainer) {
         String newPath = path + "." + key;
         NBTCompound container = preservePath ? resultContainer.addCompound(key) : resultContainer;
+        applyChildrenToCompound(newPath, context, value, container);
+    }
+
+    /**
+     *
+     *
+     * @param containerPath The path of the current container.
+     * @param value The value of the NBTCompound at the current path.
+     * @param resultContainer The current container to apply the children to.
+     */
+    protected void applyChildrenToCompound(String containerPath, EvalContext context, NBTCompound value, NBTCompound resultContainer) {
         Set<String> keys;
         if (!includes.isEmpty()) {
             keys = value.getKeys().stream().filter(s -> includes.getOrDefault(s, includeAll)).collect(Collectors.toSet());
@@ -153,10 +163,10 @@ public class QueryNodeCompound extends QueryNode<NBTCompound> {
         for (String childKey : keys) {
             QueryNode<?> subQueryNode = getChildren().get(childKey);
             if (subQueryNode != null) {
-                subQueryNode.visit(newPath, childKey, context, value, container);
+                subQueryNode.visit(containerPath, childKey, context, value, resultContainer);
             } else {
-                QueryNodeBoolean node = new QueryNodeBoolean(new BoolOperatorConst(true), childKey, newPath);
-                node.visit(newPath, childKey, context, value, container);
+                QueryNodeBoolean node = new QueryNodeBoolean(wolfyUtils, new BoolOperatorConst(wolfyUtils, true), childKey, containerPath);
+                node.visit(containerPath, childKey, context, value, resultContainer);
             }
         }
     }

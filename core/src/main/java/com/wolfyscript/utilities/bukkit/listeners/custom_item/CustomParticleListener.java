@@ -19,10 +19,10 @@
 package com.wolfyscript.utilities.bukkit.listeners.custom_item;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectData;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerStorage;
-import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
-import me.wolfyscript.utilities.util.entity.PlayerUtils;
+import com.wolfyscript.utilities.bukkit.world.entity.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

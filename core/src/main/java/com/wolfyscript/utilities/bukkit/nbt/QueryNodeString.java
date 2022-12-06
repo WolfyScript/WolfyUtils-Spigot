@@ -3,21 +3,20 @@ package com.wolfyscript.utilities.bukkit.nbt;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wolfyscript.utilities.KeyedStaticId;
+import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.eval.context.EvalContext;
+import com.wolfyscript.utilities.eval.value_provider.ValueProvider;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTType;
-import me.wolfyscript.utilities.util.NamespacedKey;
-
 import java.util.Optional;
-import me.wolfyscript.utilities.util.eval.context.EvalContext;
-import me.wolfyscript.utilities.util.eval.value_providers.ValueProvider;
 
+@KeyedStaticId(key = "string")
 public class QueryNodeString extends QueryNodePrimitive<String> {
 
-    public static final NamespacedKey TYPE = NamespacedKey.wolfyutilties("string");
-
     @JsonCreator
-    public QueryNodeString(@JsonProperty("value") ValueProvider<String> value, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
-        super(TYPE, value, key, parentPath);
+    public QueryNodeString(@JacksonInject WolfyUtils wolfyUtils, @JsonProperty("value") ValueProvider<String> value, @JacksonInject("key") String key, @JacksonInject("parent_path") String parentPath) {
+        super(wolfyUtils, value, key, parentPath);
         this.nbtType = NBTType.NBTTagString;
     }
 

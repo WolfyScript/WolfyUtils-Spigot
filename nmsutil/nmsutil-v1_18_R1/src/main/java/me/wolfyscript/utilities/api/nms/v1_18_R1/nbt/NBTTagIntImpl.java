@@ -18,8 +18,8 @@
 
 package me.wolfyscript.utilities.api.nms.v1_18_R1.nbt;
 
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagInt;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagType;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagInt;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTTagType;
 import net.minecraft.nbt.IntTag;
 
 public class NBTTagIntImpl extends NBTNumberImpl<IntTag> implements NBTTagInt {

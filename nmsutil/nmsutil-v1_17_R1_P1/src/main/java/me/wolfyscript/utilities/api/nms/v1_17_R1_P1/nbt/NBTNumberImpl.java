@@ -1,6 +1,6 @@
 package me.wolfyscript.utilities.api.nms.v1_17_R1_P1.nbt;
 
-public abstract class NBTNumberImpl<NBT extends net.minecraft.nbt.NumericTag> extends NBTBaseImpl<NBT> implements me.wolfyscript.utilities.api.nms.nbt.NBTNumber {
+public abstract class NBTNumberImpl<NBT extends net.minecraft.nbt.NumericTag> extends NBTBaseImpl<NBT> implements com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTNumber {
 
     NBTNumberImpl(NBT nbtBase) {
         super(nbtBase);
