@@ -18,7 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.registry;
 
-import com.wolfyscript.utilities.bukkit.items.reference.WolfyUtilsItemReference;
+import com.wolfyscript.utilities.bukkit.world.items.reference.WolfyUtilsItemReference;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;

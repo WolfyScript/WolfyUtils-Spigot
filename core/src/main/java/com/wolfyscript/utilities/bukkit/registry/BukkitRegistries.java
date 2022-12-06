@@ -30,7 +30,6 @@ import com.wolfyscript.utilities.bukkit.world.items.meta.Meta;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
 import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
-import com.wolfyscript.utilities.bukkit.items.reference.ItemReference;
 import com.wolfyscript.utilities.common.registry.Registries;
 import com.wolfyscript.utilities.common.registry.Registry;
 import com.wolfyscript.utilities.common.registry.RegistrySimple;

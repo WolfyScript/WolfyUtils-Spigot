@@ -81,8 +81,8 @@ import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
 import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectData;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
-import com.wolfyscript.utilities.bukkit.items.reference.BukkitItemReference;
-import com.wolfyscript.utilities.bukkit.items.reference.WolfyUtilsItemReference;
+import com.wolfyscript.utilities.bukkit.world.items.reference.BukkitItemReference;
+import com.wolfyscript.utilities.bukkit.world.items.reference.WolfyUtilsItemReference;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.eval.operator.BoolOperatorConst;
 import com.wolfyscript.utilities.eval.operator.ComparisonOperatorEqual;
@@ -427,8 +427,8 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
         console.info("Register Item references");
         var itemReferences = getRegistries().getItemReferences();
         // TODO: Use priorities, similar to the old APIReference.Parser
-        itemReferences.register(WolfyUtilsItemReference.ID, WolfyUtilsItemReference.class);
-        itemReferences.register(BukkitItemReference.ID, BukkitItemReference.class);
+        itemReferences.register(WolfyUtilsItemReference.class);
+        itemReferences.register(BukkitItemReference.class);
 
         registerAPIReference(new VanillaRef.Parser());
         registerAPIReference(new WolfyUtilitiesRef.Parser());

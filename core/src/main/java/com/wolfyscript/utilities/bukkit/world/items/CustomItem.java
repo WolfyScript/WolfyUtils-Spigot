@@ -18,6 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.world.items;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -47,11 +48,12 @@ import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.world.items.references.VanillaRef;
 import com.wolfyscript.utilities.bukkit.world.items.references.WolfyUtilitiesRef;
 import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.json.jackson.JacksonUtil;
-import com.wolfyscript.utilities.bukkit.items.reference.BackwardsWrapperReference;
-import com.wolfyscript.utilities.bukkit.items.reference.BukkitItemReference;
-import com.wolfyscript.utilities.bukkit.items.reference.ItemRefCompDeserializer;
-import com.wolfyscript.utilities.bukkit.items.reference.ItemReference;
+import com.wolfyscript.utilities.bukkit.world.items.reference.BackwardsWrapperReference;
+import com.wolfyscript.utilities.bukkit.world.items.reference.BukkitItemReference;
+import com.wolfyscript.utilities.bukkit.world.items.reference.ItemRefCompDeserializer;
+import com.wolfyscript.utilities.bukkit.world.items.reference.ItemReference;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -119,6 +121,9 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     }
 
     @JsonIgnore
+    private final WolfyUtils wolfyUtils;
+
+    @JsonIgnore
     private final Material type;
 
     /**
@@ -167,9 +172,9 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     private boolean checkOldMetaSettings = true;
 
     @JsonCreator
-    public CustomItem(@JsonProperty("reference") @JsonAlias({"item", "api_reference", "apiReference"}) @JsonDeserialize(using = ItemRefCompDeserializer.class) ItemReference reference) {
+    public CustomItem(@JacksonInject WolfyUtils wolfyUtils, @JsonProperty("reference") @JsonAlias({"item", "api_reference", "apiReference"}) @JsonDeserialize(using = ItemRefCompDeserializer.class) ItemReference reference) {
         super(CustomItem.class);
-
+        this.wolfyUtils = wolfyUtils;
         this.reference = reference;
 
         this.namespacedKey = null;
@@ -194,49 +199,13 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
         this.craftRemain = getCraftRemain();
     }
 
-    @JsonAnySetter
-    protected void setOldProperties(String fieldKey, JsonNode value) throws JsonProcessingException {
-        if (fieldKey.equals("advanced")) {
-            checkOldMetaSettings = value.asBoolean();
-        } else if (fieldKey.equals("metaSettings") || fieldKey.equals("meta")) {
-            //Since the new system has its new field we need to update old appearances to the new system.
-            JsonNode node = value.isTextual() ? JacksonUtil.getObjectMapper().readTree(value.asText()) : value;
-            final List<Meta> checks;
-            if (!node.has(MetaSettings.CHECKS_KEY)) {
-                checks = new ArrayList<>();
-                if (checkOldMetaSettings) {
-                    //Convert old meta to new format.
-                    node.fields().forEachRemaining(entry -> {
-                        if (entry.getValue() instanceof ObjectNode entryVal) {
-                            String key = entry.getKey().toLowerCase(Locale.ROOT);
-                            BukkitNamespacedKey namespacedKey = key.contains(":") ? BukkitNamespacedKey.of(key) : BukkitNamespacedKey.wolfyutilties(key);
-                            if (namespacedKey != null) {
-                                entryVal.put("key", String.valueOf(namespacedKey));
-                                Meta meta = JacksonUtil.getObjectMapper().convertValue(entryVal, Meta.class);
-                                if (meta != null && !meta.getOption().equals(MetaSettings.Option.IGNORE) && !meta.getOption().equals(MetaSettings.Option.EXACT)) {
-                                    checks.add(meta);
-                                }
-                            }
-                        }
-                    });
-                }
-            } else {
-                checks = JacksonUtil.getObjectMapper().convertValue(node.get(MetaSettings.CHECKS_KEY), new TypeReference<>() {
-                });
-            }
-            var nbtChecks = new MetaSettings();
-            checks.forEach(nbtChecks::addCheck);
-            setMetaSettings(nbtChecks);
-        }
-    }
-
     /**
      * Creates a CustomItem with a Vanilla Reference to the itemstack
      *
      * @param itemStack the itemstack this CustomItem will be linked to
      */
     public CustomItem(ItemStack itemStack) {
-        this(new BukkitItemReference(itemStack));
+        this(WolfyCoreBukkit.getInstance().getWolfyUtils(), new BukkitItemReference(WolfyCoreBukkit.getInstance().getWolfyUtils(), itemStack));
     }
 
     /**
@@ -253,6 +222,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      */
     private CustomItem(CustomItem customItem) {
         super(CustomItem.class);
+        this.wolfyUtils = customItem.wolfyUtils;
         this.reference = customItem.reference.copy();
 
         this.namespacedKey = customItem.getNamespacedKey();
@@ -280,7 +250,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
 
     @Deprecated
     public CustomItem(APIReference reference) {
-        this(new BackwardsWrapperReference(reference));
+        this(WolfyCoreBukkit.getInstance().getWolfyUtils(), new BackwardsWrapperReference(WolfyCoreBukkit.getInstance().getWolfyUtils(), reference));
     }
 
     @JsonAnySetter
@@ -298,7 +268,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
                     node.fields().forEachRemaining(entry -> {
                         if (entry.getValue() instanceof ObjectNode entryVal) {
                             String key = entry.getKey().toLowerCase(Locale.ROOT);
-                            NamespacedKey namespacedKey = key.contains(":") ? NamespacedKey.of(key) : NamespacedKey.wolfyutilties(key);
+                            BukkitNamespacedKey namespacedKey = key.contains(":") ? BukkitNamespacedKey.of(key) : BukkitNamespacedKey.wolfyutilties(key);
                             if (namespacedKey != null) {
                                 entryVal.put("key", String.valueOf(namespacedKey));
                                 Meta meta = JacksonUtil.getObjectMapper().convertValue(entryVal, Meta.class);
@@ -387,7 +357,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
             ItemReference reference = WolfyUtilCore.getInstance().getRegistries().getItemReferences().parse(itemStack);
             if (reference != null) {
                 reference.setAmount(itemStack.getAmount());
-                return new CustomItem(reference);
+                return new CustomItem(WolfyCoreBukkit.getInstance().getWolfyUtils(), reference);
             }
             return new CustomItem(itemStack);
         }
