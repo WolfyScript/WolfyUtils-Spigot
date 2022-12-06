@@ -18,14 +18,15 @@
 
 package com.wolfyscript.utilities.bukkit.gui;
 
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
-import com.wolfyscript.utilities.bukkit.gui.button.buttons.ActionButton;
-import com.wolfyscript.utilities.bukkit.gui.button.buttons.ChatInputButton;
-import com.wolfyscript.utilities.bukkit.gui.button.buttons.DummyButton;
-import com.wolfyscript.utilities.bukkit.gui.button.buttons.ItemInputButton;
-import com.wolfyscript.utilities.bukkit.gui.button.buttons.MultipleChoiceButton;
-import com.wolfyscript.utilities.bukkit.gui.button.buttons.ToggleButton;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonAction;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonChatInput;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonDummy;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonItemInput;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonMultipleChoice;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonToggle;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +47,7 @@ public abstract class GuiCluster<C extends CustomCache> extends GuiMenuComponent
     private final String id;
     private final Map<String, GuiWindow<C>> guiWindows;
 
-    private BukkitNamespacedKey entry;
+    private NamespacedKey entry;
 
     protected GuiCluster(InventoryAPI<C> inventoryAPI, String id) {
         super(inventoryAPI);
@@ -67,7 +68,7 @@ public abstract class GuiCluster<C extends CustomCache> extends GuiMenuComponent
      *
      * @return The namespaced key of the entrypoint window.
      */
-    public BukkitNamespacedKey getEntry() {
+    public NamespacedKey getEntry() {
         return entry;
     }
 
@@ -76,7 +77,7 @@ public abstract class GuiCluster<C extends CustomCache> extends GuiMenuComponent
      *
      * @param entry The namespaced key of the {@link GuiWindow}. See {@link GuiWindow#getNamespacedKey()}
      */
-    protected void setEntry(BukkitNamespacedKey entry) {
+    protected void setEntry(NamespacedKey entry) {
         this.entry = entry;
     }
 
@@ -148,33 +149,33 @@ public abstract class GuiCluster<C extends CustomCache> extends GuiMenuComponent
     protected class ClusterButtonBuilder implements ButtonBuilder<C> {
 
         @Override
-        public ChatInputButton.Builder<C> chatInput(String id) {
-            return new ChatInputButton.Builder<>(GuiCluster.this, id);
+        public ButtonChatInput.Builder<C> chatInput(String id) {
+            return new ButtonChatInput.Builder<>(GuiCluster.this, id);
         }
 
         @Override
-        public ActionButton.Builder<C> action(String id) {
-            return new ActionButton.Builder<>(GuiCluster.this, id);
+        public ButtonAction.Builder<C> action(String id) {
+            return new ButtonAction.Builder<>(GuiCluster.this, id);
         }
 
         @Override
-        public DummyButton.Builder<C> dummy(String id) {
-            return new DummyButton.Builder<>(GuiCluster.this, id);
+        public ButtonDummy.Builder<C> dummy(String id) {
+            return new ButtonDummy.Builder<>(GuiCluster.this, id);
         }
 
         @Override
-        public ItemInputButton.Builder<C> itemInput(String id) {
-            return new ItemInputButton.Builder<>(GuiCluster.this, id);
+        public ButtonItemInput.Builder<C> itemInput(String id) {
+            return new ButtonItemInput.Builder<>(GuiCluster.this, id);
         }
 
         @Override
-        public ToggleButton.Builder<C> toggle(String id) {
-            return new ToggleButton.Builder<>(GuiCluster.this, id);
+        public ButtonToggle.Builder<C> toggle(String id) {
+            return new ButtonToggle.Builder<>(GuiCluster.this, id);
         }
 
         @Override
-        public MultipleChoiceButton.Builder<C> multiChoice(String id) {
-            return new MultipleChoiceButton.Builder<>(GuiCluster.this, id);
+        public ButtonMultipleChoice.Builder<C> multiChoice(String id) {
+            return new ButtonMultipleChoice.Builder<>(GuiCluster.this, id);
         }
     }
 }

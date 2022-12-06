@@ -16,12 +16,17 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.bukkit.gui;
+package com.wolfyscript.utilities.bukkit.gui.callback;
 
+import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import org.bukkit.entity.Player;
 
-public interface ChatInputAction<C extends CustomCache> {
+/**
+ *
+ * @param <C>
+ */
+public interface CallbackChatInput<C extends CustomCache> {
 
     boolean onChat(GuiHandler<C> guiHandler, Player player, String msg, String[] args);
 }

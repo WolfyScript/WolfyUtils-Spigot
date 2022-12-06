@@ -16,15 +16,11 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.bukkit.gui.button.buttons;
+package com.wolfyscript.utilities.bukkit.gui.button;
 
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonAction;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonRender;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonState;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonType;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import java.io.IOException;
 import java.util.HashMap;
@@ -42,51 +38,19 @@ import org.bukkit.inventory.ItemStack;
  *
  * @param <C> The type of the {@link CustomCache}
  */
-public class ItemInputButton<C extends CustomCache> extends ActionButton<C> {
+public class ButtonItemInput<C extends CustomCache> extends ButtonAction<C> {
 
     private final Map<GuiHandler<C>, ItemStack> content;
 
-    public ItemInputButton(String id, ButtonState<C> state) {
+    ButtonItemInput(String id, ButtonState<C> state) {
         super(id, ButtonType.ITEM_SLOT, state);
         this.content = new HashMap<>();
-    }
-
-    public ItemInputButton(String id, ItemStack itemStack) {
-        this(id, new ButtonState<>(id, itemStack));
-    }
-
-    public ItemInputButton(String id, Material material) {
-        this(id, new ButtonState<>(id, material));
-    }
-
-    public ItemInputButton(String id, ItemStack itemStack, ButtonAction<C> action) {
-        this(id, new ButtonState<>(id, itemStack, action));
-    }
-
-    public ItemInputButton(String id, ItemStack itemStack, ButtonRender<C> render) {
-        this(id, new ButtonState<>(id, itemStack, render));
-    }
-
-    public ItemInputButton(String id, ItemStack itemStack, ButtonAction<C> action, ButtonRender<C> render) {
-        this(id, new ButtonState<>(id, itemStack, action, render));
-    }
-
-    public ItemInputButton(String id, Material material, ButtonAction<C> action) {
-        this(id, new ButtonState<>(id, material, action));
-    }
-
-    public ItemInputButton(String id, Material material, ButtonRender<C> render) {
-        this(id, new ButtonState<>(id, material, render));
-    }
-
-    public ItemInputButton(String id, Material material, ButtonAction<C> action, ButtonRender<C> render) {
-        this(id, new ButtonState<>(id, material, action, render));
     }
 
     @Override
     public boolean execute(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, int slot, InventoryInteractEvent event) throws IOException {
         if (!getType().equals(ButtonType.DUMMY) && getState().getAction() != null) {
-            return getState().getAction().execute(guiHandler.getCustomCache(), guiHandler, player, inventory, this, slot, event);
+            return getState().getAction().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, slot, event);
         }
         return false;
     }
@@ -101,7 +65,7 @@ public class ItemInputButton<C extends CustomCache> extends ActionButton<C> {
     public void render(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, ItemStack itemStack, int slot, boolean help) throws IOException {
         ItemStack item = getContent(guiHandler);
         if (getState().getRenderAction() != null) {
-            item = getState().getRenderAction().render(new HashMap<>(), guiHandler.getCustomCache(), guiHandler, player, guiInventory, item, slot, help);
+            item = getState().getRenderAction().run(guiHandler.getCustomCache(), guiHandler, player, guiInventory, this, item, slot).getCustomStack().orElse(item);
         }
         inventory.setItem(slot, item);
     }
@@ -110,19 +74,19 @@ public class ItemInputButton<C extends CustomCache> extends ActionButton<C> {
         return content.computeIfAbsent(guiHandler, g -> new ItemStack(Material.AIR));
     }
 
-    public static class Builder<C extends CustomCache> extends AbstractBuilder<C, ItemInputButton<C>, Builder<C>> {
+    public static class Builder<C extends CustomCache> extends AbstractBuilder<C, ButtonItemInput<C>, Builder<C>> {
 
         public Builder(GuiWindow<C> window, String id) {
-            super(window, id, (Class<ItemInputButton<C>>) (Object) ItemInputButton.class);
+            super(window, id, (Class<ButtonItemInput<C>>) (Object) ButtonItemInput.class);
         }
 
         public Builder(GuiCluster<C> cluster, String id) {
-            super(cluster, id, (Class<ItemInputButton<C>>) (Object) ItemInputButton.class);
+            super(cluster, id, (Class<ButtonItemInput<C>>) (Object) ButtonItemInput.class);
         }
 
         @Override
-        public ItemInputButton<C> create() {
-            return new ItemInputButton<>(key, stateBuilder.create());
+        public ButtonItemInput<C> create() {
+            return new ButtonItemInput<>(key, stateBuilder.create());
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.wolfyscript.utilities.bukkit.chat;
 
 import com.google.common.base.Preconditions;
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.adapters.PlayerImpl;
@@ -211,7 +212,7 @@ public class BukkitChat extends Chat implements IBukkitChat {
 
     @Deprecated
     @Override
-    public void sendKey(Player player, @NotNull BukkitNamespacedKey windowKey, String msgKey) {
+    public void sendKey(Player player, @NotNull NamespacedKey windowKey, String msgKey) {
         sendMessage(player, translated("inventories." + windowKey.getNamespace() + "." + windowKey.getKey() + ".messages." + msgKey, true));
     }
 
@@ -225,7 +226,7 @@ public class BukkitChat extends Chat implements IBukkitChat {
     @Deprecated
     @SafeVarargs
     @Override
-    public final void sendKey(Player player, BukkitNamespacedKey namespacedKey, String msgKey, Pair<String, String>... replacements) {
+    public final void sendKey(Player player, NamespacedKey namespacedKey, String msgKey, Pair<String, String>... replacements) {
         sendMessage(player, translated("inventories." + namespacedKey.getNamespace() + "." + namespacedKey.getKey() + ".messages." + msgKey, true, getTemplates(replacements)));
     }
 

@@ -16,18 +16,14 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.bukkit.gui.button.buttons;
+package com.wolfyscript.utilities.bukkit.gui.button;
 
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
-import com.wolfyscript.utilities.bukkit.gui.button.Button;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonState;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonType;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
@@ -46,7 +42,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <C> The type of the {@link CustomCache}
  */
-public class MultipleChoiceButton<C extends CustomCache> extends Button<C> {
+public class ButtonMultipleChoice<C extends CustomCache> extends Button<C> {
 
     private final List<ButtonState<C>> states;
     private final StateFunction<C> stateFunction;
@@ -57,30 +53,11 @@ public class MultipleChoiceButton<C extends CustomCache> extends Button<C> {
      * @param stateFunction The {@link StateFunction} to set the state of the Button depending on the player, cached data, etc.
      * @param states        The {@link ButtonState}s that this Button will cycle through.
      */
-    @SafeVarargs
-    public MultipleChoiceButton(String id, StateFunction<C> stateFunction, @NotNull ButtonState<C>... states) {
-        this(id, stateFunction, Arrays.asList(states));
-    }
-
-    /**
-     * @param id            The id of the Button
-     * @param stateFunction The {@link StateFunction} to set the state of the Button depending on the player, cached data, etc.
-     * @param states        The {@link ButtonState}s that this Button will cycle through.
-     */
-    private MultipleChoiceButton(String id, StateFunction<C> stateFunction, @NotNull List<ButtonState<C>> states) {
+    ButtonMultipleChoice(String id, StateFunction<C> stateFunction, @NotNull List<ButtonState<C>> states) {
         super(id, ButtonType.CHOICES);
         this.states = states;
         settings = new HashMap<>();
         this.stateFunction = stateFunction == null ? (cache, guiHandler, player, inventory, slot) -> settings.getOrDefault(guiHandler, 0) : stateFunction;
-    }
-
-    /**
-     * @param id     The id of the Button
-     * @param states The {@link ButtonState}s that this Button will cycle through.
-     */
-    @SafeVarargs
-    public MultipleChoiceButton(String id, @NotNull ButtonState<C>... states) {
-        this(id, null, states);
     }
 
     @Override
@@ -108,7 +85,7 @@ public class MultipleChoiceButton<C extends CustomCache> extends Button<C> {
             } else {
                 settings.put(guiHandler, setting);
             }
-            return btnState.getAction().execute(guiHandler.getCustomCache(), guiHandler, player, inventory, this, slot, event);
+            return btnState.getAction().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, slot, event);
         }
         return true;
     }
@@ -119,7 +96,7 @@ public class MultipleChoiceButton<C extends CustomCache> extends Button<C> {
         if (states != null && setting < states.size()) {
             ButtonState<C> btnState = states.get(setting);
             if (btnState.getPostAction() != null) {
-                btnState.getPostAction().run(guiHandler.getCustomCache(), guiHandler, player, inventory, itemStack, slot, event);
+                btnState.getPostAction().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, itemStack, slot, event);
             }
         }
     }
@@ -128,7 +105,7 @@ public class MultipleChoiceButton<C extends CustomCache> extends Button<C> {
     public void preRender(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot, boolean help) {
         int setting = stateFunction.run(guiHandler.getCustomCache(), guiHandler, player, inventory, slot);
         if (states != null && states.size() > setting && states.get(setting).getPrepareRender() != null) {
-            states.get(setting).getPrepareRender().prepare(guiHandler.getCustomCache(), guiHandler, player, inventory, itemStack, slot, help);
+            states.get(setting).getPrepareRender().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, itemStack, slot, help);
         }
     }
 
@@ -136,7 +113,8 @@ public class MultipleChoiceButton<C extends CustomCache> extends Button<C> {
     public void render(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, ItemStack itemStack, int slot, boolean help) {
         int setting = settings.computeIfAbsent(guiHandler, g -> 0);
         if (states != null && states.size() > setting) {
-            applyItem(guiHandler, player, guiInventory, inventory, states.get(setting), slot, help);
+            ButtonState<C> activeState = states.get(setting);
+            applyItem(guiHandler, player, guiInventory, inventory, activeState, activeState.getIcon(), slot);
         }
     }
 
@@ -147,7 +125,7 @@ public class MultipleChoiceButton<C extends CustomCache> extends Button<C> {
     public interface StateFunction<C extends CustomCache> {
 
         /**
-         * Used to set the state for the {@link MultipleChoiceButton} depending on data from the cache or player, etc.
+         * Used to set the state for the {@link ButtonMultipleChoice} depending on data from the cache or player, etc.
          *
          * @param cache      The current cache of the GuiHandler
          * @param guiHandler The current GuiHandler.
@@ -160,21 +138,21 @@ public class MultipleChoiceButton<C extends CustomCache> extends Button<C> {
 
     }
 
-    public static class Builder<C extends CustomCache> extends Button.Builder<C, MultipleChoiceButton<C>, Builder<C>> {
+    public static class Builder<C extends CustomCache> extends Button.Builder<C, ButtonMultipleChoice<C>, Builder<C>> {
 
         private final Supplier<ButtonState.Builder<C>> stateBuilderSupplier;
         protected StateFunction<C> stateFunction;
         protected List<ButtonState.Builder<C>> stateBuilders;
 
         public Builder(GuiWindow<C> window, String id) {
-            super(window, id, (Class<MultipleChoiceButton<C>>) (Object) MultipleChoiceButton.class);
+            super(window, id, (Class<ButtonMultipleChoice<C>>) (Object) ButtonMultipleChoice.class);
             stateBuilderSupplier = () -> ButtonState.of(window, id);
             stateFunction = null;
             stateBuilders = new ArrayList<>();
         }
 
         public Builder(GuiCluster<C> cluster, String id) {
-            super(cluster, id, (Class<MultipleChoiceButton<C>>) (Object) MultipleChoiceButton.class);
+            super(cluster, id, (Class<ButtonMultipleChoice<C>>) (Object) ButtonMultipleChoice.class);
             stateBuilderSupplier = () -> ButtonState.of(cluster, id);
             stateFunction = null;
             stateBuilders = new ArrayList<>();
@@ -209,8 +187,8 @@ public class MultipleChoiceButton<C extends CustomCache> extends Button<C> {
         }
 
         @Override
-        public MultipleChoiceButton<C> create() {
-            return new MultipleChoiceButton<>(key, stateFunction, stateBuilders.stream().map(ButtonState.Builder::create).toList());
+        public ButtonMultipleChoice<C> create() {
+            return new ButtonMultipleChoice<>(key, stateFunction, stateBuilders.stream().map(ButtonState.Builder::create).toList());
         }
     }
 

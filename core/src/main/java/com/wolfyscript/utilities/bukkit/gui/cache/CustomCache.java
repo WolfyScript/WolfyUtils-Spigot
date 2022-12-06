@@ -18,6 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.gui.cache;
 
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 public class CustomCache {
 
     private final Map<GuiWindow<?>, Map<Integer, String>> cachedButtons;
-    private final Map<BukkitNamespacedKey, Map<String, Object>> windows;
+    private final Map<NamespacedKey, Map<String, Object>> windows;
 
     protected CustomCache() {
         this.cachedButtons = new HashMap<>();

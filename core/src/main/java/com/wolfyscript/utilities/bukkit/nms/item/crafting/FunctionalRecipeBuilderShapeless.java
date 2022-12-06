@@ -1,5 +1,6 @@
 package com.wolfyscript.utilities.bukkit.nms.item.crafting;
 
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -13,7 +14,7 @@ public class FunctionalRecipeBuilderShapeless extends FunctionalRecipeBuilderCra
 
     private List<RecipeChoice> choices = new ArrayList<>();
 
-    public FunctionalRecipeBuilderShapeless(BukkitNamespacedKey key, ItemStack result) {
+    public FunctionalRecipeBuilderShapeless(NamespacedKey key, ItemStack result) {
         super(key, result);
     }
 

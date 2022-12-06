@@ -16,10 +16,11 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.bukkit.gui.button;
+package com.wolfyscript.utilities.bukkit.gui.callback;
 
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
-import com.wolfyscript.utilities.bukkit.gui.button.buttons.ItemInputButton;
+import com.wolfyscript.utilities.bukkit.gui.button.Button;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonItemInput;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import org.bukkit.entity.Player;
@@ -28,14 +29,14 @@ import org.bukkit.inventory.ItemStack;
 /**
  * @param <C> The type of the {@link CustomCache}
  */
-public interface ButtonPreRender<C extends CustomCache> {
+public interface CallbackButtonPreRender<C extends CustomCache> {
 
     /**
      * This method is run before the render method and provides the previous inventory, which includes all the items of last render.
      * <br>
      * It can be used for caching or other code that needs to be executed just before render, requires items from last render or needs to prepare data for the next render.
      * <br>
-     * For example it can be used for setting items into cache for something like item input see {@link ItemInputButton}
+     * For example it can be used for setting items into cache for something like item input see {@link ButtonItemInput}
      * <br>
      * .
      *
@@ -47,5 +48,5 @@ public interface ButtonPreRender<C extends CustomCache> {
      * @param slot        The slot in which the button is rendered.
      * @param helpEnabled Returns true if help is enabled.
      */
-    void prepare(C cache, GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot, boolean helpEnabled);
+    void run(C cache, GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, Button<C> button, ItemStack itemStack, int slot, boolean helpEnabled);
 }

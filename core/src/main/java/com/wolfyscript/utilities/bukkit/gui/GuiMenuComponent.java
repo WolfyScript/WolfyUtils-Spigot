@@ -20,17 +20,16 @@ package com.wolfyscript.utilities.bukkit.gui;
 
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
-import com.wolfyscript.utilities.bukkit.chat.IBukkitChat;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
-import com.wolfyscript.utilities.bukkit.gui.button.buttons.ActionButton;
-import com.wolfyscript.utilities.bukkit.gui.button.buttons.ChatInputButton;
-import com.wolfyscript.utilities.bukkit.gui.button.buttons.DummyButton;
-import com.wolfyscript.utilities.bukkit.gui.button.buttons.ItemInputButton;
-import com.wolfyscript.utilities.bukkit.gui.button.buttons.MultipleChoiceButton;
-import com.wolfyscript.utilities.bukkit.gui.button.buttons.ToggleButton;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonAction;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonChatInput;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonDummy;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonItemInput;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonMultipleChoice;
+import com.wolfyscript.utilities.bukkit.gui.button.ButtonToggle;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
+import com.wolfyscript.utilities.bukkit.gui.callback.CallbackChatInput;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -58,7 +57,7 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
 
     protected GuiMenuComponent(InventoryAPI<C> inventoryAPI) {
         this.inventoryAPI = inventoryAPI;
-        this.wolfyUtilities = inventoryAPI.getWolfyUtilities();
+        this.wolfyUtilities = inventoryAPI.getWolfyUtils();
     }
 
     /**
@@ -68,15 +67,6 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
      */
     public InventoryAPI<C> getInventoryAPI() {
         return inventoryAPI;
-    }
-
-    /**
-     * @return The {@link WolfyUtilsBukkit} that this window belongs to.
-     * @see #getWolfyUtils()
-     */
-    @Deprecated
-    public WolfyUtilsBukkit getWolfyUtilities() {
-        return wolfyUtilities;
     }
 
     /**
@@ -138,7 +128,7 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
      * @return The component set for the key; empty component if not available.
      */
     public Component translatedMsgKey(String key) {
-        return translatedMsgKey(key, false, List.of());
+        return translatedMsgKey(key, TagResolver.empty());
     }
 
     /**
@@ -166,61 +156,14 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
     }
 
     /**
-     * Creates a {@link Component} of the specified language key.<br>
-     * If the key exists in the language it will be translated and returns the according component.
-     * If it is not available it returns an empty component.
-     *
-     * @param key The key in the language.
-     * @param translateLegacyColor If it should translate legacy '&' color codes.
-     * @deprecated The translateLegacyColor param no longer affects the message! Replaced by {@link #translatedMsgKey(String)}
-     * @return The component set for the key; empty component if not available.
-     */
-    @Deprecated
-    public Component translatedMsgKey(String key, boolean translateLegacyColor) {
-        return translatedMsgKey(key, translateLegacyColor, List.of());
-    }
-
-    /**
-     * Creates a {@link Component} of the specified language key.<br>
-     * If the key exists in the language it will be translated and returns the according component.
-     * If it is not available it returns an empty component.
-     *
-     * @deprecated This method causes an inefficient conversion to an array. Replaced by {@link #translatedMsgKey(String, TagResolver...)}
-     * @param key The key in the language.
-     * @param templates The placeholders and values in the message.
-     * @return The component set for the key; empty component if not available.
-     */
-    @Deprecated
-    public Component translatedMsgKey(String key, List<? extends TagResolver> templates) {
-        return translatedMsgKey(key, false, templates);
-    }
-
-    /**
-     * Creates a {@link Component} of the specified language key.<br>
-     * If the key exists in the language it will be translated and returns the according component.
-     * If it is not available it returns an empty component.
-     *
-     * @deprecated The translateLegacyColor param no longer affects the message and this method causes an inefficient conversion to an array. Replaced by {@link #translatedMsgKey(String, TagResolver...)}
-     * @param key The key in the language.
-     * @param templates The placeholders and values in the message.
-     * @param translateLegacyColor If it should translate legacy '&' color codes.
-     * @return The component set for the key; empty component if not available.
-     */
-    @Deprecated
-    public Component translatedMsgKey(String key, boolean translateLegacyColor, List<? extends TagResolver> templates) {
-        return translatedMsgKey(key, templates.toArray(new TagResolver[0]));
-    }
-
-
-    /**
      * Opens the chat, send the player the defined message and waits for the input of the player.
      * When the player sends a message the inputAction method is executed.
      *
      * @param guiHandler  The {@link GuiHandler} it should be opened for.
      * @param msg         The message that should be sent to the player.
-     * @param inputAction The {@link ChatInputAction} to be executed when the player types in the chat.
+     * @param inputAction The {@link CallbackChatInput} to be executed when the player types in the chat.
      */
-    public void openChat(GuiHandler<C> guiHandler, Component msg, ChatInputAction<C> inputAction) {
+    public void openChat(GuiHandler<C> guiHandler, Component msg, CallbackChatInput<C> inputAction) {
         guiHandler.setChatInputAction(inputAction);
         guiHandler.close();
         getChat().sendMessage(guiHandler.getPlayer(), msg);
@@ -237,55 +180,55 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
      *
      * @param <C> The type of the custom cache.
      */
-    protected interface ButtonBuilder<C extends CustomCache> {
+    public interface ButtonBuilder<C extends CustomCache> {
 
         /**
-         * Gets a new builder for a {@link ChatInputButton<C>}.
+         * Gets a new builder for a {@link ButtonChatInput <C>}.
          *
          * @param id The id of the new button.
          * @return The new builder.
          */
-        ChatInputButton.Builder<C> chatInput(String id);
+        ButtonChatInput.Builder<C> chatInput(String id);
 
         /**
-         * Gets a new builder for a {@link ActionButton<C>}.
+         * Gets a new builder for a {@link ButtonAction <C>}.
          *
          * @param id The id of the new button.
          * @return The new builder.
          */
-        ActionButton.Builder<C> action(String id);
+        ButtonAction.Builder<C> action(String id);
 
         /**
-         * Gets a new builder for a {@link DummyButton<C>}.
+         * Gets a new builder for a {@link ButtonDummy <C>}.
          *
          * @param id The id of the new button.
          * @return The new builder.
          */
-        DummyButton.Builder<C> dummy(String id);
+        ButtonDummy.Builder<C> dummy(String id);
 
         /**
-         * Gets a new builder for a {@link ItemInputButton<C>}.
+         * Gets a new builder for a {@link ButtonItemInput <C>}.
          *
          * @param id The id of the new button.
          * @return The new builder.
          */
-        ItemInputButton.Builder<C> itemInput(String id);
+        ButtonItemInput.Builder<C> itemInput(String id);
 
         /**
-         * Gets a new builder for a {@link ToggleButton<C>}.
+         * Gets a new builder for a {@link ButtonToggle <C>}.
          *
          * @param id The id of the new button.
          * @return The new builder.
          */
-        ToggleButton.Builder<C> toggle(String id);
+        ButtonToggle.Builder<C> toggle(String id);
 
         /**
-         * Gets a new builder for a {@link MultipleChoiceButton<C>}.
+         * Gets a new builder for a {@link ButtonMultipleChoice <C>}.
          *
          * @param id The id of the new button.
          * @return The new builder.
          */
-        MultipleChoiceButton.Builder<C> multiChoice(String id);
+        ButtonMultipleChoice.Builder<C> multiChoice(String id);
 
     }
 }

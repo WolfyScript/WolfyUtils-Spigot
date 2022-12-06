@@ -22,12 +22,16 @@
 
 package com.wolfyscript.utilities.bukkit.nbt;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.eval.context.EvalContext;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTContainer;
+import de.tr7zw.changeme.nbtapi.NBTType;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -36,24 +40,29 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import com.wolfyscript.utilities.json.jackson.JacksonUtil;
 
-public class NBTQuery {
-
-    private final Map<String, QueryNode<?>> nodes;
+// Override the QueryNode settings, as this class is not registered!
+@JsonTypeInfo(use = JsonTypeInfo.Id.NONE, defaultImpl = NBTQuery.class)
+public class NBTQuery extends QueryNodeCompound {
 
     @JsonCreator
-    public NBTQuery(ObjectNode node) {
-        nodes = new HashMap<>();
-        node.fields().forEachRemaining(entry -> {
-            var key = entry.getKey();
-            var subNode = entry.getValue();
-            QueryNode.loadFrom(subNode, "", key).ifPresent(queryNode -> {
-                nodes.put(key, queryNode);
-            });
-        });
+    public NBTQuery(@JacksonInject WolfyUtils wolfyUtils) {
+        super(wolfyUtils, "", "");
+        this.nbtType = NBTType.NBTTagCompound;
+        this.includes = new HashMap<>();
+        this.required = new HashMap<>();
+        this.children = new HashMap<>();
     }
 
     private NBTQuery(NBTQuery other) {
-        this.nodes = other.nodes.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().copy()));
+        super(other);
+        this.children = other.children.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().copy()));
+    }
+
+    @JsonAnySetter
+    public void loadNonNestedChildren(String key, JsonNode node) {
+        // Sets the children that are specified in the root of the object without the "children" node!
+        // That is supported behaviour!
+        QueryNode.loadFrom(node, "", key).ifPresent(queryNode -> children.putIfAbsent(key, queryNode));
     }
 
     public static Optional<NBTQuery> of(File file) {
@@ -80,14 +89,12 @@ public class NBTQuery {
 
     public NBTCompound run(NBTCompound input, EvalContext context) {
         NBTContainer container = new NBTContainer();
-        nodes.forEach((key, queryNode) -> {
-            if (input.hasKey(key)) {
-                queryNode.visit("", key, context, input, container);
-            }
-        });
+        // Start at the root of the container
+        applyChildrenToCompound("", context, input, container);
         return container;
     }
 
+    @Override
     public NBTQuery copy() {
         return new NBTQuery(this);
     }

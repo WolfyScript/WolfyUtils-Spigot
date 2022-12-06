@@ -16,15 +16,16 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.bukkit.gui;
+package com.wolfyscript.utilities.bukkit.gui.callback;
 
+import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import java.util.List;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface ChatTabComplete<C extends CustomCache> {
+public interface CallbackChatTabComplete<C extends CustomCache> {
 
     @Nullable
     List<String> onTabComplete(GuiHandler<C> guiHandler, @NotNull Player sender, @NotNull String[] args);

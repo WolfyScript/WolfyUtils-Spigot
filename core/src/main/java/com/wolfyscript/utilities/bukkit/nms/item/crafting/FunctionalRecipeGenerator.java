@@ -1,6 +1,6 @@
 package com.wolfyscript.utilities.bukkit.nms.item.crafting;
 
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -219,7 +219,7 @@ public class FunctionalRecipeGenerator {
         generatedRecipeClass.setSuperclass(originalRecipeClass);
 
         // private final NamespacedKey recipeID;
-        CtField recipeIDField = new CtField(classPool.get(BukkitNamespacedKey.class.getName()), "recipeID", generatedRecipeClass);
+        CtField recipeIDField = new CtField(classPool.get(NamespacedKey.class.getName()), "recipeID", generatedRecipeClass);
         recipeIDField.setModifiers(Modifier.setPrivate(Modifier.FINAL)); // private final
         generatedRecipeClass.addField(recipeIDField);
         // private final RecipeMatcher matcher;
@@ -304,7 +304,7 @@ public class FunctionalRecipeGenerator {
             signatureBuilder.append(funcRecipeClass).append('(');
 
             // NamespacedKey var0,
-            signatureBuilder.append(BukkitNamespacedKey.class.getName()).append(" var0").append(", ");
+            signatureBuilder.append(NamespacedKey.class.getName()).append(" var0").append(", ");
             // RecipeMatcher var1
             signatureBuilder.append(RecipeMatcher.class.getName()).append(" var1").append(", ");
             // RecipeAssembler var1

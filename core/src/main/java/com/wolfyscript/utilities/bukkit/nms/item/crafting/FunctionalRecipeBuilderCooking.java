@@ -1,6 +1,7 @@
 package com.wolfyscript.utilities.bukkit.nms.item.crafting;
 
 import com.google.common.base.Preconditions;
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -16,7 +17,7 @@ public abstract class FunctionalRecipeBuilderCooking extends FunctionalRecipeBui
     private float experience = 1f;
     private int cookingTime = 60;
 
-    public FunctionalRecipeBuilderCooking(BukkitNamespacedKey key, ItemStack result, RecipeChoice ingredient) {
+    public FunctionalRecipeBuilderCooking(NamespacedKey key, ItemStack result, RecipeChoice ingredient) {
         super(key);
         this.result = result;
         this.ingredient = ingredient;
