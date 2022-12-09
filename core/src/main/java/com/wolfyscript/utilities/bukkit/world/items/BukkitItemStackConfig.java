@@ -7,6 +7,7 @@ import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.items.ItemStackConfig;
 import com.wolfyscript.utilities.common.nbt.NBTTagConfig;
 import com.wolfyscript.utilities.common.nbt.NBTTagConfigCompound;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigInt;
 import com.wolfyscript.utilities.common.nbt.NBTTagConfigList;
 import com.wolfyscript.utilities.common.nbt.NBTTagConfigListCompound;
 import com.wolfyscript.utilities.common.nbt.NBTTagConfigListDouble;
@@ -14,18 +15,28 @@ import com.wolfyscript.utilities.common.nbt.NBTTagConfigListFloat;
 import com.wolfyscript.utilities.common.nbt.NBTTagConfigListInt;
 import com.wolfyscript.utilities.common.nbt.NBTTagConfigListIntArray;
 import com.wolfyscript.utilities.common.nbt.NBTTagConfigListLong;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigListPrimitive;
 import com.wolfyscript.utilities.common.nbt.NBTTagConfigListString;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigLong;
 import com.wolfyscript.utilities.common.nbt.NBTTagConfigPrimitive;
 import com.wolfyscript.utilities.eval.context.EvalContext;
 import com.wolfyscript.utilities.eval.operator.BoolOperatorConst;
 import com.wolfyscript.utilities.eval.value_provider.ValueProvider;
 import com.wolfyscript.utilities.eval.value_provider.ValueProviderIntegerConst;
+import com.wolfyscript.utilities.eval.value_provider.ValueProviderLongConst;
 import com.wolfyscript.utilities.eval.value_provider.ValueProviderStringConst;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTCompoundList;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.NBTList;
+import de.tr7zw.changeme.nbtapi.NBTListCompound;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -54,11 +65,77 @@ public class BukkitItemStackConfig extends ItemStackConfig<ItemStack> {
         }
         this.enchants = stack.getEnchantments().entrySet().stream().collect(Collectors.toMap(entry-> entry.getKey().getKey().toString(), entry -> new ValueProviderIntegerConst(wolfyUtils, entry.getValue())));
 
-        NBTItem nbtItem = new NBTItem(stack);
-        for (String key : nbtItem.getKeys()) {
-            nbtItem.getType(key); // TODO
-        }
+        readFromItemStack(new NBTItem(stack), this.nbt);
 
+    }
+
+    private NBTTagConfig readFromItemStack(NBTCompound currentCompound, NBTTagConfigCompound configCompound) {
+        Map<String, NBTTagConfig> children = new HashMap<>();
+        for (String key : currentCompound.getKeys()) {
+            switch (currentCompound.getType(key)) {
+                case NBTTagCompound -> {
+                    children.put(key, readFromItemStack(currentCompound.getCompound(key), new NBTTagConfigCompound(wolfyUtils, key, configCompound)));
+                }
+                case NBTTagList -> {
+                    NBTTagConfigList<?> list = switch (currentCompound.getListType(key)) {
+                        case NBTTagCompound -> {
+                            List<NBTTagConfigList.Element<NBTTagConfigCompound>> elements = new ArrayList<>();
+                            NBTTagConfigListCompound compoundConfigList = new NBTTagConfigListCompound(wolfyUtils, elements, key, configCompound);
+                            NBTCompoundList compoundList = currentCompound.getCompoundList(key);
+                            for (NBTListCompound listCompound : compoundList) {
+                                NBTTagConfigList.Element<NBTTagConfigCompound> element = new NBTTagConfigList.Element<>();
+                                readFromItemStack(listCompound, new NBTTagConfigCompound(wolfyUtils, "", compoundConfigList));
+                                elements.add(element);
+                            }
+                            yield compoundConfigList;
+                        }
+                        case NBTTagByte -> {
+                        }
+                        case NBTTagByteArray -> {
+
+                        }
+                        case NBTTagShort -> {
+
+                        }
+                        case NBTTagInt -> readPrimitiveList(currentCompound.getIntegerList(key), new NBTTagConfigListInt(wolfyUtils, new ArrayList<>(), key, configCompound), (listInt, integer) -> new NBTTagConfigInt(wolfyUtils, new ValueProviderIntegerConst(wolfyUtils, integer), "", listInt));
+                        case NBTTagIntArray -> {
+
+                        }
+                        case NBTTagLong -> readPrimitiveList(currentCompound.getLongList(key), new NBTTagConfigListLong(wolfyUtils, new ArrayList<>(), key, configCompound), (listConfig, aLong) -> new NBTTagConfigLong(wolfyUtils, new ValueProviderLongConst(wolfyUtils, aLong), "", listConfig));
+                        case NBTTagFloat -> {
+
+                        }
+                        case NBTTagDouble -> {
+
+                        }
+                    };
+                    if (list != null) {
+                        children.put(key, list);
+                    }
+                }
+            }
+        }
+        configCompound.setChildren(children);
+        return configCompound;
+    }
+
+    /**
+     * Reads the elements of a NBTList and converts them, using the given function, to the NBTTagConfig.
+     *
+     * @param nbtList The NBTList from the NBTItemAPI
+     * @param configList The instance of the NBTTagConfigList to load the elements into.
+     * @param elementConstructor This constructs each element of list.
+     * @return The configList instance with the new elements.
+     * @param <T> The primitive data type.
+     * @param <VAL> The type of the Element config.
+     */
+    private <T, VAL extends NBTTagConfigPrimitive<T>> NBTTagConfigListPrimitive<T, VAL> readPrimitiveList(NBTList<T> nbtList, NBTTagConfigListPrimitive<T, VAL> configList, BiFunction<NBTTagConfigListPrimitive<T, VAL>, T, VAL> elementConstructor) {
+        configList.overrideElements(nbtList.stream().map(value -> {
+            var element = new NBTTagConfigList.Element<VAL>();
+            element.setValue(elementConstructor.apply(configList, value));
+            return element;
+        }).toList());
+        return configList;
     }
 
     @Override
