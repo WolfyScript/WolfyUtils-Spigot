@@ -27,7 +27,8 @@ import javassist.bytecode.SignatureAttribute;
 import me.wolfyscript.utilities.api.nms.inventory.InjectGUIInventory;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.Reflection;
-import me.wolfyscript.utilities.util.version.MinecraftVersions;
+import me.wolfyscript.utilities.util.version.MinecraftVersion;
+import me.wolfyscript.utilities.util.version.ServerVersion;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -50,6 +51,8 @@ public class FunctionalRecipeGenerator {
     private static final Class<?> NON_NULL_LIST_CLASS;
     private static final Class<?> RECIPE_MANAGER_CLASS;
     private static final Class<?> MINECRAFT_SERVER_CLASS;
+    private static final Class<?> COOKING_BOOK_CATEGORY;
+    private static final Class<?> CRAFTING_BOOK_CATEGORY;
 
     // Recipe classes
     private static final Class<?> RECIPE_CAMPFIRE_CLASS;
@@ -62,6 +65,8 @@ public class FunctionalRecipeGenerator {
     // Fields
     private static final Field ITEMSTACK_EMPTY_CONST;
     private static final Field RECIPE_ITEMSTACK_EMPTY_CONST;
+    private static final Field COOKING_BOOK_CATEGORY_CODEC;
+    private static final Field CRAFTING_BOOK_CATEGORY_CODEC;
 
     // Methods
     private static final Method MINECRAFT_SERVER_GET_RECIPE_MANAGER_METHOD;
@@ -106,6 +111,14 @@ public class FunctionalRecipeGenerator {
         RECIPE_MANAGER_CLASS = Reflection.getNMS("world.item.crafting", "CraftingManager");
         MINECRAFT_SERVER_CLASS = Reflection.getNMS("server", "MinecraftServer");
 
+        if (ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 19, 3))) {
+            COOKING_BOOK_CATEGORY = Reflection.getNMS("world.item.crafting", "CookingBookCategory");
+            CRAFTING_BOOK_CATEGORY = Reflection.getNMS("world.item.crafting", "CraftingBookCategory");
+        } else {
+            COOKING_BOOK_CATEGORY = null;
+            CRAFTING_BOOK_CATEGORY = null;
+        }
+
         RECIPE_CAMPFIRE_CLASS = Reflection.getNMS("world.item.crafting", "RecipeCampfire");
         RECIPE_FURNACE_CLASS = Reflection.getNMS("world.item.crafting", "FurnaceRecipe");
         RECIPE_SMOKING_CLASS = Reflection.getNMS("world.item.crafting", "RecipeSmoking");
@@ -116,6 +129,14 @@ public class FunctionalRecipeGenerator {
         try {
             ITEMSTACK_EMPTY_CONST = ITEMSTACK_CLASS.getDeclaredField("b");
             RECIPE_ITEMSTACK_EMPTY_CONST = RECIPE_ITEMSTACK_CLASS.getDeclaredField("a");
+
+            if (ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 19, 3))) {
+                COOKING_BOOK_CATEGORY_CODEC = COOKING_BOOK_CATEGORY.getDeclaredField("d");
+                CRAFTING_BOOK_CATEGORY_CODEC = CRAFTING_BOOK_CATEGORY.getDeclaredField("e");
+            } else {
+                COOKING_BOOK_CATEGORY_CODEC = null;
+                CRAFTING_BOOK_CATEGORY_CODEC = null;
+            }
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
@@ -307,9 +328,9 @@ public class FunctionalRecipeGenerator {
             signatureBuilder.append(NamespacedKey.class.getName()).append(" var0").append(", ");
             // RecipeMatcher var1
             signatureBuilder.append(RecipeMatcher.class.getName()).append(" var1").append(", ");
-            // RecipeAssembler var1
+            // RecipeAssembler var2
             signatureBuilder.append(RecipeAssembler.class.getName()).append(" var2").append(", ");
-            // RecipeRemainingItemsFunction var1
+            // RecipeRemainingItemsFunction var3
             signatureBuilder.append(RecipeRemainingItemsFunction.class.getName()).append(" var3");
 
             for (int i = 0; i < parameters.length; i++) {
@@ -342,6 +363,18 @@ public class FunctionalRecipeGenerator {
                     // List var<i>
                     signatureBuilder.append(", ");
                     signatureBuilder.append(List.class.getName()).append(' ').append(name);
+                } else if (ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 19, 3)) && parameters[i].equals(COOKING_BOOK_CATEGORY)) {
+                    // Use String in the constructor and find the category for it.
+                    bodyBuilder.append("(").append(COOKING_BOOK_CATEGORY.getName()).append(")").append(COOKING_BOOK_CATEGORY.getName()).append(".").append(COOKING_BOOK_CATEGORY_CODEC.getName()).append(".a(").append(name).append(")");
+                    // String var<i>
+                    signatureBuilder.append(", ");
+                    signatureBuilder.append("String ").append(name);
+                } else if (ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 19, 3)) && parameters[i].equals(CRAFTING_BOOK_CATEGORY)) {
+                    // Use String in the constructor and find the category for it.
+                    bodyBuilder.append("(").append(CRAFTING_BOOK_CATEGORY.getName()).append(")").append(CRAFTING_BOOK_CATEGORY.getName()).append(".").append(CRAFTING_BOOK_CATEGORY_CODEC.getName()).append(".a(").append(name).append(")");
+                    // String var<i>
+                    signatureBuilder.append(", ");
+                    signatureBuilder.append("String ").append(name);
                 } else {
                     bodyBuilder.append(name);
                     // <Class Name> var<i>
@@ -469,8 +502,7 @@ public class FunctionalRecipeGenerator {
                         stack.exact = true;
                     }
                             
-                    stack.${ingredient_dissolve}();
-                    if (requireNotEmpty && stack.${ingredient_choices}.length == 0) {
+                    if (requireNotEmpty && stack.${ingredient_choices}().length == 0) {
                         throw new java.lang.IllegalArgumentException("Recipe requires at least one non-air choice!");
                     } else {
                         return stack;
@@ -485,8 +517,7 @@ public class FunctionalRecipeGenerator {
                 "itemstack", ItemStack.class.getName(),
                 "empty_ingredient", emptyIngredientField.getName(),
                 "craftitemstack", CRAFT_ITEMSTACK_CLASS.getName(),
-                "ingredient_dissolve", Reflection.NMSMapping.of(MinecraftVersions.v1_18, "f").orElse("buildChoices"),
-                "ingredient_choices", Arrays.stream(RECIPE_ITEMSTACK_CLASS.getFields()).filter(field -> field.getType().equals(ITEMSTACK_CLASS.arrayType())).findFirst().map(Field::getName).orElse("choices")
+                "ingredient_choices", Arrays.stream(RECIPE_ITEMSTACK_CLASS.getMethods()).filter(field -> field.getReturnType().equals(ITEMSTACK_CLASS.arrayType())).findFirst().map(Method::getName).orElse("choices")
         ));
         conversionUtils.addMethod(CtNewMethod.make(recipeChoiceConverterMethod, conversionUtils));
 
