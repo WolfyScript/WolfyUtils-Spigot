@@ -7,7 +7,7 @@ import org.apache.commons.lang3.NotImplementedException;
 
 public class FallbackInventoryUtilImpl extends InventoryUtil {
 
-    protected FallbackInventoryUtilImpl(NMSUtil nmsUtil) {
+    public FallbackInventoryUtilImpl(NMSUtil nmsUtil) {
         super(nmsUtil);
     }
 
