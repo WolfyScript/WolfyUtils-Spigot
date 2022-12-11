@@ -38,7 +38,7 @@ public class FallbackNMSEntry extends NMSUtil {
 
     @Override
     public InventoryUtil getInventoryUtil() {
-        throw new NotImplementedException("InventoryUtil is not yet implement for " + ServerVersion.getVersion());
+        return inventoryUtil;
     }
 
     @Override

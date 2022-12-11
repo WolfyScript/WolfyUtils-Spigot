@@ -19,6 +19,8 @@
 package me.wolfyscript.utilities.api.nms;
 
 import com.wolfyscript.utilities.bukkit.nms.fallback.FallbackNMSEntry;
+import java.util.ArrayList;
+import java.util.List;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.util.Reflection;
 import me.wolfyscript.utilities.util.version.ServerVersion;
@@ -29,7 +31,8 @@ import java.util.HashMap;
 
 public abstract class NMSUtil {
 
-    private static final HashMap<String, VersionAdapter> versionAdapters = new HashMap<>();
+    private static final List<VersionHandler> versionHandlers = new ArrayList<>();
+    private static final HashMap<String, VersionHandler> versionAdapters = new HashMap<>();
 
     static {
         registerAdapter(new VersionAdapter("v1_17_R1"));
@@ -128,7 +131,7 @@ public abstract class NMSUtil {
     /**
      * Used to handle new types of NMS versions introduced with spigot 1.17 thanks to the use of Mojang mappings.
      */
-    private static class VersionAdapter {
+    private static class VersionAdapter implements VersionHandler {
 
         protected final String version;
 
@@ -136,6 +139,7 @@ public abstract class NMSUtil {
             this.version = entryVersion;
         }
 
+        @Override
         public String getPackageName() {
             if (ServerVersion.getVersion().getPatch() > 0) {
                 return version + "_P" + ServerVersion.getVersion().getPatch();
@@ -143,4 +147,11 @@ public abstract class NMSUtil {
             return version;
         }
     }
+
+    private interface VersionHandler {
+
+        String getPackageName();
+
+    }
+
 }
