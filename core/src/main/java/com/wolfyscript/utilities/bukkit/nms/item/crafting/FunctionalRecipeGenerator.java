@@ -34,6 +34,8 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 
+import static java.util.Map.entry;
+
 public class FunctionalRecipeGenerator {
 
     private static final String GENERATOR_PACKAGE = FunctionalRecipeGenerator.class.getPackageName() + "";
@@ -256,6 +258,27 @@ public class FunctionalRecipeGenerator {
         remainingItemsFunctionField.setModifiers(Modifier.setPrivate(Modifier.FINAL)); // private final
         generatedRecipeClass.addField(remainingItemsFunctionField);
 
+        Map<String, String> mappings = Map.ofEntries(
+                entry("Optional", Optional.class.getName()),
+                entry("Level", WORLD_CLASS.getName()),
+                entry("ItemStack", ITEMSTACK_CLASS.getName()),
+                entry("Container", CONTAINER_CLASS.getName()),
+                entry("NonNullList", NON_NULL_LIST_CLASS.getName()),
+                entry("RecipeMatchesMethod", RECIPE_MATCHES_METHOD.getName()),
+                entry("RecipeAssembleMethod", RECIPE_ASSEMBLE_METHOD.getName()),
+                entry("RemainingItemsMethod", RECIPE_GET_REMAINING_ITEMS_METHOD.getName()),
+                entry("List", List.class.getName()),
+                entry("NMSItemStack", ITEMSTACK_CLASS.getName()),
+                entry("BukkitItemStack", ItemStack.class.getName()),
+                entry("CraftItemStack", CRAFT_ITEMSTACK_CLASS.getName()),
+                entry("NonNullList_Create", NONNULLLIST_WITH_SIZE_METHOD.getName()),
+                entry("NMSItemStack_Empty", ITEMSTACK_EMPTY_CONST.getName()),
+                entry("CraftInventory", CRAFT_INVENTORY_CLASS.getName()),
+                entry("CraftingContainer", CRAFTING_CONTAINER_CLASS.getName()),
+                entry("CraftInventoryCrafting", CRAFT_INVENTORY_CRAFTING_CLASS.getName()),
+                entry("resultInventory", "resultInventory")
+        );
+
         generatedRecipeClass.addMethod(CtNewMethod.make(StrSubstitutor.replace("""
                 public ${Optional} getMatcher() {
                     return ${Optional}.ofNullable(this.matcher);
@@ -273,29 +296,18 @@ public class FunctionalRecipeGenerator {
                     }
                     return super.${RecipeMatchesMethod}(container, level);
                 }
-                """, Map.of(
-                "Optional", Optional.class.getName(),
-                "Level", WORLD_CLASS.getName(),
-                "Container", CONTAINER_CLASS.getName(),
-                "RecipeMatchesMethod", RECIPE_MATCHES_METHOD.getName()
-        ));
+                """, mappings);
         generatedRecipeClass.addMethod(CtNewMethod.make(matchesMethod, generatedRecipeClass));
 
         // Assemble method injection
         String assembleMethod = StrSubstitutor.replace("""
                 public ${ItemStack} ${RecipeAssembleMethod}(${Container} container) {
-                    ${Optional} item = assemble(ConversionUtils.containerToBukkit(container)).map(new ConvertCraftItemStackToNMS());
-                    if (item.isPresent()) {
+                    ${Optional} item = assemble(ConversionUtils.containerToBukkit(container)).map(new ConvertCraftItemStackToNMS()); if (item.isPresent()) {
                         return (${ItemStack}) item.get();
                     }
                     return super.${RecipeAssembleMethod}(container);
                 }
-                """, Map.of(
-                "ItemStack", ITEMSTACK_CLASS.getName(),
-                "Container", CONTAINER_CLASS.getName(),
-                "RecipeAssembleMethod", RECIPE_ASSEMBLE_METHOD.getName(),
-                "Optional", Optional.class.getName()
-        ));
+                """, mappings);
         generatedRecipeClass.addMethod(CtNewMethod.make(assembleMethod, generatedRecipeClass));
 
         // Remaining Items method injection
@@ -307,12 +319,7 @@ public class FunctionalRecipeGenerator {
                     }
                     return super.${RemainingItemsMethod}(container);
                 }
-                """, Map.of(
-                "Container", CONTAINER_CLASS.getName(),
-                "NonNullList", NON_NULL_LIST_CLASS.getName(),
-                "Optional", Optional.class.getName(),
-                "RemainingItemsMethod", RECIPE_GET_REMAINING_ITEMS_METHOD.getName()
-        ));
+                """, mappings);
         generatedRecipeClass.addMethod(CtNewMethod.make(remainingItemsMethod, generatedRecipeClass));
 
         // Create constructor

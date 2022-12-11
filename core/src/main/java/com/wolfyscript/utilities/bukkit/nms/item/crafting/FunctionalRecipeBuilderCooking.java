@@ -63,7 +63,7 @@ public abstract class FunctionalRecipeBuilderCooking extends FunctionalRecipeBui
                 constructor = recipeClass.getConstructor(
                         NamespacedKey.class, RecipeMatcher.class, RecipeAssembler.class, RecipeRemainingItemsFunction.class, String.class, String.class, RecipeChoice.class, ItemStack.class, Float.TYPE, Integer.TYPE
                 );
-                recipe = (FunctionalRecipe<Inventory>) constructor.newInstance(key, recipeMatcher, recipeAssembler, remainingItemsFunction, "misc", group, ingredient, result, experience, cookingTime);
+                recipe = (FunctionalRecipe<Inventory>) constructor.newInstance(key, recipeMatcher, recipeAssembler, remainingItemsFunction, group, "misc", ingredient, result, experience, cookingTime);
             } else {
                 constructor = recipeClass.getConstructor(
                         NamespacedKey.class, RecipeMatcher.class, RecipeAssembler.class, RecipeRemainingItemsFunction.class, String.class, RecipeChoice.class, ItemStack.class, Float.TYPE, Integer.TYPE

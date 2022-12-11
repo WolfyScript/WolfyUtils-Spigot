@@ -53,7 +53,7 @@ public class FunctionalRecipeBuilderShaped extends FunctionalRecipeBuilderCrafti
                 constructor =  FunctionalRecipeGenerator.getFunctionalRecipeClass(getType()).getConstructor(
                         NamespacedKey.class, RecipeMatcher.class, RecipeAssembler.class, RecipeRemainingItemsFunction.class, String.class, String.class, Integer.TYPE, Integer.TYPE, List.class, ItemStack.class
                 );
-                recipe = (FunctionalRecipe<CraftingInventory>) constructor.newInstance(key, recipeMatcher, recipeAssembler, remainingItemsFunction, "misc", group, width, height, choices, result);
+                recipe = (FunctionalRecipe<CraftingInventory>) constructor.newInstance(key, recipeMatcher, recipeAssembler, remainingItemsFunction, group, "misc", width, height, choices, result);
             } else {
                 constructor = FunctionalRecipeGenerator.getFunctionalRecipeClass(getType()).getConstructor(
                         NamespacedKey.class, RecipeMatcher.class, RecipeAssembler.class, RecipeRemainingItemsFunction.class, String.class, Integer.TYPE, Integer.TYPE, List.class, ItemStack.class
