@@ -7,7 +7,7 @@ import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
 import com.wolfyscript.utilities.bukkit.commands.ChatActionCommand;
 import com.wolfyscript.utilities.bukkit.commands.InfoCommand;
 import com.wolfyscript.utilities.bukkit.commands.InputCommand;
-import com.wolfyscript.utilities.bukkit.commands.QueryDebugCommand;
+import com.wolfyscript.utilities.bukkit.commands.DebugNBTQueryCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleAnimationCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleEffectCommand;
 import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManager;
@@ -495,7 +495,8 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
         Bukkit.getServer().getPluginCommand("wui").setTabCompleter(new InputCommand(this));
         Bukkit.getServer().getPluginCommand("wua").setExecutor(new ChatActionCommand());
 
-        Bukkit.getServer().getPluginCommand("query_item").setExecutor(new QueryDebugCommand(this));
+        Bukkit.getServer().getPluginCommand("query_item").setExecutor(new DebugNBTQueryCommand(this));
+        Bukkit.getServer().getPluginCommand("simple_bukkit_stack").setExecutor(new DebugSimpleStackConfigCommand(this));
     }
 
     public MessageHandler getMessageHandler() {
