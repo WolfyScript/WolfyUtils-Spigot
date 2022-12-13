@@ -452,6 +452,7 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
         KeyedTypeIdResolver.registerTypeRegistry((Class<QueryNode<?>>) (Object)QueryNode.class, nbtQueryNodes);
         KeyedTypeIdResolver.registerTypeRegistry(CustomBlockData.class, customBlockData);
         KeyedTypeIdResolver.registerTypeRegistry(CustomPlayerData.class, registries.getCustomPlayerData());
+        KeyedTypeIdResolver.registerTypeRegistry(NBTTagConfig.class, nbtTagConfigs);
     }
 
     @Override
