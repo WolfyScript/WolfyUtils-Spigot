@@ -45,7 +45,7 @@
         <depend_version.adventure-api>4.11.0</depend_version.adventure-api>
         <depend_version.adventure-platform>4.1.2</depend_version.adventure-platform>
         <depend_version.adventure-minimessage>4.11.0</depend_version.adventure-minimessage>
-        <depend_version.nbt-api>2.10.0</depend_version.nbt-api>
+        <depend_version.nbt-api>2.11.0</depend_version.nbt-api>
         <depend_version.javassist>3.29.2-GA</depend_version.javassist>
         <depend_version.test.jupiter>5.9.0</depend_version.test.jupiter>
         <depend_version.test.mockito>4.8.0</depend_version.test.mockito>
