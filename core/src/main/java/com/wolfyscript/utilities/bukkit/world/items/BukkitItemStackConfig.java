@@ -43,7 +43,9 @@ import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTCompoundList;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.NBTList;
-import de.tr7zw.changeme.nbtapi.NBTListCompound;
+import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
+import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
+import de.tr7zw.changeme.nbtapi.iface.ReadableNBTList;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,7 +67,6 @@ public class BukkitItemStackConfig extends ItemStackConfig<ItemStack> {
 
     public BukkitItemStackConfig(WolfyUtils wolfyUtils, ItemStack stack) {
         super(wolfyUtils, stack.getType().getKey().toString());
-
         this.amount = new ValueProviderIntegerConst(wolfyUtils, stack.getAmount());
         ItemMeta meta = stack.getItemMeta();
         if (meta != null) {
@@ -120,56 +121,55 @@ public class BukkitItemStackConfig extends ItemStackConfig<ItemStack> {
         return null;
     }
 
-    private NBTTagConfigCompound readFromItemStack(NBTCompound currentCompound, String entryKey, NBTTagConfig parent) {
-        NBTTagConfigCompound configCompound = new NBTTagConfigCompound(wolfyUtils, entryKey, parent);
+    private NBTTagConfigCompound readFromItemStack(ReadableNBT currentCompound, String entryKey, NBTTagConfig parent) {
+        NBTTagConfigCompound configCompound = new NBTTagConfigCompound(wolfyUtils, parent);
         Map<String, NBTTagConfig> children = new HashMap<>();
         for (String key : currentCompound.getKeys()) {
             NBTTagConfig childConfig = switch (currentCompound.getType(key)) {
                 case NBTTagCompound -> readFromItemStack(currentCompound.getCompound(key), key, configCompound);
                 case NBTTagList -> switch (currentCompound.getListType(key)) {
                     case NBTTagCompound -> {
-                        List<NBTTagConfigList.Element<NBTTagConfigCompound>> elements = new ArrayList<>();
-                        NBTTagConfigListCompound compoundConfigList = new NBTTagConfigListCompound(wolfyUtils, elements, key, configCompound);
-                        NBTCompoundList compoundList = currentCompound.getCompoundList(key);
-                        for (NBTListCompound listCompound : compoundList) {
-                            NBTTagConfigList.Element<NBTTagConfigCompound> element = new NBTTagConfigList.Element<>();
-                            readFromItemStack(listCompound, "", compoundConfigList);
-                            elements.add(element);
+                        NBTTagConfigListCompound compoundConfigList = new NBTTagConfigListCompound(wolfyUtils, parent, List.of());
+                        ReadableNBTList<ReadWriteNBT> compoundList = currentCompound.getCompoundList(key);
+                        List<NBTTagConfigCompound> elements = new ArrayList<>();
+                        for (ReadWriteNBT listCompound : compoundList) {
+                            elements.add(readFromItemStack(listCompound, "", compoundConfigList));
                         }
+                        compoundConfigList.setValues(elements);
                         yield compoundConfigList;
                     }
                     case NBTTagInt ->
-                            readPrimitiveList(currentCompound.getIntegerList(key), new NBTTagConfigListInt(wolfyUtils, new ArrayList<>(), key, configCompound), (listInt, integer) -> new NBTTagConfigInt(wolfyUtils, new ValueProviderIntegerConst(wolfyUtils, integer), "", listInt));
+                            readPrimitiveList(currentCompound.getIntegerList(key), new NBTTagConfigListInt(wolfyUtils, configCompound, new ArrayList<>()), (listInt, integer) -> new NBTTagConfigInt(wolfyUtils, listInt, new ValueProviderIntegerConst(wolfyUtils, integer)));
                     case NBTTagIntArray ->
-                            readPrimitiveList(currentCompound.getIntArrayList(key), new NBTTagConfigListIntArray(wolfyUtils, new ArrayList<>(), key, configCompound), (listIntArray, intArray) -> new NBTTagConfigIntArray(wolfyUtils, new ValueProviderIntArrayConst(wolfyUtils, intArray), "", listIntArray));
+                            readPrimitiveList(currentCompound.getIntArrayList(key), new NBTTagConfigListIntArray(wolfyUtils, configCompound, new ArrayList<>()), (listIntArray, intArray) -> new NBTTagConfigIntArray(wolfyUtils, listIntArray, new ValueProviderIntArrayConst(wolfyUtils, intArray)));
                     case NBTTagLong ->
-                            readPrimitiveList(currentCompound.getLongList(key), new NBTTagConfigListLong(wolfyUtils, new ArrayList<>(), key, configCompound), (listConfig, aLong) -> new NBTTagConfigLong(wolfyUtils, new ValueProviderLongConst(wolfyUtils, aLong), "", listConfig));
+                            readPrimitiveList(currentCompound.getLongList(key), new NBTTagConfigListLong(wolfyUtils, configCompound, new ArrayList<>()), (listConfig, aLong) -> new NBTTagConfigLong(wolfyUtils, listConfig, new ValueProviderLongConst(wolfyUtils, aLong)));
                     case NBTTagFloat ->
-                            readPrimitiveList(currentCompound.getFloatList(key), new NBTTagConfigListFloat(wolfyUtils, new ArrayList<>(), key, configCompound), (listConfig, aFloat) -> new NBTTagConfigFloat(wolfyUtils, new ValueProviderFloatConst(wolfyUtils, aFloat), "", listConfig));
+                            readPrimitiveList(currentCompound.getFloatList(key), new NBTTagConfigListFloat(wolfyUtils, configCompound, new ArrayList<>()), (listConfig, aFloat) -> new NBTTagConfigFloat(wolfyUtils, listConfig, new ValueProviderFloatConst(wolfyUtils, aFloat)));
                     case NBTTagDouble ->
-                            readPrimitiveList(currentCompound.getDoubleList(key), new NBTTagConfigListDouble(wolfyUtils, new ArrayList<>(), key, configCompound), (listConfig, aDouble) -> new NBTTagConfigDouble(wolfyUtils, new ValueProviderDoubleConst(wolfyUtils, aDouble), "", listConfig));
+                            readPrimitiveList(currentCompound.getDoubleList(key), new NBTTagConfigListDouble(wolfyUtils, configCompound, new ArrayList<>()), (listConfig, aDouble) -> new NBTTagConfigDouble(wolfyUtils, listConfig, new ValueProviderDoubleConst(wolfyUtils, aDouble)));
                     case NBTTagString ->
-                            readPrimitiveList(currentCompound.getStringList(key), new NBTTagConfigListString(wolfyUtils, new ArrayList<>(), key, configCompound), (listConfig, aString) -> new NBTTagConfigString(wolfyUtils, new ValueProviderStringConst(wolfyUtils, aString), "", listConfig));
+                            readPrimitiveList(currentCompound.getStringList(key), new NBTTagConfigListString(wolfyUtils, configCompound, new ArrayList<>()), (listConfig, aString) -> new NBTTagConfigString(wolfyUtils, listConfig, new ValueProviderStringConst(wolfyUtils, aString)));
                     default -> null;
                 };
                 case NBTTagByte ->
-                        new NBTTagConfigByte(wolfyUtils, new ValueProviderByteConst(wolfyUtils, currentCompound.getByte(key)), key, configCompound);
+                        new NBTTagConfigByte(wolfyUtils, configCompound, new ValueProviderByteConst(wolfyUtils, currentCompound.getByte(key)));
                 case NBTTagByteArray ->
-                        new NBTTagConfigByteArray(wolfyUtils, new ValueProviderByteArrayConst(wolfyUtils, currentCompound.getByteArray(key)), key, configCompound);
+                        new NBTTagConfigByteArray(wolfyUtils, configCompound,new ValueProviderByteArrayConst(wolfyUtils, currentCompound.getByteArray(key)));
                 case NBTTagShort ->
-                        new NBTTagConfigShort(wolfyUtils, new ValueProviderShortConst(wolfyUtils, currentCompound.getShort(key)), key, configCompound);
+                        new NBTTagConfigShort(wolfyUtils, configCompound, new ValueProviderShortConst(wolfyUtils, currentCompound.getShort(key)));
                 case NBTTagInt ->
-                        new NBTTagConfigInt(wolfyUtils, new ValueProviderIntegerConst(wolfyUtils, currentCompound.getInteger(key)), key, configCompound);
+                        new NBTTagConfigInt(wolfyUtils, configCompound, new ValueProviderIntegerConst(wolfyUtils, currentCompound.getInteger(key)));
                 case NBTTagIntArray ->
-                        new NBTTagConfigIntArray(wolfyUtils, new ValueProviderIntArrayConst(wolfyUtils, currentCompound.getIntArray(key)), key, configCompound);
+                        new NBTTagConfigIntArray(wolfyUtils, configCompound, new ValueProviderIntArrayConst(wolfyUtils, currentCompound.getIntArray(key)));
                 case NBTTagLong ->
-                        new NBTTagConfigLong(wolfyUtils, new ValueProviderLongConst(wolfyUtils, currentCompound.getLong(key)), key, configCompound);
+                        new NBTTagConfigLong(wolfyUtils, configCompound, new ValueProviderLongConst(wolfyUtils, currentCompound.getLong(key)));
                 case NBTTagFloat ->
-                        new NBTTagConfigFloat(wolfyUtils, new ValueProviderFloatConst(wolfyUtils, currentCompound.getFloat(key)), key, configCompound);
+                        new NBTTagConfigFloat(wolfyUtils, configCompound, new ValueProviderFloatConst(wolfyUtils, currentCompound.getFloat(key)));
                 case NBTTagDouble ->
-                        new NBTTagConfigDouble(wolfyUtils, new ValueProviderDoubleConst(wolfyUtils, currentCompound.getDouble(key)), key, configCompound);
+                        new NBTTagConfigDouble(wolfyUtils, configCompound, new ValueProviderDoubleConst(wolfyUtils, currentCompound.getDouble(key)));
                 case NBTTagString ->
-                        new NBTTagConfigString(wolfyUtils, new ValueProviderStringConst(wolfyUtils, currentCompound.getString(key)), key, configCompound);
+                        new NBTTagConfigString(wolfyUtils, configCompound, new ValueProviderStringConst(wolfyUtils, currentCompound.getString(key)));
                 default -> null;
             };
             if (childConfig != null) {
@@ -190,12 +190,8 @@ public class BukkitItemStackConfig extends ItemStackConfig<ItemStack> {
      * @param <VAL>              The type of the Element config.
      * @return The configList instance with the new elements.
      */
-    private <T, VAL extends NBTTagConfigPrimitive<T>> NBTTagConfigListPrimitive<T, VAL> readPrimitiveList(NBTList<T> nbtList, NBTTagConfigListPrimitive<T, VAL> configList, BiFunction<NBTTagConfigListPrimitive<T, VAL>, T, VAL> elementConstructor) {
-        configList.overrideElements(nbtList.stream().map(value -> {
-            var element = new NBTTagConfigList.Element<VAL>();
-            element.setValue(elementConstructor.apply(configList, value));
-            return element;
-        }).toList());
+    private <T, VAL extends NBTTagConfigPrimitive<T>> NBTTagConfigListPrimitive<T, VAL> readPrimitiveList(ReadableNBTList<T> nbtList, NBTTagConfigListPrimitive<T, VAL> configList, BiFunction<NBTTagConfigListPrimitive<T, VAL>, T, VAL> elementConstructor) {
+        configList.setValues(nbtList.toListCopy().stream().map(value -> elementConstructor.apply(configList, value)).toList());
         return configList;
     }
 
