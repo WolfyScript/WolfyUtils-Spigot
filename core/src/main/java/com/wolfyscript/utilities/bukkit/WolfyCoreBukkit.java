@@ -84,6 +84,24 @@ import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import com.wolfyscript.utilities.bukkit.world.items.reference.BukkitItemReference;
 import com.wolfyscript.utilities.bukkit.world.items.reference.WolfyUtilsItemReference;
 import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfig;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigBoolean;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigByte;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigByteArray;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigDouble;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigFloat;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigInt;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigIntArray;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigListCompound;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigListDouble;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigListFloat;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigListInt;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigListIntArray;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigListLong;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigListString;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigLong;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigShort;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigString;
 import com.wolfyscript.utilities.eval.operator.BoolOperatorConst;
 import com.wolfyscript.utilities.eval.operator.ComparisonOperatorEqual;
 import com.wolfyscript.utilities.eval.operator.ComparisonOperatorGreater;
@@ -374,6 +392,29 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
         getLogger().info("Register Custom Player Data");
         var customPlayerDataReg = getRegistries().getCustomPlayerData();
         customPlayerDataReg.register(PlayerParticleEffectData.class);
+
+        getLogger().info("Register NBT Tag Configs");
+        var nbtTagConfigs = getRegistries().getNbtTagConfigs();
+        // Primitives
+        nbtTagConfigs.register(NBTTagConfigBoolean.class);
+        nbtTagConfigs.register(NBTTagConfigString.class);
+        // Primitive Numerals
+        nbtTagConfigs.register(NBTTagConfigByte.class);
+        nbtTagConfigs.register(NBTTagConfigByteArray.class);
+        nbtTagConfigs.register(NBTTagConfigShort.class);
+        nbtTagConfigs.register(NBTTagConfigInt.class);
+        nbtTagConfigs.register(NBTTagConfigIntArray.class);
+        nbtTagConfigs.register(NBTTagConfigLong.class);
+        nbtTagConfigs.register(NBTTagConfigFloat.class);
+        nbtTagConfigs.register(NBTTagConfigDouble.class);
+        // Lists
+        nbtTagConfigs.register(NBTTagConfigListCompound.class);
+        nbtTagConfigs.register(NBTTagConfigListInt.class);
+        nbtTagConfigs.register(NBTTagConfigListIntArray.class);
+        nbtTagConfigs.register(NBTTagConfigListLong.class);
+        nbtTagConfigs.register(NBTTagConfigListFloat.class);
+        nbtTagConfigs.register(NBTTagConfigListDouble.class);
+        nbtTagConfigs.register(NBTTagConfigListString.class);
 
         getLogger().info("Register NBT Query Nodes");
         var nbtQueryNodes = getRegistries().getNbtQueryNodes();
