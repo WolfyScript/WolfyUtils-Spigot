@@ -92,6 +92,12 @@ public class BukkitItemStackConfig extends ItemStackConfig<ItemStack> {
             ItemStack itemStack = new ItemStack(type);
             itemStack.setAmount(amount.getValue(context));
 
+            // Apply the NBT of the stack
+            NBTItem nbtItem = new NBTItem(itemStack);
+            applyCompound(nbtItem, getNbt(), context);
+            itemStack = nbtItem.getItem();
+
+            // Apply ItemMeta afterwards to override possible NBT Tags
             ItemMeta meta = itemStack.getItemMeta();
             if (meta != null) {
                 //TODO: Adventure format
@@ -108,11 +114,6 @@ public class BukkitItemStackConfig extends ItemStackConfig<ItemStack> {
                 meta.setCustomModelData(customModelData.getValue(context));
                 meta.setUnbreakable(unbreakable.evaluate(context));
                 itemStack.setItemMeta(meta);
-
-                // Apply the NBT of the stack
-                NBTItem nbtItem = new NBTItem(itemStack);
-                applyCompound(nbtItem, getNbt(), context);
-                itemStack = nbtItem.getItem();
             }
             return itemStack;
         }
