@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.inject.Inject;
 import com.wolfyscript.utilities.KeyedStaticId;
-import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import java.util.Optional;
@@ -20,8 +17,8 @@ public class SimpleBukkitItemReference extends ItemReference {
 
     @JsonIgnore
     private ItemStack cachedStack;
-    private final BukkitItemStackConfig config;
 
+    private final BukkitItemStackConfig config;
     @JsonCreator
     public SimpleBukkitItemReference(@JacksonInject WolfyUtils wolfyUtils, @JsonProperty("config") BukkitItemStackConfig config) {
         super(wolfyUtils);
@@ -39,6 +36,7 @@ public class SimpleBukkitItemReference extends ItemReference {
         return new SimpleBukkitItemReference(this);
     }
 
+    @JsonIgnore
     @Override
     public ItemStack getItem() {
         if (cachedStack == null) {
