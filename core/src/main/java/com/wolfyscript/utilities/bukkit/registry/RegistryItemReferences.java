@@ -21,7 +21,7 @@ import org.bukkit.inventory.ItemStack;
 public class RegistryItemReferences extends UniqueTypeRegistrySimple<ItemReference> {
 
     private final Map<NamespacedKey, ItemReferenceParserSettings.Creator.AbstractParser<?>> parserMap = new HashMap<>();
-    private List<ItemReferenceParserSettings.Creator.AbstractParser<?>> priorityIndexedParsers = new ArrayList<>();
+    private List<ItemReferenceParserSettings.Creator.AbstractParser<?>> priorityIndexedParsers;
 
     public RegistryItemReferences(Registries registries) {
         super(new BukkitNamespacedKey((WolfyCoreBukkit) registries.getCore(), "item_references"), registries);
@@ -58,6 +58,6 @@ public class RegistryItemReferences extends UniqueTypeRegistrySimple<ItemReferen
     }
 
     private void reIndexParsers() {
-        priorityIndexedParsers = parserMap.values().stream().filter(Objects::nonNull).sorted(Comparator.comparingInt(ItemReferenceParserSettings.Creator.AbstractParser::getPriority)).toList();
+        priorityIndexedParsers = parserMap.values().stream().filter(Objects::nonNull).sorted().toList();
     }
 }
