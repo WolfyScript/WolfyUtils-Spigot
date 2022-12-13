@@ -1,9 +1,6 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
-import com.fasterxml.jackson.annotation.JacksonInject;
 import com.wolfyscript.utilities.KeyedStaticId;
-import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
 import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.common.WolfyUtils;

@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wolfyscript.utilities.KeyedStaticId;
-import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import java.util.Optional;
 import org.bukkit.inventory.ItemStack;
