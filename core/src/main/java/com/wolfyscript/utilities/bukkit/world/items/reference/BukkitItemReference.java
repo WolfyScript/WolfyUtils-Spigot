@@ -10,7 +10,7 @@ import com.wolfyscript.utilities.common.WolfyUtils;
 import java.util.Optional;
 import org.bukkit.inventory.ItemStack;
 
-@ItemReferenceParserSettings(priority = -1000, parser = BukkitItemReference.Parser.class)
+@ItemReferenceParserSettings(priority = Short.MIN_VALUE, parser = BukkitItemReference.Parser.class)
 @KeyedStaticId(key = "bukkit")
 public class BukkitItemReference extends ItemReference {
 

@@ -14,7 +14,7 @@ import java.util.Optional;
 import org.bukkit.inventory.ItemStack;
 
 // At this moment of time, this reference does not save the complete ItemStack, therefor don't use it (Set priority lower than BukkitItemReference)!
-@ItemReferenceParserSettings(priority = Short.MIN_VALUE, parser = SimpleBukkitItemReference.Parser.class)
+@ItemReferenceParserSettings(priority = -1000, parser = SimpleBukkitItemReference.Parser.class)
 @KeyedStaticId(key = "simple")
 public class SimpleBukkitItemReference extends ItemReference {
 
