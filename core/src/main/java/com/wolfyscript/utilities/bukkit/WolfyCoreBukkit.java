@@ -478,12 +478,6 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
         compatibilityManager.init();
 
         // Register ItemReferences
-        console.info("Register Item references");
-        var itemReferences = getRegistries().getItemReferences();
-        // TODO: Use priorities, similar to the old APIReference.Parser
-        itemReferences.register(WolfyUtilsItemReference.class);
-        itemReferences.register(BukkitItemReference.class);
-
         registerAPIReference(new VanillaRef.Parser());
         registerAPIReference(new WolfyUtilitiesRef.Parser());
 
