@@ -1,6 +1,7 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
@@ -27,6 +28,7 @@ public abstract class ItemReference implements Keyed, Copyable<ItemReference> {
 
     protected final NamespacedKey type;
 
+    @JsonIgnore
     protected WolfyUtils wolfyUtils;
     protected int amount;
     private double weight;
@@ -104,6 +106,7 @@ public abstract class ItemReference implements Keyed, Copyable<ItemReference> {
         this.weight = weight;
     }
 
+    @JsonIgnore
     @Override
     public NamespacedKey getNamespacedKey() {
         return type;
