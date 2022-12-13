@@ -287,7 +287,9 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
         JacksonUtil.registerModule(valueReferenceModule);
 
         // Create Global WUCore Mapper and apply modules
-        api.getJacksonMapperUtil().setGlobalMapper(applyWolfyUtilsJsonMapperModules(new HoconMapper()));
+        HoconMapper mapper = applyWolfyUtilsJsonMapperModules(new HoconMapper());
+        api.getJacksonMapperUtil().applyWolfyUtilsInjectableValues(mapper, new InjectableValues.Std());
+        api.getJacksonMapperUtil().setGlobalMapper(mapper);
 
         // Initialise all the Registers
         getLogger().info("Register JSON Operators");
