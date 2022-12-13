@@ -255,6 +255,7 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
 
         // Jackson Serializer
         getLogger().info("Register JSON de-/serializers");
+        KeyedTypeIdResolver.setCore(this);
         var module = new SimpleModule();
         ItemStackSerialization.create(module);
         ColorSerialization.create(module);
