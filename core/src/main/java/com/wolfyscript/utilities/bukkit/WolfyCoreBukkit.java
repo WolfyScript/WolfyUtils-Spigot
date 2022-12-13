@@ -47,6 +47,8 @@ import com.wolfyscript.utilities.bukkit.world.items.meta.PlayerHeadMeta;
 import com.wolfyscript.utilities.bukkit.world.items.meta.PotionMeta;
 import com.wolfyscript.utilities.bukkit.world.items.meta.RepairCostMeta;
 import com.wolfyscript.utilities.bukkit.world.items.meta.UnbreakableMeta;
+import com.wolfyscript.utilities.bukkit.world.items.reference.ItemReference;
+import com.wolfyscript.utilities.bukkit.world.items.reference.SimpleBukkitItemReference;
 import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.world.items.references.VanillaRef;
 import com.wolfyscript.utilities.bukkit.world.items.references.WolfyUtilitiesRef;
@@ -293,6 +295,12 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
         api.getJacksonMapperUtil().setGlobalMapper(mapper);
 
         // Initialise all the Registers
+        console.info("Register Item references");
+        var itemReferences = getRegistries().getItemReferences();
+        itemReferences.register(BukkitItemReference.class);
+        itemReferences.register(SimpleBukkitItemReference.class);
+        itemReferences.register(WolfyUtilsItemReference.class);
+
         getLogger().info("Register JSON Operators");
         var operators = getRegistries().getOperators();
         operators.register(BoolOperatorConst.class);
@@ -444,6 +452,7 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
 
         // Register the Registries to resolve type references in JSON
         KeyedTypeIdResolver.registerTypeRegistry(CustomItemData.class, registries.getCustomItemDataTypeRegistry());
+        KeyedTypeIdResolver.registerTypeRegistry(ItemReference.class, itemReferences);
         KeyedTypeIdResolver.registerTypeRegistry(Meta.class, nbtChecks);
         KeyedTypeIdResolver.registerTypeRegistry(Animator.class, particleAnimators);
         KeyedTypeIdResolver.registerTypeRegistry(Shape.class, particleShapes);
