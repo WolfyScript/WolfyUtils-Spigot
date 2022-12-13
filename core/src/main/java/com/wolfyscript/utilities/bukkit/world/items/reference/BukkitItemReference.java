@@ -42,6 +42,12 @@ public class BukkitItemReference extends ItemReference {
         return stack.isSimilar(other);
     }
 
+    @Override
+    public String toString() {
+        return "BukkitItemReference{" +
+                "stack=" + stack +
+                "} " + super.toString();
+    }
 
     public static class Parser implements ItemReference.Parser<BukkitItemReference> {
 

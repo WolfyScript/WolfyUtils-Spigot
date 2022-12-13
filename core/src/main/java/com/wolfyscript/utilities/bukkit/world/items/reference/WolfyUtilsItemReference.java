@@ -62,6 +62,13 @@ public class WolfyUtilsItemReference extends ItemReference {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return "WolfyUtilsItemReference{" +
+                "itemID=" + itemID +
+                "} " + super.toString();
+    }
+
     public static class Parser implements ItemReference.Parser<WolfyUtilsItemReference> {
 
         @Override

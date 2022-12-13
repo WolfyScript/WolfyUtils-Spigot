@@ -257,5 +257,19 @@ public class BukkitItemStackConfig extends ItemStackConfig<ItemStack> {
         }
     }
 
-
+    @Override
+    public String toString() {
+        return "BukkitItemStackConfig{" +
+                "itemId='" + itemId + '\'' +
+                ", name=" + name +
+                ", lore=" + lore +
+                ", amount=" + amount +
+                ", repairCost=" + repairCost +
+                ", damage=" + damage +
+                ", unbreakable=" + unbreakable +
+                ", customModelData=" + customModelData +
+                ", enchants=" + enchants +
+                ", nbt=" + nbt +
+                "} ";
+    }
 }

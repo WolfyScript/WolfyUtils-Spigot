@@ -55,6 +55,18 @@ public class SimpleBukkitItemReference extends ItemReference {
         return cachedStack.isSimilar(other);
     }
 
+    public BukkitItemStackConfig getConfig() {
+        return config;
+    }
+
+    @Override
+    public String toString() {
+        return "SimpleBukkitItemReference{" +
+                "cachedStack=" + cachedStack +
+                ", config=" + config +
+                "} " + super.toString();
+    }
+
     public static class Parser implements ItemReference.Parser<SimpleBukkitItemReference> {
 
         @Override

@@ -51,6 +51,13 @@ public class BackwardsWrapperReference extends ItemReference {
         return apiReference.isValidItem(itemStack);
     }
 
+    @Override
+    public String toString() {
+        return "BackwardsWrapperReference{" +
+                "apiReference=" + apiReference +
+                "} " + super.toString();
+    }
+
     public static class BackwardCompatibleParser implements Parser<BackwardsWrapperReference> {
 
         private static final Map<String, APIReference.Parser<?>> PARSERS = new HashMap<>();

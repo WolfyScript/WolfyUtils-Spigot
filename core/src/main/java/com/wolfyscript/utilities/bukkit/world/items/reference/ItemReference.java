@@ -109,6 +109,15 @@ public abstract class ItemReference implements Keyed, Copyable<ItemReference> {
         return type;
     }
 
+    @Override
+    public String toString() {
+        return "ItemReference{" +
+                "type=" + type +
+                ", amount=" + amount +
+                ", weight=" + weight +
+                '}';
+    }
+
     public interface Parser<T extends ItemReference> {
 
         Optional<T> parseFromStack(WolfyUtils wolfyUtils, ItemStack stack);
