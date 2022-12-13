@@ -23,7 +23,7 @@ import org.bukkit.inventory.ItemStack;
 @JsonTypeIdResolver(KeyedTypeIdResolver.class)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-@JsonPropertyOrder(value = {"type"})
+@JsonPropertyOrder(value = {"type", "amount", "weight"})
 public abstract class ItemReference implements Keyed, Copyable<ItemReference> {
 
     protected final NamespacedKey type;
