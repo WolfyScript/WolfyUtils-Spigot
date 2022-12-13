@@ -14,6 +14,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
@@ -50,17 +51,12 @@ public @interface ItemReferenceParserSettings {
                 // Specified Custom Parse class!
                 try {
                     Constructor<?> constructor = annotation.parser().getConstructor();
-                    AbstractParser<?> unTypedParser = (AbstractParser<?>) constructor.newInstance();
-                    if (unTypedParser.type != itemReferenceType) {
-                        // Invalid type!
-                        return null;
-                    }
 
-                    final ItemReference.Parser<R> parser = (ItemReference.Parser<R>) unTypedParser;
+                    final ItemReference.Parser<R> parser = (ItemReference.Parser<R>) constructor.newInstance();
                     final int priority = annotation.priority();
                     final String plugin = annotation.plugin();
 
-                    if (plugin == null) {
+                    if (plugin == null || plugin.isEmpty()) {
                         return new AbstractParser<>(id, priority, itemReferenceType) {
                             @Override
                             public Optional<R> parseFromStack(WolfyUtils wolfyUtils, ItemStack stack) {
@@ -94,7 +90,7 @@ public @interface ItemReferenceParserSettings {
          *
          * @param <T> The type of the {@link ItemReference}
          */
-        public abstract static class AbstractParser<T extends ItemReference> implements Keyed {
+        public abstract static class AbstractParser<T extends ItemReference> implements Keyed, Comparable<AbstractParser<?>> {
 
             protected final NamespacedKey id;
             protected final int priority;
@@ -115,6 +111,11 @@ public @interface ItemReferenceParserSettings {
             @Override
             public NamespacedKey getNamespacedKey() {
                 return id;
+            }
+
+            @Override
+            public int compareTo(@NotNull ItemReferenceParserSettings.Creator.AbstractParser<?> other) {
+                return -1 * Integer.compare(getPriority(), other.getPriority());
             }
         }
 
