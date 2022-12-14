@@ -34,11 +34,11 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class QueryDebugCommand implements TabExecutor {
+public class DebugNBTQueryCommand implements TabExecutor {
 
     private final WolfyCoreBukkit plugin;
 
-    public QueryDebugCommand(WolfyCoreBukkit plugin) {
+    public DebugNBTQueryCommand(WolfyCoreBukkit plugin) {
         this.plugin = plugin;
     }
 

@@ -56,6 +56,8 @@ commands:
     description: "DEBUG! Spawns a test particle effect on the target block."
   query_item:
     usage: "/query_item"
+  simple_bukkit_stack:
+    usage: "/simple_bukkit_stack"
 permissions: 
   wolfyutilities.command.query_debug:
     default: op

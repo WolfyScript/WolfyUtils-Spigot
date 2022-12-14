@@ -87,6 +87,7 @@ public class BukkitRegistries extends Registries {
     private final TypeRegistry<CustomBlockData> customBlockData;
     private final TypeRegistry<CustomPlayerData> customPlayerData;
     private final TypeRegistry<CustomItemData> customItemDataTypeRegistry;
+    private final RegistryItemReferences itemReferences;
 
     private final TypeRegistry<QueryNode<?>> nbtQueryNodes;
 
@@ -95,6 +96,7 @@ public class BukkitRegistries extends Registries {
 
         customItems = new RegistryCustomItem(this);
         customItemData = new RegistrySimple<>(new BukkitNamespacedKey(core, "custom_item_data"), this);
+        itemReferences = new RegistryItemReferences(this);
         particleEffects = new RegistryParticleEffect(this);
         particleAnimations = new RegistryParticleAnimation(this);
         customItemActionValues = new RegistrySimple<>(ITEM_ACTION_VALUES, this, (Class<Action<?>>)(Object) Action.class);
@@ -227,5 +229,9 @@ public class BukkitRegistries extends Registries {
 
     public TypeRegistry<QueryNode<?>> getNbtQueryNodes() {
         return nbtQueryNodes;
+    }
+
+    public RegistryItemReferences getItemReferences() {
+        return itemReferences;
     }
 }

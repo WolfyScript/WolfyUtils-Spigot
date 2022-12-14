@@ -86,7 +86,7 @@ public class ItemUtils {
     }
 
     public static boolean isAirOrNull(CustomItem item) {
-        return item == null || item.getApiReference() == null || isAirOrNull(item.getItemStack());
+        return item == null || item.getReference() == null || isAirOrNull(item.getItemStack());
     }
 
     /*

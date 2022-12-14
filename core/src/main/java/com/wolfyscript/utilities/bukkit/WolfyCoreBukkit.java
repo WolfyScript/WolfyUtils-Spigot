@@ -1,5 +1,6 @@
 package com.wolfyscript.utilities.bukkit;
 
+import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.wolfyscript.jackson.dataformat.hocon.HoconMapper;
@@ -7,9 +8,10 @@ import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
 import com.wolfyscript.utilities.bukkit.commands.ChatActionCommand;
 import com.wolfyscript.utilities.bukkit.commands.InfoCommand;
 import com.wolfyscript.utilities.bukkit.commands.InputCommand;
-import com.wolfyscript.utilities.bukkit.commands.QueryDebugCommand;
+import com.wolfyscript.utilities.bukkit.commands.DebugNBTQueryCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleAnimationCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleEffectCommand;
+import com.wolfyscript.utilities.bukkit.commands.DebugSimpleStackConfigCommand;
 import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManager;
 import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManagerBukkit;
 import com.wolfyscript.utilities.bukkit.config.WUConfig;
@@ -47,6 +49,8 @@ import com.wolfyscript.utilities.bukkit.world.items.meta.PlayerHeadMeta;
 import com.wolfyscript.utilities.bukkit.world.items.meta.PotionMeta;
 import com.wolfyscript.utilities.bukkit.world.items.meta.RepairCostMeta;
 import com.wolfyscript.utilities.bukkit.world.items.meta.UnbreakableMeta;
+import com.wolfyscript.utilities.bukkit.world.items.reference.ItemReference;
+import com.wolfyscript.utilities.bukkit.world.items.reference.SimpleBukkitItemReference;
 import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.world.items.references.VanillaRef;
 import com.wolfyscript.utilities.bukkit.world.items.references.WolfyUtilitiesRef;
@@ -81,7 +85,27 @@ import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
 import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectData;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
+import com.wolfyscript.utilities.bukkit.world.items.reference.BukkitItemReference;
+import com.wolfyscript.utilities.bukkit.world.items.reference.WolfyUtilsItemReference;
 import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfig;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigBoolean;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigByte;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigByteArray;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigDouble;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigFloat;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigInt;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigIntArray;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigListCompound;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigListDouble;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigListFloat;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigListInt;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigListIntArray;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigListLong;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigListString;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigLong;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigShort;
+import com.wolfyscript.utilities.common.nbt.NBTTagConfigString;
 import com.wolfyscript.utilities.eval.operator.BoolOperatorConst;
 import com.wolfyscript.utilities.eval.operator.ComparisonOperatorEqual;
 import com.wolfyscript.utilities.eval.operator.ComparisonOperatorGreater;
@@ -235,6 +259,7 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
 
         // Jackson Serializer
         getLogger().info("Register JSON de-/serializers");
+        KeyedTypeIdResolver.setCore(this);
         var module = new SimpleModule();
         ItemStackSerialization.create(module);
         ColorSerialization.create(module);
@@ -267,9 +292,17 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
         JacksonUtil.registerModule(valueReferenceModule);
 
         // Create Global WUCore Mapper and apply modules
-        api.getJacksonMapperUtil().setGlobalMapper(applyWolfyUtilsJsonMapperModules(new HoconMapper()));
+        HoconMapper mapper = applyWolfyUtilsJsonMapperModules(new HoconMapper());
+        api.getJacksonMapperUtil().applyWolfyUtilsInjectableValues(mapper, new InjectableValues.Std());
+        api.getJacksonMapperUtil().setGlobalMapper(mapper);
 
         // Initialise all the Registers
+        console.info("Register Item references");
+        var itemReferences = getRegistries().getItemReferences();
+        itemReferences.register(BukkitItemReference.class);
+        itemReferences.register(SimpleBukkitItemReference.class);
+        itemReferences.register(WolfyUtilsItemReference.class);
+
         getLogger().info("Register JSON Operators");
         var operators = getRegistries().getOperators();
         operators.register(BoolOperatorConst.class);
@@ -373,6 +406,29 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
         var customPlayerDataReg = getRegistries().getCustomPlayerData();
         customPlayerDataReg.register(PlayerParticleEffectData.class);
 
+        getLogger().info("Register NBT Tag Configs");
+        var nbtTagConfigs = getRegistries().getNbtTagConfigs();
+        // Primitives
+        nbtTagConfigs.register(NBTTagConfigBoolean.class);
+        nbtTagConfigs.register(NBTTagConfigString.class);
+        // Primitive Numerals
+        nbtTagConfigs.register(NBTTagConfigByte.class);
+        nbtTagConfigs.register(NBTTagConfigByteArray.class);
+        nbtTagConfigs.register(NBTTagConfigShort.class);
+        nbtTagConfigs.register(NBTTagConfigInt.class);
+        nbtTagConfigs.register(NBTTagConfigIntArray.class);
+        nbtTagConfigs.register(NBTTagConfigLong.class);
+        nbtTagConfigs.register(NBTTagConfigFloat.class);
+        nbtTagConfigs.register(NBTTagConfigDouble.class);
+        // Lists
+        nbtTagConfigs.register(NBTTagConfigListCompound.class);
+        nbtTagConfigs.register(NBTTagConfigListInt.class);
+        nbtTagConfigs.register(NBTTagConfigListIntArray.class);
+        nbtTagConfigs.register(NBTTagConfigListLong.class);
+        nbtTagConfigs.register(NBTTagConfigListFloat.class);
+        nbtTagConfigs.register(NBTTagConfigListDouble.class);
+        nbtTagConfigs.register(NBTTagConfigListString.class);
+
         getLogger().info("Register NBT Query Nodes");
         var nbtQueryNodes = getRegistries().getNbtQueryNodes();
         nbtQueryNodes.register(QueryNodeCompound.class);
@@ -398,6 +454,7 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
 
         // Register the Registries to resolve type references in JSON
         KeyedTypeIdResolver.registerTypeRegistry(CustomItemData.class, registries.getCustomItemDataTypeRegistry());
+        KeyedTypeIdResolver.registerTypeRegistry(ItemReference.class, itemReferences);
         KeyedTypeIdResolver.registerTypeRegistry(Meta.class, nbtChecks);
         KeyedTypeIdResolver.registerTypeRegistry(Animator.class, particleAnimators);
         KeyedTypeIdResolver.registerTypeRegistry(Shape.class, particleShapes);
@@ -409,6 +466,7 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
         KeyedTypeIdResolver.registerTypeRegistry((Class<QueryNode<?>>) (Object)QueryNode.class, nbtQueryNodes);
         KeyedTypeIdResolver.registerTypeRegistry(CustomBlockData.class, customBlockData);
         KeyedTypeIdResolver.registerTypeRegistry(CustomPlayerData.class, registries.getCustomPlayerData());
+        KeyedTypeIdResolver.registerTypeRegistry(NBTTagConfig.class, nbtTagConfigs);
     }
 
     @Override
@@ -421,8 +479,7 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
         this.config = new WUConfig(api.getConfigAPI(), this);
         compatibilityManager.init();
 
-        // Register ReferenceParser
-        console.info("Register API references");
+        // Register ItemReferences
         registerAPIReference(new VanillaRef.Parser());
         registerAPIReference(new WolfyUtilitiesRef.Parser());
 
@@ -488,7 +545,8 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
         Bukkit.getServer().getPluginCommand("wui").setTabCompleter(new InputCommand(this));
         Bukkit.getServer().getPluginCommand("wua").setExecutor(new ChatActionCommand());
 
-        Bukkit.getServer().getPluginCommand("query_item").setExecutor(new QueryDebugCommand(this));
+        Bukkit.getServer().getPluginCommand("query_item").setExecutor(new DebugNBTQueryCommand(this));
+        Bukkit.getServer().getPluginCommand("simple_bukkit_stack").setExecutor(new DebugSimpleStackConfigCommand(this));
     }
 
     public MessageHandler getMessageHandler() {

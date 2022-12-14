@@ -33,7 +33,6 @@ import com.wolfyscript.utilities.bukkit.nms.api.v1_18_R1_P1.nbt.NBTTagLongArrayI
 import com.wolfyscript.utilities.bukkit.nms.api.v1_18_R1_P1.nbt.NBTTagLongImpl;
 import com.wolfyscript.utilities.bukkit.nms.api.v1_18_R1_P1.nbt.NBTTagShortImpl;
 import com.wolfyscript.utilities.bukkit.nms.api.v1_18_R1_P1.nbt.NBTTagStringImpl;
-import me.wolfyscript.utilities.api.nms.v1_18_R1_P1.nbt.*;
 
 public class NBTTagImpl extends NBTTag {
 

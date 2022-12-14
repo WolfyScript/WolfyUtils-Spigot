@@ -18,6 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.registry;
 
+import com.wolfyscript.utilities.bukkit.world.items.reference.WolfyUtilsItemReference;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
@@ -115,7 +116,7 @@ public class RegistryCustomItem extends AbstractRegistry<Map<NamespacedKey, Cust
      */
     @Override
     public void register(NamespacedKey namespacedKey, CustomItem item) {
-        if (item == null || (item.getApiReference() instanceof WolfyUtilitiesRef && ((WolfyUtilitiesRef) item.getApiReference()).getNamespacedKey().equals(namespacedKey))) {
+        if (item == null || (item.getReference() instanceof WolfyUtilsItemReference wuRef && wuRef.getNamespacedKey().equals(namespacedKey))) {
             return;
         }
         this.map.put(namespacedKey, item);
