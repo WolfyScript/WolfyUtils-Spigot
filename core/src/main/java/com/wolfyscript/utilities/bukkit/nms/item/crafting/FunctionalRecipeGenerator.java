@@ -509,7 +509,7 @@ public class FunctionalRecipeGenerator {
                         stack.exact = true;
                     }
                             
-                    if (requireNotEmpty && stack.${ingredient_choices}().length == 0) {
+                    if (requireNotEmpty && stack.${ingredient_choices}.length == 0) {
                         throw new java.lang.IllegalArgumentException("Recipe requires at least one non-air choice!");
                     } else {
                         return stack;
@@ -524,7 +524,13 @@ public class FunctionalRecipeGenerator {
                 "itemstack", ItemStack.class.getName(),
                 "empty_ingredient", emptyIngredientField.getName(),
                 "craftitemstack", CRAFT_ITEMSTACK_CLASS.getName(),
-                "ingredient_choices", Arrays.stream(RECIPE_ITEMSTACK_CLASS.getMethods()).filter(field -> field.getReturnType().equals(ITEMSTACK_CLASS.arrayType())).findFirst().map(Method::getName).orElse("choices")
+                "ingredient_choices",
+                // Minecraft 1.17+
+                Arrays.stream(RECIPE_ITEMSTACK_CLASS.getMethods()).filter(field -> field.getReturnType().equals(ITEMSTACK_CLASS.arrayType())).findFirst().map(method -> method.getName() + "()")
+                        // Minecraft 1.16
+                        .or(() -> Arrays.stream(RECIPE_ITEMSTACK_CLASS.getFields()).filter(field -> field.getType().equals(ITEMSTACK_CLASS.arrayType())).map(Field::getName).findFirst())
+                        // Fallback
+                        .orElse("choices")
         ));
         conversionUtils.addMethod(CtNewMethod.make(recipeChoiceConverterMethod, conversionUtils));
 
