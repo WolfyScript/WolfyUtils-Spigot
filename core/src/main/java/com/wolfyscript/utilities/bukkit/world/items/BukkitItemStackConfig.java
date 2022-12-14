@@ -3,6 +3,7 @@ package com.wolfyscript.utilities.bukkit.world.items;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.items.ItemStackConfig;
 import com.wolfyscript.utilities.common.nbt.NBTTagConfig;
@@ -39,6 +40,8 @@ import com.wolfyscript.utilities.eval.value_provider.ValueProviderIntegerConst;
 import com.wolfyscript.utilities.eval.value_provider.ValueProviderLongConst;
 import com.wolfyscript.utilities.eval.value_provider.ValueProviderShortConst;
 import com.wolfyscript.utilities.eval.value_provider.ValueProviderStringConst;
+import com.wolfyscript.utilities.versioning.MinecraftVersion;
+import com.wolfyscript.utilities.versioning.ServerVersion;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTCompoundList;
 import de.tr7zw.changeme.nbtapi.NBTItem;
@@ -50,8 +53,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -60,18 +67,39 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class BukkitItemStackConfig extends ItemStackConfig<ItemStack> {
 
+    private final boolean usePaperDisplayOptions;
+    private final Set<String> HANDLED_NBT_TAGS = Set.of("display.Name", "display.Lore", "CustomModelData", "Damage", "Enchantments");
+
     @JsonCreator
     public BukkitItemStackConfig(@JacksonInject WolfyUtils wolfyUtils, @JsonProperty("itemId") String itemId) {
         super(wolfyUtils, itemId);
+        this.usePaperDisplayOptions = ((WolfyCoreBukkit) wolfyUtils.getCore()).getCompatibilityManager().isPaper() && ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 18, 2));
     }
 
     public BukkitItemStackConfig(WolfyUtils wolfyUtils, ItemStack stack) {
         super(wolfyUtils, stack.getType().getKey().toString());
+        this.usePaperDisplayOptions = ((WolfyCoreBukkit) wolfyUtils.getCore()).getCompatibilityManager().isPaper() && ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 18, 2));
+
+        // Read from ItemStack
         this.amount = new ValueProviderIntegerConst(wolfyUtils, stack.getAmount());
         ItemMeta meta = stack.getItemMeta();
         if (meta != null) {
-            if (meta.hasLore()) {
-                this.lore = meta.getLore().stream().map(s -> new ValueProviderStringConst(wolfyUtils, s)).collect(Collectors.toList());
+            MiniMessage miniMsg = wolfyUtils.getChat().getMiniMessage();
+            if (usePaperDisplayOptions) {
+                if (meta.hasDisplayName()) {
+                    this.name = new ValueProviderStringConst(wolfyUtils, miniMsg.serialize(meta.displayName()));
+                }
+                if (meta.hasLore()) {
+                    this.lore = meta.lore().stream().map(component -> new ValueProviderStringConst(wolfyUtils, miniMsg.serialize(component))).toList();
+                }
+            } else {
+                // First need to convert the Strings to Component and then back to mini message!
+                if (meta.hasDisplayName()) {
+                    this.name = new ValueProviderStringConst(wolfyUtils, miniMsg.serialize(BukkitComponentSerializer.legacy().deserialize(meta.getDisplayName())));
+                }
+                if (meta.hasLore()) {
+                    this.lore = meta.getLore().stream().map(s -> new ValueProviderStringConst(wolfyUtils, miniMsg.serialize(BukkitComponentSerializer.legacy().deserialize(s)))).toList();
+                }
             }
             this.unbreakable = new BoolOperatorConst(wolfyUtils, meta.isUnbreakable());
             this.customModelData = new ValueProviderIntegerConst(wolfyUtils, meta.getCustomModelData());
@@ -101,17 +129,24 @@ public class BukkitItemStackConfig extends ItemStackConfig<ItemStack> {
             // Apply ItemMeta afterwards to override possible NBT Tags
             ItemMeta meta = itemStack.getItemMeta();
             if (meta != null) {
-                //TODO: Adventure format
-                meta.setDisplayName(name.getValue(context));
-                meta.setLore(lore.stream().map(line -> line.getValue(context)).toList());
-
-                for (Map.Entry<String, ValueProvider<Integer>> entry : enchants.entrySet()) {
+                MiniMessage miniMsg = wolfyUtils.getChat().getMiniMessage();
+                if (usePaperDisplayOptions) {
+                    if (this.name != null) {
+                        meta.displayName(miniMsg.deserialize(this.name.getValue(context)));
+                    }
+                    if (this.lore != null && !this.lore.isEmpty()) {
+                        meta.lore(this.lore.stream().filter(Objects::nonNull).map(stringValueProvider -> miniMsg.deserialize(stringValueProvider.getValue(context))).toList());
+                    }
+                } else {
+                    meta.setDisplayName(name.getValue(context));
+                    meta.setLore(lore.stream().map(line -> line.getValue(context)).toList());
+                }
+                for (Map.Entry<String, ? extends ValueProvider<Integer>> entry : enchants.entrySet()) {
                     Enchantment enchant = Enchantment.getByKey(NamespacedKey.fromString(entry.getKey()));
                     if (enchant != null) {
                         meta.addEnchant(enchant, entry.getValue().getValue(context), true);
                     }
                 }
-
                 meta.setCustomModelData(customModelData.getValue(context));
                 meta.setUnbreakable(unbreakable.evaluate(context));
                 itemStack.setItemMeta(meta);
@@ -121,19 +156,32 @@ public class BukkitItemStackConfig extends ItemStackConfig<ItemStack> {
         return null;
     }
 
-    private NBTTagConfigCompound readFromItemStack(ReadableNBT currentCompound, String entryKey, NBTTagConfig parent) {
+    private NBTTagConfigCompound readFromItemStack(ReadableNBT currentCompound, String path, NBTTagConfig parent) {
         NBTTagConfigCompound configCompound = new NBTTagConfigCompound(wolfyUtils, parent);
         Map<String, NBTTagConfig> children = new HashMap<>();
         for (String key : currentCompound.getKeys()) {
+            String childPath = path.isEmpty() ? key : (path + "." + key);
+            if (HANDLED_NBT_TAGS.contains(childPath)) {
+                // Skip already handled NBT Tags, so they are not both in common and NBT settings!
+                continue;
+            }
             NBTTagConfig childConfig = switch (currentCompound.getType(key)) {
-                case NBTTagCompound -> readFromItemStack(currentCompound.getCompound(key), key, configCompound);
+                case NBTTagCompound -> {
+                    NBTTagConfigCompound readConfigCompound = readFromItemStack(currentCompound.getCompound(key), childPath, configCompound);
+                    if (readConfigCompound.getChildren().isEmpty()) {
+                        yield null;
+                    }
+                    yield readConfigCompound;
+                }
                 case NBTTagList -> switch (currentCompound.getListType(key)) {
                     case NBTTagCompound -> {
                         NBTTagConfigListCompound compoundConfigList = new NBTTagConfigListCompound(wolfyUtils, parent, List.of());
                         ReadableNBTList<ReadWriteNBT> compoundList = currentCompound.getCompoundList(key);
                         List<NBTTagConfigCompound> elements = new ArrayList<>();
+                        int index = 0;
                         for (ReadWriteNBT listCompound : compoundList) {
-                            elements.add(readFromItemStack(listCompound, "", compoundConfigList));
+                            elements.add(readFromItemStack(listCompound, childPath + "." + index, compoundConfigList));
+                            index++;
                         }
                         compoundConfigList.setValues(elements);
                         yield compoundConfigList;
