@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.Optional;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.Reflection;
+import me.wolfyscript.utilities.util.version.MinecraftVersion;
+import me.wolfyscript.utilities.util.version.MinecraftVersions;
+import me.wolfyscript.utilities.util.version.ServerVersion;
 import org.bukkit.inventory.Inventory;
 
 public class NMSInventoryUtils {
@@ -31,12 +34,13 @@ public class NMSInventoryUtils {
             CONTAINER_SET_CURRENT_RECIPE = CONTAINER_CLASS.getMethod("setCurrentRecipe", RECIPE_CLASS);
             MINECRAFT_SERVER_STATIC_GETTER_METHOD = Reflection.getMethod(MINECRAFT_SERVER_CLASS, "getServer");
             MINECRAFT_SERVER_GET_RECIPE_MANAGER_METHOD = Arrays.stream(MINECRAFT_SERVER_CLASS.getMethods()).filter(method -> method.getReturnType().equals(RECIPE_MANAGER_CLASS)).findFirst().orElseGet(() -> Reflection.getMethod(MINECRAFT_SERVER_CLASS, "getCraftingManager"));
-            RECIPE_MANAGER_GET_RECIPE_METHOD = Reflection.getMethod(RECIPE_MANAGER_CLASS, "a", RESOURCE_KEY_CLASS);
+            RECIPE_MANAGER_GET_RECIPE_METHOD = Reflection.getMethod(RECIPE_MANAGER_CLASS, Reflection.NMSMapping.of(MinecraftVersions.v1_18, "a").orElse("getRecipe"), RESOURCE_KEY_CLASS);
 
             CRAFT_INV_GET_CONTAINER = CRAFT_INVENTORY_CLASS.getMethod("getInventory");
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     public static void setCurrentRecipe(Inventory inventory, NamespacedKey recipeId) {
