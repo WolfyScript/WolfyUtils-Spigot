@@ -88,6 +88,7 @@ import me.wolfyscript.utilities.main.WUPlugin;
 import me.wolfyscript.utilities.main.configs.WUConfig;
 import me.wolfyscript.utilities.messages.MessageFactory;
 import me.wolfyscript.utilities.messages.MessageHandler;
+import me.wolfyscript.utilities.util.eval.operators.BoolOperatorConst;
 import me.wolfyscript.utilities.util.eval.operators.ComparisonOperatorEqual;
 import me.wolfyscript.utilities.util.eval.operators.ComparisonOperatorGreater;
 import me.wolfyscript.utilities.util.eval.operators.ComparisonOperatorGreaterEqual;
@@ -269,6 +270,7 @@ public final class WolfyCoreBukkit extends WUPlugin {
         // Initialise all the Registers
         getLogger().info("Register JSON Operators");
         var operators = getRegistries().getOperators();
+        operators.register(BoolOperatorConst.KEY, BoolOperatorConst.class);
         operators.register(ComparisonOperatorEqual.KEY, ComparisonOperatorEqual.class);
         operators.register(ComparisonOperatorNotEqual.KEY, ComparisonOperatorNotEqual.class);
         operators.register(ComparisonOperatorGreater.KEY, ComparisonOperatorGreater.class);
