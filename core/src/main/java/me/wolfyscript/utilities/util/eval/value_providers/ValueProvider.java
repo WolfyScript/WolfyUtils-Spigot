@@ -25,10 +25,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import me.wolfyscript.utilities.util.Keyed;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.eval.context.EvalContext;
@@ -60,32 +63,46 @@ public interface ValueProvider<V> extends Keyed {
 
     class ValueDeserializer extends me.wolfyscript.utilities.util.json.jackson.ValueDeserializer<ValueProvider<?>> {
 
+        private static final Pattern NUM_PATTERN = Pattern.compile("([0-9]+)([bBsSiIlL])|([0-9]?\\.?[0-9])+([fFdD])");
+
         public ValueDeserializer() {
             super((Class<ValueProvider<?>>)(Object) ValueProvider.class);
         }
 
         @Override
         public ValueProvider<?> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-            JsonNode node = p.readValueAsTree();
-            if (node.isTextual()) {
+            if (p.currentToken() == JsonToken.VALUE_STRING) {
+                JsonNode node = p.readValueAsTree();
                 String text = node.asText();
                 if (!text.isBlank()) {
-                    char identifier = text.charAt(text.length() - 1);
-                    String value = text.substring(0, text.length() - 1);
-                    try {
-                        return switch (identifier) {
-                            case 'i', 'I' -> new ValueProviderIntegerConst(Integer.parseInt(value));
-                            case 'f', 'F' -> new ValueProviderFloatConst(Float.parseFloat(value));
-                            default -> new ValueProviderStringConst(text);
-                        };
-                    } catch (NumberFormatException e) {
-                        e.printStackTrace();
+                    Matcher matcher = NUM_PATTERN.matcher(text);
+                    if (matcher.matches()) {
+                        String value;
+                        String id = matcher.group(2);
+                        if (id != null) {
+                            // integer value
+                            value = matcher.group(1);
+                        } else {
+                            // float value
+                            id = matcher.group(4);
+                            value = matcher.group(3);
+                        }
+                        try {
+                            return switch (id.charAt(0)) {
+                                case 'i', 'I' -> new ValueProviderIntegerConst(Integer.parseInt(value));
+                                case 'f', 'F' -> new ValueProviderFloatConst(Float.parseFloat(value));
+                                default -> new ValueProviderStringConst(text);
+                            };
+                        } catch (NumberFormatException e) {
+                            // Cannot parse the value. Might a String value!
+                        }
                     }
                     return new ValueProviderStringConst(text);
                 }
-            } else if (node.isInt()) {
-                return new ValueProviderIntegerConst(node.asInt());
+            } else if (p.currentToken() == JsonToken.VALUE_NUMBER_INT) {
+                return new ValueProviderIntegerConst(ctxt.readValue(p, Integer.class));
             }
+            // Ignore floating point values as they are read as double value providers, which are not available here, in v5.
             return null;
         }
     }
