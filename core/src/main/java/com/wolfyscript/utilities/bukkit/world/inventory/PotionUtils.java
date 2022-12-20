@@ -18,9 +18,9 @@
 
 package com.wolfyscript.utilities.bukkit.world.inventory;
 
+import com.wolfyscript.utilities.bukkit.chat.ChatColor;
 import java.text.DecimalFormat;
 import java.util.Locale;
-import com.wolfyscript.utilities.bukkit.chat.ChatColor;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;

@@ -18,7 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.world.particles;
 
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -34,28 +34,28 @@ public class ParticleUtils {
 
     private static final Map<UUID, ParticleAnimation.Scheduler> activeAnimations = new LinkedHashMap<>();
 
-    public static void spawnAnimationOnBlock(BukkitNamespacedKey nameSpacedKey, Block block) {
+    public static void spawnAnimationOnBlock(NamespacedKey nameSpacedKey, Block block) {
         ParticleAnimation animation = WolfyUtilCore.getInstance().getRegistries().getParticleAnimations().get(nameSpacedKey);
         if (animation != null) {
             animation.spawn(block);
         }
     }
 
-    public static void spawnAnimationOnLocation(BukkitNamespacedKey nameSpacedKey, Location location) {
+    public static void spawnAnimationOnLocation(NamespacedKey nameSpacedKey, Location location) {
         ParticleAnimation animation = WolfyUtilCore.getInstance().getRegistries().getParticleAnimations().get(nameSpacedKey);
         if (animation != null) {
             animation.spawn(location);
         }
     }
 
-    public static void spawnAnimationOnEntity(BukkitNamespacedKey nameSpacedKey, Entity entity) {
+    public static void spawnAnimationOnEntity(NamespacedKey nameSpacedKey, Entity entity) {
         ParticleAnimation animation = WolfyUtilCore.getInstance().getRegistries().getParticleAnimations().get(nameSpacedKey);
         if (animation != null) {
             animation.spawn(entity);
         }
     }
 
-    public static void spawnAnimationOnPlayer(BukkitNamespacedKey nameSpacedKey, Player player, EquipmentSlot equipmentSlot) {
+    public static void spawnAnimationOnPlayer(NamespacedKey nameSpacedKey, Player player, EquipmentSlot equipmentSlot) {
         ParticleAnimation animation = WolfyUtilCore.getInstance().getRegistries().getParticleAnimations().get(nameSpacedKey);
         if (animation != null) {
             animation.spawn(player, equipmentSlot);

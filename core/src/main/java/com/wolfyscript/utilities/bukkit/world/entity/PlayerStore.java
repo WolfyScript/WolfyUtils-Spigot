@@ -18,14 +18,14 @@
 
 package com.wolfyscript.utilities.bukkit.world.entity;
 
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.NamespacedKey;
 import java.util.HashMap;
 import java.util.Map;
 
 @Deprecated
 public class PlayerStore {
 
-    private final Map<BukkitNamespacedKey, CustomPlayerData> cachedData = new HashMap<>();
+    private final Map<NamespacedKey, CustomPlayerData> cachedData = new HashMap<>();
 
     /**
      * Only used for Json deserialization purposes!
@@ -36,7 +36,7 @@ public class PlayerStore {
      * @deprecated Changes made to the data is no longer persistent across server restarts!
      */
     @Deprecated
-    public <D extends CustomPlayerData> D getData(BukkitNamespacedKey dataKey, Class<D> dataType) {
+    public <D extends CustomPlayerData> D getData(NamespacedKey dataKey, Class<D> dataType) {
         return dataType.cast(cachedData.computeIfAbsent(dataKey, namespacedKey -> {
             CustomPlayerData.Provider<?> provider = CustomPlayerData.providers.get(namespacedKey);
             return provider != null ? provider.createData() : null;

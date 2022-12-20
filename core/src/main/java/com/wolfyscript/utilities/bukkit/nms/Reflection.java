@@ -18,6 +18,9 @@
 
 package com.wolfyscript.utilities.bukkit.nms;
 
+import com.wolfyscript.utilities.versioning.MinecraftVersion;
+import com.wolfyscript.utilities.versioning.MinecraftVersions;
+import com.wolfyscript.utilities.versioning.ServerVersion;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -26,9 +29,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.wolfyscript.utilities.versioning.MinecraftVersion;
-import com.wolfyscript.utilities.versioning.MinecraftVersions;
-import com.wolfyscript.utilities.versioning.ServerVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

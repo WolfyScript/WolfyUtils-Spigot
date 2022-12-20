@@ -22,14 +22,14 @@
 package com.wolfyscript.utilities.bukkit.nms.inventory;
 
 import com.google.common.base.Preconditions;
+import com.wolfyscript.utilities.bukkit.nms.Reflection;
+import com.wolfyscript.utilities.versioning.ServerVersion;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import com.wolfyscript.utilities.bukkit.nms.Reflection;
-import com.wolfyscript.utilities.versioning.ServerVersion;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;

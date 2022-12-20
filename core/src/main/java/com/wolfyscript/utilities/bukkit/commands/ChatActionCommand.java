@@ -19,9 +19,9 @@
 package com.wolfyscript.utilities.bukkit.commands;
 
 import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
+import com.wolfyscript.utilities.bukkit.chat.PlayerAction;
 import java.util.List;
 import java.util.UUID;
-import com.wolfyscript.utilities.bukkit.chat.PlayerAction;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;

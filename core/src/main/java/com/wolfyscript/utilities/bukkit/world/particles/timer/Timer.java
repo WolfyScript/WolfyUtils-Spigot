@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import com.wolfyscript.utilities.Keyed;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
 import com.wolfyscript.utilities.json.KeyedTypeResolver;
 
@@ -36,11 +36,11 @@ import com.wolfyscript.utilities.json.KeyedTypeResolver;
 @JsonPropertyOrder(value = {"key", "startValue", "stopValue"})
 public abstract class Timer implements Keyed {
 
-    private final BukkitNamespacedKey key;
+    private final NamespacedKey key;
     protected double startValue;
     protected double stopValue;
 
-    protected Timer(BukkitNamespacedKey namespacedKey) {
+    protected Timer(NamespacedKey namespacedKey) {
         this.key = namespacedKey;
     }
 
@@ -75,7 +75,7 @@ public abstract class Timer implements Keyed {
 
     @JsonIgnore
     @Override
-    public BukkitNamespacedKey getNamespacedKey() {
+    public NamespacedKey getNamespacedKey() {
         return key;
     }
 

@@ -18,6 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.nms.api.v1_18_R1.network;
 
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.nms.api.v1_18_R1.nbt.NBTTagCompoundImpl;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
@@ -187,12 +188,12 @@ public class MCByteBufImpl implements MCByteBuf {
     }
 
     @Override
-    public BukkitNamespacedKey readNamespacedKey() {
+    public NamespacedKey readNamespacedKey() {
         return BukkitNamespacedKey.of(this.byteBuf.readResourceLocation().toString());
     }
 
     @Override
-    public MCByteBuf writeNamespacedKey(BukkitNamespacedKey namespacedKey) {
+    public MCByteBuf writeNamespacedKey(NamespacedKey namespacedKey) {
         this.byteBuf.writeResourceLocation(ResourceLocation.tryParse(namespacedKey.toString()));
         return this;
     }

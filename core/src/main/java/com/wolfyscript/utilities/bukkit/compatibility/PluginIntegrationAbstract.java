@@ -18,6 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.compatibility;
 
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
@@ -123,7 +124,7 @@ public abstract class PluginIntegrationAbstract implements PluginIntegration {
     }
 
     @Override
-    public <T extends PluginAdapter> T getAdapter(Class<T> type, BukkitNamespacedKey key) {
+    public <T extends PluginAdapter> T getAdapter(Class<T> type, NamespacedKey key) {
         return core.getCompatibilityManager().getPlugins().getAdapter(pluginName, type, key);
     }
 

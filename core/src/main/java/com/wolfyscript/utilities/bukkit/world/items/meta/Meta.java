@@ -26,16 +26,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import com.wolfyscript.utilities.Keyed;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.world.inventory.item_builder.ItemBuilder;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
 import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
 import com.wolfyscript.utilities.json.KeyedTypeResolver;
+import com.wolfyscript.utilities.json.jackson.JacksonUtil;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import com.wolfyscript.utilities.bukkit.world.inventory.item_builder.ItemBuilder;
-import com.wolfyscript.utilities.json.jackson.JacksonUtil;
 import org.jetbrains.annotations.NotNull;
 
 @JsonTypeResolver(KeyedTypeResolver.class)
@@ -45,13 +45,13 @@ import org.jetbrains.annotations.NotNull;
 @JsonPropertyOrder("key")
 public abstract class Meta implements Keyed {
 
-    private final BukkitNamespacedKey key;
+    private final NamespacedKey key;
 
     protected MetaSettings.Option option = MetaSettings.Option.EXACT;
     @JsonIgnore
     private List<MetaSettings.Option> availableOptions = List.of(MetaSettings.Option.EXACT);
 
-    protected Meta(BukkitNamespacedKey key) {
+    protected Meta(NamespacedKey key) {
         this.key = key;
     }
 
@@ -100,23 +100,23 @@ public abstract class Meta implements Keyed {
 
     @JsonIgnore
     @Override
-    public final BukkitNamespacedKey getNamespacedKey() {
+    public final NamespacedKey getNamespacedKey() {
         return key;
     }
 
     @Deprecated
     public static class Provider<M extends Meta> implements Keyed {
 
-        private final BukkitNamespacedKey namespacedKey;
+        private final NamespacedKey namespacedKey;
         private final Class<M> type;
 
-        public Provider(BukkitNamespacedKey namespacedKey, @NotNull Class<M> type) {
+        public Provider(NamespacedKey namespacedKey, @NotNull Class<M> type) {
             Objects.requireNonNull(type, "Cannot initiate Meta \"" + namespacedKey.toString() + "\" with a null type!");
             this.namespacedKey = namespacedKey;
             this.type = type;
         }
 
-        public BukkitNamespacedKey getNamespacedKey() {
+        public NamespacedKey getNamespacedKey() {
             return namespacedKey;
         }
 

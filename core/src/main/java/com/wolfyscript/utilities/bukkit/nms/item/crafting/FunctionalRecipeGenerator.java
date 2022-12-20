@@ -2,6 +2,8 @@ package com.wolfyscript.utilities.bukkit.nms.item.crafting;
 
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.nms.Reflection;
+import com.wolfyscript.utilities.bukkit.nms.api.inventory.InjectGUIInventory;
 import com.wolfyscript.utilities.versioning.MinecraftVersion;
 import com.wolfyscript.utilities.versioning.ServerVersion;
 import java.io.IOException;
@@ -27,9 +29,6 @@ import javassist.LoaderClassPath;
 import javassist.Modifier;
 import javassist.NotFoundException;
 import javassist.bytecode.SignatureAttribute;
-import com.wolfyscript.utilities.bukkit.nms.api.inventory.InjectGUIInventory;
-import com.wolfyscript.utilities.bukkit.nms.Reflection;
-import com.wolfyscript.utilities.versioning.MinecraftVersions;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;

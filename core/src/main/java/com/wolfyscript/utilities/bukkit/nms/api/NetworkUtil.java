@@ -18,8 +18,8 @@
 
 package com.wolfyscript.utilities.bukkit.nms.api;
 
-import io.netty.buffer.ByteBuf;
 import com.wolfyscript.utilities.bukkit.nms.api.network.MCByteBuf;
+import io.netty.buffer.ByteBuf;
 
 public abstract class NetworkUtil extends UtilComponent {
 

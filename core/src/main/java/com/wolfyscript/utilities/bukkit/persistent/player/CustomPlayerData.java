@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import com.wolfyscript.utilities.Keyed;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
 import com.wolfyscript.utilities.json.KeyedTypeResolver;
@@ -31,13 +31,13 @@ import org.bukkit.entity.Player;
 public abstract class CustomPlayerData implements Keyed {
 
     @JsonProperty("id")
-    private final BukkitNamespacedKey id;
+    private final NamespacedKey id;
 
     /**
      * The default constructor that must get the id of the custom data type.
      * @param id The id of the custom data type.
      */
-    protected CustomPlayerData(BukkitNamespacedKey id) {
+    protected CustomPlayerData(NamespacedKey id) {
         this.id = id;
     }
 
@@ -71,7 +71,7 @@ public abstract class CustomPlayerData implements Keyed {
 
     @JsonIgnore
     @Override
-    public BukkitNamespacedKey getNamespacedKey() {
+    public NamespacedKey getNamespacedKey() {
         return id;
     }
 

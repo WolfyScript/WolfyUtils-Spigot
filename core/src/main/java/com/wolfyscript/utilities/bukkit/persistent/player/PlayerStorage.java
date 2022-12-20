@@ -76,7 +76,7 @@ public class PlayerStorage {
             var objectMapper = core.getWolfyUtils().getJacksonMapperUtil().getGlobalMapper();
             try {
                 data.onLoad();
-                dataContainer.set(data.getNamespacedKey().bukkit(), PersistentDataType.STRING, objectMapper.writeValueAsString(data));
+                dataContainer.set(((BukkitNamespacedKey)data.getNamespacedKey()).bukkit(), PersistentDataType.STRING, objectMapper.writeValueAsString(data));
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }

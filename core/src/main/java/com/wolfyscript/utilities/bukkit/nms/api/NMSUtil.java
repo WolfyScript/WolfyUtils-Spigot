@@ -19,11 +19,11 @@
 package com.wolfyscript.utilities.bukkit.nms.api;
 
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.bukkit.nms.Reflection;
 import com.wolfyscript.utilities.bukkit.nms.fallback.FallbackNMSEntry;
+import com.wolfyscript.utilities.versioning.ServerVersion;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
-import com.wolfyscript.utilities.bukkit.nms.Reflection;
-import com.wolfyscript.utilities.versioning.ServerVersion;
 import org.bukkit.plugin.Plugin;
 
 public abstract class NMSUtil {

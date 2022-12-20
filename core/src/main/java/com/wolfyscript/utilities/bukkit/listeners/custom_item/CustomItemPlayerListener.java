@@ -18,8 +18,10 @@
 
 package com.wolfyscript.utilities.bukkit.listeners.custom_item;
 
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.registry.RegistryCustomItem;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
 import com.wolfyscript.utilities.bukkit.world.items.actions.DataPlayerEvent;
 import com.wolfyscript.utilities.bukkit.world.items.actions.EventPlayerConsumeItem;
@@ -30,7 +32,6 @@ import com.wolfyscript.utilities.bukkit.world.items.actions.EventPlayerItemBreak
 import com.wolfyscript.utilities.bukkit.world.items.actions.EventPlayerItemDamage;
 import com.wolfyscript.utilities.bukkit.world.items.actions.EventPlayerItemDrop;
 import com.wolfyscript.utilities.bukkit.world.items.actions.EventPlayerItemHandSwap;
-import com.wolfyscript.utilities.bukkit.registry.RegistryCustomItem;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -54,7 +55,7 @@ public class CustomItemPlayerListener implements Listener {
         this.customItems = core.getRegistries().getCustomItems();
     }
 
-    private <T extends PlayerEvent> void callEvent(CustomItem item, BukkitNamespacedKey eventKey, T bukkitEvent) {
+    private <T extends PlayerEvent> void callEvent(CustomItem item, NamespacedKey eventKey, T bukkitEvent) {
         item.getActionSettings().callEvent(eventKey, new DataPlayerEvent<>(bukkitEvent, bukkitEvent.getPlayer(), item));
     }
 

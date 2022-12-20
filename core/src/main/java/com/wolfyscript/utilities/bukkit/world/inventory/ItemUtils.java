@@ -18,12 +18,12 @@
 
 package com.wolfyscript.utilities.bukkit.world.inventory;
 
+import com.wolfyscript.utilities.bukkit.chat.ChatColor;
+import com.wolfyscript.utilities.bukkit.world.inventory.item_builder.ItemBuilder;
 import com.wolfyscript.utilities.bukkit.world.items.ArmorType;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
 import java.util.LinkedList;
 import java.util.List;
-import com.wolfyscript.utilities.bukkit.chat.ChatColor;
-import com.wolfyscript.utilities.bukkit.world.inventory.item_builder.ItemBuilder;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;

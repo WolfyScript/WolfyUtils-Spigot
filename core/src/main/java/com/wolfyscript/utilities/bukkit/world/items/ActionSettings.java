@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
 import com.wolfyscript.utilities.bukkit.world.items.actions.Data;
 import com.wolfyscript.utilities.bukkit.world.items.actions.Event;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 public class ActionSettings {
 
     @JsonIgnore
-    private Multimap<BukkitNamespacedKey, Event<?>> indexedEvents;
+    private Multimap<NamespacedKey, Event<?>> indexedEvents;
 
     public ActionSettings() {
         this.indexedEvents = HashMultimap.create();
@@ -54,11 +54,11 @@ public class ActionSettings {
         return Collections.unmodifiableCollection(indexedEvents.values());
     }
 
-    public <T extends Data> List<Event<T>> getEvents(BukkitNamespacedKey key, Class<T> dataType) {
+    public <T extends Data> List<Event<T>> getEvents(NamespacedKey key, Class<T> dataType) {
         return indexedEvents.get(key).stream().filter(actionEvent -> dataType.equals(actionEvent.getDataType())).map(actionEvent -> (Event<T>) actionEvent).collect(Collectors.toList());
     }
 
-    public <T extends Data> void callEvent(BukkitNamespacedKey key, T data) {
+    public <T extends Data> void callEvent(NamespacedKey key, T data) {
         getEvents(key, (Class<T>) data.getClass()).forEach(event -> event.call(WolfyUtilCore.getInstance(), data));
     }
 }

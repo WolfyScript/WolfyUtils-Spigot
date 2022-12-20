@@ -21,8 +21,8 @@ package com.wolfyscript.utilities.bukkit.json.serialization;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import java.util.UUID;
 import com.wolfyscript.utilities.json.jackson.JacksonUtil;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 

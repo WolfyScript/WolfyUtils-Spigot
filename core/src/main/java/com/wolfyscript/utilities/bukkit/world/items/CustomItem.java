@@ -39,13 +39,18 @@ import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.ItemsAdderIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.itemsadder.CustomStack;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.itemsadder.ItemsAdderRef;
+import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
+import com.wolfyscript.utilities.bukkit.world.inventory.InventoryUtils;
+import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
+import com.wolfyscript.utilities.bukkit.world.inventory.item_builder.AbstractItemBuilder;
+import com.wolfyscript.utilities.bukkit.world.inventory.item_builder.ItemBuilder;
 import com.wolfyscript.utilities.bukkit.world.items.meta.CustomItemTagMeta;
 import com.wolfyscript.utilities.bukkit.world.items.meta.Meta;
 import com.wolfyscript.utilities.bukkit.world.items.meta.MetaSettings;
 import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.world.items.references.VanillaRef;
 import com.wolfyscript.utilities.bukkit.world.items.references.WolfyUtilitiesRef;
-import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
+import com.wolfyscript.utilities.bukkit.world.particles.ParticleLocation;
 import com.wolfyscript.utilities.json.jackson.JacksonUtil;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,11 +64,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import com.wolfyscript.utilities.bukkit.world.inventory.InventoryUtils;
-import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
-import com.wolfyscript.utilities.bukkit.world.inventory.item_builder.AbstractItemBuilder;
-import com.wolfyscript.utilities.bukkit.world.inventory.item_builder.ItemBuilder;
-import com.wolfyscript.utilities.bukkit.world.particles.ParticleLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -210,7 +210,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
                     node.fields().forEachRemaining(entry -> {
                         if (entry.getValue() instanceof ObjectNode entryVal) {
                             String key = entry.getKey().toLowerCase(Locale.ROOT);
-                            BukkitNamespacedKey namespacedKey = key.contains(":") ? BukkitNamespacedKey.of(key) : BukkitNamespacedKey.wolfyutilties(key);
+                            NamespacedKey namespacedKey = key.contains(":") ? BukkitNamespacedKey.of(key) : BukkitNamespacedKey.wolfyutilties(key);
                             if (namespacedKey != null) {
                                 entryVal.put("key", String.valueOf(namespacedKey));
                                 Meta meta = JacksonUtil.getObjectMapper().convertValue(entryVal, Meta.class);

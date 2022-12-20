@@ -2,7 +2,6 @@ package com.wolfyscript.utilities.bukkit.chat;
 
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.adapters.PlayerImpl;
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;

@@ -18,14 +18,14 @@
 
 package com.wolfyscript.utilities.bukkit.gui.button;
 
-import com.wolfyscript.utilities.bukkit.gui.callback.CallbackChatInput;
-import com.wolfyscript.utilities.bukkit.gui.callback.CallbackChatTabComplete;
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
-import java.io.IOException;
+import com.wolfyscript.utilities.bukkit.gui.callback.CallbackChatInput;
+import com.wolfyscript.utilities.bukkit.gui.callback.CallbackChatTabComplete;
 import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
+import java.io.IOException;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryInteractEvent;

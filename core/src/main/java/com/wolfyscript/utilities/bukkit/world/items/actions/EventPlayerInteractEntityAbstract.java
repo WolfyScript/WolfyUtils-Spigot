@@ -18,7 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.world.items.actions;
 
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
 import java.util.List;
 import org.bukkit.entity.EntityType;
@@ -30,7 +30,7 @@ public abstract class EventPlayerInteractEntityAbstract<T extends PlayerInteract
     private final List<EquipmentSlot> hand = List.of(EquipmentSlot.HAND);
     private final List<EntityType> entityType = List.of();
 
-    public EventPlayerInteractEntityAbstract(BukkitNamespacedKey key) {
+    public EventPlayerInteractEntityAbstract(NamespacedKey key) {
         super(key, (Class<DataPlayerEvent<T>>)(Object) DataPlayerEvent.class);
     }
 

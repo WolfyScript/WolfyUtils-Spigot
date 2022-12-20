@@ -26,11 +26,11 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.Keyed;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.world.particles.timer.Timer;
 import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
 import com.wolfyscript.utilities.json.KeyedTypeResolver;
 import java.util.function.Consumer;
-import com.wolfyscript.utilities.bukkit.world.particles.timer.Timer;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,9 +41,9 @@ import org.jetbrains.annotations.NotNull;
 @JsonPropertyOrder(value = {"key"})
 public abstract class Shape implements Keyed {
 
-    private final BukkitNamespacedKey key;
+    private final NamespacedKey key;
 
-    protected Shape(@NotNull BukkitNamespacedKey key) {
+    protected Shape(@NotNull NamespacedKey key) {
         Preconditions.checkArgument(key != null && !key.getKey().isEmpty() && !key.getNamespace().isEmpty(), "Invalid NamespacedKey! Namespaced cannot be null or empty!");
         this.key = key;
     }
@@ -61,7 +61,7 @@ public abstract class Shape implements Keyed {
 
     @JsonIgnore
     @Override
-    public BukkitNamespacedKey getNamespacedKey() {
+    public NamespacedKey getNamespacedKey() {
         return key;
     }
 

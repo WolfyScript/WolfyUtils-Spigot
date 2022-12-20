@@ -19,7 +19,6 @@
 package com.wolfyscript.utilities.bukkit.gui.cache;
 
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import java.util.HashMap;
 import java.util.Map;

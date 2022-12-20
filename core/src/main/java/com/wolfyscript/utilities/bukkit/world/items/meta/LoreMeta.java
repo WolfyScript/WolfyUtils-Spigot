@@ -20,9 +20,9 @@ package com.wolfyscript.utilities.bukkit.world.items.meta;
 
 
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.bukkit.world.inventory.item_builder.ItemBuilder;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
 import java.util.Objects;
-import com.wolfyscript.utilities.bukkit.world.inventory.item_builder.ItemBuilder;
 
 public class LoreMeta extends Meta {
 

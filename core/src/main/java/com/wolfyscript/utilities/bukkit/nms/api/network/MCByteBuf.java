@@ -20,7 +20,10 @@ package com.wolfyscript.utilities.bukkit.nms.api.network;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.bukkit.nms.api.NetworkUtil;
+import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTCompound;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.ByteProcessor;
@@ -43,8 +46,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import javax.annotation.Nullable;
-import com.wolfyscript.utilities.bukkit.nms.api.NetworkUtil;
-import com.wolfyscript.utilities.bukkit.nms.api.nbt.NBTCompound;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -197,7 +198,7 @@ public interface MCByteBuf {
      *
      * @return The {@link BukkitNamespacedKey} instance, read from the buffer.
      */
-    BukkitNamespacedKey readNamespacedKey();
+    NamespacedKey readNamespacedKey();
 
     /**
      * Writes the {@link BukkitNamespacedKey} instance to the buffer.<br>
@@ -206,7 +207,7 @@ public interface MCByteBuf {
      * @param namespacedKey The {@link BukkitNamespacedKey} to write to the buffer.
      * @return The instance of this {@link MCByteBuf} for chaining.
      */
-    MCByteBuf writeNamespacedKey(BukkitNamespacedKey namespacedKey);
+    MCByteBuf writeNamespacedKey(NamespacedKey namespacedKey);
 
     Date readDate();
 

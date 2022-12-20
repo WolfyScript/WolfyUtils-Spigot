@@ -19,6 +19,7 @@
 package me.wolfyscript.utilities.compatibility.plugins.placeholderapi.value_providers;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.eval.context.EvalContext;
 import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.PlaceholderAPIIntegration;
@@ -31,7 +32,7 @@ public abstract class ValueProviderPlaceholderAPI<V> extends AbstractValueProvid
     @JsonProperty("value")
     protected final String value;
 
-    protected ValueProviderPlaceholderAPI(BukkitNamespacedKey key, String value) {
+    protected ValueProviderPlaceholderAPI(NamespacedKey key, String value) {
         super(key);
         this.value = value;
     }

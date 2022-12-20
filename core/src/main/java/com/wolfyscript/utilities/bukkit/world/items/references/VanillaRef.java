@@ -22,9 +22,9 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
+import com.wolfyscript.utilities.json.jackson.JacksonUtil;
 import java.io.IOException;
 import java.util.Objects;
-import com.wolfyscript.utilities.json.jackson.JacksonUtil;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 

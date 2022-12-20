@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import com.wolfyscript.utilities.Copyable;
 import com.wolfyscript.utilities.Keyed;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
 import com.wolfyscript.utilities.json.KeyedTypeResolver;
 
@@ -23,15 +23,15 @@ import com.wolfyscript.utilities.json.KeyedTypeResolver;
 public abstract class CustomItemData implements Keyed, Copyable<CustomItemData> {
 
     @JsonProperty("id")
-    private final BukkitNamespacedKey id;
+    private final NamespacedKey id;
 
-    protected CustomItemData(BukkitNamespacedKey id) {
+    protected CustomItemData(NamespacedKey id) {
         this.id = id;
     }
 
     @JsonIgnore
     @Override
-    public BukkitNamespacedKey getNamespacedKey() {
+    public NamespacedKey getNamespacedKey() {
         return id;
     }
 

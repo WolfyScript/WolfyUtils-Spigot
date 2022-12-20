@@ -2,8 +2,9 @@ package com.wolfyscript.utilities.bukkit.language;
 
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.bukkit.chat.ChatColor;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonState;
 import com.wolfyscript.utilities.common.language.LanguageAPI;
 import com.wolfyscript.utilities.language.Language;
@@ -18,7 +19,6 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import com.wolfyscript.utilities.bukkit.chat.ChatColor;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 
@@ -155,7 +155,7 @@ public class LangAPISpigot extends LanguageAPI {
         return readKey(key, node -> ChatColor.convert(node.asText()));
     }
 
-    public String getButtonName(@NotNull BukkitNamespacedKey window, String buttonKey) {
+    public String getButtonName(@NotNull NamespacedKey window, String buttonKey) {
         return BukkitComponentSerializer.legacy().serialize(getComponent(String.format(ButtonState.BUTTON_WINDOW_KEY + ButtonState.NAME_KEY, window.getNamespace(), window.getKey(), buttonKey)));
     }
 
@@ -163,7 +163,7 @@ public class LangAPISpigot extends LanguageAPI {
         return BukkitComponentSerializer.legacy().serialize(getComponent(String.format(ButtonState.BUTTON_CLUSTER_KEY + ButtonState.NAME_KEY, clusterId, buttonKey)));
     }
 
-    public List<String> getButtonLore(@NotNull BukkitNamespacedKey window, String buttonKey) {
+    public List<String> getButtonLore(@NotNull NamespacedKey window, String buttonKey) {
         return getComponents(String.format(ButtonState.BUTTON_WINDOW_KEY + ButtonState.NAME_KEY, window.getNamespace(), window.getKey(), buttonKey)).stream().map(component -> BukkitComponentSerializer.legacy().serialize(component)).collect(Collectors.toList());
     }
 

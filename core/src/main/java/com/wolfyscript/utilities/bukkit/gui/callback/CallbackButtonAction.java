@@ -21,8 +21,8 @@ package com.wolfyscript.utilities.bukkit.gui.callback;
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
-import java.io.IOException;
 import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
+import java.io.IOException;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 

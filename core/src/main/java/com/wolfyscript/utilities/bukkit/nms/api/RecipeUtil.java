@@ -18,8 +18,8 @@
 
 package com.wolfyscript.utilities.bukkit.nms.api;
 
-import java.util.Iterator;
 import com.wolfyscript.utilities.bukkit.nms.api.inventory.RecipeType;
+import java.util.Iterator;
 import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 

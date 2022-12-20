@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import com.wolfyscript.utilities.Keyed;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
 import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
 import com.wolfyscript.utilities.json.KeyedTypeResolver;
@@ -41,12 +41,12 @@ import java.util.Objects;
 @OptionalKeyReference(serializeAsKey = false, registryKey = "wolfyutilities:custom_item/events/values")
 public abstract class Event<T extends Data> implements Keyed {
 
-    private final BukkitNamespacedKey key;
+    private final NamespacedKey key;
     @JsonIgnore
     protected final Class<T> dataType;
     private List<Action<? super T>> actions;
 
-    protected Event(BukkitNamespacedKey key, Class<T> dataType) {
+    protected Event(NamespacedKey key, Class<T> dataType) {
         this.key = key;
         this.dataType = dataType;
     }
@@ -77,7 +77,7 @@ public abstract class Event<T extends Data> implements Keyed {
 
     @JsonIgnore
     @Override
-    public BukkitNamespacedKey getNamespacedKey() {
+    public NamespacedKey getNamespacedKey() {
         return key;
     }
 

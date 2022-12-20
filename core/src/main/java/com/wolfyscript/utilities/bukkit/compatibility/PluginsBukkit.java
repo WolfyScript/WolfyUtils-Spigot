@@ -19,7 +19,7 @@
 package com.wolfyscript.utilities.bukkit.compatibility;
 
 import com.google.common.base.Preconditions;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.events.DependenciesLoadedEvent;
@@ -48,7 +48,7 @@ import org.jetbrains.annotations.Nullable;
 final class PluginsBukkit implements Plugins, Listener {
 
     private final WolfyUtilCore core;
-    private final Map<String, Map<BukkitNamespacedKey, PluginAdapter>> pluginAdapters = new HashMap<>();
+    private final Map<String, Map<NamespacedKey, PluginAdapter>> pluginAdapters = new HashMap<>();
     private final Map<String, PluginIntegrationAbstract> pluginIntegrations = new HashMap<>();
     private final Map<String, Class<? extends PluginIntegrationAbstract>> pluginIntegrationClasses = new HashMap<>();
     private boolean doneLoading = false;
@@ -285,15 +285,15 @@ final class PluginsBukkit implements Plugins, Listener {
         Optional.ofNullable(Bukkit.getPluginManager().getPlugin(pluginName)).ifPresent(plugin -> registerAdapter(pluginAdapter.get(), pluginAdapters.computeIfAbsent(pluginName, s -> new HashMap<>())));
     }
 
-    private <T extends PluginAdapter> void registerAdapter(T adapter, Map<BukkitNamespacedKey, T> adapters) {
+    private <T extends PluginAdapter> void registerAdapter(T adapter, Map<NamespacedKey, T> adapters) {
         Preconditions.checkArgument(adapter != null, "The plugin adapter cannot be null!");
         Preconditions.checkArgument(!adapters.containsKey(adapter.getNamespacedKey()), "A plugin adapter with that key was already registered!");
         adapters.putIfAbsent(adapter.getNamespacedKey(), adapter);
     }
 
     @Override
-    public <T extends PluginAdapter> T getAdapter(String pluginName, Class<T> type, BukkitNamespacedKey key) {
-        Map<BukkitNamespacedKey, PluginAdapter> adapters = pluginAdapters.get(pluginName);
+    public <T extends PluginAdapter> T getAdapter(String pluginName, Class<T> type, NamespacedKey key) {
+        Map<NamespacedKey, PluginAdapter> adapters = pluginAdapters.get(pluginName);
         if (adapters != null) {
             var adapter = adapters.get(key);
             if (type.isInstance(adapter)) {

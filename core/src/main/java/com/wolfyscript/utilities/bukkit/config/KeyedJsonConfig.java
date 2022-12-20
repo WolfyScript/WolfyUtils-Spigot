@@ -18,7 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.config;
 
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.NamespacedKey;
 import java.io.File;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -35,39 +35,39 @@ import org.jetbrains.annotations.Nullable;
 @Deprecated
 public class KeyedJsonConfig<T> extends JsonConfig<T> {
 
-    private final BukkitNamespacedKey namespacedKey;
+    private final NamespacedKey namespacedKey;
 
-    public KeyedJsonConfig(BukkitNamespacedKey namespacedKey, @NotNull File file, Function<File, T> rootFunction) {
+    public KeyedJsonConfig(NamespacedKey namespacedKey, @NotNull File file, Function<File, T> rootFunction) {
         super(file, rootFunction);
         this.namespacedKey = namespacedKey;
     }
 
-    public KeyedJsonConfig(BukkitNamespacedKey namespacedKey, @Nullable File file, Supplier<T> rootSupplier) {
+    public KeyedJsonConfig(NamespacedKey namespacedKey, @Nullable File file, Supplier<T> rootSupplier) {
         super(file, rootSupplier);
         this.namespacedKey = namespacedKey;
     }
 
-    public KeyedJsonConfig(BukkitNamespacedKey namespacedKey, @NotNull File file, Class<T> type) {
+    public KeyedJsonConfig(NamespacedKey namespacedKey, @NotNull File file, Class<T> type) {
         super(file, type);
         this.namespacedKey = namespacedKey;
     }
 
-    public KeyedJsonConfig(BukkitNamespacedKey namespacedKey, @Nullable File file, Class<T> type, @NotNull String initialValue) {
+    public KeyedJsonConfig(NamespacedKey namespacedKey, @Nullable File file, Class<T> type, @NotNull String initialValue) {
         super(file, type, initialValue);
         this.namespacedKey = namespacedKey;
     }
 
-    public KeyedJsonConfig(BukkitNamespacedKey namespacedKey, Class<T> type, @NotNull String initialValue) {
+    public KeyedJsonConfig(NamespacedKey namespacedKey, Class<T> type, @NotNull String initialValue) {
         super(type, initialValue);
         this.namespacedKey = namespacedKey;
     }
 
-    public KeyedJsonConfig(BukkitNamespacedKey namespacedKey, @NotNull T root) {
+    public KeyedJsonConfig(NamespacedKey namespacedKey, @NotNull T root) {
         super(root);
         this.namespacedKey = namespacedKey;
     }
 
-    public BukkitNamespacedKey getNamespacedKey() {
+    public NamespacedKey getNamespacedKey() {
         return namespacedKey;
     }
 }

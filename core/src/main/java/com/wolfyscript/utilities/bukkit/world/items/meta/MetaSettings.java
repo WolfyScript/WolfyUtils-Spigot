@@ -21,11 +21,11 @@ package com.wolfyscript.utilities.bukkit.world.items.meta;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Preconditions;
+import com.wolfyscript.utilities.bukkit.world.inventory.item_builder.ItemBuilder;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import com.wolfyscript.utilities.bukkit.world.inventory.item_builder.ItemBuilder;
 import org.jetbrains.annotations.NotNull;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)

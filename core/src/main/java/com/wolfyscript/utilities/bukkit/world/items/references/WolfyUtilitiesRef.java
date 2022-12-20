@@ -21,6 +21,7 @@ package com.wolfyscript.utilities.bukkit.world.items.references;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
@@ -38,9 +39,9 @@ public class WolfyUtilitiesRef extends APIReference {
 
     private static final org.bukkit.NamespacedKey CUSTOM_ITEM_KEY = new org.bukkit.NamespacedKey(WolfyCoreBukkit.getInstance(), "custom_item");
 
-    private final BukkitNamespacedKey namespacedKey;
+    private final NamespacedKey namespacedKey;
 
-    public WolfyUtilitiesRef(BukkitNamespacedKey namespacedKey) {
+    public WolfyUtilitiesRef(NamespacedKey namespacedKey) {
         this.namespacedKey = namespacedKey;
     }
 
@@ -49,7 +50,7 @@ public class WolfyUtilitiesRef extends APIReference {
         this.namespacedKey = wolfyUtilitiesRef.namespacedKey;
     }
 
-    public BukkitNamespacedKey getNamespacedKey() {
+    public NamespacedKey getNamespacedKey() {
         return namespacedKey;
     }
 
