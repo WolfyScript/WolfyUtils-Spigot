@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import me.wolfyscript.utilities.util.Keyed;
@@ -74,6 +75,13 @@ public @interface OptionalValueSerializer {
                 } else {
                     throw new IllegalArgumentException("ValueSerializer of type \"" + constructedDeserializer.getType().getName() + "\" cannot handle type \"" + genericType.getName() + "\"");
                 }
+            }
+
+            @Override
+            public void serializeWithType(T value, JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
+               if (!serializer.serialize(value, gen, serializers)) {
+                   defaultSerializer.serializeWithType(value, gen, serializers, typeSer);
+               }
             }
 
             @Override
