@@ -18,7 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.world.inventory;
 
-import com.wolfyscript.utilities.bukkit.chat.ChatColor;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.world.inventory.item_builder.ItemBuilder;
 import com.wolfyscript.utilities.bukkit.world.items.ArmorType;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
@@ -30,7 +30,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Material;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,13 +40,15 @@ public class ItemUtils {
     public static boolean isEquipable(Material material) {
         return switch (material.name()) {
             case "ELYTRA", "CARVED_PUMPKIN" -> true;
-            default -> material.name().endsWith("_CHESTPLATE") || material.name().endsWith("_LEGGINGS") || material.name().endsWith("_HELMET") || material.name().endsWith("_BOOTS") || material.name().endsWith("_HEAD") || material.name().endsWith("SKULL");
+            default ->
+                    material.name().endsWith("_CHESTPLATE") || material.name().endsWith("_LEGGINGS") || material.name().endsWith("_HELMET") || material.name().endsWith("_BOOTS") || material.name().endsWith("_HEAD") || material.name().endsWith("SKULL");
         };
     }
 
     public static boolean isEquipable(Material material, ArmorType type) {
         return switch (type) {
-            case HELMET -> material.name().endsWith("_HELMET") || material.name().endsWith("_HEAD") || material.name().endsWith("SKULL") || material.equals(Material.CARVED_PUMPKIN);
+            case HELMET ->
+                    material.name().endsWith("_HELMET") || material.name().endsWith("_HEAD") || material.name().endsWith("SKULL") || material.equals(Material.CARVED_PUMPKIN);
             case CHESTPLATE -> material.equals(Material.ELYTRA) || material.name().endsWith("_CHESTPLATE");
             case LEGGINGS -> material.name().endsWith("_LEGGINGS");
             case BOOTS -> material.name().endsWith("_BOOTS");
@@ -56,16 +57,14 @@ public class ItemUtils {
 
     public static boolean isTool(Material material) {
         return switch (material.name()) {
-            case
-                    "WOODEN_HOE", "WOODEN_AXE", "WOODEN_PICKAXE", "WOODEN_SHOVEL", "WOODEN_SWORD", //WOODEN
+            case "WOODEN_HOE", "WOODEN_AXE", "WOODEN_PICKAXE", "WOODEN_SHOVEL", "WOODEN_SWORD", //WOODEN
                     "STONE_HOE", "STONE_AXE", "STONE_PICKAXE", "STONE_SHOVEL", "STONE_SWORD", //STONE
                     "IRON_HOE", "IRON_AXE", "IRON_PICKAXE", "IRON_SHOVEL", "IRON_SWORD",  //IRON
                     "GOLDEN_HOE", "GOLDEN_AXE", "GOLDEN_PICKAXE", "GOLDEN_SHOVEL", "GOLDEN_SWORD", //GOLDEN
                     "DIAMOND_HOE", "DIAMOND_AXE", "DIAMOND_PICKAXE", "DIAMOND_SHOVEL", "DIAMOND_SWORD", //DIAMOND
                     "NETHERITE_HOE", "NETHERITE_AXE", "NETHERITE_PICKAXE", "NETHERITE_SHOVEL", "NETHERITE_SWORD" //NETHERITE
                     -> true;
-            default
-                    -> false;
+            default -> false;
         };
     }
 
@@ -76,7 +75,8 @@ public class ItemUtils {
         }
         if (isTool(material)) return true;
         return switch (material.name()) {
-            case "BOW", "CROSSBOW", "TRIDENT", "SHIELD", "TURTLE_HELMET", "ELYTRA", "CARROT_ON_A_STICK", "WARPED_FUNGUS_ON_A_STICK", "FISHING_ROD", "SHEARS", "FLINT_AND_STEEL", "ENCHANTED_BOOK" -> true;
+            case "BOW", "CROSSBOW", "TRIDENT", "SHIELD", "TURTLE_HELMET", "ELYTRA", "CARROT_ON_A_STICK", "WARPED_FUNGUS_ON_A_STICK", "FISHING_ROD", "SHEARS", "FLINT_AND_STEEL", "ENCHANTED_BOOK" ->
+                    true;
             default -> false;
         };
     }
@@ -86,52 +86,34 @@ public class ItemUtils {
     }
 
     public static boolean isAirOrNull(CustomItem item) {
-        return item == null || item.getApiReference() == null || isAirOrNull(item.getItemStack());
+        return item == null || item.getReference() == null || isAirOrNull(item.getItemStack());
     }
 
     /*
     Prepare and configure the ItemStack for the GUI!
      */
     public static ItemStack createItem(ItemStack itemStack, String displayName, String... lore) {
-        var itemBuilder = new ItemBuilder(itemStack);
-        var itemMeta = itemBuilder.getItemMeta();
-        if (itemMeta != null) {
-            itemBuilder.setDisplayName(ChatColor.convert(displayName));
-            if (lore != null) {
-                for (String s : lore) {
-                    itemBuilder.addLoreLine(ChatColor.convert(s));
-                }
-            }
-            itemBuilder.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_POTION_EFFECTS);
-        }
-        return itemBuilder.create();
+        return WolfyCoreBukkit.getInstance().getWolfyUtils().getItems().createItem(itemStack, displayName, lore);
     }
 
     public static ItemStack createItem(ItemStack itemStack, Component displayName, List<Component> lore) {
-        var itemBuilder = new ItemBuilder(itemStack);
-        var itemMeta = itemBuilder.getItemMeta();
-        if (itemMeta != null) {
-            itemBuilder.setDisplayName(BukkitComponentSerializer.legacy().serialize(displayName));
-            itemBuilder.setLore(lore.stream().map(line -> BukkitComponentSerializer.legacy().serialize(line)).toList());
-            itemBuilder.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_POTION_EFFECTS);
-        }
-        return itemBuilder.create();
+        return WolfyCoreBukkit.getInstance().getWolfyUtils().getItems().createItem(itemStack, displayName, lore);
     }
 
     public static ItemStack applyNameAndLore(ItemStack itemStack, Component displayName, List<Component> lore) {
-        var itemBuilder = new ItemBuilder(itemStack);
+        var itemBuilder = new ItemBuilder(WolfyCoreBukkit.getInstance().getWolfyUtils(), itemStack);
         var itemMeta = itemBuilder.getItemMeta();
         if (itemMeta != null) {
-            itemBuilder.setDisplayName(BukkitComponentSerializer.legacy().serialize(displayName));
+            itemBuilder.displayName(displayName);
             if (!lore.isEmpty()) {
-                itemBuilder.setLore(lore.stream().map(line -> BukkitComponentSerializer.legacy().serialize(line)).toList());
+                itemBuilder.lore(lore);
             }
         }
         return itemBuilder.create();
     }
 
     @Deprecated
-    public static ItemStack replaceNameAndLore(MiniMessage miniMessage, ItemStack itemStack, @NotNull TagResolver tagResolver) {
+    public static ItemStack replaceNameAndLore(MiniMessage miniMessage, ItemStack itemStack, @NotNull TagResolver... tagResolver) {
         var itemMeta = itemStack.getItemMeta();
         if (itemMeta != null) {
             Component name = convertLegacyTextWithTagResolversToComponent(miniMessage, itemMeta.getDisplayName(), tagResolver);
@@ -141,13 +123,8 @@ public class ItemUtils {
         return itemStack;
     }
 
-    @Deprecated
-    public static ItemStack replaceNameAndLore(MiniMessage miniMessage, ItemStack itemStack, @NotNull TagResolver... tagResolvers) {
-        return replaceNameAndLore(miniMessage, itemStack, TagResolver.resolver(tagResolvers));
-    }
-
-    private static Component convertLegacyTextWithTagResolversToComponent(MiniMessage miniMessage, String value, TagResolver tagResolver) {
-        Component lore = miniMessage.deserialize(value.replace("§", "&"), tagResolver);
+    private static Component convertLegacyTextWithTagResolversToComponent(MiniMessage miniMessage, String value, TagResolver... tagResolvers) {
+        Component lore = miniMessage.deserialize(value.replace("§", "&"), tagResolvers);
         String converted = BukkitComponentSerializer.legacy().serialize(lore);
         return BukkitComponentSerializer.legacy().deserialize(converted.replace("&", "§"));
     }

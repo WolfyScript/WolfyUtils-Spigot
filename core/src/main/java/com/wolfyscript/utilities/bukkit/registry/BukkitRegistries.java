@@ -19,7 +19,8 @@
 package com.wolfyscript.utilities.bukkit.registry;
 
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
 import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
@@ -54,7 +55,6 @@ import org.jetbrains.annotations.NotNull;
  * <strong>Get an instance:</strong>
  * <ul>
  *     <li>(<b>Recommended</b>) via your API instance {@link WolfyUtilsBukkit#getRegistries()}</li>
- *     <li>via static method {@link WolfyUtilCore#getInstance()} & {@link WolfyUtilCore#getRegistries()} (This should only be used in cases where you have no access to your API instance!)</li>
  * </ul>
  */
 public class BukkitRegistries extends Registries {
@@ -87,14 +87,16 @@ public class BukkitRegistries extends Registries {
     private final TypeRegistry<CustomBlockData> customBlockData;
     private final TypeRegistry<CustomPlayerData> customPlayerData;
     private final TypeRegistry<CustomItemData> customItemDataTypeRegistry;
+    private final RegistryItemReferences itemReferences;
 
     private final TypeRegistry<QueryNode<?>> nbtQueryNodes;
 
-    public BukkitRegistries(WolfyUtilCore core) {
+    public BukkitRegistries(WolfyCoreBukkit core) {
         super(core);
 
         customItems = new RegistryCustomItem(this);
-        customItemData = new RegistrySimple<>(new BukkitNamespacedKey(core, "custom_item_data"), this);
+        customItemData = new RegistrySimple<>(new BukkitNamespacedKey(core.getWolfyUtils(), "custom_item_data"), this);
+        itemReferences = new RegistryItemReferences(this);
         particleEffects = new RegistryParticleEffect(this);
         particleAnimations = new RegistryParticleAnimation(this);
         customItemActionValues = new RegistrySimple<>(ITEM_ACTION_VALUES, this, (Class<Action<?>>)(Object) Action.class);
@@ -102,18 +104,18 @@ public class BukkitRegistries extends Registries {
 
         itemTags = new Tags<>(this);
 
-        particleAnimators = new UniqueTypeRegistrySimple<>(new BukkitNamespacedKey(core, "particles/animators"), this);
-        particleShapes = new UniqueTypeRegistrySimple<>(new BukkitNamespacedKey(core, "particles/shapes"), this);
-        particleTimer = new UniqueTypeRegistrySimple<>(new BukkitNamespacedKey(core, "particles/timers"), this);
+        particleAnimators = new UniqueTypeRegistrySimple<>(new BukkitNamespacedKey(core.getWolfyUtils(), "particles/animators"), this);
+        particleShapes = new UniqueTypeRegistrySimple<>(new BukkitNamespacedKey(core.getWolfyUtils(), "particles/shapes"), this);
+        particleTimer = new UniqueTypeRegistrySimple<>(new BukkitNamespacedKey(core.getWolfyUtils(), "particles/timers"), this);
         customItemNbtChecks = new UniqueTypeRegistrySimple<>(ITEM_NBT_CHECKS, this);
         customItemDataTypeRegistry = new UniqueTypeRegistrySimple<>(ITEM_CUSTOM_DATA, this);
         customItemActions = new UniqueTypeRegistrySimple<>(ITEM_ACTION_TYPES, this);
         customItemEvents = new UniqueTypeRegistrySimple<>(ITEM_EVENT_TYPES, this);
 
-        customPlayerData = new UniqueTypeRegistrySimple<>(new BukkitNamespacedKey(core, "persistent/player"), this);
-        customBlockData = new UniqueTypeRegistrySimple<>(new BukkitNamespacedKey(core, "persistent/block"), this);
+        customPlayerData = new UniqueTypeRegistrySimple<>(new BukkitNamespacedKey(core.getWolfyUtils(), "persistent/player"), this);
+        customBlockData = new UniqueTypeRegistrySimple<>(new BukkitNamespacedKey(core.getWolfyUtils(), "persistent/block"), this);
 
-        this.nbtQueryNodes = new UniqueTypeRegistrySimple<>(new BukkitNamespacedKey(core, "nbt/query/nodes"), this);
+        this.nbtQueryNodes = new UniqueTypeRegistrySimple<>(new BukkitNamespacedKey(core.getWolfyUtils(), "nbt/query/nodes"), this);
     }
 
     @Override
@@ -227,5 +229,9 @@ public class BukkitRegistries extends Registries {
 
     public TypeRegistry<QueryNode<?>> getNbtQueryNodes() {
         return nbtQueryNodes;
+    }
+
+    public RegistryItemReferences getItemReferences() {
+        return itemReferences;
     }
 }

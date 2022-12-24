@@ -41,7 +41,7 @@ public interface CallbackButtonRender<C extends CustomCache> {
      * @param cache        The current cache of the GuiHandler
      * @param guiHandler   The current GuiHandler.
      * @param player       The current Player.
-     * @param guiInventory The GUIInventory in which this render was called from.
+     * @param inventory The GUIInventory in which this render was called from.
      * @param itemStack    The current itemsStack of the button.
      * @param slot         The slot in which the button is rendered.
      * @return The itemStack that should be set into the GUI.

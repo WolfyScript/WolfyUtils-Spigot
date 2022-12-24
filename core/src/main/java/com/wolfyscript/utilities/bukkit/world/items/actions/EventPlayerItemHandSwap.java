@@ -18,15 +18,19 @@
 
 package com.wolfyscript.utilities.bukkit.world.items.actions;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 
 public class EventPlayerItemHandSwap extends EventPlayer<DataPlayerEvent<PlayerSwapHandItemsEvent>> {
 
     public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("player/item_swap_hand");
 
-    protected EventPlayerItemHandSwap() {
-        super(KEY, (Class<DataPlayerEvent<PlayerSwapHandItemsEvent>>)(Object) DataPlayerEvent.class);
+    @JsonCreator
+    protected EventPlayerItemHandSwap(@JacksonInject WolfyUtils wolfyUtils) {
+        super(wolfyUtils, KEY, (Class<DataPlayerEvent<PlayerSwapHandItemsEvent>>)(Object) DataPlayerEvent.class);
     }
 
 }

@@ -36,6 +36,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -113,12 +114,12 @@ public final class InventoryUpdate {
      * @param player   whose inventory will be updated.
      * @param newTitle the new title for the inventory.
      */
-    public static void updateInventory(JavaPlugin plugin, Player player, String newTitle) {
+    public static void updateInventory(Plugin plugin, Player player, String newTitle) {
         Preconditions.checkNotNull(player, "Cannot update inventory to null player.");
         updateInventory(plugin, player, Component.text(newTitle == null ? "" : newTitle));
     }
 
-    public static void updateInventory(JavaPlugin plugin, Player player, Component newTitle) {
+    public static void updateInventory(Plugin plugin, Player player, Component newTitle) {
         Preconditions.checkNotNull(player, "Cannot update inventory to null player.");
         try {
             // Get EntityPlayer from CraftPlayer.

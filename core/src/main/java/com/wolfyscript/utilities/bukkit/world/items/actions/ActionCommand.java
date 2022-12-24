@@ -18,10 +18,14 @@
 
 package com.wolfyscript.utilities.bukkit.world.items.actions;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.PlaceholderAPIIntegration;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Bukkit;
@@ -36,13 +40,14 @@ public class ActionCommand extends Action<DataPlayer> {
     private List<String> playerCommands = new ArrayList<>();
     private List<String> consoleCommands = new ArrayList<>();
 
-    public ActionCommand() {
-        super(KEY, DataPlayer.class);
-        papi = WolfyUtilCore.getInstance().getCompatibilityManager().getPlugins().getIntegration(PlaceholderAPIIntegration.KEY, PlaceholderAPIIntegration.class);
+    @JsonCreator
+    public ActionCommand(@JacksonInject WolfyUtils wolfyUtils) {
+        super(wolfyUtils, KEY, DataPlayer.class);
+        papi = ((WolfyUtilsBukkit) wolfyUtils).getCore().getCompatibilityManager().getPlugins().getIntegration(PlaceholderAPIIntegration.KEY, PlaceholderAPIIntegration.class);
     }
 
     @Override
-    public void execute(WolfyUtilCore core, DataPlayer data) {
+    public void execute(WolfyUtils core, DataPlayer data) {
         final Player player = data.getPlayer();
         List<String> resultPlayerCmds = playerCommands;
         List<String> resultConsoleCmds = consoleCommands;

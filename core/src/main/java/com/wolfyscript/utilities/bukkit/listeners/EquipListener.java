@@ -262,7 +262,7 @@ public class EquipListener implements Listener {
                             if (customItem.hasEquipmentSlot()) {
                                 event.setCancelled(true);
                                 player.getInventory().setItem(equipEvent.getType().getSlot(), equipEvent.getNewArmorPiece().clone());
-                                Bukkit.getScheduler().runTask(core, () -> ((org.bukkit.block.Dispenser) block.getState()).getInventory().removeItem(item));
+                                Bukkit.getScheduler().runTask(core.getWolfyUtils().getPlugin(), () -> ((org.bukkit.block.Dispenser) block.getState()).getInventory().removeItem(item));
                                 player.updateInventory();
                             } else if (customItem.isBlockVanillaEquip()) {
                                 event.setCancelled(true);

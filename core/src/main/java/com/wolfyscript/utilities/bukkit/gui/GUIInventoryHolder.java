@@ -26,6 +26,6 @@ public class GUIInventoryHolder<C extends CustomCache> implements InventoryHolde
     @NotNull
     @Override
     public Inventory getInventory() {
-        return guiHandler.getPlayer().getInventory();
+        return null;
     }
 }

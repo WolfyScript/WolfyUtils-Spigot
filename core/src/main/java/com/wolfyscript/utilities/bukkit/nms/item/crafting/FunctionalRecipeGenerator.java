@@ -401,7 +401,7 @@ public class FunctionalRecipeGenerator {
             generatedRecipeClass.addConstructor(generatedConstructor);
         }
 
-        generatedRecipeClass.writeFile(WolfyCoreBukkit.getInstance().getDataFolder().getPath() + "/generated_classes");
+        generatedRecipeClass.writeFile(WolfyCoreBukkit.getInstance().getWolfyUtils().getDataFolder().getPath() + "/generated_classes");
         return generatedRecipeClass.toClass(FunctionalRecipe.class);
     }
 
@@ -445,7 +445,7 @@ public class FunctionalRecipeGenerator {
                 "CraftItemStack", CRAFT_ITEMSTACK_CLASS.getName()
         ));
         convertCraftItemStack.addMethod(CtNewMethod.make(convertItemStackMethod, convertCraftItemStack));
-        convertCraftItemStack.writeFile(WolfyCoreBukkit.getInstance().getDataFolder().getPath() + "/generated_classes");
+        convertCraftItemStack.writeFile(WolfyCoreBukkit.getInstance().getWolfyUtils().getDataFolder().getPath() + "/generated_classes");
         convertCraftItemStack.toClass(FunctionalRecipe.class);
 
         // Functional Class to convert a list of Bukkit ItemStacks to NMS ItemStacks
@@ -470,7 +470,7 @@ public class FunctionalRecipeGenerator {
                 "BukkitItemStack", ItemStack.class.getName()
         ));
         convertRemainingItems.addMethod(CtNewMethod.make(convertRemainingItemsMethod, convertRemainingItems));
-        convertRemainingItems.writeFile(WolfyCoreBukkit.getInstance().getDataFolder().getPath() + "/generated_classes");
+        convertRemainingItems.writeFile(WolfyCoreBukkit.getInstance().getWolfyUtils().getDataFolder().getPath() + "/generated_classes");
         convertRemainingItems.toClass(FunctionalRecipe.class);
     }
 
@@ -575,7 +575,7 @@ public class FunctionalRecipeGenerator {
         ));
         conversionUtils.addMethod(CtNewMethod.make(convertContainerToCraftBukkitMethod, conversionUtils));
 
-        conversionUtils.writeFile(WolfyCoreBukkit.getInstance().getDataFolder().getPath() + "/generated_classes");
+        conversionUtils.writeFile(WolfyCoreBukkit.getInstance().getWolfyUtils().getDataFolder().getPath() + "/generated_classes");
         conversionUtils.toClass(FunctionalRecipe.class);
     }
 

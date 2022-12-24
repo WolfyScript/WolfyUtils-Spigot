@@ -1,5 +1,6 @@
 package com.wolfyscript.utilities.bukkit;
 
+import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.wolfyscript.jackson.dataformat.hocon.HoconMapper;
@@ -7,13 +8,15 @@ import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
 import com.wolfyscript.utilities.bukkit.commands.ChatActionCommand;
 import com.wolfyscript.utilities.bukkit.commands.InfoCommand;
 import com.wolfyscript.utilities.bukkit.commands.InputCommand;
-import com.wolfyscript.utilities.bukkit.commands.QueryDebugCommand;
+import com.wolfyscript.utilities.bukkit.commands.DebugNBTQueryCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleAnimationCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleEffectCommand;
+import com.wolfyscript.utilities.bukkit.commands.DebugSimpleStackConfigCommand;
 import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManager;
 import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManagerBukkit;
 import com.wolfyscript.utilities.bukkit.config.WUConfig;
 import com.wolfyscript.utilities.bukkit.console.Console;
+import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import com.wolfyscript.utilities.bukkit.json.serialization.APIReferenceSerialization;
 import com.wolfyscript.utilities.bukkit.json.serialization.ColorSerialization;
 import com.wolfyscript.utilities.bukkit.json.serialization.DustOptionsSerialization;
@@ -22,40 +25,9 @@ import com.wolfyscript.utilities.bukkit.json.serialization.LocationSerialization
 import com.wolfyscript.utilities.bukkit.json.serialization.PotionEffectSerialization;
 import com.wolfyscript.utilities.bukkit.json.serialization.PotionEffectTypeSerialization;
 import com.wolfyscript.utilities.bukkit.json.serialization.VectorSerialization;
-import com.wolfyscript.utilities.bukkit.listeners.EquipListener;
-import com.wolfyscript.utilities.bukkit.listeners.GUIInventoryListener;
-import com.wolfyscript.utilities.bukkit.listeners.PersistentStorageListener;
-import com.wolfyscript.utilities.bukkit.listeners.PlayerListener;
-import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomDurabilityListener;
-import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomItemDataListener;
-import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomItemPlayerListener;
-import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomParticleListener;
-import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
-import com.wolfyscript.utilities.bukkit.nbt.QueryNodeBoolean;
-import com.wolfyscript.utilities.bukkit.nbt.QueryNodeByte;
-import com.wolfyscript.utilities.bukkit.nbt.QueryNodeByteArray;
-import com.wolfyscript.utilities.bukkit.nbt.QueryNodeCompound;
-import com.wolfyscript.utilities.bukkit.nbt.QueryNodeDouble;
-import com.wolfyscript.utilities.bukkit.nbt.QueryNodeFloat;
-import com.wolfyscript.utilities.bukkit.nbt.QueryNodeInt;
-import com.wolfyscript.utilities.bukkit.nbt.QueryNodeIntArray;
-import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListCompound;
-import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListDouble;
-import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListFloat;
-import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListInt;
-import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListLong;
-import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListString;
-import com.wolfyscript.utilities.bukkit.nbt.QueryNodeLong;
-import com.wolfyscript.utilities.bukkit.nbt.QueryNodeShort;
-import com.wolfyscript.utilities.bukkit.nbt.QueryNodeString;
 import com.wolfyscript.utilities.bukkit.network.messages.MessageFactory;
 import com.wolfyscript.utilities.bukkit.network.messages.MessageHandler;
-import com.wolfyscript.utilities.bukkit.nms.item.crafting.FunctionalRecipeGenerator;
-import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
-import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
-import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectData;
-import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
-import com.wolfyscript.utilities.bukkit.world.WorldUtils;
+import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import com.wolfyscript.utilities.bukkit.world.inventory.CreativeModeTab;
 import com.wolfyscript.utilities.bukkit.world.items.CustomData;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
@@ -90,9 +62,44 @@ import com.wolfyscript.utilities.bukkit.world.items.meta.PlayerHeadMeta;
 import com.wolfyscript.utilities.bukkit.world.items.meta.PotionMeta;
 import com.wolfyscript.utilities.bukkit.world.items.meta.RepairCostMeta;
 import com.wolfyscript.utilities.bukkit.world.items.meta.UnbreakableMeta;
+import com.wolfyscript.utilities.bukkit.world.items.reference.ItemReference;
+import com.wolfyscript.utilities.bukkit.world.items.reference.SimpleBukkitItemReference;
 import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.world.items.references.VanillaRef;
 import com.wolfyscript.utilities.bukkit.world.items.references.WolfyUtilitiesRef;
+import com.wolfyscript.utilities.bukkit.listeners.EquipListener;
+import com.wolfyscript.utilities.bukkit.listeners.GUIInventoryListener;
+import com.wolfyscript.utilities.bukkit.listeners.PersistentStorageListener;
+import com.wolfyscript.utilities.bukkit.listeners.PlayerListener;
+import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomDurabilityListener;
+import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomItemDataListener;
+import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomItemPlayerListener;
+import com.wolfyscript.utilities.bukkit.listeners.custom_item.CustomParticleListener;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeBoolean;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeByte;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeByteArray;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeCompound;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeDouble;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeFloat;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeInt;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeIntArray;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListCompound;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListDouble;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListFloat;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListInt;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListLong;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListString;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeLong;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeShort;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeString;
+import com.wolfyscript.utilities.bukkit.nms.item.crafting.FunctionalRecipeGenerator;
+import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
+import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
+import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectData;
+import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
+import com.wolfyscript.utilities.bukkit.world.items.reference.BukkitItemReference;
+import com.wolfyscript.utilities.bukkit.world.items.reference.WolfyUtilsItemReference;
 import com.wolfyscript.utilities.bukkit.world.particles.animators.Animator;
 import com.wolfyscript.utilities.bukkit.world.particles.animators.AnimatorBasic;
 import com.wolfyscript.utilities.bukkit.world.particles.animators.AnimatorCircle;
@@ -111,7 +118,26 @@ import com.wolfyscript.utilities.bukkit.world.particles.timer.Timer;
 import com.wolfyscript.utilities.bukkit.world.particles.timer.TimerLinear;
 import com.wolfyscript.utilities.bukkit.world.particles.timer.TimerPi;
 import com.wolfyscript.utilities.bukkit.world.particles.timer.TimerRandom;
+import com.wolfyscript.utilities.common.WolfyCore;
 import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.nbt.NBTTagConfig;
+import com.wolfyscript.utilities.nbt.NBTTagConfigBoolean;
+import com.wolfyscript.utilities.nbt.NBTTagConfigByte;
+import com.wolfyscript.utilities.nbt.NBTTagConfigByteArray;
+import com.wolfyscript.utilities.nbt.NBTTagConfigDouble;
+import com.wolfyscript.utilities.nbt.NBTTagConfigFloat;
+import com.wolfyscript.utilities.nbt.NBTTagConfigInt;
+import com.wolfyscript.utilities.nbt.NBTTagConfigIntArray;
+import com.wolfyscript.utilities.nbt.NBTTagConfigListCompound;
+import com.wolfyscript.utilities.nbt.NBTTagConfigListDouble;
+import com.wolfyscript.utilities.nbt.NBTTagConfigListFloat;
+import com.wolfyscript.utilities.nbt.NBTTagConfigListInt;
+import com.wolfyscript.utilities.nbt.NBTTagConfigListIntArray;
+import com.wolfyscript.utilities.nbt.NBTTagConfigListLong;
+import com.wolfyscript.utilities.nbt.NBTTagConfigListString;
+import com.wolfyscript.utilities.nbt.NBTTagConfigLong;
+import com.wolfyscript.utilities.nbt.NBTTagConfigShort;
+import com.wolfyscript.utilities.nbt.NBTTagConfigString;
 import com.wolfyscript.utilities.eval.operator.BoolOperatorConst;
 import com.wolfyscript.utilities.eval.operator.ComparisonOperatorEqual;
 import com.wolfyscript.utilities.eval.operator.ComparisonOperatorGreater;
@@ -150,14 +176,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import java.util.logging.Logger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.java.JavaPluginLoader;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.plugin.Plugin;
+import org.reflections.Reflections;
 
 /**
  * The core implementation of WolfyUtils.<br>
@@ -165,42 +189,36 @@ import org.jetbrains.annotations.NotNull;
  *
  * If you want to use the plugin specific API, see {@link com.wolfyscript.utilities.common.WolfyUtils} & {@link WolfyUtilsBukkit}
  */
-public final class WolfyCoreBukkit extends WolfyUtilCore {
+public final class WolfyCoreBukkit implements WolfyCore {
 
     private static final Map<String, Boolean> classes = new HashMap<>();
     private final Console console;
-    private Metrics metrics;
     private WUConfig config;
     private final MessageHandler messageHandler;
     private final MessageFactory messageFactory;
     private final CompatibilityManager compatibilityManager;
-    private BukkitAudiences adventure;
-    private PersistentStorage persistentStorage;
+    private final PersistentStorage persistentStorage;
     private final List<SimpleModule> jsonMapperModules = new ArrayList<>();
+    private final Map<String, WolfyUtilsBukkit> wolfyUtilsInstances = new HashMap<>();
+    private final WolfyUtilsBukkit api;
+    private final BukkitRegistries registries;
+    private final WolfyUtilBootstrap plugin;
+    private final Logger logger;
 
     /**
      * Constructor invoked by Spigot when the plugin is loaded.
      */
-    public WolfyCoreBukkit() {
-        super();
-        this.console = api.getConsole();
+    public WolfyCoreBukkit(WolfyUtilBootstrap plugin) {
+        this.plugin = plugin;
+        this.api = getOrCreate(plugin);
         api.getChat().setChatPrefix(Component.text("[", NamedTextColor.GRAY).append(Component.text("WU", NamedTextColor.AQUA)).append(Component.text("] ", NamedTextColor.DARK_GRAY)));
+        this.console = api.getConsole();
         this.messageHandler = new MessageHandler(this);
         this.messageFactory = new MessageFactory(this);
         this.compatibilityManager = new CompatibilityManagerBukkit(this);
         this.persistentStorage = new PersistentStorage(this);
-    }
-
-    /**
-     * Constructor invoked by MockBukkit to mock the plugin.
-     */
-    private WolfyCoreBukkit(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
-        super(loader, description, dataFolder, file);
-        this.console = api.getConsole();
-        api.getChat().setChatPrefix(Component.text("[", NamedTextColor.GRAY).append(Component.text("WU", NamedTextColor.AQUA)).append(Component.text("] ", NamedTextColor.DARK_GRAY)));
-        this.messageHandler = new MessageHandler(this);
-        this.messageFactory = new MessageFactory(this);
-        this.compatibilityManager = new CompatibilityManagerBukkit(this);
+        this.registries = new BukkitRegistries(this);
+        this.logger = plugin.getLogger();
     }
 
     /**
@@ -211,25 +229,106 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
      */
     @Deprecated
     public static WolfyCoreBukkit getInstance() {
-        return (WolfyCoreBukkit) WolfyUtilCore.getInstance();
+        return WolfyUtilBootstrap.getInstance().getCore();
     }
 
-    @Override
+    /**
+     * Gets the {@link CompatibilityManagerBukkit}, that manages the plugins compatibility features.
+     *
+     * @return The {@link CompatibilityManagerBukkit}.
+     */
     public CompatibilityManager getCompatibilityManager() {
         return compatibilityManager;
     }
 
+    /**
+     * Gets the {@link Reflections} instance of the plugins' package.
+     *
+     * @return The Reflection of the plugins' package.
+     */
     @Override
-    @NotNull
-    public BukkitAudiences getAdventure() {
-        if(this.adventure == null) {
-            throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
-        }
-        return this.adventure;
+    public WolfyUtilsBukkit getWolfyUtils() {
+        return api;
     }
 
     @Override
-    public void onLoad() {
+    public Reflections getReflections() {
+        return null;
+    }
+
+    /**
+     * Gets the {@link BukkitRegistries} object, that contains all info about available registries.
+     *
+     * @return The {@link BukkitRegistries} object, to access registries.
+     */
+    @Override
+    public BukkitRegistries getRegistries() {
+        return registries;
+    }
+
+    /**
+     * Gets or create the {@link WolfyUtilsBukkit} instance for the specified plugin.
+     *
+     * @param plugin The plugin to get the instance for.
+     * @return The WolfyUtilities instance for the plugin.
+     */
+    public WolfyUtilsBukkit getOrCreate(Plugin plugin) {
+        return getOrCreate(plugin, false);
+    }
+
+    /**
+     * Gets or create the {@link WolfyUtilsBukkit} instance for the specified plugin.<br>
+     * In case init is enabled it will directly initialize the event listeners and possibly other things.<br>
+     * <b>This will call {@link WolfyUtilsBukkit#initialize()} directly, so only use it inside your onEnable()!</b>
+     *
+     * @param plugin The plugin to get the instance for.
+     * @return The WolfyUtilities instance for the plugin.
+     */
+    public WolfyUtilsBukkit getOrCreateAndInit(Plugin plugin) {
+        return getOrCreate(plugin, true);
+    }
+
+    private WolfyUtilsBukkit getOrCreate(Plugin plugin, boolean init) {
+        return wolfyUtilsInstances.computeIfAbsent(plugin.getName(), s -> new WolfyUtilsBukkit(this, plugin, init));
+    }
+
+    /**
+     * Gets or create the {@link WolfyUtilsBukkit} instance for the specified plugin.
+     * This method also creates the InventoryAPI with the specified custom class of the {@link CustomCache}.<br>
+     * <b>You need to run {@link WolfyUtilsBukkit#initialize()} inside your onEnable() </b> to register required events!
+     *
+     * @param plugin           The plugin to get the instance from.
+     * @param customCacheClass The class of the custom cache you created. Must extend {@link CustomCache}
+     * @return The WolfyUtilities instance for the plugin.
+     */
+    public WolfyUtilsBukkit getOrCreate(Plugin plugin, Class<? extends CustomCache> customCacheClass) {
+        return wolfyUtilsInstances.computeIfAbsent(plugin.getName(), s -> new WolfyUtilsBukkit(this, plugin, customCacheClass));
+    }
+
+    /**
+     * Checks if the specified plugin has an API instance associated with it.
+     *
+     * @param plugin The plugin to check.
+     * @return True in case the API is available; false otherwise.
+     */
+    public boolean has(Plugin plugin) {
+        return wolfyUtilsInstances.containsKey(plugin.getName());
+    }
+
+    /**
+     * Returns an unmodifiable List of all available {@link WolfyUtilsBukkit} instances.
+     *
+     * @return A list containing all the created API instances.
+     */
+    public List<WolfyUtilsBukkit> getAPIList() {
+        return List.copyOf(wolfyUtilsInstances.values());
+    }
+
+    public Logger getLogger() {
+        return logger;
+    }
+
+    public void load() {
         getLogger().info("Generate Functional Recipes");
         FunctionalRecipeGenerator.generateRecipeClasses();
 
@@ -256,7 +355,7 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
         // De-/Serializer Modifiers that handle type references in JSON
         var keyReferenceModule = new SimpleModule();
         keyReferenceModule.setSerializerModifier(new OptionalKeyReference.SerializerModifier());
-        keyReferenceModule.setDeserializerModifier(new OptionalKeyReference.DeserializerModifier());
+        keyReferenceModule.setDeserializerModifier(new OptionalKeyReference.DeserializerModifier(this));
         jsonMapperModules.add(keyReferenceModule);
         JacksonUtil.registerModule(keyReferenceModule);
 
@@ -267,9 +366,17 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
         JacksonUtil.registerModule(valueReferenceModule);
 
         // Create Global WUCore Mapper and apply modules
-        api.getJacksonMapperUtil().setGlobalMapper(applyWolfyUtilsJsonMapperModules(new HoconMapper()));
+        HoconMapper mapper = applyWolfyUtilsJsonMapperModules(new HoconMapper());
+        api.getJacksonMapperUtil().applyWolfyUtilsInjectableValues(mapper, new InjectableValues.Std());
+        api.getJacksonMapperUtil().setGlobalMapper(mapper);
 
         // Initialise all the Registers
+        console.info("Register Item references");
+        var itemReferences = getRegistries().getItemReferences();
+        itemReferences.register(BukkitItemReference.class);
+        itemReferences.register(SimpleBukkitItemReference.class);
+        itemReferences.register(WolfyUtilsItemReference.class);
+
         getLogger().info("Register JSON Operators");
         var operators = getRegistries().getOperators();
         operators.register(BoolOperatorConst.class);
@@ -373,6 +480,29 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
         var customPlayerDataReg = getRegistries().getCustomPlayerData();
         customPlayerDataReg.register(PlayerParticleEffectData.class);
 
+        getLogger().info("Register NBT Tag Configs");
+        var nbtTagConfigs = getRegistries().getNbtTagConfigs();
+        // Primitives
+        nbtTagConfigs.register(NBTTagConfigBoolean.class);
+        nbtTagConfigs.register(NBTTagConfigString.class);
+        // Primitive Numerals
+        nbtTagConfigs.register(NBTTagConfigByte.class);
+        nbtTagConfigs.register(NBTTagConfigByteArray.class);
+        nbtTagConfigs.register(NBTTagConfigShort.class);
+        nbtTagConfigs.register(NBTTagConfigInt.class);
+        nbtTagConfigs.register(NBTTagConfigIntArray.class);
+        nbtTagConfigs.register(NBTTagConfigLong.class);
+        nbtTagConfigs.register(NBTTagConfigFloat.class);
+        nbtTagConfigs.register(NBTTagConfigDouble.class);
+        // Lists
+        nbtTagConfigs.register(NBTTagConfigListCompound.class);
+        nbtTagConfigs.register(NBTTagConfigListInt.class);
+        nbtTagConfigs.register(NBTTagConfigListIntArray.class);
+        nbtTagConfigs.register(NBTTagConfigListLong.class);
+        nbtTagConfigs.register(NBTTagConfigListFloat.class);
+        nbtTagConfigs.register(NBTTagConfigListDouble.class);
+        nbtTagConfigs.register(NBTTagConfigListString.class);
+
         getLogger().info("Register NBT Query Nodes");
         var nbtQueryNodes = getRegistries().getNbtQueryNodes();
         nbtQueryNodes.register(QueryNodeCompound.class);
@@ -398,6 +528,7 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
 
         // Register the Registries to resolve type references in JSON
         KeyedTypeIdResolver.registerTypeRegistry(CustomItemData.class, registries.getCustomItemDataTypeRegistry());
+        KeyedTypeIdResolver.registerTypeRegistry(ItemReference.class, itemReferences);
         KeyedTypeIdResolver.registerTypeRegistry(Meta.class, nbtChecks);
         KeyedTypeIdResolver.registerTypeRegistry(Animator.class, particleAnimators);
         KeyedTypeIdResolver.registerTypeRegistry(Shape.class, particleShapes);
@@ -411,18 +542,15 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
         KeyedTypeIdResolver.registerTypeRegistry(CustomPlayerData.class, registries.getCustomPlayerData());
     }
 
-    @Override
-    public void onEnable() {
+    public void enable() {
         this.api.initialize();
         console.info("Minecraft version: " + ServerVersion.getVersion().getVersion());
         console.info("WolfyUtils version: " + ServerVersion.getWUVersion().getVersion());
         console.info("Environment: " + WolfyUtils.getENVIRONMENT());
-        this.adventure = BukkitAudiences.create(this);
-        this.config = new WUConfig(api.getConfigAPI(), this);
+        this.config = new WUConfig(api.getConfigAPI(), plugin);
         compatibilityManager.init();
 
-        // Register ReferenceParser
-        console.info("Register API references");
+        // Register ItemReferences
         registerAPIReference(new VanillaRef.Parser());
         registerAPIReference(new WolfyUtilitiesRef.Parser());
 
@@ -430,9 +558,7 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
         api.getLanguageAPI().loadLangFile("en_US");
 
         if (!ServerVersion.isIsJUnitTest()) {
-            this.metrics = new Metrics(this, 5114);
 
-            WorldUtils.load();
             registerListeners();
             registerCommands();
 
@@ -442,42 +568,40 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
         }
     }
 
+    public void disable() {
+        api.getConfigAPI().saveConfigs();
+        console.info("Save stored Custom Items");
+    }
+
     /**
      * Handles JUnit test startup
      */
     private void onJUnitTests() {
-        WorldUtils.load();
-
         registerCommands();
     }
 
-    @Override
+    /**
+     * Register a new {@link APIReference.Parser} that can parse ItemStacks and keys from another plugin to a usable {@link APIReference}
+     *
+     * @param parser an {@link APIReference.Parser} instance.
+     * @see CustomItem#registerAPIReferenceParser(APIReference.Parser)
+     */
     public void registerAPIReference(APIReference.Parser<?> parser) {
         if (parser instanceof VanillaRef.Parser || parser instanceof WolfyUtilitiesRef.Parser || config.isAPIReferenceEnabled(parser)) {
             CustomItem.registerAPIReferenceParser(parser);
         }
     }
 
-    @Override
-    public void onDisable() {
-        if(this.adventure != null) {
-            this.adventure.close();
-            this.adventure = null;
-        }
-        api.getConfigAPI().saveConfigs();
-        console.info("Save stored Custom Items");
-    }
-
     private void registerListeners() {
-        Bukkit.getPluginManager().registerEvents(new BukkitChat.ChatListener(), this);
-        Bukkit.getPluginManager().registerEvents(new CustomDurabilityListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new CustomParticleListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new CustomItemPlayerListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new EquipListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
-        Bukkit.getPluginManager().registerEvents(new GUIInventoryListener(), this);
-        Bukkit.getPluginManager().registerEvents(new PersistentStorageListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new CustomItemDataListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new BukkitChat.ChatListener(), plugin);
+        Bukkit.getPluginManager().registerEvents(new CustomDurabilityListener(this), plugin);
+        Bukkit.getPluginManager().registerEvents(new CustomParticleListener(this), plugin);
+        Bukkit.getPluginManager().registerEvents(new CustomItemPlayerListener(this), plugin);
+        Bukkit.getPluginManager().registerEvents(new EquipListener(this), plugin);
+        Bukkit.getPluginManager().registerEvents(new PlayerListener(), plugin);
+        Bukkit.getPluginManager().registerEvents(new GUIInventoryListener(), plugin);
+        Bukkit.getPluginManager().registerEvents(new PersistentStorageListener(this), plugin);
+        Bukkit.getPluginManager().registerEvents(new CustomItemDataListener(this), plugin);
     }
 
     private void registerCommands() {
@@ -488,7 +612,8 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
         Bukkit.getServer().getPluginCommand("wui").setTabCompleter(new InputCommand(this));
         Bukkit.getServer().getPluginCommand("wua").setExecutor(new ChatActionCommand());
 
-        Bukkit.getServer().getPluginCommand("query_item").setExecutor(new QueryDebugCommand(this));
+        Bukkit.getServer().getPluginCommand("query_item").setExecutor(new DebugNBTQueryCommand(this));
+        Bukkit.getServer().getPluginCommand("simple_bukkit_stack").setExecutor(new DebugSimpleStackConfigCommand(this));
     }
 
     public MessageHandler getMessageHandler() {

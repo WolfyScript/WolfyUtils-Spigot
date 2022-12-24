@@ -6,13 +6,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.events.CustomItemBreakEvent;
 import com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.ChunkStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import com.wolfyscript.utilities.bukkit.world.particles.ParticleLocation;
 import com.wolfyscript.utilities.bukkit.world.particles.ParticleUtils;
+import com.wolfyscript.utilities.common.WolfyCore;
 import java.util.Optional;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -26,7 +28,7 @@ public class CustomItemBlockData extends CustomBlockData {
     public static final NamespacedKey ID = new BukkitNamespacedKey(BukkitNamespacedKey.WOLFYUTILITIES, "custom_item");
 
     @JsonIgnore
-    private final WolfyUtilCore core;
+    private final WolfyCore core;
     @JsonIgnore
     private final ChunkStorage chunkStorage;
     @JsonIgnore
@@ -37,7 +39,7 @@ public class CustomItemBlockData extends CustomBlockData {
     private final NamespacedKey item;
 
     @JsonCreator
-    public CustomItemBlockData(@JacksonInject WolfyUtilCore core, @JacksonInject ChunkStorage chunkStorage, @JacksonInject Vector pos, @JsonProperty("item") NamespacedKey item) {
+    public CustomItemBlockData(@JacksonInject WolfyCore core, @JacksonInject ChunkStorage chunkStorage, @JacksonInject Vector pos, @JsonProperty("item") NamespacedKey item) {
         super(ID);
         this.core = core;
         this.chunkStorage = chunkStorage;
@@ -61,7 +63,7 @@ public class CustomItemBlockData extends CustomBlockData {
 
     @JsonIgnore
     public Optional<CustomItem> getCustomItem() {
-        return Optional.ofNullable(core.getRegistries().getCustomItems().get(getItem()));
+        return Optional.ofNullable(((WolfyCoreBukkit) core).getRegistries().getCustomItems().get(getItem()));
     }
 
     @JsonIgnore

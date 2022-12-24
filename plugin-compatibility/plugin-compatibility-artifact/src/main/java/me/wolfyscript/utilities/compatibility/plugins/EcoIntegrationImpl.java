@@ -22,7 +22,7 @@ import com.willfp.eco.core.items.CustomItem;
 import com.willfp.eco.core.items.Items;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.EcoIntegration;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.eco.EcoRefImpl;
@@ -39,7 +39,7 @@ public class EcoIntegrationImpl extends PluginIntegrationAbstract implements Eco
      *
      * @param core       The WolfyUtilCore.
      */
-    protected EcoIntegrationImpl(WolfyUtilCore core) {
+    protected EcoIntegrationImpl(WolfyUtilBootstrap core) {
         super(core, EcoIntegration.KEY);
     }
 

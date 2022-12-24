@@ -292,7 +292,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
                     guiHandler.setWindowUpdateTask(Bukkit.getScheduler().runTaskTimer(wolfyUtilities.getPlugin(), () -> {
                         var player = guiHandler.getPlayer();
                         if (player != null) {
-                            InventoryUpdate.updateInventory(wolfyUtilities.getCore(), player, updateTitle(player, inv, guiHandler));
+                            InventoryUpdate.updateInventory(wolfyUtilities.getCore().getWolfyUtils().getPlugin(), player, updateTitle(player, inv, guiHandler));
                         }
                     }, titleUpdateDelay, titleUpdatePeriod));
                 }
@@ -485,7 +485,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
         if (useLegacyTitleUpdate) {
             //This window still uses the deprecated update method
             String title = onUpdateTitle(BukkitComponentSerializer.legacy().serialize(getInventoryTitle(player)), null, guiHandler);
-            var desc = wolfyUtilities.getCore().getDescription();
+            var desc = wolfyUtilities.getCore().getWolfyUtils().getPlugin().getDescription();
             title = title.replace("%plugin.version%", desc.getVersion()).replace("%plugin.author%", desc.getAuthors().toString()).replace("%plugin.name%", desc.getName());
 
             PlaceholderAPIIntegration integration = wolfyUtilities.getCore().getCompatibilityManager().getPlugins().getIntegration("PlaceholderAPI", PlaceholderAPIIntegration.class);

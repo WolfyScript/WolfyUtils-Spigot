@@ -21,6 +21,7 @@ package com.wolfyscript.utilities.bukkit.registry;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
+import com.wolfyscript.utilities.bukkit.world.items.reference.WolfyUtilsItemReference;
 import com.wolfyscript.utilities.bukkit.world.items.references.WolfyUtilitiesRef;
 import com.wolfyscript.utilities.common.registry.AbstractRegistry;
 import java.util.HashMap;
@@ -100,7 +101,7 @@ public class RegistryCustomItem extends AbstractRegistry<Map<NamespacedKey, Cust
     }
 
     /**
-     * Add a CustomItem to the registry or update a existing one and sets the NamespacedKey in the CustomItem object.
+     * Add a CustomItem to the registry or update an existing one and sets the NamespacedKey in the CustomItem object.
      * <br>
      * If the registry already contains a value for the NamespacedKey then the value will be updated with the new one.
      * <br>
@@ -115,7 +116,7 @@ public class RegistryCustomItem extends AbstractRegistry<Map<NamespacedKey, Cust
      */
     @Override
     public void register(NamespacedKey namespacedKey, CustomItem item) {
-        if (item == null || (item.getApiReference() instanceof WolfyUtilitiesRef && ((WolfyUtilitiesRef) item.getApiReference()).getNamespacedKey().equals(namespacedKey))) {
+        if (item == null || (item.getReference() instanceof WolfyUtilsItemReference wuRef && wuRef.getNamespacedKey().equals(namespacedKey))) {
             return;
         }
         this.map.put(namespacedKey, item);

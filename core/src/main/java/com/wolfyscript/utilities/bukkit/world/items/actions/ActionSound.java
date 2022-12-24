@@ -18,9 +18,12 @@
 
 package com.wolfyscript.utilities.bukkit.world.items.actions;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 
@@ -34,12 +37,13 @@ public class ActionSound extends Action<DataLocation> {
     private SoundCategory category = SoundCategory.PLAYERS;
     private boolean onlyForPlayer = false;
 
-    protected ActionSound() {
-        super(KEY, DataLocation.class);
+    @JsonCreator
+    protected ActionSound(@JacksonInject WolfyUtils wolfyUtils) {
+        super(wolfyUtils, KEY, DataLocation.class);
     }
 
     @Override
-    public void execute(WolfyUtilCore core, DataLocation data) {
+    public void execute(WolfyUtils core, DataLocation data) {
         var location = data.getLocation();
         if (location == null || location.getWorld() == null) {
             return;

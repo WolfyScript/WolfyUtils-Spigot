@@ -73,14 +73,14 @@ public class ButtonToggle<C extends CustomCache> extends Button<C> {
 
     @Override
     public void init(GuiWindow<C> guiWindow) {
-        states.getKey().init(guiWindow);
-        states.getValue().init(guiWindow);
+        initState(states.getKey(), guiWindow);
+        initState(states.getValue(), guiWindow);
     }
 
     @Override
     public void init(GuiCluster<C> guiCluster) {
-        states.getKey().init(guiCluster);
-        states.getValue().init(guiCluster);
+        initState(states.getKey(), guiCluster);
+        initState(states.getValue(), guiCluster);
     }
 
     @Override
@@ -99,19 +99,19 @@ public class ButtonToggle<C extends CustomCache> extends Button<C> {
     }
 
     @Override
-    public void preRender(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot, boolean help) {
+    public void preRender(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot) {
         boolean state = stateFunction.run(guiHandler.getCustomCache(), guiHandler, player, inventory, slot);
         settings.put(guiHandler, state);
         ButtonState<C> buttonState = state ? states.getKey() : states.getValue();
         if (buttonState.getPrepareRender() != null) {
-            buttonState.getPrepareRender().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, itemStack, slot, help);
+            buttonState.getPrepareRender().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, itemStack, slot, false);
         }
     }
 
     @Override
-    public void render(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, ItemStack itemStack, int slot, boolean help) {
+    public void render(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, int slot) {
         ButtonState<C> activeState = getState(guiHandler);
-        applyItem(guiHandler, player, guiInventory, inventory, activeState, activeState.getIcon(), slot);
+        applyItem(guiHandler, player, guiInventory, inventory, activeState, slot);
     }
 
     public interface StateFunction<C extends CustomCache> {

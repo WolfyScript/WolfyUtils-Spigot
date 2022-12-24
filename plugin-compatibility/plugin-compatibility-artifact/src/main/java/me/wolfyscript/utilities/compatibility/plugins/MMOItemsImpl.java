@@ -19,7 +19,7 @@
 package me.wolfyscript.utilities.compatibility.plugins;
 
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.mmoitems.MMOItemsRefImpl;
@@ -30,7 +30,7 @@ public class MMOItemsImpl extends PluginIntegrationAbstract {
 
     static final String PLUGIN_NAME = "MMOItems";
 
-    protected MMOItemsImpl(WolfyUtilCore core) {
+    protected MMOItemsImpl(WolfyUtilBootstrap core) {
         super(core, PLUGIN_NAME);
     }
 

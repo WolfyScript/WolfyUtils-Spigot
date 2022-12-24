@@ -20,7 +20,8 @@ package com.wolfyscript.utilities.bukkit.compatibility;
 
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.events.DependenciesLoadedEvent;
 import java.lang.reflect.Constructor;
@@ -47,13 +48,13 @@ import org.jetbrains.annotations.Nullable;
  */
 final class PluginsBukkit implements Plugins, Listener {
 
-    private final WolfyUtilCore core;
+    private final WolfyCoreBukkit core;
     private final Map<String, Map<NamespacedKey, PluginAdapter>> pluginAdapters = new HashMap<>();
     private final Map<String, PluginIntegrationAbstract> pluginIntegrations = new HashMap<>();
     private final Map<String, Class<? extends PluginIntegrationAbstract>> pluginIntegrationClasses = new HashMap<>();
     private boolean doneLoading = false;
 
-    PluginsBukkit(WolfyUtilCore core) {
+    PluginsBukkit(WolfyCoreBukkit core) {
         this.core = core;
     }
 
@@ -71,7 +72,7 @@ final class PluginsBukkit implements Plugins, Listener {
      */
     void init() {
         core.getLogger().info("Loading Plugin integrations: ");
-        Bukkit.getPluginManager().registerEvents(this, core);
+        Bukkit.getPluginManager().registerEvents(this, core.getWolfyUtils().getPlugin());
         for (Class<?> integrationType : core.getReflections().getTypesAnnotatedWith(WUPluginIntegration.class)) {
             WUPluginIntegration annotation = integrationType.getAnnotation(WUPluginIntegration.class);
             if (annotation != null && PluginIntegrationAbstract.class.isAssignableFrom(integrationType)) {
@@ -100,7 +101,7 @@ final class PluginsBukkit implements Plugins, Listener {
         if (integrationClass != null) {
             var integration = pluginIntegrations.computeIfAbsent(pluginName, (key) -> {
                 try {
-                    Constructor<? extends PluginIntegrationAbstract> integrationConstructor = integrationClass.getDeclaredConstructor(WolfyUtilCore.class);
+                    Constructor<? extends PluginIntegrationAbstract> integrationConstructor = integrationClass.getDeclaredConstructor(WolfyUtilBootstrap.class);
                     integrationConstructor.setAccessible(true);
                     return integrationConstructor.newInstance(core);
                 } catch (InstantiationException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
@@ -137,7 +138,7 @@ final class PluginsBukkit implements Plugins, Listener {
         long enabledIntegrations = pluginIntegrations.values().stream().filter(PluginIntegrationAbstract::isDoneLoading).count();
         if (availableIntegrations == enabledIntegrations) {
             doneLoading = true;
-            Bukkit.getScheduler().runTaskLater(core, () -> {
+            Bukkit.getScheduler().runTaskLater(core.getWolfyUtils().getPlugin(), () -> {
                 core.getLogger().info("Dependencies Loaded. Calling DependenciesLoadedEvent!");
                 Bukkit.getPluginManager().callEvent(new DependenciesLoadedEvent(core));
             }, 2);

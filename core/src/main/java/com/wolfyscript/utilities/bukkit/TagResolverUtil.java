@@ -14,7 +14,7 @@ public class TagResolverUtil {
     public static TagResolver papi(Player player) {
         return TagResolver.resolver("papi", (args, context) -> {
             String text = args.popOr("The <papi> tag requires exactly one argument, text with papi placeholders!").value();
-            PlaceholderAPIIntegration integration = WolfyUtilCore.getInstance().getCompatibilityManager().getPlugins().getIntegration("PlaceholderAPI", PlaceholderAPIIntegration.class);
+            PlaceholderAPIIntegration integration = player.getServer().getServicesManager().load(WolfyCoreBukkit.class).getCompatibilityManager().getPlugins().getIntegration("PlaceholderAPI", PlaceholderAPIIntegration.class);
             if (integration != null) {
                 text = integration.setPlaceholders(player, text);
             }

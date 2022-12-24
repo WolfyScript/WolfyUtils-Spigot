@@ -21,7 +21,7 @@ package com.wolfyscript.utilities;
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -32,12 +32,12 @@ import org.junit.jupiter.api.Test;
 public class TestWUPlugin {
 
     private static ServerMock server;
-    private static WolfyCoreBukkit plugin;
+    private static WolfyCoreBukkit core;
 
     @BeforeAll
     public static void load() {
         server = MockBukkit.mock();
-        plugin = MockBukkit.load(WolfyCoreBukkit.class);
+        core = MockBukkit.load(WolfyUtilBootstrap.class).getCore();
     }
 
     @AfterAll
@@ -48,15 +48,15 @@ public class TestWUPlugin {
     @Test
     @DisplayName("Check plugin instance")
     public void verifyInstance() {
-        Assertions.assertNotNull(WolfyUtilCore.getInstance());
-        Assertions.assertNotNull(plugin.getRegistries());
-        Assertions.assertNotNull(plugin.getCompatibilityManager());
-        Assertions.assertNotNull(plugin.getWolfyUtils());
+        Assertions.assertNotNull(core);
+        Assertions.assertNotNull(core.getRegistries());
+        Assertions.assertNotNull(core.getCompatibilityManager());
+        Assertions.assertNotNull(core.getWolfyUtils());
     }
 
     @Test
     public void checkRegistries() {
-        BukkitRegistries registries = plugin.getRegistries();
+        BukkitRegistries registries = core.getRegistries();
         var customItems = registries.getCustomItems();
         Assertions.assertNotNull(customItems);
         var customItemData = registries.getCustomItemData();

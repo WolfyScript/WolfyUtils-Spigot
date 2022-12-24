@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.InjectableValues;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,11 +31,11 @@ public class PlayerStorage {
 
     private static final org.bukkit.NamespacedKey DATA_KEY = new org.bukkit.NamespacedKey("wolfyutils", "data");
 
-    private final WolfyUtilCore core;
+    private final WolfyCoreBukkit core;
     private final UUID playerUUID;
     private final Map<NamespacedKey, CustomPlayerData> CACHED_DATA = new HashMap<>();
 
-    public PlayerStorage(WolfyUtilCore core, UUID playerUUID) {
+    public PlayerStorage(WolfyCoreBukkit core, UUID playerUUID) {
         this.core = core;
         this.playerUUID = playerUUID;
     }

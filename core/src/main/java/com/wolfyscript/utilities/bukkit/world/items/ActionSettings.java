@@ -18,15 +18,17 @@
 
 package com.wolfyscript.utilities.bukkit.world.items;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
 import com.wolfyscript.utilities.bukkit.world.items.actions.Data;
 import com.wolfyscript.utilities.bukkit.world.items.actions.Event;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -36,9 +38,13 @@ public class ActionSettings {
 
     @JsonIgnore
     private Multimap<NamespacedKey, Event<?>> indexedEvents;
+    @JsonIgnore
+    private final WolfyUtils wolfyUtils;
 
-    public ActionSettings() {
+    @JsonCreator
+    public ActionSettings(@JacksonInject WolfyUtils wolfyUtils) {
         this.indexedEvents = HashMultimap.create();
+        this.wolfyUtils = wolfyUtils;
     }
 
     @JsonSetter("events")
@@ -59,6 +65,6 @@ public class ActionSettings {
     }
 
     public <T extends Data> void callEvent(NamespacedKey key, T data) {
-        getEvents(key, (Class<T>) data.getClass()).forEach(event -> event.call(WolfyUtilCore.getInstance(), data));
+        getEvents(key, (Class<T>) data.getClass()).forEach(event -> event.call(wolfyUtils, data));
     }
 }

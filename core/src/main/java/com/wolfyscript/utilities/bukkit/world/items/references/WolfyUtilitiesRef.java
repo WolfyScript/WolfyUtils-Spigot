@@ -24,7 +24,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
 import java.io.IOException;
 import java.util.Objects;
 import org.bukkit.Material;
@@ -37,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class WolfyUtilitiesRef extends APIReference {
 
-    private static final org.bukkit.NamespacedKey CUSTOM_ITEM_KEY = new org.bukkit.NamespacedKey(WolfyCoreBukkit.getInstance(), "custom_item");
+    private static final org.bukkit.NamespacedKey CUSTOM_ITEM_KEY = new org.bukkit.NamespacedKey(WolfyCoreBukkit.getInstance().getWolfyUtils().getPlugin(), "custom_item");
 
     private final NamespacedKey namespacedKey;
 
@@ -56,7 +55,7 @@ public class WolfyUtilitiesRef extends APIReference {
 
     @Override
     public ItemStack getLinkedItem() {
-        var customItem = WolfyUtilCore.getInstance().getRegistries().getCustomItems().get(namespacedKey);
+        var customItem = WolfyCoreBukkit.getInstance().getRegistries().getCustomItems().get(namespacedKey);
         if (customItem != null) {
             return customItem.create();
         }

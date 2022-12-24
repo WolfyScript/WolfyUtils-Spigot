@@ -19,8 +19,8 @@
 package com.wolfyscript.utilities.bukkit.compatibility;
 
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 
 public interface PluginIntegration {
@@ -52,7 +52,7 @@ public interface PluginIntegration {
      *
      * @return The plugin core.
      */
-    WolfyUtilCore getCore();
+    WolfyCoreBukkit getCore();
 
     /**
      * Checks if the integration is done loading.<br>

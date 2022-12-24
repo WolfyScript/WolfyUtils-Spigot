@@ -19,15 +19,18 @@
 package com.wolfyscript.utilities.bukkit.world.items;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.world.particles.ParticleAnimation;
 import com.wolfyscript.utilities.bukkit.world.particles.ParticleLocation;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import java.util.Objects;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
@@ -108,29 +111,6 @@ public class ParticleContent {
     }
 
     /**
-     * Old method for backwards compatibility.
-     *
-     * @param location The {@link ParticleLocation} of the animation.
-     * @param animation The key of the animation.
-     * @deprecated Use {@link #setAnimation(ParticleLocation, ParticleAnimation)} instead!
-     */
-    @Deprecated(forRemoval = true, since = "1.7.6.0")
-    public void addParticleEffect(ParticleLocation location, NamespacedKey animation) {
-        setAnimation(location, WolfyUtilCore.getInstance().getRegistries().getParticleAnimations().get(animation));
-    }
-    /**
-     * Old method for backwards compatibility.
-     *
-     * @param location The {@link ParticleLocation} of the animation.
-     * @deprecated Use {@link #getAnimation(ParticleLocation)} instead!
-     */
-    @Deprecated(forRemoval = true, since = "1.7.6.0")
-    public NamespacedKey getParticleEffect(ParticleLocation location) {
-        ParticleAnimation animation = getAnimation(location);
-        return animation == null ? null : animation.getNamespacedKey();
-    }
-
-    /**
      * Spawns the animation for the specified equipment slot if it is available.
      *
      * @param player The player to spawn the animation on.
@@ -183,9 +163,13 @@ public class ParticleContent {
 
     public static class Settings {
 
+        @JsonIgnore
+        private WolfyUtils wolfyUtils;
         private ParticleAnimation animation;
 
-        protected Settings() { }
+        protected Settings(WolfyUtils wolfyUtils) {
+            this.wolfyUtils = wolfyUtils;
+        }
 
         public Settings(NamespacedKey key) {
             setAnimation(key);
@@ -206,7 +190,7 @@ public class ParticleContent {
         }
 
         public void setAnimation(NamespacedKey animation) {
-            this.animation = Objects.requireNonNull(WolfyUtilCore.getInstance().getRegistries().getParticleAnimations().get(animation), "Animation \"" + animation + "\" not found!");
+            this.animation = Objects.requireNonNull(((WolfyUtilsBukkit) wolfyUtils).getRegistries().getParticleAnimations().get(animation), "Animation \"" + animation + "\" not found!");
         }
 
         /**
@@ -241,8 +225,8 @@ public class ParticleContent {
         private ParticleAnimation mainHand;
         private ParticleAnimation offHand;
 
-        public PlayerSettings() {
-            super();
+        public PlayerSettings(WolfyUtils wolfyUtils) {
+            super(wolfyUtils);
         }
 
         public PlayerSettings(NamespacedKey key) {

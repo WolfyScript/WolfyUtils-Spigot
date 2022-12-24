@@ -204,7 +204,7 @@ public class InjectGUIInventory {
             wrappedInventory.addConstructor(generatedConstructor);
         }
 
-        wrappedInventory.writeFile(WolfyCoreBukkit.getInstance().getDataFolder().getPath() + "/generated_classes");
+        wrappedInventory.writeFile(WolfyCoreBukkit.getInstance().getWolfyUtils().getDataFolder().getPath() + "/generated_classes");
         return wrappedInventory.toClass(PermissionReference.class);
     }
 

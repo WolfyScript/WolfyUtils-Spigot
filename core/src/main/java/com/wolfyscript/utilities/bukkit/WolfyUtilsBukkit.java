@@ -10,6 +10,7 @@ import com.wolfyscript.utilities.bukkit.network.messages.MessageAPI;
 import com.wolfyscript.utilities.bukkit.nms.api.NMSUtil;
 import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import com.wolfyscript.utilities.bukkit.world.items.BookUtil;
+import com.wolfyscript.utilities.bukkit.world.items.Items;
 import com.wolfyscript.utilities.common.Identifiers;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.language.LanguageAPI;
@@ -34,6 +35,7 @@ public class WolfyUtilsBukkit extends WolfyUtils {
     private final MessageAPI messageAPI;
     private final NMSUtil nmsUtil;
     private final Identifiers identifiers;
+    private final Items items;
 
     private String dataBasePrefix;
     private final ConfigAPI configAPI;
@@ -64,6 +66,7 @@ public class WolfyUtilsBukkit extends WolfyUtils {
         this.inventoryAPI = new InventoryAPI<>(plugin, this, cacheType);
         this.identifiers = new BukkitIdentifiers(this);
         this.initialize = init;
+        this.items = new Items(this);
     }
 
     public final void initialize() {
@@ -156,6 +159,10 @@ public class WolfyUtilsBukkit extends WolfyUtils {
 
     public MessageAPI getMessageAPI() {
         return messageAPI;
+    }
+
+    public Items getItems() {
+        return items;
     }
 
     /**

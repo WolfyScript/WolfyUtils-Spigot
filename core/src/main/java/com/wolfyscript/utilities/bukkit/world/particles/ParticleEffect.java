@@ -317,7 +317,7 @@ public class ParticleEffect implements Keyed {
 
         @Override
         public void run() {
-            Bukkit.getScheduler().runTaskTimer(WolfyCoreBukkit.getInstance(), task -> {
+            Bukkit.getScheduler().runTaskTimer(WolfyCoreBukkit.getInstance().getWolfyUtils().getPlugin(), task -> {
                 if (!task.isCancelled()) {
                     animator.draw(runner, ParticleEffect.this, origin.getLocation(), player);
                     if (runner.shouldStop()) {

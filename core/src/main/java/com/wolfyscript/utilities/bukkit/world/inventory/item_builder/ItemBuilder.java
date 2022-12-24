@@ -18,6 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.world.inventory.item_builder;
 
+import com.wolfyscript.utilities.common.WolfyUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -25,13 +26,13 @@ public class ItemBuilder extends AbstractItemBuilder<ItemBuilder> {
 
     private final ItemStack itemStack;
 
-    public ItemBuilder(ItemStack itemStack){
-        super(ItemBuilder.class);
+    public ItemBuilder(WolfyUtils wolfyUtils, ItemStack itemStack){
+        super(wolfyUtils, ItemBuilder.class);
         this.itemStack = itemStack;
     }
 
-    public ItemBuilder(Material material){
-        super(ItemBuilder.class);
+    public ItemBuilder(WolfyUtils wolfyUtils, Material material){
+        super(wolfyUtils, ItemBuilder.class);
         this.itemStack = new ItemStack(material);
     }
 

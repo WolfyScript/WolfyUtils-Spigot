@@ -22,6 +22,7 @@ import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
+import com.wolfyscript.utilities.bukkit.gui.GuiMenuComponent;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import com.wolfyscript.utilities.bukkit.gui.InventoryAPI;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
@@ -59,7 +60,7 @@ public class ButtonState<C extends CustomCache> {
     private WolfyUtilsBukkit wolfyUtilities;
     private String clusterID = null;
     private NamespacedKey windowID = null;
-    private String key;
+    private final String key;
     private final ItemStack presetIcon;
     private ItemStack icon;
     private CallbackButtonAction<C> action;
@@ -91,109 +92,8 @@ public class ButtonState<C extends CustomCache> {
         this.presetIcon = presetIcon;
     }
 
-    public void init(GuiCluster<C> cluster) {
-        this.wolfyUtilities = cluster.getWolfyUtils();
-        //For backwards compatibility!
-        if (this.clusterID == null) {
-            this.clusterID = cluster.getId();
-        }
-        createIcon(null);
-    }
-
-    public void init(GuiWindow<C> window) {
-        this.wolfyUtilities = window.wolfyUtilities;
-        if (this.windowID == null) {
-            this.windowID = window.getNamespacedKey();
-        }
-        createIcon(window);
-    }
-
     public ItemStack getIcon() {
         return icon.clone();
-    }
-
-    private void createIcon(GuiWindow<C> window) {
-        if (key != null && !key.isEmpty()) {
-            this.icon = ItemUtils.createItem(presetIcon, getName(window), getLore(window));
-        }
-    }
-
-    public ItemStack constructIcon() {
-        return ItemUtils.createItem(presetIcon, getName(), getLore());
-    }
-
-    public ItemStack constructIcon(TagResolver tagResolver) {
-        return ItemUtils.createItem(presetIcon, getName(tagResolver), getLore(tagResolver));
-    }
-
-    /**
-     * Gets the name of this state. The name may vary depending on if it was initiated in a {@link GuiCluster} or {@link GuiWindow}.
-     *
-     * @return The display name of this state.
-     */
-    public Component getName() {
-        return getName(TagResolver.empty());
-    }
-
-    /**
-     * Gets the name of this state. The name may vary depending on if it was initiated in a {@link GuiCluster} or {@link GuiWindow}.
-     *
-     * @param tagResolver The resolver used to handle tags when deserializing the raw value.
-     * @return The display name of this state.
-     */
-    public Component getName(TagResolver tagResolver) {
-        if (clusterID != null) {
-            return wolfyUtilities.getLanguageAPI().getComponent(String.format(BUTTON_CLUSTER_KEY + NAME_KEY, clusterID, key), tagResolver);
-        }
-        return windowID != null ? wolfyUtilities.getLanguageAPI().getComponent(String.format(BUTTON_WINDOW_KEY + NAME_KEY, windowID.getNamespace(), windowID.getKey(), key), tagResolver) : Component.text("");
-    }
-
-    @Deprecated
-    public Component getName(GuiWindow<C> window) {
-        return getName(window, List.of());
-    }
-
-    @Deprecated
-    public Component getName(GuiWindow<C> window, List<? extends TagResolver> templates) {
-        if (clusterID != null) {
-            return wolfyUtilities.getLanguageAPI().getComponent(String.format(BUTTON_CLUSTER_KEY + NAME_KEY, clusterID, key), true, templates);
-        }
-        return wolfyUtilities.getLanguageAPI().getComponent(String.format(BUTTON_WINDOW_KEY + NAME_KEY, window.getNamespacedKey().getNamespace(), window.getNamespacedKey().getKey(), key), true, templates);
-    }
-
-    /**
-     * Gets the lore of this state. The lore may vary depending on if it was initiated in a {@link GuiCluster} or {@link GuiWindow}.
-     *
-     * @return The lore (description) of this state.
-     */
-    public List<Component> getLore() {
-        return getLore(TagResolver.empty());
-    }
-
-    /**
-     * Gets the lore of this state. The lore may vary depending on if it was initiated in a {@link GuiCluster} or {@link GuiWindow}.
-     *
-     * @param tagResolver The resolver used to handle tags when deserializing the raw value.
-     * @return The lore (description) of this state.
-     */
-    public List<Component> getLore(TagResolver tagResolver) {
-        if (clusterID != null) {
-            return wolfyUtilities.getLanguageAPI().getComponents(String.format(BUTTON_CLUSTER_KEY + LORE_KEY, clusterID, key), tagResolver);
-        }
-        return wolfyUtilities.getLanguageAPI().getComponents(String.format(BUTTON_WINDOW_KEY + LORE_KEY, windowID.getNamespace(), windowID.getKey(), key), tagResolver);
-    }
-
-    @Deprecated
-    public List<Component> getLore(GuiWindow<C> window) {
-        return getLore(window, List.of());
-    }
-
-    @Deprecated
-    public List<Component> getLore(GuiWindow<C> window, List<? extends TagResolver> templates) {
-        if (clusterID != null) {
-            return wolfyUtilities.getLanguageAPI().getComponents(String.format(BUTTON_CLUSTER_KEY + LORE_KEY, clusterID, key), true, templates);
-        }
-        return wolfyUtilities.getLanguageAPI().getComponents(String.format(BUTTON_WINDOW_KEY + LORE_KEY, window.getNamespacedKey().getNamespace(), window.getNamespacedKey().getKey(), key), true, templates);
     }
 
     public CallbackButtonAction<C> getAction() {
@@ -210,6 +110,88 @@ public class ButtonState<C extends CustomCache> {
 
     public CallbackButtonPostAction<C> getPostAction() {
         return postAction;
+    }
+
+    /**
+     * Initialises the ButtonState for a specific GuiCluster.
+     *
+     * @param guiMenuComponent The menu component parent to init the state for.
+     */
+    protected void init(GuiMenuComponent<C> guiMenuComponent) {
+        this.wolfyUtilities = guiMenuComponent.getWolfyUtils();
+        if (guiMenuComponent instanceof GuiCluster<C> cluster) {
+            //For backwards compatibility!
+            if (this.clusterID == null) {
+                this.clusterID = cluster.getId();
+            }
+        } else if (guiMenuComponent instanceof GuiWindow<C> window) {
+            if (this.windowID == null) {
+                this.windowID = window.getNamespacedKey();
+            }
+        }
+        createIcon();
+    }
+
+    private void createIcon() {
+        if (key != null && !key.isEmpty()) {
+            this.icon = ItemUtils.createItem(presetIcon, getName(), getLore());
+        }
+    }
+
+    protected ItemStack constructIcon() {
+        return ItemUtils.createItem(presetIcon, getName(), getLore());
+    }
+
+    protected ItemStack constructIcon(TagResolver... tagResolvers) {
+        return ItemUtils.createItem(presetIcon, getName(tagResolvers), getLore(tagResolvers));
+    }
+
+    protected ItemStack constructCustomIcon(ItemStack itemStack, TagResolver... resolvers) {
+        return ItemUtils.createItem(itemStack, getName(resolvers), getLore(resolvers));
+    }
+
+    /**
+     * Gets the name of this state. The name may vary depending on if it was initiated in a {@link GuiCluster} or {@link GuiWindow}.
+     *
+     * @return The display name of this state.
+     */
+    protected Component getName() {
+        return getName(TagResolver.empty());
+    }
+
+    /**
+     * Gets the name of this state. The name may vary depending on if it was initiated in a {@link GuiCluster} or {@link GuiWindow}.
+     *
+     * @param tagResolvers The resolvers used to handle tags when deserializing the raw value.
+     * @return The display name of this state.
+     */
+    protected Component getName(TagResolver... tagResolvers) {
+        if (clusterID != null) {
+            return wolfyUtilities.getLanguageAPI().getComponent(String.format(BUTTON_CLUSTER_KEY + NAME_KEY, clusterID, key), tagResolvers);
+        }
+        return windowID != null ? wolfyUtilities.getLanguageAPI().getComponent(String.format(BUTTON_WINDOW_KEY + NAME_KEY, windowID.getNamespace(), windowID.getKey(), key), tagResolvers) : Component.text("");
+    }
+
+    /**
+     * Gets the lore of this state. The lore may vary depending on if it was initiated in a {@link GuiCluster} or {@link GuiWindow}.
+     *
+     * @return The lore (description) of this state.
+     */
+    protected List<Component> getLore() {
+        return getLore(TagResolver.empty());
+    }
+
+    /**
+     * Gets the lore of this state. The lore may vary depending on if it was initiated in a {@link GuiCluster} or {@link GuiWindow}.
+     *
+     * @param tagResolvers The resolver used to handle tags when deserializing the raw value.
+     * @return The lore (description) of this state.
+     */
+    protected List<Component> getLore(TagResolver... tagResolvers) {
+        if (clusterID != null) {
+            return wolfyUtilities.getLanguageAPI().getComponents(String.format(BUTTON_CLUSTER_KEY + LORE_KEY, clusterID, key), tagResolvers);
+        }
+        return wolfyUtilities.getLanguageAPI().getComponents(String.format(BUTTON_WINDOW_KEY + LORE_KEY, windowID.getNamespace(), windowID.getKey(), key), tagResolvers);
     }
 
     /**

@@ -62,7 +62,7 @@ public class ButtonItemInput<C extends CustomCache> extends ButtonAction<C> {
     }
 
     @Override
-    public void render(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, ItemStack itemStack, int slot, boolean help) throws IOException {
+    public void render(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, int slot) throws IOException {
         ItemStack item = getContent(guiHandler);
         if (getState().getRenderAction() != null) {
             item = getState().getRenderAction().run(guiHandler.getCustomCache(), guiHandler, player, guiInventory, this, item, slot).getCustomStack().orElse(item);

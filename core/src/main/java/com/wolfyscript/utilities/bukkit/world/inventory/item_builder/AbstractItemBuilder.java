@@ -21,7 +21,8 @@ package com.wolfyscript.utilities.bukkit.world.inventory.item_builder;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Preconditions;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.util.EncryptionUtils;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTCompoundList;
@@ -58,13 +59,16 @@ public abstract class AbstractItemBuilder<T extends AbstractItemBuilder<?>> {
     private static final NamespacedKey CUSTOM_DURABILITY_TAG_MINIMSG = new NamespacedKey("wolfyutilities", "mini_msg");
 
     @JsonIgnore
+    protected final WolfyUtilsBukkit wolfyUtils;
+    @JsonIgnore
     private final Class<T> typeClass;
     @JsonIgnore
     private final MiniMessage miniMessage;
 
-    protected AbstractItemBuilder(Class<T> typeClass) {
+    protected AbstractItemBuilder(WolfyUtils wolfyUtils, Class<T> typeClass) {
         this.typeClass = typeClass;
-        this.miniMessage = WolfyUtilCore.getInstance().getChat().getMiniMessage();
+        this.wolfyUtils = (WolfyUtilsBukkit) wolfyUtils;
+        this.miniMessage = wolfyUtils.getChat().getMiniMessage();
     }
 
     protected abstract ItemStack getItemStack();
@@ -130,9 +134,20 @@ public abstract class AbstractItemBuilder<T extends AbstractItemBuilder<?>> {
         return setItemMeta(itemMeta);
     }
 
+    @Deprecated
     public T setDisplayName(String name) {
         var itemMeta = getItemStack().getItemMeta();
         itemMeta.setDisplayName(name);
+        return setItemMeta(itemMeta);
+    }
+
+    public T displayName(Component name) {
+        var itemMeta = getItemStack().getItemMeta();
+        if (wolfyUtils.getCore().getCompatibilityManager().isPaper()) {
+            itemMeta.displayName(name);
+        } else {
+            itemMeta.setDisplayName(BukkitComponentSerializer.legacy().serialize(name));
+        }
         return setItemMeta(itemMeta);
     }
 
@@ -141,9 +156,20 @@ public abstract class AbstractItemBuilder<T extends AbstractItemBuilder<?>> {
         return get();
     }
 
+    @Deprecated
     public T setLore(List<String> lore) {
         var itemMeta = getItemStack().getItemMeta();
         itemMeta.setLore(lore);
+        return setItemMeta(itemMeta);
+    }
+
+    public T lore(List<Component> lore) {
+        var itemMeta = getItemStack().getItemMeta();
+        if (wolfyUtils.getCore().getCompatibilityManager().isPaper()) {
+            itemMeta.lore(lore);
+        } else {
+            itemMeta.setLore(lore.stream().map(line -> BukkitComponentSerializer.legacy().serialize(line)).toList());
+        }
         return setItemMeta(itemMeta);
     }
 

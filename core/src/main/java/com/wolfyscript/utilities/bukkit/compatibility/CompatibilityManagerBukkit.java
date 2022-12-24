@@ -18,16 +18,24 @@
 
 package com.wolfyscript.utilities.bukkit.compatibility;
 
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
+import com.wolfyscript.utilities.common.WolfyCore;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class CompatibilityManagerBukkit implements CompatibilityManager {
 
-    private final WolfyUtilCore core;
-    private final PluginsBukkit pluginsBukkit;
 
-    public CompatibilityManagerBukkit(WolfyUtilCore core) {
+    private static final Map<String, Boolean> classes = new HashMap<>();
+    private final WolfyCore core;
+    private final PluginsBukkit pluginsBukkit;
+    private final boolean isPaper;
+
+    public CompatibilityManagerBukkit(WolfyCoreBukkit core) {
         this.core = core;
         this.pluginsBukkit = new PluginsBukkit(core);
+        this.isPaper = hasClass("com.destroystokyo.paper.utils.PaperPluginLogger");
     }
 
     public void init() {
@@ -36,5 +44,30 @@ public final class CompatibilityManagerBukkit implements CompatibilityManager {
 
     public Plugins getPlugins() {
         return pluginsBukkit;
+    }
+
+    @Override
+    public boolean isPaper() {
+        return isPaper;
+    }
+
+    /**
+     * Check if the specific class exists.
+     *
+     * @param path The path to the class to check for.
+     * @return If the class exists.
+     */
+    public static boolean hasClass(String path) {
+        if (classes.containsKey(path)) {
+            return classes.get(path);
+        }
+        try {
+            Class.forName(path);
+            classes.put(path, true);
+            return true;
+        } catch (Exception e) {
+            classes.put(path, false);
+            return false;
+        }
     }
 }

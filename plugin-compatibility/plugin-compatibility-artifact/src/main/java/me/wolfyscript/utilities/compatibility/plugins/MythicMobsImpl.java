@@ -24,7 +24,7 @@ import io.lumine.xikage.mythicmobs.MythicMobs;
 import io.lumine.xikage.mythicmobs.adapters.bukkit.BukkitAdapter;
 import io.lumine.xikage.mythicmobs.mobs.MythicMob;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.mythicmobs.MythicMobs5RefImpl;
@@ -35,7 +35,7 @@ import org.bukkit.plugin.Plugin;
 @WUPluginIntegration(pluginName = MythicMobsIntegration.KEY)
 public class MythicMobsImpl extends PluginIntegrationAbstract implements MythicMobsIntegration {
 
-    protected MythicMobsImpl(WolfyUtilCore core) {
+    protected MythicMobsImpl(WolfyUtilBootstrap core) {
         super(core, MythicMobsIntegration.KEY);
     }
 

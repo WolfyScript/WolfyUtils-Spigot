@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
+import com.wolfyscript.utilities.common.WolfyCore;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +23,7 @@ public class BlockStorage {
 
     private final Vector pos;
     private final ChunkStorage chunkStorage;
-    private final WolfyUtilCore core;
+    private final WolfyCoreBukkit core;
     private final PersistentDataContainer persistentContainer;
 
     private final Map<NamespacedKey, CustomBlockData> data = new HashMap<>();
@@ -110,7 +112,7 @@ public class BlockStorage {
             CustomBlockData blockData = null;
             try {
                 blockData = objectMapper.reader(new InjectableValues.Std()
-                        .addValue(WolfyUtilCore.class, core)
+                        .addValue(WolfyCore.class, core)
                         .addValue(ChunkStorage.class, chunkStorage)
                         .addValue(Vector.class, pos)
                 ).forType(CustomBlockData.class).readValue(customDataString);

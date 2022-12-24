@@ -282,7 +282,7 @@ public class ParticleAnimation implements Keyed {
          * @return The UUID of the running animation.
          */
         public UUID start() {
-            this.task = Bukkit.getScheduler().runTaskTimer(WolfyCoreBukkit.getInstance(), this, delay, 1);
+            this.task = Bukkit.getScheduler().runTaskTimer(WolfyCoreBukkit.getInstance().getWolfyUtils().getPlugin(), this, delay, 1);
             this.uuid = ParticleUtils.addScheduler(this);
             return uuid;
         }

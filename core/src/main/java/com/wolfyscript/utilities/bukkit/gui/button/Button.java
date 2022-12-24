@@ -20,27 +20,20 @@ package com.wolfyscript.utilities.bukkit.gui.button;
 
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
-import com.wolfyscript.utilities.bukkit.chat.ChatColor;
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
+import com.wolfyscript.utilities.bukkit.gui.GuiMenuComponent;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import com.wolfyscript.utilities.bukkit.gui.InventoryAPI;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import com.wolfyscript.utilities.bukkit.gui.callback.CallbackButtonRender;
 import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
-import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -90,9 +83,9 @@ public abstract class Button<C extends CustomCache> {
 
     public abstract void postExecute(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot, InventoryInteractEvent event) throws IOException;
 
-    public abstract void preRender(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot, boolean help);
+    public abstract void preRender(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot);
 
-    public abstract void render(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, ItemStack itemStack, int slot, boolean help) throws IOException;
+    public abstract void render(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, int slot) throws IOException;
 
     @NotNull
     public ButtonType getType() {
@@ -104,57 +97,33 @@ public abstract class Button<C extends CustomCache> {
         return id;
     }
 
-    protected void applyItem(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, ButtonState<C> state, ItemStack item, int slot) {
+    /**
+     * Calls the Render Callback of the specified state and applies the result to the specified inventory slot.
+     *
+     * @param guiHandler
+     * @param player
+     * @param guiInventory
+     * @param inventory
+     * @param state
+     * @param slot
+     */
+    protected void applyItem(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, ButtonState<C> state, int slot) {
         //No longer set default templates, that should be purely managed by the plugin.
-        CallbackButtonRender.UpdateResult updateResult = state.getRenderAction().run(guiHandler.getCustomCache(), guiHandler, player, guiInventory, this, item, slot);
-        Optional<ItemStack> customStack = updateResult.getCustomStack();
-        if (customStack.isPresent()) {
-            updateResult.getTagResolver().ifPresentOrElse(tagResolver -> inventory.setItem(slot, ItemUtils.replaceNameAndLore(MiniMessage.miniMessage(), customStack.get(), tagResolver)), () -> inventory.setItem(slot, customStack.get()));
-        } else {
-            inventory.setItem(slot, state.constructIcon(updateResult.getTagResolver().orElseGet(TagResolver::empty)));
-        }
+        CallbackButtonRender.UpdateResult updateResult = state.getRenderAction().run(guiHandler.getCustomCache(), guiHandler, player, guiInventory, this, state.getIcon(), slot);
+        inventory.setItem(slot, updateResult.getCustomStack()
+                .map(itemStack -> state.constructCustomIcon(itemStack, updateResult.getTagResolver().orElseGet(TagResolver::empty)))
+                .orElseGet(() -> state.constructIcon(updateResult.getTagResolver().orElseGet(TagResolver::empty)))
+        );
     }
 
     /**
-     * Legacy method to replace placeholders in the ItemStack lore and name.
+     * Initializes the specified state using the specified parent, to fetch the settings from.
      *
-     * @param itemStack The ItemStack
-     * @param values    The placeholder keys and values.
-     * @return The ItemStack with replaced lore and name.
+     * @param state The state to initialize.
+     * @param guiMenuComponent The parent to fetch the settings from.
      */
-    @Deprecated
-    protected ItemStack replaceKeysWithValue(ItemStack itemStack, Map<String, Object> values) {
-        if (itemStack != null) {
-            ItemMeta meta = itemStack.getItemMeta();
-            if (meta != null && meta.hasDisplayName()) {
-                String name = meta.getDisplayName();
-                List<String> lore = meta.getLore();
-                for (Map.Entry<String, Object> entry : values.entrySet()) {
-                    if (entry.getValue() instanceof List<?> list) {
-                        if (lore != null) {
-                            for (int i = 0; i < lore.size(); i++) {
-                                if (!lore.get(i).contains(entry.getKey())) continue;
-                                lore.set(i, !list.isEmpty() ? lore.get(i).replace(entry.getKey(), ChatColor.convert(String.valueOf(list.get(list.size() - 1)))) : "");
-                                if (list.size() > 1) {
-                                    for (int j = list.size() - 2; j >= 0; j--) {
-                                        lore.add(i, ChatColor.convert(String.valueOf(list.get(j))));
-                                    }
-                                }
-                            }
-                        }
-                    } else if (entry.getValue() != null) {
-                        name = name.replace(entry.getKey(), ChatColor.convert(String.valueOf(entry.getValue())));
-                        if (lore != null && !lore.isEmpty()) {
-                            lore = lore.stream().map(s -> s.replace(entry.getKey(), ChatColor.convert(String.valueOf(entry.getValue())))).collect(Collectors.toList());
-                        }
-                    }
-                }
-                meta.setDisplayName(name);
-                meta.setLore(lore);
-                itemStack.setItemMeta(meta);
-            }
-        }
-        return itemStack;
+    protected void initState(ButtonState<C> state, GuiMenuComponent<C> guiMenuComponent) {
+        state.init(guiMenuComponent);
     }
 
     public static abstract class Builder<C extends CustomCache, B extends Button<C>, T extends Builder<C, B, T>> {

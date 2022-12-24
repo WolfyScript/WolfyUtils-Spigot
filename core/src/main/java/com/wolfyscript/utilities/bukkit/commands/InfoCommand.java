@@ -45,7 +45,7 @@ public class InfoCommand implements TabExecutor {
         plugin.getWolfyUtils().getChat().sendMessages((Player) sender, true,
                 Component.text("——————— ", NamedTextColor.GRAY).append(Component.text("WolfyUtilities", NamedTextColor.AQUA, TextDecoration.BOLD)).append(Component.text(" ———————")),
                 Component.empty(),
-                Component.text("Author: ", NamedTextColor.GRAY).append(Component.text(String.join(", ", plugin.getDescription().getAuthors()), null, TextDecoration.BOLD)),
+                Component.text("Author: ", NamedTextColor.GRAY).append(Component.text(String.join(", ", plugin.getWolfyUtils().getPlugin().getDescription().getAuthors()), null, TextDecoration.BOLD)),
                 Component.empty(),
                 Component.text("Version: ", NamedTextColor.GRAY).append(Component.text(ServerVersion.getWUVersion().getVersion(), null, TextDecoration.BOLD)),
                 Component.text("———————————————————————", NamedTextColor.GRAY)

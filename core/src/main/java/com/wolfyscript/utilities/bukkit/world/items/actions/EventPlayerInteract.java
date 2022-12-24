@@ -18,8 +18,11 @@
 
 package com.wolfyscript.utilities.bukkit.world.items.actions;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import java.util.List;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.block.Action;
@@ -34,12 +37,13 @@ public class EventPlayerInteract extends EventPlayer<DataPlayerEvent<PlayerInter
     private List<EquipmentSlot> hand = List.of(EquipmentSlot.HAND);
     private List<BlockFace> blockFace = List.of();
 
-    protected EventPlayerInteract() {
-        super(KEY, (Class<DataPlayerEvent<PlayerInteractEvent>>)(Object) DataPlayerEvent.class);
+    @JsonCreator
+    protected EventPlayerInteract(@JacksonInject WolfyUtils wolfyUtils) {
+        super(wolfyUtils, KEY, (Class<DataPlayerEvent<PlayerInteractEvent>>)(Object) DataPlayerEvent.class);
     }
 
     @Override
-    public void call(WolfyUtilCore core, DataPlayerEvent<PlayerInteractEvent> data) {
+    public void call(WolfyUtils core, DataPlayerEvent<PlayerInteractEvent> data) {
         PlayerInteractEvent event = data.getEvent();
         if ((eventAction.isEmpty() || eventAction.contains(event.getAction())) && (hand.isEmpty() || hand.contains(event.getHand())) && (blockFace.isEmpty() || blockFace.contains(event.getBlockFace()))) {
             super.call(core, data);

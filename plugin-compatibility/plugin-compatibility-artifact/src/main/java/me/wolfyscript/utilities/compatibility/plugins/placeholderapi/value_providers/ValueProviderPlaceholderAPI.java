@@ -18,12 +18,14 @@
 
 package me.wolfyscript.utilities.compatibility.plugins.placeholderapi.value_providers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.eval.context.EvalContext;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.PlaceholderAPIIntegration;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.eval.context.EvalContextPlayer;
 import com.wolfyscript.utilities.eval.value_provider.AbstractValueProvider;
 
@@ -31,16 +33,19 @@ public abstract class ValueProviderPlaceholderAPI<V> extends AbstractValueProvid
 
     @JsonProperty("value")
     protected final String value;
+    @JsonIgnore
+    protected final WolfyUtils wolfyUtils;
 
-    protected ValueProviderPlaceholderAPI(NamespacedKey key, String value) {
+    protected ValueProviderPlaceholderAPI(WolfyUtils wolfyUtils, NamespacedKey key, String value) {
         super(key);
+        this.wolfyUtils = wolfyUtils;
         this.value = value;
     }
 
     protected String getPlaceholderValue(EvalContext context) {
         if (context instanceof EvalContextPlayer playerContext) {
             var player = playerContext.getPlayer();
-            var integration = WolfyUtilCore.getInstance().getCompatibilityManager().getPlugins().getIntegration(PlaceholderAPIIntegration.KEY, PlaceholderAPIIntegration.class);
+            var integration = ((WolfyUtilsBukkit) wolfyUtils).getCore().getCompatibilityManager().getPlugins().getIntegration(PlaceholderAPIIntegration.KEY, PlaceholderAPIIntegration.class);
             if (player != null && integration != null) {
                 String result = integration.setPlaceholders(player, value);
                 return integration.setBracketPlaceholders(player, result);

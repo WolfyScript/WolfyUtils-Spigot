@@ -1,6 +1,7 @@
 package com.wolfyscript.utilities.bukkit.persistent.world;
 
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.math.Vec2i;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,15 +18,15 @@ public class WorldStorage {
 
     private final Map<Vec2i, ChunkStorage> CHUNK_DATA = new HashMap<>();
 
-    private final WolfyUtilCore core;
+    private final WolfyCoreBukkit core;
     private final UUID worldUUID;
 
-    public WorldStorage(WolfyUtilCore core, UUID world) {
+    public WorldStorage(WolfyCoreBukkit core, UUID world) {
         this.worldUUID = world;
         this.core = core;
     }
 
-    public WolfyUtilCore getCore() {
+    public WolfyCoreBukkit getCore() {
         return core;
     }
 

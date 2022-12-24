@@ -18,9 +18,12 @@
 
 package com.wolfyscript.utilities.bukkit.world.items.actions;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.world.particles.ParticleAnimation;
+import com.wolfyscript.utilities.common.WolfyUtils;
 
 public class ActionParticleAnimation extends Action<DataLocation> {
 
@@ -28,12 +31,13 @@ public class ActionParticleAnimation extends Action<DataLocation> {
 
     private ParticleAnimation animation;
 
-    protected ActionParticleAnimation() {
-        super(KEY, DataLocation.class);
+    @JsonCreator
+    protected ActionParticleAnimation(@JacksonInject WolfyUtils wolfyUtils) {
+        super(wolfyUtils, KEY, DataLocation.class);
     }
 
     @Override
-    public void execute(WolfyUtilCore core, DataLocation data) {
+    public void execute(WolfyUtils core, DataLocation data) {
         if (data instanceof DataPlayer dataPlayer) {
             animation.spawn(dataPlayer.getPlayer());
             return;

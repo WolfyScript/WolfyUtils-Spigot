@@ -19,11 +19,12 @@
 package com.wolfyscript.utilities.bukkit.world.items.actions;
 
 import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.common.WolfyUtils;
 
 public abstract class EventPlayer<T extends DataPlayer> extends Event<T> {
 
-    protected EventPlayer(NamespacedKey key, Class<T> dataType) {
-        super(key, dataType);
+    protected EventPlayer(WolfyUtils wolfyUtils, NamespacedKey key, Class<T> dataType) {
+        super(wolfyUtils, key, dataType);
     }
 
 }

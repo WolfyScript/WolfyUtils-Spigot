@@ -37,6 +37,12 @@
             <artifactId>worldguard-bukkit</artifactId>
             <version>7.1.0-SNAPSHOT</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- PlotSquared Bukkit API-->
         <dependency>

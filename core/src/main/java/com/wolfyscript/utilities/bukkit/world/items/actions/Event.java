@@ -26,7 +26,8 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import com.wolfyscript.utilities.Keyed;
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
 import com.wolfyscript.utilities.json.KeyedTypeResolver;
 import com.wolfyscript.utilities.json.annotations.OptionalKeyReference;
@@ -41,19 +42,22 @@ import java.util.Objects;
 @OptionalKeyReference(serializeAsKey = false, registryKey = "wolfyutilities:custom_item/events/values")
 public abstract class Event<T extends Data> implements Keyed {
 
+    @JsonIgnore
+    protected WolfyUtils wolfyUtils;
     private final NamespacedKey key;
     @JsonIgnore
     protected final Class<T> dataType;
     private List<Action<? super T>> actions;
 
-    protected Event(NamespacedKey key, Class<T> dataType) {
+    protected Event(WolfyUtils wolfyUtils, NamespacedKey key, Class<T> dataType) {
         this.key = key;
+        this.wolfyUtils = wolfyUtils;
         this.dataType = dataType;
     }
 
-    public void call(WolfyUtilCore core, T data) {
+    public void call(WolfyUtils wolfyUtils1, T data) {
         for (Action<? super T> action : actions) {
-            action.execute(core, data);
+            action.execute(wolfyUtils, data);
         }
     }
 

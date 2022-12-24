@@ -63,14 +63,14 @@ public class ButtonMultipleChoice<C extends CustomCache> extends Button<C> {
     @Override
     public void init(GuiWindow<C> guiWindow) {
         for (ButtonState<C> btnState : states) {
-            btnState.init(guiWindow);
+            initState(btnState, guiWindow);
         }
     }
 
     @Override
     public void init(GuiCluster<C> guiCluster) {
         for (ButtonState<C> btnState : states) {
-            btnState.init(guiCluster);
+            initState(btnState, guiCluster);
         }
     }
 
@@ -102,19 +102,19 @@ public class ButtonMultipleChoice<C extends CustomCache> extends Button<C> {
     }
 
     @Override
-    public void preRender(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot, boolean help) {
+    public void preRender(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot) {
         int setting = stateFunction.run(guiHandler.getCustomCache(), guiHandler, player, inventory, slot);
         if (states != null && states.size() > setting && states.get(setting).getPrepareRender() != null) {
-            states.get(setting).getPrepareRender().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, itemStack, slot, help);
+            states.get(setting).getPrepareRender().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, itemStack, slot, false);
         }
     }
 
     @Override
-    public void render(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, ItemStack itemStack, int slot, boolean help) {
+    public void render(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, int slot) {
         int setting = settings.computeIfAbsent(guiHandler, g -> 0);
         if (states != null && states.size() > setting) {
             ButtonState<C> activeState = states.get(setting);
-            applyItem(guiHandler, player, guiInventory, inventory, activeState, activeState.getIcon(), slot);
+            applyItem(guiHandler, player, guiInventory, inventory, activeState, slot);
         }
     }
 

@@ -20,11 +20,11 @@ package com.wolfyscript.utilities.bukkit.commands;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.nbt.NBTQuery;
-import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import java.io.File;
 import java.util.List;
+import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -34,11 +34,11 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class QueryDebugCommand implements TabExecutor {
+public class DebugNBTQueryCommand implements TabExecutor {
 
     private final WolfyCoreBukkit plugin;
 
-    public QueryDebugCommand(WolfyCoreBukkit plugin) {
+    public DebugNBTQueryCommand(WolfyCoreBukkit plugin) {
         this.plugin = plugin;
     }
 
@@ -48,7 +48,7 @@ public class QueryDebugCommand implements TabExecutor {
         if (!player.hasPermission("wolfyutilities.command.query_debug")) return true;
         ItemStack stack = player.getEquipment().getItem(EquipmentSlot.HAND);
         if (!ItemUtils.isAirOrNull(stack)) {
-            File file = new File(plugin.getDataFolder(), "query_debug.json");
+            File file = new File(plugin.getWolfyUtils().getDataFolder(), "query_debug.json");
             if (file.exists()) {
                 NBTQuery.of(file).ifPresent(nbtQuery -> {
                     NBTItem nbtItem = new NBTItem(stack);

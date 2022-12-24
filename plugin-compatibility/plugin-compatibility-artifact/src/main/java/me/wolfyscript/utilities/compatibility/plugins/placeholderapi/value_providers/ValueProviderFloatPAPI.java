@@ -18,9 +18,11 @@
 
 package me.wolfyscript.utilities.compatibility.plugins.placeholderapi.value_providers;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.eval.context.EvalContext;
 
 public class ValueProviderFloatPAPI extends ValueProviderPlaceholderAPI<Float> {
@@ -28,8 +30,8 @@ public class ValueProviderFloatPAPI extends ValueProviderPlaceholderAPI<Float> {
     public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("float/papi");
 
     @JsonCreator
-    protected ValueProviderFloatPAPI(@JsonProperty("value") String value) {
-        super(KEY, value);
+    protected ValueProviderFloatPAPI(@JacksonInject WolfyUtils wolfyUtils, @JsonProperty("value") String value) {
+        super(wolfyUtils, KEY, value);
     }
 
     @Override

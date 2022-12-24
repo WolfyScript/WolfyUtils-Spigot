@@ -18,7 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.events;
 
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegration;
 import com.wolfyscript.utilities.common.WolfyCore;
 import org.bukkit.event.Event;
@@ -40,7 +40,7 @@ public class DependenciesLoadedEvent extends Event {
     }
 
     /**
-     * Gets the core {@link WolfyUtilCore}
+     * Gets the core {@link WolfyUtilBootstrap}
      * @return The core of the plugin.
      */
     public WolfyCore getCore() {

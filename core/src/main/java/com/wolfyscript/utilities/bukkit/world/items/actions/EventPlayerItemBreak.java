@@ -18,15 +18,19 @@
 
 package com.wolfyscript.utilities.bukkit.world.items.actions;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 
 public class EventPlayerItemBreak extends EventPlayer<DataPlayerEvent<PlayerItemBreakEvent>> {
 
     public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("player/item_break");
 
-    protected EventPlayerItemBreak() {
-        super(KEY, (Class<DataPlayerEvent<PlayerItemBreakEvent>>)(Object) DataPlayerEvent.class);
+    @JsonCreator
+    protected EventPlayerItemBreak(@JacksonInject WolfyUtils wolfyUtils) {
+        super(wolfyUtils, KEY, (Class<DataPlayerEvent<PlayerItemBreakEvent>>)(Object) DataPlayerEvent.class);
     }
 
 }

@@ -19,8 +19,7 @@
 package com.wolfyscript.utilities.bukkit.listeners.custom_item;
 
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.registry.RegistryCustomItem;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
 import com.wolfyscript.utilities.bukkit.world.items.actions.DataPlayerEvent;
@@ -47,10 +46,10 @@ import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 
 public class CustomItemPlayerListener implements Listener {
 
-    private final WolfyUtilCore core;
+    private final WolfyCoreBukkit core;
     private final RegistryCustomItem customItems;
 
-    public CustomItemPlayerListener(WolfyUtilCore core) {
+    public CustomItemPlayerListener(WolfyCoreBukkit core) {
         this.core = core;
         this.customItems = core.getRegistries().getCustomItems();
     }

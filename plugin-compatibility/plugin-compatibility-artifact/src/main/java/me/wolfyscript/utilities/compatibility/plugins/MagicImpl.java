@@ -20,7 +20,7 @@ package me.wolfyscript.utilities.compatibility.plugins;
 
 import com.elmakers.mine.bukkit.api.event.LoadEvent;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.magic.MagicRefImpl;
@@ -34,7 +34,7 @@ public class MagicImpl extends PluginIntegrationAbstract implements Listener {
 
     static final String PLUGIN_NAME = "Magic";
 
-    protected MagicImpl(WolfyUtilCore core) {
+    protected MagicImpl(WolfyUtilBootstrap core) {
         super(core, PLUGIN_NAME);
     }
 

@@ -4,9 +4,10 @@ import com.denizenscript.denizen.scripts.containers.core.ItemScriptHelper;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import java.io.IOException;
 import java.util.Objects;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.plugins.DenizenIntegrationImpl;
 import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
@@ -69,7 +70,7 @@ public class DenizenRefImpl extends APIReference {
         @Override
         public @Nullable DenizenRefImpl parse(JsonNode element) {
             if (element.isObject()) {
-                ItemStack item = WolfyUtilCore.getInstance().getWolfyUtils().getJacksonMapperUtil().getGlobalMapper().convertValue(element.path("display_item"), ItemStack.class);
+                ItemStack item = WolfyCoreBukkit.getInstance().getWolfyUtils().getJacksonMapperUtil().getGlobalMapper().convertValue(element.path("display_item"), ItemStack.class);
                 if(!ItemUtils.isAirOrNull(item)) {
                     String script = element.path("script").asText("");
                     if (!script.isBlank()) {

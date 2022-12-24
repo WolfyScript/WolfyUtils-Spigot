@@ -1,7 +1,8 @@
 package me.wolfyscript.utilities.compatibility.plugins;
 
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.denizen.DenizenRefImpl;
@@ -18,7 +19,7 @@ public class DenizenIntegrationImpl extends PluginIntegrationAbstract {
      *
      * @param core       The WolfyUtilCore.
      */
-    protected DenizenIntegrationImpl(WolfyUtilCore core) {
+    protected DenizenIntegrationImpl(WolfyCoreBukkit core) {
         super(core, PLUGIN_NAME);
     }
 

@@ -20,7 +20,7 @@ package me.wolfyscript.utilities.compatibility.plugins;
 
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.OraxenIntegration;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.oraxen.OraxenRefImpl;
@@ -29,7 +29,7 @@ import org.bukkit.plugin.Plugin;
 @WUPluginIntegration(pluginName = OraxenIntegration.KEY)
 public class OraxenImpl extends PluginIntegrationAbstract implements OraxenIntegration {
 
-    protected OraxenImpl(WolfyUtilCore core) {
+    protected OraxenImpl(WolfyUtilBootstrap core) {
         super(core, OraxenIntegration.KEY);
     }
 

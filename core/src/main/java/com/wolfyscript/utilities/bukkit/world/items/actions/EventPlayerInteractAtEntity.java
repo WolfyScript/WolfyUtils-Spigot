@@ -18,14 +18,18 @@
 
 package com.wolfyscript.utilities.bukkit.world.items.actions;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 
 public class EventPlayerInteractAtEntity extends EventPlayerInteractEntityAbstract<PlayerInteractAtEntityEvent> {
 
     public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("player/interact_at_entity");
 
-    public EventPlayerInteractAtEntity() {
-        super(KEY);
+    @JsonCreator
+    public EventPlayerInteractAtEntity(@JacksonInject WolfyUtils wolfyUtils) {
+        super(wolfyUtils, KEY);
     }
 }

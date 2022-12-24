@@ -26,8 +26,9 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import com.wolfyscript.utilities.Keyed;
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
 import com.wolfyscript.utilities.json.KeyedTypeResolver;
 import com.wolfyscript.utilities.json.annotations.OptionalKeyReference;
@@ -40,16 +41,19 @@ import com.wolfyscript.utilities.json.annotations.OptionalKeyReference;
 @OptionalKeyReference(serializeAsKey = false, registryKey = "wolfyutilities:custom_item/actions/values")
 public abstract class Action<T extends Data> implements Keyed {
 
+    @JsonIgnore
+    protected WolfyUtils wolfyUtils;
     private final NamespacedKey key;
     @JsonIgnore
     protected final Class<T> dataType;
 
-    protected Action(NamespacedKey key, Class<T> dataType) {
+    protected Action(WolfyUtils wolfyUtils, NamespacedKey key, Class<T> dataType) {
+        this.wolfyUtils = wolfyUtils;
         this.key = key;
         this.dataType = dataType;
     }
 
-    public abstract void execute(WolfyUtilCore core, T data);
+    public abstract void execute(WolfyUtils core, T data);
 
     @JsonIgnore
     @Override

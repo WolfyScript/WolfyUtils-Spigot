@@ -19,7 +19,8 @@
 package com.wolfyscript.utilities.bukkit.world.items.actions;
 
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import java.util.List;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -30,12 +31,12 @@ public abstract class EventPlayerInteractEntityAbstract<T extends PlayerInteract
     private final List<EquipmentSlot> hand = List.of(EquipmentSlot.HAND);
     private final List<EntityType> entityType = List.of();
 
-    public EventPlayerInteractEntityAbstract(NamespacedKey key) {
-        super(key, (Class<DataPlayerEvent<T>>)(Object) DataPlayerEvent.class);
+    public EventPlayerInteractEntityAbstract(WolfyUtils wolfyUtils, NamespacedKey key) {
+        super(wolfyUtils, key, (Class<DataPlayerEvent<T>>)(Object) DataPlayerEvent.class);
     }
 
     @Override
-    public void call(WolfyUtilCore core, DataPlayerEvent<T> data) {
+    public void call(WolfyUtils core, DataPlayerEvent<T> data) {
         PlayerInteractEntityEvent event = data.getEvent();
         if ((hand.isEmpty() || hand.contains(event.getHand())) && (entityType.isEmpty() || entityType.contains(event.getRightClicked().getType()))) {
             super.call(core, data);

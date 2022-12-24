@@ -1,7 +1,8 @@
 package com.wolfyscript.utilities.bukkit.persistent.world;
 
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.math.Vec2i;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +27,7 @@ public class ChunkStorage {
 
     private final Vec2i coords;
     private final WorldStorage worldStorage;
-    private final WolfyUtilCore core;
+    private final WolfyCoreBukkit core;
 
     private ChunkStorage(WorldStorage worldStorage, Vec2i coords) {
         this.coords = coords;
@@ -34,7 +35,7 @@ public class ChunkStorage {
         this.core = worldStorage.getCore();
     }
 
-    public WolfyUtilCore getCore() {
+    public WolfyCoreBukkit getCore() {
         return core;
     }
 

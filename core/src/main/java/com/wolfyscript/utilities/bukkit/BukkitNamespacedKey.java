@@ -28,6 +28,8 @@ import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
+import com.wolfyscript.utilities.common.WolfyCore;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Objects;
@@ -43,7 +45,7 @@ import org.jetbrains.annotations.Nullable;
  * <br>
  * Usually the namespace should be the plugins' (lowercase) name and identifies resources as part of that plugin.<br>
  * e.g. when registering data using the {@link com.wolfyscript.utilities.common.registry.Registry}, etc.<br>
- * In those cases the {@link #BukkitNamespacedKey(Plugin, String)} constructor should be used.
+ * In those cases the {@link #BukkitNamespacedKey(WolfyUtils, String)} constructor should be used.
  * <br>
  * They can however be used inside a plugin itself with non-plugin namespaces, when resources are only accessible internally.<br>
  * e.g. {@link GuiWindow} where the namespace is the {@link GuiCluster}s' id and the key the GuiWindows's id, etc.<br>
@@ -59,7 +61,6 @@ public class BukkitNamespacedKey implements NamespacedKey, Comparable<BukkitName
     private static final Pattern VALID_NAMESPACE = Pattern.compile("[a-z0-9._-]+");
     @JsonIgnore
     private static final Pattern VALID_KEY = Pattern.compile("[a-z0-9/._-]+");
-    private final boolean hasPlugin;
     private final String namespace;
     private final Key key;
 
@@ -75,7 +76,6 @@ public class BukkitNamespacedKey implements NamespacedKey, Comparable<BukkitName
         Preconditions.checkArgument(namespace != null && VALID_NAMESPACE.matcher(namespace).matches(), "Invalid namespace. Must be [a-z0-9._-]: %s", namespace);
         this.key = new Key(key.toLowerCase(Locale.ROOT));
         this.namespace = namespace;
-        this.hasPlugin = false;
         var string = this.toString();
         Preconditions.checkArgument(string.length() < 256, "NamespacedKey must be less than 256 characters", string);
     }
@@ -86,11 +86,10 @@ public class BukkitNamespacedKey implements NamespacedKey, Comparable<BukkitName
      * @param plugin The plugin that this data belongs to
      * @param key    The key that fits the pattern [a-z0-9/._-]
      */
-    public BukkitNamespacedKey(@NotNull Plugin plugin, @NotNull String key) {
-        Preconditions.checkArgument(plugin != null, "Plugin cannot be null");
+    public BukkitNamespacedKey(@NotNull WolfyUtils api, @NotNull String key) {
+        Preconditions.checkArgument(api != null, "Plugin cannot be null");
         Preconditions.checkArgument(key != null, "Key cannot be null");
-        this.hasPlugin = true;
-        this.namespace = plugin.getName().toLowerCase(Locale.ROOT);
+        this.namespace = api.getName().toLowerCase(Locale.ROOT).replace(" ", "_");
         Preconditions.checkArgument(VALID_NAMESPACE.matcher(this.namespace).matches(), "Invalid namespace. Must be [a-z0-9._-]: %s", this.namespace);
         this.key = new Key(key.toLowerCase(Locale.ROOT));
         String string = this.toString();
@@ -155,7 +154,6 @@ public class BukkitNamespacedKey implements NamespacedKey, Comparable<BukkitName
 
     /**
      * Creates a new NamespacedKey from the specified Bukkit NamespacedKey.<br>
-     * <strong>This is not compatible with {@link #toBukkit()} or {@link #toBukkit(Plugin)}! Therefor those are deprecated and {@link #bukkit()} should be used instead!</strong>
      *
      * @param namespacedKey The bukkit NamespacedKey.
      * @return A new NamespacedKey with the same namespace and key as the Bukkit representation.
@@ -164,35 +162,8 @@ public class BukkitNamespacedKey implements NamespacedKey, Comparable<BukkitName
         return new BukkitNamespacedKey(namespacedKey.getNamespace(), namespacedKey.getKey());
     }
 
-    /**
-     * Creates a new Bukkit NamespacedKey with the plugins' name as the namespace.
-     *
-     * @deprecated A NamespacedKey should be constructed with the plugins' namespace right away (see {@link #BukkitNamespacedKey(Plugin, String)}), which makes this method redundant! Use {@link #bukkit()} instead!
-     * @param plugin The plugin
-     * @return The new constructed NamespacedKey
-     */
-    @Deprecated
-    public org.bukkit.NamespacedKey toBukkit(Plugin plugin) {
-        return new org.bukkit.NamespacedKey(plugin, this.namespace + "/" + this.getKey());
-    }
-
-    /**
-     * Creates a new Bukkit NamespacedKey with the "wolfyutilities" namespace.
-     *
-     * @deprecated A NamespacedKey should be constructed with the plugins' namespace right away (see {@link #BukkitNamespacedKey(Plugin, String)}), which makes this method redundant! Use {@link #bukkit()} instead!
-     * @return The new constructed NamespacedKey
-     */
-    @Deprecated
-    public org.bukkit.NamespacedKey toBukkit() {
-        return toBukkit(WolfyCoreBukkit.getInstance());
-    }
-
     public static BukkitNamespacedKey wolfyutilties(String key) {
-        return new BukkitNamespacedKey(WolfyUtilCore.getInstance(), key);
-    }
-
-    public boolean hasPlugin() {
-        return hasPlugin;
+        return new BukkitNamespacedKey(BukkitNamespacedKey.WOLFYUTILITIES, key);
     }
 
     @Override

@@ -73,12 +73,12 @@ public class ButtonAction<C extends CustomCache> extends Button<C> {
 
     @Override
     public void init(GuiWindow<C> guiWindow) {
-        state.init(guiWindow);
+        initState(state, guiWindow);
     }
 
     @Override
     public void init(GuiCluster<C> guiCluster) {
-        state.init(guiCluster);
+        initState(state, guiCluster);
     }
 
     @Override
@@ -97,15 +97,15 @@ public class ButtonAction<C extends CustomCache> extends Button<C> {
     }
 
     @Override
-    public void preRender(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot, boolean help) {
+    public void preRender(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot) {
         if (state.getPrepareRender() != null) {
-            state.getPrepareRender().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, itemStack, slot, help);
+            state.getPrepareRender().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, itemStack, slot, false);
         }
     }
 
     @Override
-    public void render(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, ItemStack itemStack, int slot, boolean help) throws IOException {
-        applyItem(guiHandler, player, guiInventory, inventory, state, state.getIcon(), slot);
+    public void render(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, int slot) throws IOException {
+        applyItem(guiHandler, player, guiInventory, inventory, state, slot);
     }
 
     @Override
