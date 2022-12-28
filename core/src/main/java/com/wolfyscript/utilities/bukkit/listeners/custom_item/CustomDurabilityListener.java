@@ -19,7 +19,7 @@
 package com.wolfyscript.utilities.bukkit.listeners.custom_item;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
+import com.wolfyscript.utilities.bukkit.world.inventory.item_builder.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
@@ -29,15 +29,15 @@ import org.bukkit.event.player.PlayerItemMendEvent;
 
 public class CustomDurabilityListener implements Listener {
 
-    private final WolfyCoreBukkit plugin;
+    private final WolfyCoreBukkit core;
 
     public CustomDurabilityListener(WolfyCoreBukkit plugin) {
-        this.plugin = plugin;
+        this.core = plugin;
     }
 
     @EventHandler
     public void onDamage(PlayerItemDamageEvent event) {
-        var customItem = new CustomItem(event.getItem());
+        var customItem = new ItemBuilder(core.getWolfyUtils(), event.getItem());
         var itemStack = event.getItem();
         if (customItem.hasCustomDurability()) {
             event.setCancelled(true);
@@ -53,11 +53,11 @@ public class CustomDurabilityListener implements Listener {
 
     @EventHandler
     public void onMend(PlayerItemMendEvent event) {
-        var customItem = new CustomItem(event.getItem());
+        var customItem = new ItemBuilder(core.getWolfyUtils(), event.getItem());
         if (customItem.hasCustomDurability()) {
             int repairAmount = Math.min(event.getExperienceOrb().getExperience() * 2, customItem.getCustomDamage());
             int finalTotalDmg = Math.max(0, customItem.getCustomDamage() - repairAmount);
-            Bukkit.getScheduler().runTask(plugin, () -> customItem.setCustomDamage(finalTotalDmg));
+            Bukkit.getScheduler().runTask(core.getWolfyUtils().getPlugin(), () -> customItem.setCustomDamage(finalTotalDmg));
         }
     }
 }

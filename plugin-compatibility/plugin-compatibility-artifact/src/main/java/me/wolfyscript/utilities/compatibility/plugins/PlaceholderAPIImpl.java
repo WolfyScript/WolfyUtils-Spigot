@@ -18,6 +18,8 @@
 
 package me.wolfyscript.utilities.compatibility.plugins;
 
+import com.google.inject.Inject;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.PlaceholderAPIIntegration;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.events.ExpansionsLoadedEvent;
@@ -47,19 +49,20 @@ public class PlaceholderAPIImpl extends PluginIntegrationAbstract implements Pla
      *
      * @param core       The WolfyUtilCore.
      */
-    protected PlaceholderAPIImpl(WolfyUtilBootstrap core) {
+    @Inject
+    protected PlaceholderAPIImpl(WolfyCoreBukkit core) {
         super(core, PlaceholderAPIIntegration.KEY);
     }
 
     @Override
     public void init(Plugin plugin) {
         getCore().getLogger().info("init PAPI event");
-        Bukkit.getPluginManager().registerEvents(this, core);
+        Bukkit.getPluginManager().registerEvents(this, core.getWolfyUtils().getPlugin());
 
         var valueProviderRegistry = core.getRegistries().getValueProviders();
-        valueProviderRegistry.register(ValueProviderFloatPAPI.KEY, ValueProviderFloatPAPI.class);
-        valueProviderRegistry.register(ValueProviderIntegerPAPI.KEY, ValueProviderIntegerPAPI.class);
-        valueProviderRegistry.register(ValueProviderStringPAPI.KEY, ValueProviderStringPAPI.class);
+        valueProviderRegistry.register(ValueProviderFloatPAPI.class);
+        valueProviderRegistry.register(ValueProviderIntegerPAPI.class);
+        valueProviderRegistry.register(ValueProviderStringPAPI.class);
     }
 
     @Override

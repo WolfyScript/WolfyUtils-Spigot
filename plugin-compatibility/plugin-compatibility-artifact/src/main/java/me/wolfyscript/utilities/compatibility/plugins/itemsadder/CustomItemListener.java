@@ -63,7 +63,7 @@ public class CustomItemListener implements Listener {
                 Bukkit.getPluginManager().callEvent(blockStorageBreakEvent);
                 if (blockStorageBreakEvent.isCancelled()) return;
                 worldStorage.removeBlock(block.getLocation()).ifPresent(storage -> {
-                    event.getBlock().setMetadata(PersistentStorageListener.PREVIOUS_BROKEN_STORE, new FixedMetadataValue(core, storage));
+                    event.getBlock().setMetadata(PersistentStorageListener.PREVIOUS_BROKEN_STORE, new FixedMetadataValue(core.getWolfyUtils().getPlugin(), storage));
                 });
             }
         });

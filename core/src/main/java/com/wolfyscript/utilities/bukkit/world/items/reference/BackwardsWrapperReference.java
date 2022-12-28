@@ -1,7 +1,7 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
 import com.wolfyscript.utilities.KeyedStaticId;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import java.util.HashMap;
@@ -82,7 +82,7 @@ public class BackwardsWrapperReference extends ItemReference {
          */
         public static void registerAPIReferenceParser(APIReference.Parser<?> parser) {
             if (parser instanceof APIReference.PluginParser<?> pluginParser) {
-                if (!WolfyUtilCore.getInstance().getCompatibilityManager().getPlugins().isPluginEnabled(pluginParser.getPluginName())) {
+                if (!WolfyCoreBukkit.getInstance().getCompatibilityManager().getPlugins().isPluginEnabled(pluginParser.getPluginName())) {
                     return;
                 }
                 pluginParser.init(Bukkit.getPluginManager().getPlugin(pluginParser.getPluginName()));

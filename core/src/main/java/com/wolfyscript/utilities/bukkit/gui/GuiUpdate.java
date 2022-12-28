@@ -23,14 +23,12 @@ import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
-import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -48,26 +46,41 @@ public class GuiUpdate<C extends CustomCache> {
     private final InventoryAPI<C> inventoryAPI;
     private final WolfyUtilsBukkit wolfyUtilities;
     private final Player player;
-    private final GUIInventory<C> inventory;
+    private final Inventory inventory;
     private final Inventory queueInventory;
     private final GuiWindow<C> guiWindow;
+    private final GUIHolder<C> guiHolder;
 
-    GuiUpdate(GUIInventory<C> inventory, GuiHandler<C> guiHandler, GuiWindow<C> guiWindow) {
+    GuiUpdate(Inventory inventory, GuiHandler<C> guiHandler, GuiWindow<C> guiWindow) {
         this.guiHandler = guiHandler;
         this.inventoryAPI = guiHandler.getInvAPI();
         this.wolfyUtilities = guiHandler.getWolfyUtils();
         this.player = guiHandler.getPlayer();
         this.guiWindow = guiWindow;
         this.queueInventory = Bukkit.createInventory(null, 54, "");
-        if (inventory != null) {
+        Class<C> cacheType = guiHandler.getInvAPI().customCacheClass;
+        if (inventory != null && inventory.getHolder() instanceof GUIHolder<?> guiHolder && guiHolder.getGuiHandler().getInvAPI().customCacheClass.equals(cacheType)) {
             this.inventory = inventory;
+            this.guiHolder = (GUIHolder<C>) guiHolder; // We checked the cache type, so the type is correct
         } else {
-            String title = BukkitComponentSerializer.legacy().serializeOr(guiWindow.updateTitle(player, null, guiHandler), " ");
-            if (guiWindow.getInventoryType() == null) {
-                this.inventory = wolfyUtilities.getNmsUtil().getInventoryUtil().createGUIInventory(guiHandler, guiWindow, guiWindow.getSize(), title);
+            final var holder = new GUIHolder<>(player, guiHandler, guiWindow);
+            final var title = guiWindow.updateTitle(holder);
+            if (wolfyUtilities.getCore().getCompatibilityManager().isPaper()) {
+                // Paper has direct Adventure support, so use it for better titles!
+                if (guiWindow.getInventoryType() == null || !guiWindow.getInventoryType().isCreatable()) {
+                    this.inventory = Bukkit.createInventory(holder, guiWindow.getSize(), title);
+                } else {
+                    this.inventory = Bukkit.createInventory(holder, guiWindow.getInventoryType(), title);
+                }
             } else {
-                this.inventory = wolfyUtilities.getNmsUtil().getInventoryUtil().createGUIInventory(guiHandler, guiWindow, guiWindow.getInventoryType(), title);
+                if (guiWindow.getInventoryType() == null) {
+                    this.inventory = Bukkit.createInventory(holder, guiWindow.getSize(), BukkitComponentSerializer.legacy().serialize(title));
+                } else {
+                    this.inventory = Bukkit.createInventory(holder, guiWindow.getInventoryType(), BukkitComponentSerializer.legacy().serialize(title));
+                }
             }
+            holder.setActiveInventory(this.inventory);
+            this.guiHolder = holder;
         }
     }
 
@@ -75,20 +88,24 @@ public class GuiUpdate<C extends CustomCache> {
      * @return The {@link GuiHandler} that caused this update.
      */
     public final GuiHandler<C> getGuiHandler() {
-        return guiHandler;
+        return guiHolder.getGuiHandler();
+    }
+
+    public GUIHolder<C> getGuiHolder() {
+        return guiHolder;
     }
 
     /**
      * @return The player that caused this update.
      */
     public final Player getPlayer() {
-        return player;
+        return guiHolder.getPlayer();
     }
 
     /**
-     * @return The {@link GUIInventory} this update was called from.
+     * @return The {@link Inventory} this update was called from.
      */
-    public final GUIInventory<C> getInventory() {
+    public final Inventory getInventory() {
         return inventory;
     }
 
@@ -114,7 +131,7 @@ public class GuiUpdate<C extends CustomCache> {
         Button<C> button = guiWindow.getButton(id);
         if (button != null) {
             guiHandler.setButton(guiWindow, slot, id);
-            renderButton(button, guiHandler, player, slot, guiHandler.isHelpEnabled());
+            renderButton(button, guiHandler, player, slot);
         }
     }
 
@@ -130,7 +147,7 @@ public class GuiUpdate<C extends CustomCache> {
         Button<C> button = inventoryAPI.getButton(namespacedKey);
         if (button != null) {
             guiHandler.setButton(guiWindow, slot, namespacedKey.toString());
-            renderButton(button, guiHandler, player, slot, guiHandler.isHelpEnabled());
+            renderButton(button, guiHandler, player, slot);
         }
     }
 
@@ -143,7 +160,7 @@ public class GuiUpdate<C extends CustomCache> {
     public void setButton(int slot, @NotNull Button<C> button) {
         if (button != null) {
             guiHandler.setButton(guiWindow, slot, button.getId());
-            renderButton(button, guiHandler, player, slot, guiHandler.isHelpEnabled());
+            renderButton(button, guiHandler, player, slot);
         }
     }
 
@@ -161,15 +178,15 @@ public class GuiUpdate<C extends CustomCache> {
         }
         if (button != null) {
             guiHandler.setButton(guiWindow, slot, id);
-            renderButton(button, guiHandler, player, slot, guiHandler.isHelpEnabled());
+            renderButton(button, guiHandler, player, slot);
         }
     }
 
-    private void renderButton(Button<C> button, GuiHandler<C> guiHandler, Player player, int slot, boolean help) {
+    private void renderButton(Button<C> button, GuiHandler<C> guiHandler, Player player, int slot) {
         try {
             var itemStack = this.inventory.getItem(slot);
-            button.preRender(guiHandler, player, this.inventory, itemStack, slot);
-            button.render(guiHandler, player, this.inventory, this.queueInventory, slot);
+            button.preRender(guiHolder, itemStack, slot);
+            button.render(guiHolder, this.queueInventory, slot);
         } catch (IOException e) {
             wolfyUtilities.getConsole().severe("Error while rendering Button \"" + button.getId() + "\"!");
             e.printStackTrace();
@@ -182,11 +199,11 @@ public class GuiUpdate<C extends CustomCache> {
         }
     }
 
-    final void postExecuteButtons(HashMap<Integer, Button<C>> postExecuteBtns, InventoryInteractEvent event) {
+    final void postExecuteButtons(Map<Integer, Button<C>> postExecuteBtns) {
         if (postExecuteBtns != null) {
             postExecuteBtns.forEach((slot, btn) -> {
                 try {
-                    btn.postExecute(guiHandler, player, inventory, inventory.getItem(slot), slot, event);
+                    btn.postExecute(guiHolder, inventory.getItem(slot), slot);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -24,7 +24,8 @@ import com.wolfyscript.utilities.bukkit.gui.button.Button;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonItemInput;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonType;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
-import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
+import com.wolfyscript.utilities.bukkit.gui.callback.CallbackButtonAction;
+import org.bukkit.inventory.Inventory;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -48,8 +49,7 @@ public class InventoryAPI<C extends CustomCache> implements Listener {
     private final WolfyUtilsBukkit wolfyUtilities;
     private final Map<UUID, GuiHandler<C>> guiHandlers = new HashMap<>();
     private final Map<String, GuiCluster<C>> guiClusters = new HashMap<>();
-
-    private final Class<C> customCacheClass;
+    final Class<C> customCacheClass;
 
     public InventoryAPI(Plugin plugin, WolfyUtilsBukkit wolfyUtilities, Class<C> customCacheClass) {
         this.wolfyUtilities = wolfyUtilities;
@@ -198,89 +198,6 @@ public class InventoryAPI<C extends CustomCache> implements Listener {
         if (namespacedKey == null) return null;
         GuiCluster<C> cluster = getGuiCluster(namespacedKey.getNamespace());
         return cluster != null ? cluster.getButton(namespacedKey.getKey()) : null;
-    }
-
-    public void onClick(GuiHandler<C> guiHandler, GUIInventory<C> inventory, InventoryClickEvent event) {
-        GuiWindow<C> guiWindow = inventory.getWindow();
-        event.setCancelled(true);
-        if (guiWindow == null) return;
-        HashMap<Integer, Button<C>> buttons = new HashMap<>();
-        if (inventory.equals(event.getClickedInventory())) {
-            Button<C> clickedBtn = guiHandler.getButton(guiWindow, event.getSlot());
-            if (clickedBtn != null) {
-                buttons.put(event.getSlot(), clickedBtn);
-                event.setCancelled(executeButton(clickedBtn, guiHandler, (Player) event.getWhoClicked(), inventory, event.getSlot(), event));
-                if (Objects.equals(clickedBtn.getType(), ButtonType.ITEM_SLOT)) { //If the button is marked as an Item slot it may affect other buttons too!
-                    if (event.getAction().equals(InventoryAction.COLLECT_TO_CURSOR) || event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
-                        var clickedBtnClass = clickedBtn.getClass();
-                        for (Map.Entry<Integer, String> buttonEntry : guiHandler.getCustomCache().getButtons(guiWindow).entrySet()) {
-                            if (event.getSlot() != buttonEntry.getKey()) {
-                                Button<C> button = guiWindow.getButton(buttonEntry.getValue());
-                                if (clickedBtnClass.isInstance(button)) { //Make sure to only execute the buttons that are of the same type as the clicked one.
-                                    buttons.put(buttonEntry.getKey(), button);
-                                    event.setCancelled(executeButton(button, guiHandler, (Player) event.getWhoClicked(), inventory, buttonEntry.getKey(), event));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } else if (!event.getAction().equals(InventoryAction.COLLECT_TO_CURSOR)) {
-            event.setCancelled(false);
-            if (event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
-                for (Map.Entry<Integer, String> buttonEntry : guiHandler.getCustomCache().getButtons(guiWindow).entrySet()) {
-                    Button<C> button = guiWindow.getButton(buttonEntry.getValue());
-                    if (button instanceof ButtonItemInput) {
-                        buttons.put(buttonEntry.getKey(), button);
-                        if (executeButton(button, guiHandler, (Player) event.getWhoClicked(), inventory, buttonEntry.getKey(), event)) {
-                            event.setCancelled(true);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        if (guiHandler.openedPreviousWindow) {
-            guiHandler.openedPreviousWindow = false;
-        } else if (guiHandler.getWindow() != null && guiHandler.isWindowOpen()) {
-            guiWindow.update(inventory, buttons, event);
-        }
-    }
-
-    public void onDrag(GuiHandler<C> guiHandler, GUIInventory<C> inventory, InventoryDragEvent event) {
-        if (event.getRawSlots().parallelStream().anyMatch(rawSlot -> !Objects.equals(event.getView().getInventory(rawSlot), inventory))) {
-            event.setCancelled(true);
-            return;
-        }
-        GuiWindow<C> guiWindow = guiHandler.getWindow();
-        if (guiWindow != null) {
-            HashMap<Integer, Button<C>> buttons = new HashMap<>();
-            for (int slot : event.getInventorySlots()) {
-                Button<C> button = guiHandler.getButton(guiWindow, slot);
-                if (button == null) {
-                    event.setCancelled(true);
-                    return;
-                }
-                buttons.put(slot, button);
-            }
-            for (Map.Entry<Integer, Button<C>> button : buttons.entrySet()) {
-                event.setCancelled(executeButton(button.getValue(), guiHandler, (Player) event.getWhoClicked(), inventory, button.getKey(), event));
-            }
-            if (guiHandler.openedPreviousWindow) {
-                guiHandler.openedPreviousWindow = false;
-            } else if (guiHandler.getWindow() != null) {
-                guiWindow.update(inventory, buttons, event);
-            }
-        }
-    }
-
-    private boolean executeButton(Button<C> button, GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, int slot, InventoryInteractEvent event) {
-        try {
-            return button.execute(guiHandler, player, inventory, slot, event);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return true;
-        }
     }
 
 }

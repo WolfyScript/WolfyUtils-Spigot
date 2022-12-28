@@ -18,6 +18,8 @@
 
 package me.wolfyscript.utilities.compatibility.plugins;
 
+import com.google.inject.Inject;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.OraxenIntegration;
 import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
@@ -29,7 +31,8 @@ import org.bukkit.plugin.Plugin;
 @WUPluginIntegration(pluginName = OraxenIntegration.KEY)
 public class OraxenImpl extends PluginIntegrationAbstract implements OraxenIntegration {
 
-    protected OraxenImpl(WolfyUtilBootstrap core) {
+    @Inject
+    protected OraxenImpl(WolfyCoreBukkit core) {
         super(core, OraxenIntegration.KEY);
     }
 

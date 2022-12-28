@@ -18,13 +18,12 @@
 
 package com.wolfyscript.utilities.bukkit.gui.callback;
 
-import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
+import com.wolfyscript.utilities.common.gui.ButtonInteractionResult;
+import com.wolfyscript.utilities.bukkit.gui.GUIHolder;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
-import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
+import com.wolfyscript.utilities.common.gui.GUIInteractionDetails;
 import java.io.IOException;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryInteractEvent;
 
 /**
  * @param <C> The type of the {@link CustomCache}
@@ -41,5 +40,6 @@ public interface CallbackButtonAction<C extends CustomCache> {
      * @return a boolean indicating whether the interaction should be cancelled. If true the interaction is cancelled.
      * @throws IOException if an error occurs on the execution.
      */
-    boolean run(C cache, GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, Button<C> button, int slot, InventoryInteractEvent event) throws IOException;
+    ButtonInteractionResult run(GUIHolder<C> holder, C cache, Button<C> button, int slot, GUIInteractionDetails details) throws IOException;
+
 }

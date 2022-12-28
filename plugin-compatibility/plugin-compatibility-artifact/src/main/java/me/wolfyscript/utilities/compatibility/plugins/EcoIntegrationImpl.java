@@ -18,8 +18,10 @@
 
 package me.wolfyscript.utilities.compatibility.plugins;
 
+import com.google.inject.Inject;
 import com.willfp.eco.core.items.CustomItem;
 import com.willfp.eco.core.items.Items;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.EcoIntegration;
 import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
@@ -39,7 +41,8 @@ public class EcoIntegrationImpl extends PluginIntegrationAbstract implements Eco
      *
      * @param core       The WolfyUtilCore.
      */
-    protected EcoIntegrationImpl(WolfyUtilBootstrap core) {
+    @Inject
+    protected EcoIntegrationImpl(WolfyCoreBukkit core) {
         super(core, EcoIntegration.KEY);
     }
 

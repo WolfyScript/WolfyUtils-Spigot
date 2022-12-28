@@ -19,6 +19,8 @@
 package me.wolfyscript.utilities.compatibility.plugins;
 
 import com.elmakers.mine.bukkit.api.event.LoadEvent;
+import com.google.inject.Inject;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
@@ -34,14 +36,15 @@ public class MagicImpl extends PluginIntegrationAbstract implements Listener {
 
     static final String PLUGIN_NAME = "Magic";
 
-    protected MagicImpl(WolfyUtilBootstrap core) {
+    @Inject
+    protected MagicImpl(WolfyCoreBukkit core) {
         super(core, PLUGIN_NAME);
     }
 
     @Override
     public void init(Plugin plugin) {
         core.registerAPIReference(new MagicRefImpl.Parser());
-        Bukkit.getPluginManager().registerEvents(this, core);
+        Bukkit.getPluginManager().registerEvents(this, core.getWolfyUtils().getPlugin());
     }
 
     @Override

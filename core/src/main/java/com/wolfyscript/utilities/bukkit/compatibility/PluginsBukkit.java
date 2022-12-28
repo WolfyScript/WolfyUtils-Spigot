@@ -19,11 +19,18 @@
 package com.wolfyscript.utilities.bukkit.compatibility;
 
 import com.google.common.base.Preconditions;
+import com.google.inject.ConfigurationException;
+import com.google.inject.CreationException;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.ProvisionException;
+import com.google.inject.name.Names;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.events.DependenciesLoadedEvent;
+import com.wolfyscript.utilities.common.WolfyCore;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -101,10 +108,13 @@ final class PluginsBukkit implements Plugins, Listener {
         if (integrationClass != null) {
             var integration = pluginIntegrations.computeIfAbsent(pluginName, (key) -> {
                 try {
-                    Constructor<? extends PluginIntegrationAbstract> integrationConstructor = integrationClass.getDeclaredConstructor(WolfyUtilBootstrap.class);
-                    integrationConstructor.setAccessible(true);
-                    return integrationConstructor.newInstance(core);
-                } catch (InstantiationException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                    Injector injector = Guice.createInjector(binder -> {
+                        binder.bindConstant().annotatedWith(Names.named("pluginName")).to(pluginName);
+                        binder.bind(WolfyCore.class).toInstance(core);
+                        binder.bind(WolfyCoreBukkit.class).toInstance(core);
+                    });
+                    return injector.getInstance(integrationClass);
+                } catch (ConfigurationException | ProvisionException | CreationException e) {
                     core.getLogger().warning("     Failed to initialise integration for " + pluginName + "! Cause: " + e.getMessage());
                     return null;
                 }

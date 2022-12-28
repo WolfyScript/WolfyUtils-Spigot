@@ -36,7 +36,7 @@ public class MessageFactory {
     public void sendWolfyUtilsInfo(Player player) {
         MCByteBuf buf = wolfyUtils.getNmsUtil().getNetworkUtil().buffer();
         buf.writeBoolean(true);
-        buf.writeUtf(plugin.getDescription().getVersion());
+        buf.writeUtf(plugin.getWolfyUtils().getPlugin().getDescription().getVersion());
         wolfyUtils.getMessageAPI().send(Messages.CONNECT_INFO, player, buf);
     }
 

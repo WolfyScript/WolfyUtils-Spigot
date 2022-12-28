@@ -27,7 +27,6 @@ import com.wolfyscript.utilities.bukkit.gui.callback.CallbackButtonAction;
 import com.wolfyscript.utilities.bukkit.gui.callback.CallbackButtonRender;
 import com.wolfyscript.utilities.bukkit.gui.callback.CallbackChatInput;
 import com.wolfyscript.utilities.bukkit.gui.callback.CallbackChatTabComplete;
-import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +39,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -507,13 +507,13 @@ public class GuiHandler<C extends CustomCache> implements Listener {
     /**
      * Called when the inventory is closed.
      *
-     * @param guiInventory The {@link GUIInventory} that is closed.
+     * @param guiInventory The {@link Inventory} that is closed.
      * @param event        The {@link InventoryCloseEvent} that caused this action.
      */
-    public void onClose(GUIInventory<C> guiInventory, InventoryCloseEvent event) {
+    public void onClose(GUIHolder<C> holder) {
         getWindowUpdateTask().ifPresent(BukkitTask::cancel);
         if (!clusterHistory.isEmpty() && !switchWindow) {
-            if (guiInventory.getWindow().onClose(this, guiInventory, event.getView())) {
+            if (holder.getWindow().onClose(holder)) {
                 this.openCluster();
             } else {
                 this.isWindowOpen = false;

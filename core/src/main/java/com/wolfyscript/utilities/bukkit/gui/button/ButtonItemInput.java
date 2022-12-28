@@ -18,17 +18,16 @@
 
 package com.wolfyscript.utilities.bukkit.gui.button;
 
+import com.wolfyscript.utilities.common.gui.ButtonInteractionResult;
+import com.wolfyscript.utilities.bukkit.gui.GUIHolder;
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
-import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -48,26 +47,26 @@ public class ButtonItemInput<C extends CustomCache> extends ButtonAction<C> {
     }
 
     @Override
-    public boolean execute(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, int slot, InventoryInteractEvent event) throws IOException {
+    public ButtonInteractionResult execute(GUIHolder<C> holder, int slot) throws IOException {
         if (!getType().equals(ButtonType.DUMMY) && getState().getAction() != null) {
-            return getState().getAction().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, slot, event);
+            return getState().getAction().run(holder, holder.getGuiHandler().getCustomCache(), this, slot, null); // TODO: Details
         }
-        return false;
+        return ButtonInteractionResult.cancel(false);
     }
 
     @Override
-    public void postExecute(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot, InventoryInteractEvent event) throws IOException {
-        content.put(guiHandler, itemStack != null ? itemStack.clone() : new ItemStack(Material.AIR));
-        super.postExecute(guiHandler, player, inventory, itemStack, slot, event);
+    public void postExecute(GUIHolder<C> holder, ItemStack itemStack, int slot) throws IOException {
+        content.put(holder.getGuiHandler(), itemStack != null ? itemStack.clone() : new ItemStack(Material.AIR));
+        super.postExecute(holder, itemStack, slot);
     }
 
     @Override
-    public void render(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, int slot) throws IOException {
-        ItemStack item = getContent(guiHandler);
+    public void render(GUIHolder<C> holder, Inventory queueInventory, int slot) throws IOException {
+        ItemStack item = getContent(holder.getGuiHandler());
         if (getState().getRenderAction() != null) {
-            item = getState().getRenderAction().run(guiHandler.getCustomCache(), guiHandler, player, guiInventory, this, item, slot).getCustomStack().orElse(item);
+            item = getState().getRenderAction().run(holder, holder.getGuiHandler().getCustomCache(), this, slot, item).getCustomStack().orElse(item);
         }
-        inventory.setItem(slot, item);
+        queueInventory.setItem(slot, item);
     }
 
     public ItemStack getContent(GuiHandler<C> guiHandler) {

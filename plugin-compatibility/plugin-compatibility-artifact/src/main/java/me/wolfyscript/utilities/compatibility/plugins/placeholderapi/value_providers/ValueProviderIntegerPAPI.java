@@ -18,18 +18,20 @@
 
 package me.wolfyscript.utilities.compatibility.plugins.placeholderapi.value_providers;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.eval.context.EvalContext;
 
+@KeyedStaticId(key = "int/papi")
 public class ValueProviderIntegerPAPI extends ValueProviderPlaceholderAPI<Integer> {
 
-    public static final BukkitNamespacedKey KEY = BukkitNamespacedKey.wolfyutilties("int/papi");
-
     @JsonCreator
-    protected ValueProviderIntegerPAPI(@JsonProperty("value") String value) {
-        super(KEY, value);
+    protected ValueProviderIntegerPAPI(@JacksonInject WolfyUtils wolfyUtils, @JsonProperty("value") String value) {
+        super(wolfyUtils, value);
     }
 
     @Override

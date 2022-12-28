@@ -18,17 +18,15 @@
 
 package com.wolfyscript.utilities.bukkit.gui.button;
 
+import com.wolfyscript.utilities.common.gui.ButtonInteractionResult;
+import com.wolfyscript.utilities.bukkit.gui.GUIHolder;
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
-import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import com.wolfyscript.utilities.bukkit.gui.callback.CallbackChatInput;
 import com.wolfyscript.utilities.bukkit.gui.callback.CallbackChatTabComplete;
-import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import java.io.IOException;
 import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryInteractEvent;
 
 /**
  * @param <C> The type of the {@link CustomCache}
@@ -62,9 +60,10 @@ public class ButtonChatInput<C extends CustomCache> extends ButtonAction<C> {
     }
 
     @Override
-    public boolean execute(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, int slot, InventoryInteractEvent event) throws IOException {
+    public ButtonInteractionResult execute(GUIHolder<C> holder, int slot) throws IOException {
         //If the ButtonAction returns true then the ChatInput will be created.
-        if (super.execute(guiHandler, player, inventory, slot, event)) {
+        if (!super.execute(holder, slot).isCancelled()) {
+            final var guiHandler = holder.getGuiHandler();
             guiHandler.setChatTabComplete(tabComplete);
             guiHandler.setChatInputAction(action);
             if (msg != null) {
@@ -73,7 +72,7 @@ public class ButtonChatInput<C extends CustomCache> extends ButtonAction<C> {
             guiHandler.close();
         }
         //If the ButtonAction returns false then the ChatInput won't be created.
-        return true; //The click is always cancelled.
+        return ButtonInteractionResult.cancel(true); //The click is always cancelled.
     }
 
     public static class Builder<C extends CustomCache> extends AbstractBuilder<C, ButtonChatInput<C>, Builder<C>> {

@@ -206,7 +206,7 @@ public class PersistentStorageListener implements Listener {
                 if (blockStorageBreakEvent.isCancelled()) return;
                 worldStorage.removeBlock(block.getLocation()).ifPresent(storage -> {
                     if (event.isDropItems()) {
-                        event.getBlock().setMetadata(PREVIOUS_BROKEN_STORE, new FixedMetadataValue(core, storage));
+                        event.getBlock().setMetadata(PREVIOUS_BROKEN_STORE, new FixedMetadataValue(core.getWolfyUtils().getPlugin(), storage));
                     }
                 });
             }
@@ -279,7 +279,7 @@ public class PersistentStorageListener implements Listener {
     public void onBlockStorageItemDrop(BlockDropItemEvent event) {
         var state = event.getBlockState(); // Get previous state with old metadata.
         state.getMetadata(PREVIOUS_BROKEN_STORE).stream().filter(metadataValue -> Objects.equals(metadataValue.getOwningPlugin(), core)).findFirst().ifPresent(metadataValue -> {
-            event.getBlock().removeMetadata(PREVIOUS_BROKEN_STORE, core); //Remove old metadata from block!
+            event.getBlock().removeMetadata(PREVIOUS_BROKEN_STORE, core.getWolfyUtils().getPlugin()); //Remove old metadata from block!
             if (metadataValue.value() instanceof BlockStorage store) {
                 var blockStoreDropItemsEvent = new BlockStorageDropItemsEvent(event.getBlock(), state, store, event.getPlayer(), event.getItems());
                 Bukkit.getPluginManager().callEvent(blockStoreDropItemsEvent);

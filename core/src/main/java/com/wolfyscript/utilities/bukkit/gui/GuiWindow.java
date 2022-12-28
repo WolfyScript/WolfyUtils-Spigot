@@ -25,7 +25,6 @@ import com.wolfyscript.utilities.bukkit.chat.ChatColor;
 import com.wolfyscript.utilities.bukkit.chat.ClickAction;
 import com.wolfyscript.utilities.bukkit.chat.ClickData;
 import com.wolfyscript.utilities.bukkit.chat.IBukkitChat;
-import com.wolfyscript.utilities.bukkit.compatibility.plugins.PlaceholderAPIIntegration;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonAction;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonChatInput;
@@ -35,21 +34,20 @@ import com.wolfyscript.utilities.bukkit.gui.button.ButtonMultipleChoice;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonToggle;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import com.wolfyscript.utilities.bukkit.gui.callback.CallbackChatInput;
-import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import com.wolfyscript.utilities.bukkit.nms.inventory.InventoryUpdate;
 import com.wolfyscript.utilities.tuple.Pair;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.Nullable;
@@ -81,7 +79,6 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
     private int titleUpdatePeriod = -1;
     private int titleUpdateDelay = 20;
     private final Permission permission;
-    private boolean useLegacyTitleUpdate = false;
 
     //Inventory
     private final InventoryType inventoryType;
@@ -135,18 +132,6 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
         this.forceSyncUpdate = forceSyncUpdate;
         this.permission = loadPermission();
         Bukkit.getPluginManager().registerEvents(this, wolfyUtilities.getPlugin());
-
-        //Check if the old title update method is used.
-        try {
-            Class<?> newTitleMethodClass = getClass().getMethod("onUpdateTitle", Player.class, GUIInventory.class, GuiHandler.class).getDeclaringClass();
-            Class<?> oldTitleMethodClass = getClass().getMethod("onUpdateTitle", String.class, GUIInventory.class, GuiHandler.class).getDeclaringClass();
-            if (!newTitleMethodClass.equals(getClass()) && oldTitleMethodClass.equals(getClass())) {
-                wolfyUtilities.getConsole().getLogger().warning("GuiWindow " + namespacedKey + " is using deprecated title method!");
-                useLegacyTitleUpdate = true;
-            }
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
     }
 
     private Permission loadPermission() {
@@ -203,29 +188,10 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      * Using {@link #setTitleUpdateDelay(int)} and {@link #setTitleUpdatePeriod(int)} you can set the frequency at which the title is updated.<br>
      * When enabled this will be called every specified period.
      *
-     * @param originalTitle The original title from the language file.
-     * @param inventory     The inventory instance, which title is updated. Null when the inventory is opened for the first time!
-     * @param guiHandler    The handler that the inventory belongs to.
      * @return The new modified title. Color codes using & will be converted.
      */
-    @Deprecated
-    public String onUpdateTitle(String originalTitle, @Nullable GUIInventory<C> inventory, GuiHandler<C> guiHandler) {
-        return originalTitle;
-    }
-
-    /**
-     * Called each time the title of the window is updated.<br>
-     * By default, that only happens once, when the player opens the inventory.<br>
-     * Using {@link #setTitleUpdateDelay(int)} and {@link #setTitleUpdatePeriod(int)} you can set the frequency at which the title is updated.<br>
-     * When enabled this will be called every specified period.
-     *
-     * @param player        The player that the window belongs to.
-     * @param inventory     The inventory instance, which title is updated. Null when the inventory is opened for the first time!
-     * @param guiHandler    The handler that the inventory belongs to.
-     * @return The new modified title. Color codes using & will be converted.
-     */
-    public Component onUpdateTitle(Player player, @Nullable GUIInventory<C> inventory, GuiHandler<C> guiHandler) {
-        return getInventoryTitle(player);
+    public Component onUpdateTitle(GUIHolder<C> holder) {
+        return getInventoryTitle(holder);
     }
 
     /**
@@ -242,35 +208,32 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
     /**
      * This method allows you to execute code when this window is closed and block players from closing the GUI.
      *
-     * @param guiHandler   the gui handler that caused this close event.
-     * @param guiInventory The {@link GUIInventory} that is being closed.
-     * @param transaction  the inventory view of the player.
      * @return true if the gui close should be cancelled.
      */
-    public boolean onClose(GuiHandler<C> guiHandler, GUIInventory<C> guiInventory, InventoryView transaction) {
+    public boolean onClose(GUIHolder<C> holder) {
         return false;
     }
 
     void create(GuiHandler<C> guiHandler) {
-        update(null, guiHandler, null, null, true);
+        update(null, guiHandler, null, true);
     }
 
-    void update(GUIInventory<C> inventory, HashMap<Integer, Button<C>> postExecuteBtns, InventoryInteractEvent event) {
-        update(inventory, inventory.getGuiHandler(), postExecuteBtns, event, false);
+    void update(Inventory inventory, GuiHandler<C> guiHandler, Map<Integer, Button<C>> postExecuteBtns) {
+        update(inventory, guiHandler, postExecuteBtns, false);
     }
 
-    private void update(GUIInventory<C> inventory, GuiHandler<C> guiHandler, HashMap<Integer, Button<C>> postExecuteBtns, InventoryInteractEvent event, boolean openInventory) {
+    private void update(Inventory inventory, GuiHandler<C> guiHandler, Map<Integer, Button<C>> postExecuteBtns, boolean openInventory) {
         Bukkit.getScheduler().runTask(guiHandler.getWolfyUtils().getPlugin(), () -> {
             GuiUpdate<C> guiUpdate = new GuiUpdate<>(inventory, guiHandler, this);
-            guiUpdate.postExecuteButtons(postExecuteBtns, event);
-            callUpdate(guiHandler, guiUpdate, openInventory);
+            guiUpdate.postExecuteButtons(postExecuteBtns);
+            callUpdate(guiUpdate, openInventory);
         });
     }
 
-    private void callUpdate(GuiHandler<C> guiHandler, GuiUpdate<C> guiUpdate, boolean openInventory) {
-        if (!guiHandler.isChatEventActive()) {
+    private void callUpdate(GuiUpdate<C> guiUpdate, boolean openInventory) {
+        if (!guiUpdate.getGuiHandler().isChatEventActive()) {
             onUpdateSync(guiUpdate);
-            Runnable runnable = () -> openInventory(guiHandler, guiUpdate, openInventory);
+            Runnable runnable = () -> openInventory(guiUpdate, openInventory);
             if (forceSyncUpdate) {
                 runnable.run();
             } else {
@@ -279,12 +242,13 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
         }
     }
 
-    private void openInventory(GuiHandler<C> guiHandler, GuiUpdate<C> guiUpdate, boolean openInventory) {
+    private void openInventory(GuiUpdate<C> guiUpdate, boolean openInventory) {
         onUpdateAsync(guiUpdate);
         guiUpdate.applyChanges();
         if (openInventory) {
             Bukkit.getScheduler().runTask(wolfyUtilities.getPlugin(), () -> {
-                var inv = guiUpdate.getInventory();
+                final var guiHandler = guiUpdate.getGuiHandler();
+                final var inv = guiUpdate.getInventory();
                 guiHandler.setSwitchWindow(true);
                 guiHandler.getPlayer().openInventory(inv);
                 guiHandler.setSwitchWindow(false);
@@ -292,7 +256,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
                     guiHandler.setWindowUpdateTask(Bukkit.getScheduler().runTaskTimer(wolfyUtilities.getPlugin(), () -> {
                         var player = guiHandler.getPlayer();
                         if (player != null) {
-                            InventoryUpdate.updateInventory(wolfyUtilities.getCore().getWolfyUtils().getPlugin(), player, updateTitle(player, inv, guiHandler));
+                            InventoryUpdate.updateInventory(wolfyUtilities.getCore().getWolfyUtils().getPlugin(), player, updateTitle(guiUpdate.getGuiHolder()));
                         }
                     }, titleUpdateDelay, titleUpdatePeriod));
                 }
@@ -477,24 +441,12 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
         return BukkitComponentSerializer.legacy().serialize(getInventoryTitle(null));
     }
 
-    protected Component getInventoryTitle(Player player) {
-        return wolfyUtilities.getLanguageAPI().getComponent("inventories." + namespacedKey.getNamespace() + "." + namespacedKey.getKey() + ".gui_name", TagResolverUtil.papi(player));
+    protected Component getInventoryTitle(GUIHolder<C> holder) {
+        return wolfyUtilities.getLanguageAPI().getComponent("inventories." + namespacedKey.getNamespace() + "." + namespacedKey.getKey() + ".gui_name", TagResolverUtil.papi(holder.getPlayer()));
     }
 
-    Component updateTitle(Player player, GUIInventory<C> guiInventory, GuiHandler<C> guiHandler) {
-        if (useLegacyTitleUpdate) {
-            //This window still uses the deprecated update method
-            String title = onUpdateTitle(BukkitComponentSerializer.legacy().serialize(getInventoryTitle(player)), null, guiHandler);
-            var desc = wolfyUtilities.getCore().getWolfyUtils().getPlugin().getDescription();
-            title = title.replace("%plugin.version%", desc.getVersion()).replace("%plugin.author%", desc.getAuthors().toString()).replace("%plugin.name%", desc.getName());
-
-            PlaceholderAPIIntegration integration = wolfyUtilities.getCore().getCompatibilityManager().getPlugins().getIntegration("PlaceholderAPI", PlaceholderAPIIntegration.class);
-            if (integration != null) {
-                title = integration.setPlaceholders(player, integration.setBracketPlaceholders(player, title));
-            }
-            return BukkitComponentSerializer.legacy().deserialize(title);
-        }
-        return onUpdateTitle(player, guiInventory, guiHandler);
+    Component updateTitle(GUIHolder<C> holder) {
+        return onUpdateTitle(holder);
     }
 
     /**

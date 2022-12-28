@@ -18,16 +18,14 @@
 
 package com.wolfyscript.utilities.bukkit.gui.button;
 
+import com.wolfyscript.utilities.common.gui.ButtonInteractionResult;
+import com.wolfyscript.utilities.bukkit.gui.GUIHolder;
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
-import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.GuiUpdate;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
-import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import java.io.IOException;
 import java.util.function.Consumer;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -82,30 +80,30 @@ public class ButtonAction<C extends CustomCache> extends Button<C> {
     }
 
     @Override
-    public boolean execute(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, int slot, InventoryInteractEvent event) throws IOException {
+    public ButtonInteractionResult execute(GUIHolder<C> holder, int slot) throws IOException {
         if (!type.equals(ButtonType.DUMMY) && state.getAction() != null) {
-            return state.getAction().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, slot, event);
+            return state.getAction().run(holder, holder.getGuiHandler().getCustomCache(), this, slot, null); // TODO: Details
         }
-        return true;
+        return ButtonInteractionResult.def();
     }
 
     @Override
-    public void postExecute(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot, InventoryInteractEvent event) throws IOException {
+    public void postExecute(GUIHolder<C> holder, ItemStack itemStack, int slot) throws IOException {
         if (state.getPostAction() != null) {
-            state.getPostAction().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, itemStack, slot, event);
+            state.getPostAction().run(holder, holder.getGuiHandler().getCustomCache(), this, slot, itemStack, null); // TODO: Details
         }
     }
 
     @Override
-    public void preRender(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot) {
+    public void preRender(GUIHolder<C> holder, ItemStack itemStack, int slot) {
         if (state.getPrepareRender() != null) {
-            state.getPrepareRender().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, itemStack, slot, false);
+            state.getPrepareRender().run(holder, holder.getGuiHandler().getCustomCache(), this, slot, itemStack);
         }
     }
 
     @Override
-    public void render(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, int slot) throws IOException {
-        applyItem(guiHandler, player, guiInventory, inventory, state, slot);
+    public void render(GUIHolder<C> holder, Inventory queueInventory, int slot) throws IOException {
+        applyItem(holder, state, slot, queueInventory);
     }
 
     @Override

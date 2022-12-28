@@ -46,7 +46,7 @@ public class InputCommand implements TabExecutor {
                     .filter(WolfyUtilsBukkit::hasInventoryAPI)
                     .map(wolfyUtilities -> wolfyUtilities.getInventoryAPI().getGuiHandler(player))
                     .filter(GuiHandler::isChatEventActive)
-                    .forEach(guiHandler -> Bukkit.getScheduler().runTask(plugin, () -> {
+                    .forEach(guiHandler -> Bukkit.getScheduler().runTask(guiHandler.getWolfyUtils().getPlugin(), () -> {
                         //Handles ChatInput
                         if (!guiHandler.onChat(player, String.join(" ", args).trim(), args)) {
                             guiHandler.setChatInputAction(null);

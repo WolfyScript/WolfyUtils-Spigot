@@ -18,6 +18,8 @@
 
 package me.wolfyscript.utilities.compatibility.plugins;
 
+import com.google.inject.Inject;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
@@ -30,7 +32,8 @@ public class MMOItemsImpl extends PluginIntegrationAbstract {
 
     static final String PLUGIN_NAME = "MMOItems";
 
-    protected MMOItemsImpl(WolfyUtilBootstrap core) {
+    @Inject
+    protected MMOItemsImpl(WolfyCoreBukkit core) {
         super(core, PLUGIN_NAME);
     }
 

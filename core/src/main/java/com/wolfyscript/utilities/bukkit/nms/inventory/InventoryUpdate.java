@@ -153,9 +153,9 @@ public final class InventoryUpdate {
                         plugin.getDescription().getName()));
                 return;
             }
-            Object object = container.getObject();
+            Object containerTypeObject = container.getObject();
             // Create packet.
-            Object packet = packetPlayOutOpenWindowConstructor.newInstance(windowId, object, title);
+            Object packet = packetPlayOutOpenWindowConstructor.newInstance(windowId, containerTypeObject, title);
 
             // Send packet sync.
             Reflection.sendPacket(player, packet);

@@ -20,6 +20,7 @@ package com.wolfyscript.utilities.bukkit.world.inventory;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.world.inventory.item_builder.ItemBuilder;
 import java.lang.reflect.Field;
 import java.util.UUID;
@@ -42,7 +43,7 @@ public class PlayerHeadUtils {
      * @return the Player Head ItemStack with the corresponding Texture
      */
     public static ItemStack getViaValue(String value) {
-        return new ItemBuilder(Material.PLAYER_HEAD).setPlayerHeadValue(value).create();
+        return new ItemBuilder(WolfyCoreBukkit.getInstance().getWolfyUtils(), Material.PLAYER_HEAD).setPlayerHeadValue(value).create();
     }
 
     /**
@@ -56,7 +57,7 @@ public class PlayerHeadUtils {
      * @return the Player Head ItemStack with the corresponding Texture
      */
     public static ItemStack getViaValue(String value, String name, UUID uuid) {
-        return new ItemBuilder(Material.PLAYER_HEAD).setPlayerHeadValue(value, name, uuid).create();
+        return new ItemBuilder(WolfyCoreBukkit.getInstance().getWolfyUtils(), Material.PLAYER_HEAD).setPlayerHeadValue(value, name, uuid).create();
     }
 
     /**
@@ -69,7 +70,7 @@ public class PlayerHeadUtils {
      * @return the Player Head ItemStack with the corresponding Texture
      */
     public static ItemStack getViaURL(String value) {
-        return new ItemBuilder(Material.PLAYER_HEAD).setPlayerHeadURL(value).create();
+        return new ItemBuilder(WolfyCoreBukkit.getInstance().getWolfyUtils(), Material.PLAYER_HEAD).setPlayerHeadURL(value).create();
     }
 
     /**
@@ -85,7 +86,7 @@ public class PlayerHeadUtils {
      * @return the Player Head ItemStack with the corresponding Texture
      */
     public static ItemStack getViaURL(String value, String name, UUID uuid) {
-        return new ItemBuilder(Material.PLAYER_HEAD).setPlayerHeadURL(value, name, uuid).create();
+        return new ItemBuilder(WolfyCoreBukkit.getInstance().getWolfyUtils(), Material.PLAYER_HEAD).setPlayerHeadURL(value, name, uuid).create();
     }
 
     /**

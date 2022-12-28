@@ -18,19 +18,19 @@
 
 package com.wolfyscript.utilities.bukkit.gui.button;
 
+import com.wolfyscript.utilities.common.gui.ButtonInteractionResult;
+import com.wolfyscript.utilities.bukkit.gui.GUIHolder;
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
-import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +46,7 @@ public class ButtonMultipleChoice<C extends CustomCache> extends Button<C> {
 
     private final List<ButtonState<C>> states;
     private final StateFunction<C> stateFunction;
-    private final HashMap<GuiHandler<C>, Integer> settings;
+    private final Map<GuiHandler<C>, Integer> settings;
 
     /**
      * @param id            The id of the Button
@@ -57,7 +57,7 @@ public class ButtonMultipleChoice<C extends CustomCache> extends Button<C> {
         super(id, ButtonType.CHOICES);
         this.states = states;
         settings = new HashMap<>();
-        this.stateFunction = stateFunction == null ? (cache, guiHandler, player, inventory, slot) -> settings.getOrDefault(guiHandler, 0) : stateFunction;
+        this.stateFunction = stateFunction == null ? ((holder, cache, button, slot) -> settings.getOrDefault(holder.getGuiHandler(), 0)) : stateFunction;
     }
 
     @Override
@@ -75,46 +75,45 @@ public class ButtonMultipleChoice<C extends CustomCache> extends Button<C> {
     }
 
     @Override
-    public boolean execute(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, int slot, InventoryInteractEvent event) throws IOException {
-        int setting = settings.getOrDefault(guiHandler, 0);
+    public ButtonInteractionResult execute(GUIHolder<C> holder, int slot) throws IOException {
+        int setting = settings.getOrDefault(holder.getGuiHandler(), 0);
         if (states != null && setting < states.size()) {
             ButtonState<C> btnState = states.get(setting);
             setting++;
             if (setting >= states.size()) {
-                settings.put(guiHandler, 0);
+                settings.put(holder.getGuiHandler(), 0);
             } else {
-                settings.put(guiHandler, setting);
+                settings.put(holder.getGuiHandler(), setting);
             }
-            return btnState.getAction().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, slot, event);
+            return btnState.getAction().run(holder, holder.getGuiHandler().getCustomCache(), this, slot, null); // TODO: Details
         }
-        return true;
+        return ButtonInteractionResult.def();
     }
 
     @Override
-    public void postExecute(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot, InventoryInteractEvent event) throws IOException {
-        int setting = settings.computeIfAbsent(guiHandler, g -> 0);
+    public void postExecute(GUIHolder<C> holder, ItemStack itemStack, int slot) throws IOException {
+        int setting = settings.computeIfAbsent(holder.getGuiHandler(), g -> 0);
         if (states != null && setting < states.size()) {
             ButtonState<C> btnState = states.get(setting);
             if (btnState.getPostAction() != null) {
-                btnState.getPostAction().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, itemStack, slot, event);
+                btnState.getPostAction().run(holder, holder.getGuiHandler().getCustomCache(), this, slot, itemStack, null); // TODO: Details
             }
         }
     }
 
     @Override
-    public void preRender(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot) {
-        int setting = stateFunction.run(guiHandler.getCustomCache(), guiHandler, player, inventory, slot);
+    public void preRender(GUIHolder<C> holder, ItemStack itemStack, int slot) {
+        int setting = stateFunction.run(holder, holder.getGuiHandler().getCustomCache(), this, slot);
         if (states != null && states.size() > setting && states.get(setting).getPrepareRender() != null) {
-            states.get(setting).getPrepareRender().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, itemStack, slot, false);
+            states.get(setting).getPrepareRender().run(holder, holder.getGuiHandler().getCustomCache(), this, slot, itemStack);
         }
     }
 
     @Override
-    public void render(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, int slot) {
-        int setting = settings.computeIfAbsent(guiHandler, g -> 0);
+    public void render(GUIHolder<C> holder, Inventory inventory, int slot) {
+        int setting = settings.computeIfAbsent(holder.getGuiHandler(), g -> 0);
         if (states != null && states.size() > setting) {
-            ButtonState<C> activeState = states.get(setting);
-            applyItem(guiHandler, player, guiInventory, inventory, activeState, slot);
+            applyItem(holder, states.get(setting), slot, inventory);
         }
     }
 
@@ -128,13 +127,10 @@ public class ButtonMultipleChoice<C extends CustomCache> extends Button<C> {
          * Used to set the state for the {@link ButtonMultipleChoice} depending on data from the cache or player, etc.
          *
          * @param cache      The current cache of the GuiHandler
-         * @param guiHandler The current GuiHandler.
-         * @param player     The current Player.
-         * @param inventory  The original/previous inventory. No changes to this inventory will be applied on render!
          * @param slot       The slot in which the button is rendered.
-         * @return a int indicating the state of the button.
+         * @return an int indicating the state of the button.
          */
-        int run(C cache, GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, int slot);
+        int run(GUIHolder<C> holder, C cache, ButtonMultipleChoice<C> button, int slot);
 
     }
 

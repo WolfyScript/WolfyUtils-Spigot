@@ -18,14 +18,12 @@
 
 package com.wolfyscript.utilities.bukkit.gui.button;
 
+import com.wolfyscript.utilities.common.gui.ButtonInteractionResult;
+import com.wolfyscript.utilities.bukkit.gui.GUIHolder;
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
-import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
-import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import java.io.IOException;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryInteractEvent;
 
 /**
  * This Button acts as a dummy, it will not run the action, even if you set one for the ButtonState!
@@ -38,8 +36,9 @@ public class ButtonDummy<C extends CustomCache> extends ButtonAction<C> {
         super(id, ButtonType.DUMMY, state);
     }
 
-    public boolean execute(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, int slot, InventoryInteractEvent event) throws IOException {
-        return true; // This is a dummy button. Always cancel the interaction!
+    @Override
+    public ButtonInteractionResult execute(GUIHolder<C> holder, int slot) throws IOException {
+        return ButtonInteractionResult.cancel(true); // This is a dummy button. Always cancel the interaction!
     }
 
     public static class Builder<C extends CustomCache> extends AbstractBuilder<C, ButtonDummy<C>, Builder<C>> {

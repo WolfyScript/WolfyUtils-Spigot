@@ -18,13 +18,11 @@
 
 package com.wolfyscript.utilities.bukkit.gui.callback;
 
-import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
+import com.wolfyscript.utilities.bukkit.gui.GUIHolder;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
-import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import java.util.Optional;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,28 +44,28 @@ public interface CallbackButtonRender<C extends CustomCache> {
      * @param slot         The slot in which the button is rendered.
      * @return The itemStack that should be set into the GUI.
      */
-    UpdateResult run(C cache, GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, Button<C> button, ItemStack itemStack, int slot);
+    Result run(GUIHolder<C> holder, C cache, Button<C> button, int slot, ItemStack itemStack);
 
     /**
      * Contains the data that is used to render the button.
      *
      * @see CallbackButtonRender
      */
-    class UpdateResult {
+    class Result {
 
         private final ItemStack itemStack;
         private final TagResolver resolver;
 
-        private UpdateResult(@Nullable ItemStack itemStack, @Nullable TagResolver resolver) {
+        private Result(@Nullable ItemStack itemStack, @Nullable TagResolver resolver) {
             this.itemStack = itemStack;
             this.resolver = resolver;
         }
 
-        private UpdateResult(@Nullable ItemStack itemStack, TagResolver... resolvers) {
+        private Result(@Nullable ItemStack itemStack, TagResolver... resolvers) {
             this(itemStack, resolvers == null || resolvers.length == 0 ? null : TagResolver.resolver(resolvers));
         }
 
-        private UpdateResult(@Nullable ItemStack itemStack) {
+        private Result(@Nullable ItemStack itemStack) {
             this(itemStack, (TagResolver) null);
         }
 
@@ -79,11 +77,11 @@ public interface CallbackButtonRender<C extends CustomCache> {
          * @deprecated TagResolvers should <b>not be used</b> together with a custom ItemStack!
          * They cause a very resource intensive conversion for each lore line and the display name of the item!
          *
-         * @return a new {@link UpdateResult} instance.
+         * @return a new {@link Result} instance.
          */
         @Deprecated
-        public static UpdateResult of(@Nullable ItemStack itemStack, TagResolver... resolvers) {
-            return new UpdateResult(itemStack, resolvers);
+        public static Result of(@Nullable ItemStack itemStack, TagResolver... resolvers) {
+            return new Result(itemStack, resolvers);
         }
 
         /**
@@ -93,33 +91,33 @@ public interface CallbackButtonRender<C extends CustomCache> {
          * @param resolver The TagResolver to use to replace tags in display name and lore.
          * @deprecated TagResolvers should <b>not be used</b> together with a custom ItemStack!
          * They cause a very resource intensive conversion for each lore line and the display name of the item!
-         * @return a new {@link UpdateResult} instance.
+         * @return a new {@link Result} instance.
          */
         @Deprecated
-        public static UpdateResult of(@Nullable ItemStack itemStack, TagResolver resolver) {
-            return new UpdateResult(itemStack, resolver);
+        public static Result of(@Nullable ItemStack itemStack, TagResolver resolver) {
+            return new Result(itemStack, resolver);
         }
 
         /**
          * Creates a new UpdateResult of the specified ItemStack.
          *
          * @param itemStack The ItemStack to render.
-         * @return a new {@link UpdateResult} instance.
+         * @return a new {@link Result} instance.
          */
-        public static UpdateResult of(@Nullable ItemStack itemStack) {
-            return new UpdateResult(itemStack);
+        public static Result of(@Nullable ItemStack itemStack) {
+            return new Result(itemStack);
         }
 
-        public static UpdateResult of() {
-            return new UpdateResult(null);
+        public static Result of() {
+            return new Result(null);
         }
 
-        public static UpdateResult of(TagResolver resolver) {
-            return new UpdateResult(null, resolver);
+        public static Result of(TagResolver resolver) {
+            return new Result(null, resolver);
         }
 
-        public static UpdateResult of(TagResolver... resolvers) {
-            return new UpdateResult(null, resolvers);
+        public static Result of(TagResolver... resolvers) {
+            return new Result(null, resolvers);
         }
 
         /**

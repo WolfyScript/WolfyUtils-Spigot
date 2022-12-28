@@ -16,9 +16,8 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.bukkit.listeners;
+package com.wolfyscript.utilities.bukkit.gui;
 
-import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -30,22 +29,22 @@ public class GUIInventoryListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInvClick(InventoryClickEvent event) {
-        if (event.getInventory() instanceof GUIInventory<?> inventory) {
-            inventory.onClick(event);
+        if (event.getInventory().getHolder() instanceof GUIHolder<?> guiHolder) {
+            guiHolder.onClick(event);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onItemDrag(InventoryDragEvent event) {
-        if (event.getInventory() instanceof GUIInventory<?> inventory) {
-            inventory.onDrag(event);
+        if (event.getInventory().getHolder() instanceof GUIHolder<?> guiHolder) {
+            guiHolder.onDrag(event);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onClose(InventoryCloseEvent event) {
-        if (event.getInventory() instanceof GUIInventory<?> inventory) {
-            inventory.onClose(event);
+        if (event.getInventory().getHolder() instanceof GUIHolder<?> guiHolder) {
+            guiHolder.onClose(event);
         }
     }
 

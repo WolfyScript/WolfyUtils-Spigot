@@ -7,7 +7,7 @@ import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.WolfyUtilCore;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import java.util.Objects;
 import java.util.Optional;
@@ -18,7 +18,7 @@ import org.bukkit.persistence.PersistentDataType;
 @KeyedStaticId(key = "wolfyutils")
 public class WolfyUtilsItemReference extends ItemReference {
 
-    private static final org.bukkit.NamespacedKey CUSTOM_ITEM_KEY = new org.bukkit.NamespacedKey(WolfyCoreBukkit.getInstance(), "custom_item");
+    private static final org.bukkit.NamespacedKey CUSTOM_ITEM_KEY = new org.bukkit.NamespacedKey(WolfyCoreBukkit.getInstance().getWolfyUtils().getPlugin(), "custom_item");
 
     private final NamespacedKey itemID;
 
@@ -40,11 +40,11 @@ public class WolfyUtilsItemReference extends ItemReference {
 
     @Override
     public ItemStack getItem() {
-        var customItem = WolfyUtilCore.getInstance().getRegistries().getCustomItems().get(itemID);
+        var customItem = ((WolfyUtilsBukkit)wolfyUtils).getRegistries().getCustomItems().get(itemID);
         if (customItem != null) {
             return customItem.create();
         }
-        WolfyUtilCore.getInstance().getLogger().warning("Couldn't find CustomItem for " + itemID.toString());
+        wolfyUtils.getLogger().warning("Couldn't find CustomItem for " + itemID.toString());
         return null;
     }
 

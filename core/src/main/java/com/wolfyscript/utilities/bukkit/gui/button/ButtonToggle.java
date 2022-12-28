@@ -18,17 +18,16 @@
 
 package com.wolfyscript.utilities.bukkit.gui.button;
 
+import com.wolfyscript.utilities.common.gui.ButtonInteractionResult;
+import com.wolfyscript.utilities.bukkit.gui.GUIHolder;
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
-import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import com.wolfyscript.utilities.tuple.Pair;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.function.Consumer;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +59,7 @@ public class ButtonToggle<C extends CustomCache> extends Button<C> {
         this.defaultState = defaultState;
         states = new Pair<>(state, state2);
         settings = new HashMap<>();
-        this.stateFunction = stateFunction == null ? (cache, guiHandler, player, inventory, slot) -> settings.getOrDefault(guiHandler, defaultState) : stateFunction;
+        this.stateFunction = stateFunction == null ? (holder, cache, slot) -> settings.getOrDefault(holder.getGuiHandler(), defaultState) : stateFunction;
     }
 
     public void setState(GuiHandler<C> guiHandler, boolean enabled) {
@@ -84,34 +83,34 @@ public class ButtonToggle<C extends CustomCache> extends Button<C> {
     }
 
     @Override
-    public void postExecute(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot, InventoryInteractEvent event) throws IOException {
-        ButtonState<C> state = getState(guiHandler);
+    public void postExecute(GUIHolder<C> holder, ItemStack itemStack, int slot) throws IOException {
+        ButtonState<C> state = getState(holder.getGuiHandler());
         if (state.getPostAction() != null) {
-            state.getPostAction().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, itemStack, slot, event);
+            state.getPostAction().run(holder, holder.getGuiHandler().getCustomCache(), this, slot, itemStack, null); // TODO: Details
         }
     }
 
     @Override
-    public boolean execute(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, int slot, InventoryInteractEvent event) throws IOException {
-        boolean result = getState(guiHandler).getAction().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, slot, event);
-        settings.put(guiHandler, !settings.getOrDefault(guiHandler, defaultState));
+    public ButtonInteractionResult execute(GUIHolder<C> holder, int slot) throws IOException {
+        ButtonInteractionResult result = getState(holder.getGuiHandler()).getAction().run(holder, holder.getGuiHandler().getCustomCache(),this, slot, null); // TODO: Details
+        settings.put(holder.getGuiHandler(), !settings.getOrDefault(holder.getGuiHandler(), defaultState));
         return result;
     }
 
     @Override
-    public void preRender(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot) {
-        boolean state = stateFunction.run(guiHandler.getCustomCache(), guiHandler, player, inventory, slot);
-        settings.put(guiHandler, state);
+    public void preRender(GUIHolder<C> holder, ItemStack itemStack, int slot) {
+        boolean state = stateFunction.run(holder, holder.getGuiHandler().getCustomCache(), slot);
+        settings.put(holder.getGuiHandler(), state);
         ButtonState<C> buttonState = state ? states.getKey() : states.getValue();
         if (buttonState.getPrepareRender() != null) {
-            buttonState.getPrepareRender().run(guiHandler.getCustomCache(), guiHandler, player, inventory, this, itemStack, slot, false);
+            buttonState.getPrepareRender().run(holder, holder.getGuiHandler().getCustomCache(), this, slot, itemStack);
         }
     }
 
     @Override
-    public void render(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, int slot) {
-        ButtonState<C> activeState = getState(guiHandler);
-        applyItem(guiHandler, player, guiInventory, inventory, activeState, slot);
+    public void render(GUIHolder<C> holder, Inventory queueInventory, int slot) {
+        ButtonState<C> activeState = getState(holder.getGuiHandler());
+        applyItem(holder, activeState, slot, queueInventory);
     }
 
     public interface StateFunction<C extends CustomCache> {
@@ -120,13 +119,10 @@ public class ButtonToggle<C extends CustomCache> extends Button<C> {
          * Used to set the state for the {@link ButtonToggle} depending on data from the cache or player, etc.
          *
          * @param cache      The current cache of the GuiHandler
-         * @param guiHandler The current GuiHandler.
-         * @param player     The current Player.
-         * @param inventory  The original/previous inventory. No changes to this inventory will be applied on render!
          * @param slot       The slot in which the button is rendered.
          * @return a boolean indicating the state of the button.
          */
-        boolean run(C cache, GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, int slot);
+        boolean run(GUIHolder<C> holder, C cache, int slot);
 
     }
 

@@ -3,7 +3,6 @@ package com.wolfyscript.utilities.bukkit.nms.item.crafting;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.nms.Reflection;
-import com.wolfyscript.utilities.bukkit.nms.api.inventory.InjectGUIInventory;
 import com.wolfyscript.utilities.versioning.MinecraftVersion;
 import com.wolfyscript.utilities.versioning.ServerVersion;
 import java.io.IOException;
@@ -227,8 +226,6 @@ public class FunctionalRecipeGenerator {
      * @throws CannotCompileException
      */
     private static Class<?> inject(ClassPool classPool, Class<?> originalClass) throws NotFoundException, CannotCompileException, IOException {
-        classPool.insertClassPath(new LoaderClassPath(InjectGUIInventory.class.getClassLoader()));
-
         final String funcRecipeClass = "Functional" + originalClass.getSimpleName();
         final CtClass generatedRecipeClass = classPool.makeClass(GENERATOR_PACKAGE + "." + funcRecipeClass);
 

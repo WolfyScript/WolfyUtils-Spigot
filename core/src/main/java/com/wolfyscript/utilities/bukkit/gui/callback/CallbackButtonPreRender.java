@@ -18,12 +18,10 @@
 
 package com.wolfyscript.utilities.bukkit.gui.callback;
 
-import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
+import com.wolfyscript.utilities.bukkit.gui.GUIHolder;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonItemInput;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
-import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -48,5 +46,5 @@ public interface CallbackButtonPreRender<C extends CustomCache> {
      * @param slot        The slot in which the button is rendered.
      * @param helpEnabled Returns true if help is enabled.
      */
-    void run(C cache, GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, Button<C> button, ItemStack itemStack, int slot, boolean helpEnabled);
+    void run(GUIHolder<C> holder, C cache, Button<C> button, int slot, ItemStack itemStack);
 }

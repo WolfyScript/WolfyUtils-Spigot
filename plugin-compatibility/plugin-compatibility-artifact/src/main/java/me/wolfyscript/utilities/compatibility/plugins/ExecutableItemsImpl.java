@@ -1,6 +1,8 @@
 package me.wolfyscript.utilities.compatibility.plugins;
 
+import com.google.inject.Inject;
 import com.ssomar.score.api.executableitems.ExecutableItemsAPI;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.ExecutableItemsIntegration;
 import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
@@ -19,7 +21,8 @@ public class ExecutableItemsImpl extends PluginIntegrationAbstract implements Ex
      *
      * @param core       The WolfyUtilCore.
      */
-    protected ExecutableItemsImpl(WolfyUtilBootstrap core) {
+    @Inject
+    protected ExecutableItemsImpl(WolfyCoreBukkit core) {
         super(core, ExecutableItemsIntegration.PLUGIN_NAME);
     }
 

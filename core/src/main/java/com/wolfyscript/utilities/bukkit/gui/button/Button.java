@@ -20,18 +20,16 @@ package com.wolfyscript.utilities.bukkit.gui.button;
 
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.common.gui.ButtonInteractionResult;
+import com.wolfyscript.utilities.bukkit.gui.GUIHolder;
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
-import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.GuiMenuComponent;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import com.wolfyscript.utilities.bukkit.gui.InventoryAPI;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import com.wolfyscript.utilities.bukkit.gui.callback.CallbackButtonRender;
-import com.wolfyscript.utilities.bukkit.nms.api.inventory.GUIInventory;
 import java.io.IOException;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -79,13 +77,13 @@ public abstract class Button<C extends CustomCache> {
      */
     public abstract void init(GuiCluster<C> guiCluster);
 
-    public abstract boolean execute(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, int slot, InventoryInteractEvent event) throws IOException;
+    public abstract ButtonInteractionResult execute(GUIHolder<C> guiHandler, int slot) throws IOException;
 
-    public abstract void postExecute(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot, InventoryInteractEvent event) throws IOException;
+    public abstract void postExecute(GUIHolder<C> holder, ItemStack itemStack, int slot) throws IOException;
 
-    public abstract void preRender(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot);
+    public abstract void preRender(GUIHolder<C> holder, ItemStack itemStack, int slot);
 
-    public abstract void render(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, int slot) throws IOException;
+    public abstract void render(GUIHolder<C> holder, Inventory queueInventory, int slot) throws IOException;
 
     @NotNull
     public ButtonType getType() {
@@ -107,10 +105,9 @@ public abstract class Button<C extends CustomCache> {
      * @param state
      * @param slot
      */
-    protected void applyItem(GuiHandler<C> guiHandler, Player player, GUIInventory<C> guiInventory, Inventory inventory, ButtonState<C> state, int slot) {
-        //No longer set default templates, that should be purely managed by the plugin.
-        CallbackButtonRender.UpdateResult updateResult = state.getRenderAction().run(guiHandler.getCustomCache(), guiHandler, player, guiInventory, this, state.getIcon(), slot);
-        inventory.setItem(slot, updateResult.getCustomStack()
+    protected void applyItem(GUIHolder<C> holder, ButtonState<C> state, int slot, Inventory queueInventory) {
+        CallbackButtonRender.Result updateResult = state.getRenderAction().run(holder, holder.getGuiHandler().getCustomCache(), this, slot, state.getIcon());
+        queueInventory.setItem(slot, updateResult.getCustomStack()
                 .map(itemStack -> state.constructCustomIcon(itemStack, updateResult.getTagResolver().orElseGet(TagResolver::empty)))
                 .orElseGet(() -> state.constructIcon(updateResult.getTagResolver().orElseGet(TagResolver::empty)))
         );

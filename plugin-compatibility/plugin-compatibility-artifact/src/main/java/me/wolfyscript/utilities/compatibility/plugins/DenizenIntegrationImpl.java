@@ -1,5 +1,6 @@
 package me.wolfyscript.utilities.compatibility.plugins;
 
+import com.google.inject.Inject;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
@@ -19,6 +20,7 @@ public class DenizenIntegrationImpl extends PluginIntegrationAbstract {
      *
      * @param core       The WolfyUtilCore.
      */
+    @Inject
     protected DenizenIntegrationImpl(WolfyCoreBukkit core) {
         super(core, PLUGIN_NAME);
     }

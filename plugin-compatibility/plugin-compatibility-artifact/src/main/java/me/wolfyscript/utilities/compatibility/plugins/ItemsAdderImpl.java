@@ -18,6 +18,8 @@
 
 package me.wolfyscript.utilities.compatibility.plugins;
 
+import com.google.inject.Inject;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.ItemsAdderIntegration;
 import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
 import java.util.Optional;
@@ -42,15 +44,16 @@ import org.jetbrains.annotations.Nullable;
 @WUPluginIntegration(pluginName = ItemsAdderIntegration.KEY)
 public class ItemsAdderImpl extends PluginIntegrationAbstract implements ItemsAdderIntegration, Listener {
 
-    protected ItemsAdderImpl(WolfyUtilBootstrap core) {
+    @Inject
+    protected ItemsAdderImpl(WolfyCoreBukkit core) {
         super(core, ItemsAdderIntegration.KEY);
     }
 
     @Override
     public void init(Plugin plugin) {
         core.registerAPIReference(new ItemsAdderRefImpl.Parser());
-        Bukkit.getPluginManager().registerEvents(this, core);
-        Bukkit.getPluginManager().registerEvents(new CustomItemListener(this), core);
+        Bukkit.getPluginManager().registerEvents(this, core.getWolfyUtils().getPlugin());
+        Bukkit.getPluginManager().registerEvents(new CustomItemListener(this), core.getWolfyUtils().getPlugin());
     }
 
     @Override
