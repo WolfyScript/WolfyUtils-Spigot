@@ -24,6 +24,7 @@ import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
 import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
+import com.wolfyscript.utilities.common.gui.InteractionResult;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,11 +48,11 @@ public class ButtonItemInput<C extends CustomCache> extends ButtonAction<C> {
     }
 
     @Override
-    public ButtonInteractionResult execute(GUIHolder<C> holder, int slot) throws IOException {
+    public InteractionResult execute(GUIHolder<C> holder, int slot) throws IOException {
         if (!getType().equals(ButtonType.DUMMY) && getState().getAction() != null) {
             return getState().getAction().run(holder, holder.getGuiHandler().getCustomCache(), this, slot, null); // TODO: Details
         }
-        return ButtonInteractionResult.cancel(false);
+        return InteractionResult.cancel(false);
     }
 
     @Override

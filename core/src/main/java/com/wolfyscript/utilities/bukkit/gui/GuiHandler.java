@@ -455,22 +455,6 @@ public class GuiHandler<C extends CustomCache> implements Listener {
     }
 
     /**
-     * @return If help is enabled for this GuiHandler.
-     */
-    public boolean isHelpEnabled() {
-        return helpEnabled;
-    }
-
-    /**
-     * Set if the help is enabled.
-     *
-     * @param helpEnabled The new help value.
-     */
-    public void setHelpEnabled(boolean helpEnabled) {
-        this.helpEnabled = helpEnabled;
-    }
-
-    /**
      * @return The instance of the {@link CustomCache}
      */
     public C getCustomCache() {

@@ -3,8 +3,11 @@ package com.wolfyscript.utilities.bukkit.gui;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonItemInput;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonType;
-import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
-import com.wolfyscript.utilities.common.gui.ButtonInteractionResult;
+import com.wolfyscript.utilities.common.gui.Data;
+import com.wolfyscript.utilities.common.gui.GuiHolderCommonImpl;
+import com.wolfyscript.utilities.common.gui.GuiViewManager;
+import com.wolfyscript.utilities.common.gui.InteractionResult;
+import com.wolfyscript.utilities.common.gui.Window;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,25 +21,14 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
-public class GUIHolder<C extends CustomCache> implements InventoryHolder {
+public class GUIHolder<D extends Data> extends GuiHolderCommonImpl<D> implements InventoryHolder {
 
-    private final GuiWindow<C> window;
     private Inventory activeInventory;
-    private final GuiHandler<C> guiHandler;
     private final Player player;
 
-    public GUIHolder(Player player, GuiHandler<C> guiHandler, GuiWindow<C> window) {
-        this.guiHandler = guiHandler;
-        this.window = window;
+    public GUIHolder(Player player, GuiViewManager<D> viewManager, Window<D> window) {
+        super(window, viewManager);
         this.player = player;
-    }
-
-    public GuiHandler<C> getGuiHandler() {
-        return guiHandler;
-    }
-
-    public GuiWindow<C> getWindow() {
-        return window;
     }
 
     public Player getPlayer() {
@@ -45,19 +37,19 @@ public class GUIHolder<C extends CustomCache> implements InventoryHolder {
 
     void onClick(InventoryClickEvent event) {
         event.setCancelled(true);
-        if (window == null) return;
-        Map<Integer, Button<C>> buttons = new HashMap<>();
+        if (currentWindow == null) return;
+        Map<Integer, Button<D>> buttons = new HashMap<>();
         if (activeInventory.equals(event.getClickedInventory())) {
-            Button<C> clickedBtn = guiHandler.getButton(window, event.getSlot());
+            Button<D> clickedBtn = guiHandler.getButton(currentWindow, event.getSlot());
             if (clickedBtn != null) {
                 buttons.put(event.getSlot(), clickedBtn);
                 event.setCancelled(executeButton(clickedBtn, event.getSlot()).isCancelled());
                 if (Objects.equals(clickedBtn.getType(), ButtonType.ITEM_SLOT)) { //If the button is marked as an Item slot it may affect other buttons too!
                     if (event.getAction().equals(InventoryAction.COLLECT_TO_CURSOR) || event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
                         var clickedBtnClass = clickedBtn.getClass();
-                        for (Map.Entry<Integer, String> buttonEntry : guiHandler.getCustomCache().getButtons(window).entrySet()) {
+                        for (Map.Entry<Integer, String> buttonEntry : guiHandler.getCustomCache().getButtons(currentWindow).entrySet()) {
                             if (event.getSlot() != buttonEntry.getKey()) {
-                                Button<C> button = window.getButton(buttonEntry.getValue());
+                                Button<D> button = currentWindow.getButton(buttonEntry.getValue());
                                 if (clickedBtnClass.isInstance(button)) { //Make sure to only execute the buttons that are of the same type as the clicked one.
                                     buttons.put(buttonEntry.getKey(), button);
                                     event.setCancelled(executeButton(button, buttonEntry.getKey()).isCancelled());
@@ -70,8 +62,8 @@ public class GUIHolder<C extends CustomCache> implements InventoryHolder {
         } else if (!event.getAction().equals(InventoryAction.COLLECT_TO_CURSOR)) {
             event.setCancelled(false);
             if (event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
-                for (Map.Entry<Integer, String> buttonEntry : guiHandler.getCustomCache().getButtons(window).entrySet()) {
-                    Button<C> button = window.getButton(buttonEntry.getValue());
+                for (Map.Entry<Integer, String> buttonEntry : guiHandler.getCustomCache().getButtons(currentWindow).entrySet()) {
+                    Button<D> button = currentWindow.getButton(buttonEntry.getValue());
                     if (button instanceof ButtonItemInput) {
                         buttons.put(buttonEntry.getKey(), button);
                         if (executeButton(button, buttonEntry.getKey()).isCancelled()) {
@@ -82,10 +74,10 @@ public class GUIHolder<C extends CustomCache> implements InventoryHolder {
                 }
             }
         }
-        if (guiHandler.openedPreviousWindow) {
-            guiHandler.openedPreviousWindow = false;
+        if (openedPreviousWindow) {
+            openedPreviousWindow = false;
         } else if (guiHandler.getWindow() != null && guiHandler.isWindowOpen()) {
-            window.update(activeInventory, guiHandler, buttons);
+            currentWindow.open(viewManager, player.getUniqueId());
         }
     }
 
@@ -95,16 +87,16 @@ public class GUIHolder<C extends CustomCache> implements InventoryHolder {
             return;
         }
         if (window != null) {
-            Map<Integer, Button<C>> buttons = new HashMap<>();
+            Map<Integer, Button<D>> buttons = new HashMap<>();
             for (int slot : event.getInventorySlots()) {
-                Button<C> button = guiHandler.getButton(window, slot);
+                Button<D> button = guiHandler.getButton(window, slot);
                 if (button == null) {
                     event.setCancelled(true);
                     return;
                 }
                 buttons.put(slot, button);
             }
-            for (Map.Entry<Integer, Button<C>> button : buttons.entrySet()) {
+            for (Map.Entry<Integer, Button<D>> button : buttons.entrySet()) {
                 event.setCancelled(executeButton(button.getValue(), button.getKey()).isCancelled());
             }
             if (guiHandler.openedPreviousWindow) {
@@ -123,12 +115,12 @@ public class GUIHolder<C extends CustomCache> implements InventoryHolder {
         this.activeInventory = activeInventory;
     }
 
-    private ButtonInteractionResult executeButton(Button<C> button, int slot) {
+    private InteractionResult executeButton(Button<D> button, int slot) {
         try {
             return button.execute(this, slot);
         } catch (IOException e) {
             e.printStackTrace();
-            return ButtonInteractionResult.def();
+            return InteractionResult.def();
         }
     }
 

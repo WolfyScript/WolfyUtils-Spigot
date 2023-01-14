@@ -20,7 +20,6 @@ package com.wolfyscript.utilities.bukkit.gui.button;
 
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
-import com.wolfyscript.utilities.common.gui.ButtonInteractionResult;
 import com.wolfyscript.utilities.bukkit.gui.GUIHolder;
 import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
 import com.wolfyscript.utilities.bukkit.gui.GuiMenuComponent;
@@ -28,6 +27,7 @@ import com.wolfyscript.utilities.bukkit.gui.GuiWindow;
 import com.wolfyscript.utilities.bukkit.gui.InventoryAPI;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import com.wolfyscript.utilities.bukkit.gui.callback.CallbackButtonRender;
+import com.wolfyscript.utilities.common.gui.InteractionResult;
 import java.io.IOException;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.inventory.Inventory;
@@ -77,7 +77,7 @@ public abstract class Button<C extends CustomCache> {
      */
     public abstract void init(GuiCluster<C> guiCluster);
 
-    public abstract ButtonInteractionResult execute(GUIHolder<C> guiHandler, int slot) throws IOException;
+    public abstract InteractionResult execute(GUIHolder<C> guiHandler, int slot) throws IOException;
 
     public abstract void postExecute(GUIHolder<C> holder, ItemStack itemStack, int slot) throws IOException;
 
