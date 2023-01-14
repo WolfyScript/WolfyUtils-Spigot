@@ -289,7 +289,10 @@ public class FunctionalRecipeGenerator {
         String matchesMethod = StrSubstitutor.replace("""
                 public boolean ${RecipeMatchesMethod}(${Container} container, ${Level} level) {
                     if (getMatcher().isPresent()) {
-                        return matches(ConversionUtils.containerToBukkit(container), level.getWorld());
+                        if (level != null) {
+                            return matches(ConversionUtils.containerToBukkit(container), level.getWorld());
+                        }
+                        return matches(ConversionUtils.containerToBukkit(container), null);
                     }
                     return super.${RecipeMatchesMethod}(container, level);
                 }
@@ -299,7 +302,8 @@ public class FunctionalRecipeGenerator {
         // Assemble method injection
         String assembleMethod = StrSubstitutor.replace("""
                 public ${ItemStack} ${RecipeAssembleMethod}(${Container} container) {
-                    ${Optional} item = assemble(ConversionUtils.containerToBukkit(container)).map(new ConvertCraftItemStackToNMS()); if (item.isPresent()) {
+                    ${Optional} item = assemble(ConversionUtils.containerToBukkit(container)).map(new ConvertCraftItemStackToNMS());
+                    if (item.isPresent()) {
                         return (${ItemStack}) item.get();
                     }
                     return super.${RecipeAssembleMethod}(container);
