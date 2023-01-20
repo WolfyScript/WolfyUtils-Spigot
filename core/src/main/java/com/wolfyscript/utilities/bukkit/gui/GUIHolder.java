@@ -1,17 +1,14 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonItemInput;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonType;
 import com.wolfyscript.utilities.common.gui.Data;
 import com.wolfyscript.utilities.common.gui.GuiHolderCommonImpl;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.Window;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -36,49 +33,20 @@ public class GUIHolder<D extends Data> extends GuiHolderCommonImpl<D> implements
     }
 
     void onClick(InventoryClickEvent event) {
-        event.setCancelled(true);
-        if (currentWindow == null) return;
-        Map<Integer, Button<D>> buttons = new HashMap<>();
-        if (activeInventory.equals(event.getClickedInventory())) {
-            Button<D> clickedBtn = guiHandler.getButton(currentWindow, event.getSlot());
-            if (clickedBtn != null) {
-                buttons.put(event.getSlot(), clickedBtn);
-                event.setCancelled(executeButton(clickedBtn, event.getSlot()).isCancelled());
-                if (Objects.equals(clickedBtn.getType(), ButtonType.ITEM_SLOT)) { //If the button is marked as an Item slot it may affect other buttons too!
-                    if (event.getAction().equals(InventoryAction.COLLECT_TO_CURSOR) || event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
-                        var clickedBtnClass = clickedBtn.getClass();
-                        for (Map.Entry<Integer, String> buttonEntry : guiHandler.getCustomCache().getButtons(currentWindow).entrySet()) {
-                            if (event.getSlot() != buttonEntry.getKey()) {
-                                Button<D> button = currentWindow.getButton(buttonEntry.getValue());
-                                if (clickedBtnClass.isInstance(button)) { //Make sure to only execute the buttons that are of the same type as the clicked one.
-                                    buttons.put(buttonEntry.getKey(), button);
-                                    event.setCancelled(executeButton(button, buttonEntry.getKey()).isCancelled());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        if (currentWindow == null || event.getClickedInventory() == null) return;
+        if (Objects.equals(event.getClickedInventory().getHolder(), this)) {
+            Optional<ComponentStateNode<D>> nodeOptional = ((GuiViewManagerImpl<D>) viewManager).getTailNode(event.getSlot());
+            var interactionDetails = new ClickInteractionDetailsImpl<D>(event);
+            var data = viewManager.getData();
+            InteractionResult result = nodeOptional.map(node -> node.getOwner().interact(this, data, interactionDetails)).orElse(InteractionResult.def());
+            // TODO: Way of adding tail components to call interact on? For example Item Input slots.
+            event.setCancelled(result.isCancelled());
         } else if (!event.getAction().equals(InventoryAction.COLLECT_TO_CURSOR)) {
             event.setCancelled(false);
-            if (event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
-                for (Map.Entry<Integer, String> buttonEntry : guiHandler.getCustomCache().getButtons(currentWindow).entrySet()) {
-                    Button<D> button = currentWindow.getButton(buttonEntry.getValue());
-                    if (button instanceof ButtonItemInput) {
-                        buttons.put(buttonEntry.getKey(), button);
-                        if (executeButton(button, buttonEntry.getKey()).isCancelled()) {
-                            event.setCancelled(true);
-                            break;
-                        }
-                    }
-                }
-            }
+            // TODO: Handle bottom inventory clicks
         }
-        if (openedPreviousWindow) {
-            openedPreviousWindow = false;
-        } else if (guiHandler.getWindow() != null && guiHandler.isWindowOpen()) {
-            currentWindow.open(viewManager, player.getUniqueId());
-        }
+        // TODO: update window & necessary components
+        currentWindow.open(viewManager, player.getUniqueId());
     }
 
     void onDrag(InventoryDragEvent event) {
@@ -86,42 +54,25 @@ public class GUIHolder<D extends Data> extends GuiHolderCommonImpl<D> implements
             event.setCancelled(true);
             return;
         }
-        if (window != null) {
-            Map<Integer, Button<D>> buttons = new HashMap<>();
+        if (currentWindow == null) return;
+        if (Objects.equals(event.getInventory().getHolder(), this)) {
+            var interactionDetails = new DragInteractionDetailsImpl<D>(event);
+            var data = viewManager.getData();
             for (int slot : event.getInventorySlots()) {
-                Button<D> button = guiHandler.getButton(window, slot);
-                if (button == null) {
+                if (((GuiViewManagerImpl<D>) viewManager).getTailNode(slot).map(node -> node.getOwner().interact(this, data, interactionDetails)).orElse(InteractionResult.def()).isCancelled()) {
                     event.setCancelled(true);
-                    return;
                 }
-                buttons.put(slot, button);
             }
-            for (Map.Entry<Integer, Button<D>> button : buttons.entrySet()) {
-                event.setCancelled(executeButton(button.getValue(), button.getKey()).isCancelled());
-            }
-            if (guiHandler.openedPreviousWindow) {
-                guiHandler.openedPreviousWindow = false;
-            } else if (guiHandler.getWindow() != null) {
-                window.update(activeInventory, guiHandler, buttons);
-            }
+            currentWindow.open(viewManager, player.getUniqueId());
         }
     }
 
     void onClose(InventoryCloseEvent event) {
-        guiHandler.onClose(this);
+        // TODO: Close Window
     }
 
     void setActiveInventory(Inventory activeInventory) {
         this.activeInventory = activeInventory;
-    }
-
-    private InteractionResult executeButton(Button<D> button, int slot) {
-        try {
-            return button.execute(this, slot);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return InteractionResult.def();
-        }
     }
 
     @NotNull
