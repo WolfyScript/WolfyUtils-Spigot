@@ -8,10 +8,32 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 public class ClickInteractionDetailsImpl<D extends Data> implements ClickInteractionDetails<D> {
 
-    private InventoryClickEvent clickEvent;
+    private final InventoryClickEvent clickEvent;
+    private final ClickType clickType;
+    private InteractionResult.ResultType resultType;
 
     ClickInteractionDetailsImpl(InventoryClickEvent clickEvent) {
         this.clickEvent = clickEvent;
+        this.clickType = switch (clickEvent.getClick()) {
+            case DROP -> ClickType.DROP;
+            case CONTROL_DROP -> ClickType.CONTROL_DROP;
+            case LEFT -> ClickType.PRIMARY;
+            case RIGHT -> ClickType.SECONDARY;
+            case SHIFT_LEFT -> ClickType.SHIFT_PRIMARY;
+            case SHIFT_RIGHT -> ClickType.SHIFT_SECONDARY;
+            case MIDDLE -> ClickType.MIDDLE;
+            case CREATIVE -> ClickType.CREATIVE;
+            case NUMBER_KEY -> ClickType.NUMBER_KEY;
+            case DOUBLE_CLICK -> ClickType.DOUBLE_CLICK;
+            case WINDOW_BORDER_LEFT -> ClickType.CONTAINER_BORDER_PRIMARY;
+            case WINDOW_BORDER_RIGHT -> ClickType.CONTAINER_BORDER_SECONDARY;
+            default -> throw new IllegalStateException("Unexpected value: " + clickEvent.getClick());
+        };
+        this.resultType = switch (clickEvent.getResult()) {
+            case DEFAULT -> InteractionResult.ResultType.DEFAULT;
+            case ALLOW -> InteractionResult.ResultType.ALLOW;
+            case DENY -> InteractionResult.ResultType.DENY;
+        };
     }
 
     @Override
@@ -46,21 +68,7 @@ public class ClickInteractionDetailsImpl<D extends Data> implements ClickInterac
 
     @Override
     public ClickType getClickType() {
-        return switch (clickEvent.getClick()) {
-            case DROP -> ClickType.DROP;
-            case CONTROL_DROP -> ClickType.CONTROL_DROP;
-            case LEFT -> ClickType.PRIMARY;
-            case RIGHT -> ClickType.SECONDARY;
-            case SHIFT_LEFT -> ClickType.SHIFT_PRIMARY;
-            case SHIFT_RIGHT -> ClickType.SHIFT_SECONDARY;
-            case MIDDLE -> ClickType.MIDDLE;
-            case CREATIVE -> ClickType.CREATIVE;
-            case NUMBER_KEY -> ClickType.NUMBER_KEY;
-            case DOUBLE_CLICK -> ClickType.DOUBLE_CLICK;
-            case WINDOW_BORDER_LEFT -> ClickType.CONTAINER_BORDER_PRIMARY;
-            case WINDOW_BORDER_RIGHT -> ClickType.CONTAINER_BORDER_SECONDARY;
-            default -> throw new IllegalStateException("Unexpected value: " + clickEvent.getClick());
-        };
+        return clickType;
     }
 
     @Override
@@ -70,6 +78,6 @@ public class ClickInteractionDetailsImpl<D extends Data> implements ClickInterac
 
     @Override
     public InteractionResult.ResultType getResultType() {
-        return null;
+        return resultType;
     }
 }
