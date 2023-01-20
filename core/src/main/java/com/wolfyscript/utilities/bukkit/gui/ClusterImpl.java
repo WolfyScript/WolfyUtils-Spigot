@@ -5,11 +5,15 @@ import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.Cluster;
 import com.wolfyscript.utilities.common.gui.ClusterCommonImpl;
 import com.wolfyscript.utilities.common.gui.ClusterComponentBuilder;
+import com.wolfyscript.utilities.common.gui.ClusterStateBuilder;
 import com.wolfyscript.utilities.common.gui.ComponentState;
 import com.wolfyscript.utilities.common.gui.Data;
+import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.MenuComponent;
 import com.wolfyscript.utilities.common.gui.StateSelector;
 import com.wolfyscript.utilities.common.gui.WindowComponentBuilder;
+import java.util.UUID;
+import java.util.function.Consumer;
 
 public class ClusterImpl<D extends Data> extends ClusterCommonImpl<D> {
 
@@ -21,6 +25,11 @@ public class ClusterImpl<D extends Data> extends ClusterCommonImpl<D> {
 
         protected Builder(String subID, Cluster<D> parent) {
             super(subID, parent, new ChildBuilder<>(parent));
+        }
+
+        @Override
+        public ClusterComponentBuilder<D> state(Consumer<ClusterStateBuilder<D>> consumer) {
+            return null;
         }
 
         @Override
