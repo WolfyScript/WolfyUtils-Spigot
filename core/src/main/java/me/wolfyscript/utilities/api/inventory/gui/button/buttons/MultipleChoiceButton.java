@@ -128,8 +128,12 @@ public class MultipleChoiceButton<C extends CustomCache> extends Button<C> {
     @Override
     public void preRender(GuiHandler<C> guiHandler, Player player, GUIInventory<C> inventory, ItemStack itemStack, int slot, boolean help) {
         int setting = stateFunction.run(guiHandler.getCustomCache(), guiHandler, player, inventory, slot);
-        if (states != null && states.size() > setting && states.get(setting).getPrepareRender() != null) {
-            states.get(setting).getPrepareRender().prepare(guiHandler.getCustomCache(), guiHandler, player, inventory, itemStack, slot, help);
+        if (states != null && states.size() > setting) {
+            setState(guiHandler, setting);
+
+            if (states.get(setting).getPrepareRender() != null) {
+                states.get(setting).getPrepareRender().prepare(guiHandler.getCustomCache(), guiHandler, player, inventory, itemStack, slot, help);
+            }
         }
     }
 
