@@ -29,22 +29,22 @@ import java.io.IOException;
 import net.kyori.adventure.text.Component;
 
 /**
- * @param <C> The type of the {@link CustomCache}
+ * @param  The type of the {@link CustomCache}
  */
-public class ButtonChatInput<C extends CustomCache> extends ButtonAction<C> {
+public class ButtonChatInput<C extends CustomCache> extends ButtonAction {
 
-    private CallbackChatInput<C> action;
-    private CallbackChatTabComplete<C> tabComplete;
+    private CallbackChatInput action;
+    private CallbackChatTabComplete tabComplete;
     private Component msg = null;
     private final boolean deprecated;
 
-    ButtonChatInput(String id, ButtonState<C> buttonState) {
+    ButtonChatInput(String id, ButtonState buttonState) {
         super(id, buttonState);
         this.deprecated = false;
     }
 
     @Override
-    public void init(GuiWindow<C> guiWindow) {
+    public void init(GuiWindow guiWindow) {
         super.init(guiWindow);
         if (msg == null) {
             this.msg = guiWindow.getChat().translated(String.format(ButtonState.BUTTON_WINDOW_KEY + ".message", guiWindow.getCluster().getId(), guiWindow.getNamespacedKey().getKey(), getId()), deprecated);
@@ -52,7 +52,7 @@ public class ButtonChatInput<C extends CustomCache> extends ButtonAction<C> {
     }
 
     @Override
-    public void init(GuiCluster<C> guiCluster) {
+    public void init(GuiCluster guiCluster) {
         super.init(guiCluster);
         if (msg == null) {
             this.msg = guiCluster.getChat().translated(String.format(ButtonState.BUTTON_CLUSTER_KEY + ".message", guiCluster.getId(), getId()), deprecated);
@@ -60,7 +60,7 @@ public class ButtonChatInput<C extends CustomCache> extends ButtonAction<C> {
     }
 
     @Override
-    public ButtonInteractionResult execute(GUIHolder<C> holder, int slot) throws IOException {
+    public ButtonInteractionResult execute(GUIHolder holder, int slot) throws IOException {
         //If the ButtonAction returns true then the ChatInput will be created.
         if (!super.execute(holder, slot).isCancelled()) {
             final var guiHandler = holder.getGuiHandler();
@@ -75,37 +75,37 @@ public class ButtonChatInput<C extends CustomCache> extends ButtonAction<C> {
         return ButtonInteractionResult.cancel(true); //The click is always cancelled.
     }
 
-    public static class Builder<C extends CustomCache> extends AbstractBuilder<C, ButtonChatInput<C>, Builder<C>> {
+    public static class Builder extends AbstractBuilder<C, ButtonChatInput, Builder> {
 
-        private CallbackChatInput<C> action = null;
-        private CallbackChatTabComplete<C> tabComplete = null;
+        private CallbackChatInput action = null;
+        private CallbackChatTabComplete tabComplete = null;
         private Component msg = null;
 
-        public Builder(GuiWindow<C> window, String id) {
-            super(window, id, (Class<ButtonChatInput<C>>) (Object) ButtonChatInput.class);
+        public Builder(GuiWindow window, String id) {
+            super(window, id, (Class<ButtonChatInput>) (Object) ButtonChatInput.class);
         }
 
-        public Builder(GuiCluster<C> cluster, String id) {
-            super(cluster, id, (Class<ButtonChatInput<C>>) (Object) ButtonChatInput.class);
+        public Builder(GuiCluster cluster, String id) {
+            super(cluster, id, (Class<ButtonChatInput>) (Object) ButtonChatInput.class);
         }
 
-        public Builder<C> inputAction(CallbackChatInput<C> inputAction) {
+        public Builder inputAction(CallbackChatInput inputAction) {
             this.action = inputAction;
             return inst();
         }
 
-        public Builder<C> tabComplete(CallbackChatTabComplete<C> tabComplete) {
+        public Builder tabComplete(CallbackChatTabComplete tabComplete) {
             this.tabComplete = tabComplete;
             return inst();
         }
 
-        public Builder<C> message(Component msg) {
+        public Builder message(Component msg) {
             this.msg = msg;
             return inst();
         }
 
         @Override
-        public ButtonChatInput<C> create() {
+        public ButtonChatInput create() {
             var button = new ButtonChatInput<>(key, stateBuilder.create());
             button.msg = msg;
             button.action = action;

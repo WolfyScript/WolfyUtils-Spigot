@@ -29,21 +29,21 @@ public class GUIInventoryListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInvClick(InventoryClickEvent event) {
-        if (event.getInventory().getHolder() instanceof GUIHolder<?> guiHolder) {
+        if (event.getInventory().getHolder() instanceof GUIHolder guiHolder) {
             guiHolder.onClick(event);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onItemDrag(InventoryDragEvent event) {
-        if (event.getInventory().getHolder() instanceof GUIHolder<?> guiHolder) {
+        if (event.getInventory().getHolder() instanceof GUIHolder guiHolder) {
             guiHolder.onDrag(event);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onClose(InventoryCloseEvent event) {
-        if (event.getInventory().getHolder() instanceof GUIHolder<?> guiHolder) {
+        if (event.getInventory().getHolder() instanceof GUIHolder guiHolder) {
             guiHolder.onClose(event);
         }
     }

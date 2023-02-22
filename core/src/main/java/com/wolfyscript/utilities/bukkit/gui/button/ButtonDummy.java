@@ -28,31 +28,31 @@ import java.io.IOException;
 /**
  * This Button acts as a dummy, it will not run the action, even if you set one for the ButtonState!
  *
- * @param <C> The type of the {@link CustomCache}
+ * @param  The type of the {@link CustomCache}
  */
-public class ButtonDummy<C extends CustomCache> extends ButtonAction<C> {
+public class ButtonDummy<C extends CustomCache> extends ButtonAction {
 
-    ButtonDummy(String id, ButtonState<C> state) {
+    ButtonDummy(String id, ButtonState state) {
         super(id, ButtonType.DUMMY, state);
     }
 
     @Override
-    public ButtonInteractionResult execute(GUIHolder<C> holder, int slot) throws IOException {
+    public ButtonInteractionResult execute(GUIHolder holder, int slot) throws IOException {
         return ButtonInteractionResult.cancel(true); // This is a dummy button. Always cancel the interaction!
     }
 
-    public static class Builder<C extends CustomCache> extends AbstractBuilder<C, ButtonDummy<C>, Builder<C>> {
+    public static class Builder<C extends CustomCache> extends AbstractBuilder<C, ButtonDummy, Builder> {
 
-        public Builder(GuiWindow<C> window, String id) {
-            super(window, id, (Class<ButtonDummy<C>>) (Object) ButtonDummy.class);
+        public Builder(GuiWindow window, String id) {
+            super(window, id, (Class<ButtonDummy>) (Object) ButtonDummy.class);
         }
 
-        public Builder(GuiCluster<C> cluster, String id) {
-            super(cluster, id, (Class<ButtonDummy<C>>) (Object) ButtonDummy.class);
+        public Builder(GuiCluster cluster, String id) {
+            super(cluster, id, (Class<ButtonDummy>) (Object) ButtonDummy.class);
         }
 
         @Override
-        public ButtonDummy<C> create() {
+        public ButtonDummy create() {
             return new ButtonDummy<>(key, stateBuilder.create());
         }
     }

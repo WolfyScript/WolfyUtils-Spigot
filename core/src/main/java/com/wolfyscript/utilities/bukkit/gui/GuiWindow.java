@@ -69,11 +69,12 @@ import org.jetbrains.annotations.Nullable;
  *     To register Buttons
  * </p>
  *
- * @param <C> The type of the {@link CustomCache}.
+ * @param  The type of the {@link CustomCache}.
  */
-public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<C> implements Listener {
+@Deprecated(forRemoval = true)
+public abstract class GuiWindow extends GuiMenuComponent implements Listener {
 
-    private final GuiCluster<C> cluster;
+    private final GuiCluster cluster;
     private final NamespacedKey namespacedKey;
     private boolean forceSyncUpdate;
     private int titleUpdatePeriod = -1;
@@ -89,7 +90,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      * @param key     The key for this window. This must be comply with the {@link BukkitNamespacedKey} key pattern!
      * @param size    The size of the window. Must be a multiple of 9 and less or equal to 54.
      */
-    protected GuiWindow(GuiCluster<C> cluster, String key, int size) {
+    protected GuiWindow(GuiCluster cluster, String key, int size) {
         this(cluster, key, size, false);
     }
 
@@ -99,7 +100,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      * @param size            The size of the window. Must be a multiple of 9 and less or equal to 54.
      * @param forceSyncUpdate If the window should only allow sync code and no async code.
      */
-    protected GuiWindow(GuiCluster<C> cluster, String key, int size, boolean forceSyncUpdate) {
+    protected GuiWindow(GuiCluster cluster, String key, int size, boolean forceSyncUpdate) {
         this(cluster, key, null, size, forceSyncUpdate);
     }
 
@@ -108,7 +109,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      * @param key           The key for this window. This must be comply with the {@link BukkitNamespacedKey} key pattern!
      * @param inventoryType The type of the window.
      */
-    protected GuiWindow(GuiCluster<C> cluster, String key, InventoryType inventoryType) {
+    protected GuiWindow(GuiCluster cluster, String key, InventoryType inventoryType) {
         this(cluster, key, inventoryType, false);
     }
 
@@ -118,11 +119,11 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      * @param inventoryType   The type of the window.
      * @param forceSyncUpdate If the window should only allow sync code and no async code.
      */
-    protected GuiWindow(GuiCluster<C> cluster, String key, InventoryType inventoryType, boolean forceSyncUpdate) {
+    protected GuiWindow(GuiCluster cluster, String key, InventoryType inventoryType, boolean forceSyncUpdate) {
         this(cluster, key, inventoryType, 0, forceSyncUpdate);
     }
 
-    private GuiWindow(GuiCluster<C> cluster, String key, InventoryType inventoryType, int size, boolean forceSyncUpdate) {
+    private GuiWindow(GuiCluster cluster, String key, InventoryType inventoryType, int size, boolean forceSyncUpdate) {
         super(cluster.getInventoryAPI());
         this.cluster = cluster;
         this.namespacedKey = new BukkitNamespacedKey(cluster.getId(), key);
@@ -180,7 +181,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      *
      * @param update The {@link GuiUpdate} instance, that contains all the data of the action that caused this update.
      */
-    public abstract void onUpdateSync(GuiUpdate<C> update);
+    public abstract void onUpdateSync(GuiUpdate update);
 
     /**
      * Called each time the title of the window is updated.<br>
@@ -190,7 +191,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      *
      * @return The new modified title. Color codes using & will be converted.
      */
-    public Component onUpdateTitle(GUIHolder<C> holder) {
+    public Component onUpdateTitle(GUIHolder holder) {
         return getInventoryTitle(holder);
     }
 
@@ -203,34 +204,34 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      *
      * @param update The {@link GuiUpdate} instance, that contains all the data of the action that caused this update.
      */
-    public abstract void onUpdateAsync(GuiUpdate<C> update);
+    public abstract void onUpdateAsync(GuiUpdate update);
 
     /**
      * This method allows you to execute code when this window is closed and block players from closing the GUI.
      *
      * @return true if the gui close should be cancelled.
      */
-    public boolean onClose(GUIHolder<C> holder) {
+    public boolean onClose(GUIHolder holder) {
         return false;
     }
 
-    void create(GuiHandler<C> guiHandler) {
+    void create(GuiHandler guiHandler) {
         update(null, guiHandler, null, true);
     }
 
-    void update(Inventory inventory, GuiHandler<C> guiHandler, Map<Integer, Button<C>> postExecuteBtns) {
+    void update(Inventory inventory, GuiHandler guiHandler, Map<Integer, Button> postExecuteBtns) {
         update(inventory, guiHandler, postExecuteBtns, false);
     }
 
-    private void update(Inventory inventory, GuiHandler<C> guiHandler, Map<Integer, Button<C>> postExecuteBtns, boolean openInventory) {
+    private void update(Inventory inventory, GuiHandler guiHandler, Map<Integer, Button> postExecuteBtns, boolean openInventory) {
         Bukkit.getScheduler().runTask(guiHandler.getWolfyUtils().getPlugin(), () -> {
-            GuiUpdate<C> guiUpdate = new GuiUpdate<>(inventory, guiHandler, this);
+            GuiUpdate guiUpdate = new GuiUpdate<>(inventory, guiHandler, this);
             guiUpdate.postExecuteButtons(postExecuteBtns);
             callUpdate(guiUpdate, openInventory);
         });
     }
 
-    private void callUpdate(GuiUpdate<C> guiUpdate, boolean openInventory) {
+    private void callUpdate(GuiUpdate guiUpdate, boolean openInventory) {
         if (!guiUpdate.getGuiHandler().isChatEventActive()) {
             onUpdateSync(guiUpdate);
             Runnable runnable = () -> openInventory(guiUpdate, openInventory);
@@ -242,7 +243,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
         }
     }
 
-    private void openInventory(GuiUpdate<C> guiUpdate, boolean openInventory) {
+    private void openInventory(GuiUpdate guiUpdate, boolean openInventory) {
         onUpdateAsync(guiUpdate);
         guiUpdate.applyChanges();
         if (openInventory) {
@@ -282,7 +283,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      *
      * @return The parent {@link GuiCluster} of this window.
      */
-    public final GuiCluster<C> getCluster() {
+    public final GuiCluster getCluster() {
         return cluster;
     }
 
@@ -292,7 +293,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      *
      * @param button The button to register.
      */
-    public final void registerButton(Button<C> button) {
+    public final void registerButton(Button button) {
         button.init(this);
         buttons.put(button.getId(), button);
     }
@@ -316,7 +317,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      * @deprecated This uses the legacy chat format. <b>Use {@link #openChat(GuiHandler, Component, CallbackChatInput)} instead!</b>
      */
     @Deprecated
-    public void openChat(GuiHandler<C> guiHandler, String msg, CallbackChatInput<C> inputAction) {
+    public void openChat(GuiHandler guiHandler, String msg, CallbackChatInput inputAction) {
         guiHandler.setChatInputAction(inputAction);
         guiHandler.close();
         getChat().sendMessage(guiHandler.getPlayer(), msg);
@@ -334,7 +335,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      * @deprecated This uses the legacy chat format. <b>Use {@link #openChat(GuiHandler, Component, CallbackChatInput)} instead!</b>
      */
     @Deprecated
-    public void openChat(GuiCluster<C> guiCluster, String msgKey, GuiHandler<C> guiHandler, CallbackChatInput<C> inputAction) {
+    public void openChat(GuiCluster guiCluster, String msgKey, GuiHandler guiHandler, CallbackChatInput inputAction) {
         guiHandler.setChatInputAction(inputAction);
         guiHandler.close();
         var chat = wolfyUtilities.getChat();
@@ -352,7 +353,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      * @deprecated This uses the legacy chat format. <b>Use {@link #openChat(GuiHandler, Component, CallbackChatInput)} instead!</b>
      */
     @Deprecated
-    public void openChat(String msgKey, GuiHandler<C> guiHandler, CallbackChatInput<C> inputAction) {
+    public void openChat(String msgKey, GuiHandler guiHandler, CallbackChatInput inputAction) {
         guiHandler.setChatInputAction(inputAction);
         guiHandler.close();
         getChat().sendKey(guiHandler.getPlayer(), getNamespacedKey(), msgKey);
@@ -369,7 +370,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      * @deprecated This uses the legacy chat format. <b>Use {@link #openChat(GuiHandler, Component, CallbackChatInput)} instead!</b> For callback execution on text click use {@link IBukkitChat#executable(Player, boolean, ClickAction)}
      */
     @Deprecated
-    public void openActionChat(GuiHandler<C> guiHandler, ClickData clickData, CallbackChatInput<C> inputAction) {
+    public void openActionChat(GuiHandler guiHandler, ClickData clickData, CallbackChatInput inputAction) {
         guiHandler.setChatInputAction(inputAction);
         guiHandler.close();
         getChat().sendActionMessage(guiHandler.getPlayer(), clickData);
@@ -383,7 +384,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      * @deprecated This uses the legacy chat format. <b>Use {@link #sendMessage(GuiHandler, Component)} instead!</b>
      */
     @Deprecated
-    public final void sendMessage(GuiHandler<C> guiHandler, String msgKey) {
+    public final void sendMessage(GuiHandler guiHandler, String msgKey) {
         sendMessage(guiHandler.getPlayer(), msgKey);
     }
 
@@ -404,7 +405,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      */
     @SafeVarargs
     @Deprecated
-    public final void sendMessage(GuiHandler<C> guiHandler, String msgKey, Pair<String, String>... replacements) {
+    public final void sendMessage(GuiHandler guiHandler, String msgKey, Pair<String, String>... replacements) {
         wolfyUtilities.getChat().sendKey(guiHandler.getPlayer(), getNamespacedKey(), msgKey, replacements);
     }
 
@@ -441,11 +442,11 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
         return BukkitComponentSerializer.legacy().serialize(getInventoryTitle(null));
     }
 
-    protected Component getInventoryTitle(GUIHolder<C> holder) {
+    protected Component getInventoryTitle(GUIHolder holder) {
         return wolfyUtilities.getLanguageAPI().getComponent("inventories." + namespacedKey.getNamespace() + "." + namespacedKey.getKey() + ".gui_name", TagResolverUtil.papi(holder.getPlayer()));
     }
 
-    Component updateTitle(GUIHolder<C> holder) {
+    Component updateTitle(GUIHolder holder) {
         return onUpdateTitle(holder);
     }
 
@@ -529,35 +530,35 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
      * The button builder for this GuiWindow. It creates new instances of the builders using the instance of this GuiWindow.<br>
      * Therefor calling the {@link Button.Builder#register()} will then register the button into this GuiWindow.
      */
-    protected class WindowButtonBuilder implements ButtonBuilder<C> {
+    protected class WindowButtonBuilder implements ButtonBuilder {
 
         @Override
-        public ButtonChatInput.Builder<C> chatInput(String id) {
+        public ButtonChatInput.Builder chatInput(String id) {
             return new ButtonChatInput.Builder<>(GuiWindow.this, id);
         }
 
         @Override
-        public ButtonAction.Builder<C> action(String id) {
+        public ButtonAction.Builder action(String id) {
             return new ButtonAction.Builder<>(GuiWindow.this, id);
         }
 
         @Override
-        public ButtonDummy.Builder<C> dummy(String id) {
+        public ButtonDummy.Builder dummy(String id) {
             return new ButtonDummy.Builder<>(GuiWindow.this, id);
         }
 
         @Override
-        public ButtonItemInput.Builder<C> itemInput(String id) {
+        public ButtonItemInput.Builder itemInput(String id) {
             return new ButtonItemInput.Builder<>(GuiWindow.this, id);
         }
 
         @Override
-        public ButtonToggle.Builder<C> toggle(String id) {
+        public ButtonToggle.Builder toggle(String id) {
             return new ButtonToggle.Builder<>(GuiWindow.this, id);
         }
 
         @Override
-        public ButtonMultipleChoice.Builder<C> multiChoice(String id) {
+        public ButtonMultipleChoice.Builder multiChoice(String id) {
             return new ButtonMultipleChoice.Builder<>(GuiWindow.this, id);
         }
     }

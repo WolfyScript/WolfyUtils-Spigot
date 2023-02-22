@@ -205,7 +205,7 @@ public class BukkitChat extends Chat implements IBukkitChat {
      */
     @Deprecated
     @Override
-    public void sendKey(Player player, GuiCluster<?> guiCluster, String msgKey) {
+    public void sendKey(Player player, GuiCluster guiCluster, String msgKey) {
         sendMessage(player, translated("inventories." + guiCluster.getId() + ".global_messages." + msgKey, true));
     }
 
@@ -218,7 +218,7 @@ public class BukkitChat extends Chat implements IBukkitChat {
     @Deprecated
     @SafeVarargs
     @Override
-    public final void sendKey(Player player, GuiCluster<?> guiCluster, String msgKey, Pair<String, String>... replacements) {
+    public final void sendKey(Player player, GuiCluster guiCluster, String msgKey, Pair<String, String>... replacements) {
         sendMessage(player, translated("inventories." + guiCluster.getId() + ".global_messages." + msgKey, true, getTemplates(replacements)));
     }
 

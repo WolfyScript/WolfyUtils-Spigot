@@ -1,36 +1,32 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
 import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.common.gui.Cluster;
-import com.wolfyscript.utilities.common.gui.Component;
-import com.wolfyscript.utilities.common.gui.ComponentState;
-import com.wolfyscript.utilities.common.gui.Data;
 import com.wolfyscript.utilities.common.gui.GuiViewManagerCommonImpl;
+import com.wolfyscript.utilities.common.gui.Router;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-public class GuiViewManagerImpl<D extends Data> extends GuiViewManagerCommonImpl<D> {
+public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
 
-    private ComponentStateNode<D> rootStateNode;
-    private Map<Integer, ComponentStateNode<D>> tailStateNodes = new HashMap<>();
+    private ComponentStateImpl rootStateNode;
+    private final Map<Integer, ComponentStateImpl> tailStateNodes = new HashMap<>();
 
-    protected GuiViewManagerImpl(WolfyUtils wolfyUtils, Cluster<D> rootCluster, Set<UUID> viewers) {
-        super(wolfyUtils, rootCluster, viewers);
-
+    protected GuiViewManagerImpl(WolfyUtils wolfyUtils, Router rootRouter, Set<UUID> viewers) {
+        super(wolfyUtils, rootRouter, viewers);
     }
 
-    public ComponentStateNode<D> getRootStateNode() {
+    void changeRootState(ComponentStateImpl newState) {
+        this.rootStateNode = newState;
+    }
+
+    public ComponentStateImpl getRootStateNode() {
         return rootStateNode;
     }
 
-    public void setState(Component<D> component, ComponentState<D> state) {
-
-    }
-
-    Optional<ComponentStateNode<D>> getTailNode(int slot) {
+    Optional<ComponentStateImpl> getTailNode(int slot) {
         return Optional.ofNullable(tailStateNodes.get(slot));
     }
 }

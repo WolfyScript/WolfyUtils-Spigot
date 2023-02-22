@@ -1,13 +1,12 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
-import com.wolfyscript.utilities.common.gui.Data;
 import com.wolfyscript.utilities.common.gui.DragInteractionDetails;
 import com.wolfyscript.utilities.common.gui.DragType;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import java.util.Set;
 import org.bukkit.event.inventory.InventoryDragEvent;
 
-public class DragInteractionDetailsImpl<D extends Data> implements DragInteractionDetails<D> {
+public class DragInteractionDetailsImpl implements DragInteractionDetails {
 
     private final InventoryDragEvent event;
 

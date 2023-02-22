@@ -25,7 +25,7 @@ import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * @param <C> The type of the {@link CustomCache}
+ * @param  The type of the {@link CustomCache}
  */
 public interface CallbackButtonPreRender<C extends CustomCache> {
 
@@ -46,5 +46,5 @@ public interface CallbackButtonPreRender<C extends CustomCache> {
      * @param slot        The slot in which the button is rendered.
      * @param helpEnabled Returns true if help is enabled.
      */
-    void run(GUIHolder<C> holder, C cache, Button<C> button, int slot, ItemStack itemStack);
+    void run(GUIHolder holder, C cache, Button button, int slot, ItemStack itemStack);
 }

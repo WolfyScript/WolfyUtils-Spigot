@@ -36,19 +36,19 @@ import org.bukkit.inventory.ItemStack;
  * This Button acts as a container for Items.
  * It saves the placed in item and can also execute an action on each click.
  *
- * @param <C> The type of the {@link CustomCache}
+ * @param  The type of the {@link CustomCache}
  */
-public class ButtonItemInput<C extends CustomCache> extends ButtonAction<C> {
+public class ButtonItemInput<C extends CustomCache> extends ButtonAction {
 
-    private final Map<GuiHandler<C>, ItemStack> content;
+    private final Map<GuiHandler, ItemStack> content;
 
-    ButtonItemInput(String id, ButtonState<C> state) {
+    ButtonItemInput(String id, ButtonState state) {
         super(id, ButtonType.ITEM_SLOT, state);
         this.content = new HashMap<>();
     }
 
     @Override
-    public InteractionResult execute(GUIHolder<C> holder, int slot) throws IOException {
+    public InteractionResult execute(GUIHolder holder, int slot) throws IOException {
         if (!getType().equals(ButtonType.DUMMY) && getState().getAction() != null) {
             return getState().getAction().run(holder, holder.getGuiHandler().getCustomCache(), this, slot, null); // TODO: Details
         }
@@ -56,13 +56,13 @@ public class ButtonItemInput<C extends CustomCache> extends ButtonAction<C> {
     }
 
     @Override
-    public void postExecute(GUIHolder<C> holder, ItemStack itemStack, int slot) throws IOException {
+    public void postExecute(GUIHolder holder, ItemStack itemStack, int slot) throws IOException {
         content.put(holder.getGuiHandler(), itemStack != null ? itemStack.clone() : new ItemStack(Material.AIR));
         super.postExecute(holder, itemStack, slot);
     }
 
     @Override
-    public void render(GUIHolder<C> holder, Inventory queueInventory, int slot) throws IOException {
+    public void render(GUIHolder holder, Inventory queueInventory, int slot) throws IOException {
         ItemStack item = getContent(holder.getGuiHandler());
         if (getState().getRenderAction() != null) {
             item = getState().getRenderAction().run(holder, holder.getGuiHandler().getCustomCache(), this, slot, item).getCustomStack().orElse(item);
@@ -70,22 +70,22 @@ public class ButtonItemInput<C extends CustomCache> extends ButtonAction<C> {
         queueInventory.setItem(slot, item);
     }
 
-    public ItemStack getContent(GuiHandler<C> guiHandler) {
+    public ItemStack getContent(GuiHandler guiHandler) {
         return content.computeIfAbsent(guiHandler, g -> new ItemStack(Material.AIR));
     }
 
-    public static class Builder<C extends CustomCache> extends AbstractBuilder<C, ButtonItemInput<C>, Builder<C>> {
+    public static class Builder<C extends CustomCache> extends AbstractBuilder<C, ButtonItemInput, Builder> {
 
-        public Builder(GuiWindow<C> window, String id) {
-            super(window, id, (Class<ButtonItemInput<C>>) (Object) ButtonItemInput.class);
+        public Builder(GuiWindow window, String id) {
+            super(window, id, (Class<ButtonItemInput>) (Object) ButtonItemInput.class);
         }
 
-        public Builder(GuiCluster<C> cluster, String id) {
-            super(cluster, id, (Class<ButtonItemInput<C>>) (Object) ButtonItemInput.class);
+        public Builder(GuiCluster cluster, String id) {
+            super(cluster, id, (Class<ButtonItemInput>) (Object) ButtonItemInput.class);
         }
 
         @Override
-        public ButtonItemInput<C> create() {
+        public ButtonItemInput create() {
             return new ButtonItemInput<>(key, stateBuilder.create());
         }
     }

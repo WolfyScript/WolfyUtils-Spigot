@@ -28,6 +28,6 @@ import org.jetbrains.annotations.Nullable;
 public interface CallbackChatTabComplete<C extends CustomCache> {
 
     @Nullable
-    List<String> onTabComplete(GuiHandler<C> guiHandler, @NotNull Player sender, @NotNull String[] args);
+    List<String> onTabComplete(GuiHandler guiHandler, @NotNull Player sender, @NotNull String[] args);
 
 }

@@ -48,7 +48,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * To execute code on a Button click you need to use the {@link CallbackButtonAction} method, which is called each time the button is clicked.
  *
- * @param <C> The type of the {@link CustomCache}
+ * @param  The type of the {@link CustomCache}
  */
 public class ButtonState<C extends CustomCache> {
 
@@ -63,16 +63,16 @@ public class ButtonState<C extends CustomCache> {
     private final String key;
     private final ItemStack presetIcon;
     private ItemStack icon;
-    private CallbackButtonAction<C> action;
-    private CallbackButtonRender<C> buttonRender;
-    private CallbackButtonPreRender<C> prepareRender;
-    private CallbackButtonPostAction<C> postAction;
+    private CallbackButtonAction action;
+    private CallbackButtonRender buttonRender;
+    private CallbackButtonPreRender prepareRender;
+    private CallbackButtonPostAction postAction;
 
-    public static <C extends CustomCache> Builder<C> of(GuiWindow<C> window, String key) {
+    public static <C extends CustomCache> Builder of(GuiWindow window, String key) {
         return new Builder<>(window, key);
     }
 
-    public static <C extends CustomCache> Builder<C> of(GuiCluster<C> cluster, String key) {
+    public static <C extends CustomCache> Builder of(GuiCluster cluster, String key) {
         return new Builder<>(cluster, key);
     }
 
@@ -96,19 +96,19 @@ public class ButtonState<C extends CustomCache> {
         return icon.clone();
     }
 
-    public CallbackButtonAction<C> getAction() {
+    public CallbackButtonAction getAction() {
         return action;
     }
 
-    public CallbackButtonRender<C> getRenderAction() {
+    public CallbackButtonRender getRenderAction() {
         return buttonRender;
     }
 
-    public CallbackButtonPreRender<C> getPrepareRender() {
+    public CallbackButtonPreRender getPrepareRender() {
         return prepareRender;
     }
 
-    public CallbackButtonPostAction<C> getPostAction() {
+    public CallbackButtonPostAction getPostAction() {
         return postAction;
     }
 
@@ -117,14 +117,14 @@ public class ButtonState<C extends CustomCache> {
      *
      * @param guiMenuComponent The menu component parent to init the state for.
      */
-    protected void init(GuiMenuComponent<C> guiMenuComponent) {
+    protected void init(GuiMenuComponent guiMenuComponent) {
         this.wolfyUtilities = guiMenuComponent.getWolfyUtils();
-        if (guiMenuComponent instanceof GuiCluster<C> cluster) {
+        if (guiMenuComponent instanceof GuiCluster cluster) {
             //For backwards compatibility!
             if (this.clusterID == null) {
                 this.clusterID = cluster.getId();
             }
-        } else if (guiMenuComponent instanceof GuiWindow<C> window) {
+        } else if (guiMenuComponent instanceof GuiWindow window) {
             if (this.windowID == null) {
                 this.windowID = window.getNamespacedKey();
             }
@@ -207,32 +207,32 @@ public class ButtonState<C extends CustomCache> {
      * When the instance is provided via the Button builder, then the default key is equal to the button key.
      * </p>
      *
-     * @param <C> The CustomCache type
+     * @param  The CustomCache type
      */
     public static class Builder<C extends CustomCache> {
 
         private final WolfyUtilsBukkit api;
-        private final InventoryAPI<C> invApi;
-        private GuiWindow<C> window;
-        private GuiCluster<C> cluster;
+        private final InventoryAPI invApi;
+        private GuiWindow window;
+        private GuiCluster cluster;
         private String key;
         private ItemStack icon;
-        private CallbackButtonAction<C> action;
-        private CallbackButtonRender<C> render;
-        private CallbackButtonPreRender<C> preRender;
-        private CallbackButtonPostAction<C> postAction;
+        private CallbackButtonAction action;
+        private CallbackButtonRender render;
+        private CallbackButtonPreRender preRender;
+        private CallbackButtonPostAction postAction;
 
-        private Builder(GuiWindow<C> window, String key) {
+        private Builder(GuiWindow window, String key) {
             this(window.getCluster().getInventoryAPI(), window.getWolfyUtils(), key);
             this.window = window;
         }
 
-        private Builder(GuiCluster<C> cluster, String key) {
+        private Builder(GuiCluster cluster, String key) {
             this(cluster.getInventoryAPI(), cluster.getWolfyUtils(), key);
             this.cluster = cluster;
         }
 
-        private Builder(InventoryAPI<C> invApi, WolfyUtilsBukkit api, String key) {
+        private Builder(InventoryAPI invApi, WolfyUtilsBukkit api, String key) {
             this.api = api;
             this.invApi = invApi;
             this.key = key;
@@ -247,7 +247,7 @@ public class ButtonState<C extends CustomCache> {
          * @param cluster The cluster to switch to.
          * @return This button state builder for chaining.
          */
-        public Builder<C> cluster(GuiCluster<C> cluster) {
+        public Builder cluster(GuiCluster cluster) {
             this.cluster = cluster;
             return this;
         }
@@ -258,7 +258,7 @@ public class ButtonState<C extends CustomCache> {
          * @param key The key of the state.
          * @return This button state builder for chaining.
          */
-        public Builder<C> key(String key) {
+        public Builder key(String key) {
             this.key = key;
             return this;
         }
@@ -272,7 +272,7 @@ public class ButtonState<C extends CustomCache> {
          * @param buttonKey The namespaced key of the button.
          * @return This button state builder for chaining.
          */
-        public Builder<C> key(NamespacedKey buttonKey) {
+        public Builder key(NamespacedKey buttonKey) {
             String clusterID = buttonKey.getNamespace();
             this.cluster = invApi.getGuiCluster(clusterID);
             Preconditions.checkArgument(this.cluster != null, "Error setting key of ButtonState: Cluster \"" + clusterID + "\" does not exist!");
@@ -290,7 +290,7 @@ public class ButtonState<C extends CustomCache> {
          * @param subKey The sub-key to append to the current key.
          * @return This button state builder for chaining.
          */
-        public Builder<C> subKey(String subKey) {
+        public Builder subKey(String subKey) {
             this.key += "." + subKey;
             return this;
         }
@@ -301,7 +301,7 @@ public class ButtonState<C extends CustomCache> {
          * @param icon The material to use as the icon.
          * @return This button state builder for chaining.
          */
-        public Builder<C> icon(ItemStack icon) {
+        public Builder icon(ItemStack icon) {
             this.icon = icon;
             return this;
         }
@@ -312,7 +312,7 @@ public class ButtonState<C extends CustomCache> {
          * @param icon The ItemStack to use as the icon.
          * @return This button state builder for chaining.
          */
-        public Builder<C> icon(Material icon) {
+        public Builder icon(Material icon) {
             this.icon = new ItemStack(icon);
             return this;
         }
@@ -323,7 +323,7 @@ public class ButtonState<C extends CustomCache> {
          * @param action The action callback.
          * @return This button state for chaining.
          */
-        public Builder<C> action(@Nullable CallbackButtonAction<C> action) {
+        public Builder action(@Nullable CallbackButtonAction action) {
             this.action = action;
             return this;
         }
@@ -334,7 +334,7 @@ public class ButtonState<C extends CustomCache> {
          * @param buttonRender The render callback.
          * @return This button state for chaining.
          */
-        public Builder<C> render(@Nullable CallbackButtonRender<C> buttonRender) {
+        public Builder render(@Nullable CallbackButtonRender buttonRender) {
             this.render = buttonRender;
             return this;
         }
@@ -345,7 +345,7 @@ public class ButtonState<C extends CustomCache> {
          * @param prepareRender The pre-render callback.
          * @return This button state for chaining.
          */
-        public Builder<C> preRender(@Nullable CallbackButtonPreRender<C> prepareRender) {
+        public Builder preRender(@Nullable CallbackButtonPreRender prepareRender) {
             this.preRender = prepareRender;
             return this;
         }
@@ -356,7 +356,7 @@ public class ButtonState<C extends CustomCache> {
          * @param postAction The post-action callback.
          * @return This button state for chaining.
          */
-        public Builder<C> postAction(@Nullable CallbackButtonPostAction<C> postAction) {
+        public Builder postAction(@Nullable CallbackButtonPostAction postAction) {
             this.postAction = postAction;
             return this;
         }
@@ -366,8 +366,8 @@ public class ButtonState<C extends CustomCache> {
          *
          * @return A new ButtonState instance with the configured settings.
          */
-        public ButtonState<C> create() {
-            ButtonState<C> state;
+        public ButtonState create() {
+            ButtonState state;
             if (cluster == null) {
                 state = new ButtonState<>(key, icon);
             } else {

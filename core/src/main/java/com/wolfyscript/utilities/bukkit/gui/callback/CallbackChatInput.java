@@ -24,9 +24,9 @@ import org.bukkit.entity.Player;
 
 /**
  *
- * @param <C>
+ * @param 
  */
-public interface CallbackChatInput<C extends CustomCache> {
+public interface CallbackChatInput {
 
-    boolean onChat(GuiHandler<C> guiHandler, Player player, String msg, String[] args);
+    boolean onChat(GuiHandler guiHandler, Player player, String msg, String[] args);
 }

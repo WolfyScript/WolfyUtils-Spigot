@@ -35,7 +35,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @param <C> The type of the {@link CustomCache}
+ * @param  The type of the {@link CustomCache}
  */
 public abstract class Button<C extends CustomCache> {
 
@@ -68,22 +68,22 @@ public abstract class Button<C extends CustomCache> {
      *
      * @param guiWindow The {@link GuiWindow} this button is registered in.
      */
-    public abstract void init(GuiWindow<C> guiWindow);
+    public abstract void init(GuiWindow guiWindow);
 
     /**
      * Called when registered globally inside the {@link GuiCluster#onInit()}
      *
      * @param guiCluster The {@link GuiCluster} this button is registered in.
      */
-    public abstract void init(GuiCluster<C> guiCluster);
+    public abstract void init(GuiCluster guiCluster);
 
-    public abstract InteractionResult execute(GUIHolder<C> guiHandler, int slot) throws IOException;
+    public abstract InteractionResult execute(GUIHolder guiHandler, int slot) throws IOException;
 
-    public abstract void postExecute(GUIHolder<C> holder, ItemStack itemStack, int slot) throws IOException;
+    public abstract void postExecute(GUIHolder holder, ItemStack itemStack, int slot) throws IOException;
 
-    public abstract void preRender(GUIHolder<C> holder, ItemStack itemStack, int slot);
+    public abstract void preRender(GUIHolder holder, ItemStack itemStack, int slot);
 
-    public abstract void render(GUIHolder<C> holder, Inventory queueInventory, int slot) throws IOException;
+    public abstract void render(GUIHolder holder, Inventory queueInventory, int slot) throws IOException;
 
     @NotNull
     public ButtonType getType() {
@@ -105,7 +105,7 @@ public abstract class Button<C extends CustomCache> {
      * @param state
      * @param slot
      */
-    protected void applyItem(GUIHolder<C> holder, ButtonState<C> state, int slot, Inventory queueInventory) {
+    protected void applyItem(GUIHolder holder, ButtonState state, int slot, Inventory queueInventory) {
         CallbackButtonRender.Result updateResult = state.getRenderAction().run(holder, holder.getGuiHandler().getCustomCache(), this, slot, state.getIcon());
         queueInventory.setItem(slot, updateResult.getCustomStack()
                 .map(itemStack -> state.constructCustomIcon(itemStack, updateResult.getTagResolver().orElseGet(TagResolver::empty)))
@@ -119,31 +119,31 @@ public abstract class Button<C extends CustomCache> {
      * @param state The state to initialize.
      * @param guiMenuComponent The parent to fetch the settings from.
      */
-    protected void initState(ButtonState<C> state, GuiMenuComponent<C> guiMenuComponent) {
+    protected void initState(ButtonState state, GuiMenuComponent guiMenuComponent) {
         state.init(guiMenuComponent);
     }
 
-    public static abstract class Builder<C extends CustomCache, B extends Button<C>, T extends Builder<C, B, T>> {
+    public static abstract class Builder<C extends CustomCache, B extends Button, T extends Builder<C, B, T>> {
 
         protected final Class<B> buttonType;
         protected final Class<T> builderType;
         protected final WolfyUtilsBukkit api;
-        protected final InventoryAPI<C> invApi;
-        protected GuiWindow<C> window;
-        protected GuiCluster<C> cluster;
+        protected final InventoryAPI invApi;
+        protected GuiWindow window;
+        protected GuiCluster cluster;
         protected final String key;
 
-        protected Builder(GuiWindow<C> window, String key, Class<B> buttonType) {
+        protected Builder(GuiWindow window, String key, Class<B> buttonType) {
             this(window.getCluster().getInventoryAPI(), window.getWolfyUtils(), key, buttonType);
             this.window = window;
         }
 
-        protected Builder(GuiCluster<C> cluster, String key, Class<B> buttonType) {
+        protected Builder(GuiCluster cluster, String key, Class<B> buttonType) {
             this(cluster.getInventoryAPI(), cluster.getWolfyUtils(), key, buttonType);
             this.cluster = cluster;
         }
 
-        private Builder(InventoryAPI<C> invApi, WolfyUtilsBukkit api, String key, Class<B> buttonType) {
+        private Builder(InventoryAPI invApi, WolfyUtilsBukkit api, String key, Class<B> buttonType) {
             this.api = api;
             this.invApi = invApi;
             this.buttonType = buttonType;

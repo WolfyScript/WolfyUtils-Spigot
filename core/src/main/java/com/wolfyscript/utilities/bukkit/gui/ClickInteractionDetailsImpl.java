@@ -2,11 +2,10 @@ package com.wolfyscript.utilities.bukkit.gui;
 
 import com.wolfyscript.utilities.common.gui.ClickInteractionDetails;
 import com.wolfyscript.utilities.common.gui.ClickType;
-import com.wolfyscript.utilities.common.gui.Data;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-public class ClickInteractionDetailsImpl<D extends Data> implements ClickInteractionDetails<D> {
+public class ClickInteractionDetailsImpl implements ClickInteractionDetails {
 
     private final InventoryClickEvent clickEvent;
     private final ClickType clickType;

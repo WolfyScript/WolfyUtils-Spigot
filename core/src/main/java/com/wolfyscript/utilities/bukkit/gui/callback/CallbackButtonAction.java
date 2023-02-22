@@ -26,7 +26,7 @@ import com.wolfyscript.utilities.common.gui.GUIInteractionDetails;
 import java.io.IOException;
 
 /**
- * @param <C> The type of the {@link CustomCache}
+ * @param  The type of the {@link CustomCache}
  */
 public interface CallbackButtonAction<C extends CustomCache> {
 
@@ -40,6 +40,6 @@ public interface CallbackButtonAction<C extends CustomCache> {
      * @return a boolean indicating whether the interaction should be cancelled. If true the interaction is cancelled.
      * @throws IOException if an error occurs on the execution.
      */
-    ButtonInteractionResult run(GUIHolder<C> holder, C cache, Button<C> button, int slot, GUIInteractionDetails details) throws IOException;
+    ButtonInteractionResult run(GUIHolder holder, C cache, Button button, int slot, GUIInteractionDetails details) throws IOException;
 
 }

@@ -27,7 +27,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @param <C> The type of the {@link CustomCache}
+ * @param  The type of the {@link CustomCache}
  */
 public interface CallbackButtonRender<C extends CustomCache> {
 
@@ -44,7 +44,7 @@ public interface CallbackButtonRender<C extends CustomCache> {
      * @param slot         The slot in which the button is rendered.
      * @return The itemStack that should be set into the GUI.
      */
-    Result run(GUIHolder<C> holder, C cache, Button<C> button, int slot, ItemStack itemStack);
+    Result run(GUIHolder holder, C cache, Button button, int slot, ItemStack itemStack);
 
     /**
      * Contains the data that is used to render the button.

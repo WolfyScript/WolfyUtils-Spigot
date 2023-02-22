@@ -27,7 +27,6 @@ import com.wolfyscript.utilities.bukkit.gui.button.ButtonDummy;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonItemInput;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonMultipleChoice;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonToggle;
-import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import com.wolfyscript.utilities.bukkit.gui.callback.CallbackChatInput;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,17 +44,18 @@ import org.jetbrains.annotations.Nullable;
  *     <li>{@link GuiWindow}</li>
  * </ul>
  *
- * @param <C> The type of the CustomCache
+ * @param  The type of the CustomCache
  */
-public abstract class GuiMenuComponent<C extends CustomCache> {
+@Deprecated(forRemoval = true)
+public abstract class GuiMenuComponent {
 
     public final WolfyUtilsBukkit wolfyUtilities;
-    protected final InventoryAPI<C> inventoryAPI;
-    ButtonBuilder<C> buttonBuilder;
+    protected final InventoryAPI inventoryAPI;
+    ButtonBuilder buttonBuilder;
 
-    final HashMap<String, Button<C>> buttons = new HashMap<>();
+    final HashMap<String, Button> buttons = new HashMap<>();
 
-    protected GuiMenuComponent(InventoryAPI<C> inventoryAPI) {
+    protected GuiMenuComponent(InventoryAPI inventoryAPI) {
         this.inventoryAPI = inventoryAPI;
         this.wolfyUtilities = inventoryAPI.getWolfyUtils();
     }
@@ -65,7 +65,7 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
      *
      * @return The InventoryAPI
      */
-    public InventoryAPI<C> getInventoryAPI() {
+    public InventoryAPI getInventoryAPI() {
         return inventoryAPI;
     }
 
@@ -88,7 +88,7 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
      *
      * @return The ButtonBuilder of this menu.
      */
-    public ButtonBuilder<C> getButtonBuilder() {
+    public ButtonBuilder getButtonBuilder() {
         return buttonBuilder;
     }
 
@@ -97,7 +97,7 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
      * @return The button if it exists, else null.
      */
     @Nullable
-    public final Button<C> getButton(String id) {
+    public final Button getButton(String id) {
         return buttons.get(id);
     }
 
@@ -115,7 +115,7 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
      *
      * @return The map of the registered buttons.
      */
-    Map<String, Button<C>> getButtons() {
+    Map<String, Button> getButtons() {
         return buttons;
     }
 
@@ -163,13 +163,13 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
      * @param msg         The message that should be sent to the player.
      * @param inputAction The {@link CallbackChatInput} to be executed when the player types in the chat.
      */
-    public void openChat(GuiHandler<C> guiHandler, Component msg, CallbackChatInput<C> inputAction) {
+    public void openChat(GuiHandler guiHandler, Component msg, CallbackChatInput inputAction) {
         guiHandler.setChatInputAction(inputAction);
         guiHandler.close();
         getChat().sendMessage(guiHandler.getPlayer(), msg);
     }
 
-    public void sendMessage(GuiHandler<C> guiHandler, Component msg) {
+    public void sendMessage(GuiHandler guiHandler, Component msg) {
         getChat().sendMessage(guiHandler.getPlayer(), msg);
     }
 
@@ -178,57 +178,57 @@ public abstract class GuiMenuComponent<C extends CustomCache> {
      * It is implemented by either {@link GuiWindow} or {@link GuiCluster} and will create the builders accordingly.
      * Calling the {@link Button.Builder#register()} will then register the button either into the {@link GuiWindow} or {@link GuiCluster} depending on from which one the builder was created.
      *
-     * @param <C> The type of the custom cache.
+     * @param  The type of the custom cache.
      */
-    public interface ButtonBuilder<C extends CustomCache> {
+    public interface ButtonBuilder {
 
         /**
-         * Gets a new builder for a {@link ButtonChatInput <C>}.
+         * Gets a new builder for a {@link ButtonChatInput }.
          *
          * @param id The id of the new button.
          * @return The new builder.
          */
-        ButtonChatInput.Builder<C> chatInput(String id);
+        ButtonChatInput.Builder chatInput(String id);
 
         /**
-         * Gets a new builder for a {@link ButtonAction <C>}.
+         * Gets a new builder for a {@link ButtonAction }.
          *
          * @param id The id of the new button.
          * @return The new builder.
          */
-        ButtonAction.Builder<C> action(String id);
+        ButtonAction.Builder action(String id);
 
         /**
-         * Gets a new builder for a {@link ButtonDummy <C>}.
+         * Gets a new builder for a {@link ButtonDummy }.
          *
          * @param id The id of the new button.
          * @return The new builder.
          */
-        ButtonDummy.Builder<C> dummy(String id);
+        ButtonDummy.Builder dummy(String id);
 
         /**
-         * Gets a new builder for a {@link ButtonItemInput <C>}.
+         * Gets a new builder for a {@link ButtonItemInput }.
          *
          * @param id The id of the new button.
          * @return The new builder.
          */
-        ButtonItemInput.Builder<C> itemInput(String id);
+        ButtonItemInput.Builder itemInput(String id);
 
         /**
-         * Gets a new builder for a {@link ButtonToggle <C>}.
+         * Gets a new builder for a {@link ButtonToggle }.
          *
          * @param id The id of the new button.
          * @return The new builder.
          */
-        ButtonToggle.Builder<C> toggle(String id);
+        ButtonToggle.Builder toggle(String id);
 
         /**
-         * Gets a new builder for a {@link ButtonMultipleChoice <C>}.
+         * Gets a new builder for a {@link ButtonMultipleChoice }.
          *
          * @param id The id of the new button.
          * @return The new builder.
          */
-        ButtonMultipleChoice.Builder<C> multiChoice(String id);
+        ButtonMultipleChoice.Builder multiChoice(String id);
 
     }
 }

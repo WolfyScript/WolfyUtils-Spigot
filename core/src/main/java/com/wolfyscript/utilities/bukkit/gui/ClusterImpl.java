@@ -2,56 +2,72 @@ package com.wolfyscript.utilities.bukkit.gui;
 
 import com.google.common.collect.BiMap;
 import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.common.gui.Cluster;
-import com.wolfyscript.utilities.common.gui.ClusterCommonImpl;
-import com.wolfyscript.utilities.common.gui.ClusterComponentBuilder;
-import com.wolfyscript.utilities.common.gui.ClusterStateBuilder;
 import com.wolfyscript.utilities.common.gui.ComponentState;
-import com.wolfyscript.utilities.common.gui.Data;
-import com.wolfyscript.utilities.common.gui.GuiViewManager;
+import com.wolfyscript.utilities.common.gui.GuiHolder;
+import com.wolfyscript.utilities.common.gui.InteractionCallback;
+import com.wolfyscript.utilities.common.gui.InteractionDetails;
+import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.MenuComponent;
-import com.wolfyscript.utilities.common.gui.StateSelector;
+import com.wolfyscript.utilities.common.gui.RenderCallback;
+import com.wolfyscript.utilities.common.gui.RenderContext;
+import com.wolfyscript.utilities.common.gui.Router;
+import com.wolfyscript.utilities.common.gui.RouterCommonImpl;
+import com.wolfyscript.utilities.common.gui.RouterComponentBuilder;
 import com.wolfyscript.utilities.common.gui.WindowComponentBuilder;
-import java.util.UUID;
-import java.util.function.Consumer;
 
-public class ClusterImpl<D extends Data> extends ClusterCommonImpl<D> {
+public class ClusterImpl extends RouterCommonImpl {
 
-    protected ClusterImpl(String id, Class<D> dataType, WolfyUtils wolfyUtils, Cluster<D> parent, StateSelector<D> stateSelector, ComponentState<D>[] states, BiMap<String, ? extends MenuComponent<D>> children, MenuComponent<D> entry) {
-        super(id, dataType, wolfyUtils, parent, stateSelector, states, children, entry);
+    protected ClusterImpl(String id, WolfyUtils wolfyUtils, Router parent, BiMap<String, ? extends MenuComponent> children, MenuComponent entry) {
+        super(id, wolfyUtils, parent, children, entry);
     }
 
-    public static class Builder<D extends Data> extends ClusterCommonImpl.Builder<D> {
+    @Override
+    public InteractionResult interact(GuiHolder holder, ComponentState state, InteractionDetails interactionDetails) {
+        return null;
+    }
 
-        protected Builder(String subID, Cluster<D> parent) {
-            super(subID, parent, new ChildBuilder<>(parent));
+    @Override
+    public void render(GuiHolder holder, ComponentState state, RenderContext context) {
+
+    }
+
+    @Override
+    public InteractionCallback interactCallback() {
+        return null;
+    }
+
+    @Override
+    public RenderCallback renderCallback() {
+        return null;
+    }
+
+    public static class Builder extends RouterCommonImpl.Builder {
+
+        protected Builder(String subID, Router parent) {
+            super(subID, parent, new ChildBuilder(parent));
         }
 
         @Override
-        public ClusterComponentBuilder<D> state(Consumer<ClusterStateBuilder<D>> consumer) {
-            return null;
+        protected Router constructImplementation(String subID, WolfyUtils wolfyUtils, Router router,  BiMap<String, ? extends MenuComponent> children, MenuComponent entry) {
+            return new ClusterImpl(subID, wolfyUtils, router, children, entry);
         }
 
-        @Override
-        protected Cluster<D> constructImplementation(String id, Class<D> dataType, WolfyUtils wolfyUtils, Cluster<D> cluster, StateSelector<D> stateSelector, ComponentState<D>[] componentStates, BiMap<String, ? extends MenuComponent<D>> children, MenuComponent<D> menuComponent) {
-            return new ClusterImpl<>(id, dataType, wolfyUtils, cluster, stateSelector, componentStates, children, menuComponent);
-        }
     }
 
-    public static class ChildBuilder<D extends Data> extends ClusterCommonImpl.ChildBuilder<D> {
+    public static class ChildBuilder extends RouterCommonImpl.ChildBuilder {
 
-        protected ChildBuilder(Cluster<D> parent) {
+        protected ChildBuilder(Router parent) {
             super(parent);
         }
 
         @Override
-        protected ClusterComponentBuilder<D> constructClusterBuilderImpl(String id, Cluster<D> cluster) {
-            return new ClusterImpl.Builder<>(id, cluster);
+        protected RouterComponentBuilder constructClusterBuilderImpl(String id, Router router) {
+            return new ClusterImpl.Builder(id, router);
         }
 
         @Override
-        protected WindowComponentBuilder<D> constructWindowBuilderImpl(String id, Cluster<D> cluster) {
-            return new WindowImpl.BuilderImpl<>(id, cluster);
+        protected WindowComponentBuilder constructWindowBuilderImpl(String id, Router router) {
+            return new WindowImpl.BuilderImpl(id, router);
         }
     }
 

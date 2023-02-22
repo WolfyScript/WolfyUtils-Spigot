@@ -34,7 +34,7 @@ import org.bukkit.inventory.ItemStack;
  * <br>
  * For example, it can be used for setting items into cache for something like item input see {@link ButtonItemInput}
  *
- * @param <C> The type of the {@link CustomCache}
+ * @param  The type of the {@link CustomCache}
  */
 public interface CallbackButtonPostAction<C extends CustomCache> {
 
@@ -47,6 +47,6 @@ public interface CallbackButtonPostAction<C extends CustomCache> {
      * @param event      The previous event of the click that caused the update. Can be a InventoryClickEvent or InventoryDragEvent
      * @throws IOException if an error occurs on the execution.
      */
-    void run(GUIHolder<C> holder, C cache, Button<C> button, int slot, ItemStack itemStack, GUIInteractionDetails details) throws IOException;
+    void run(GUIHolder holder, C cache, Button button, int slot, ItemStack itemStack, GUIInteractionDetails details) throws IOException;
 
 }

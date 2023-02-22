@@ -38,17 +38,18 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
  *
  * Buttons registered in a GuiCluster are available globally, so you can use them in the child windows or access them in windows outside this cluster.<br>
  *
- * @param <C> The type of the CustomCache
+ * @param  The type of the CustomCache
  */
-public abstract class GuiCluster<C extends CustomCache> extends GuiMenuComponent<C> {
+@Deprecated(forRemoval = true)
+public abstract class GuiCluster extends GuiMenuComponent {
 
-    protected final InventoryAPI<C> inventoryAPI;
+    protected final InventoryAPI inventoryAPI;
     private final String id;
-    private final Map<String, GuiWindow<C>> guiWindows;
+    private final Map<String, GuiWindow> guiWindows;
 
     private NamespacedKey entry;
 
-    protected GuiCluster(InventoryAPI<C> inventoryAPI, String id) {
+    protected GuiCluster(InventoryAPI inventoryAPI, String id) {
         super(inventoryAPI);
         this.inventoryAPI = inventoryAPI;
         this.id = id;
@@ -72,20 +73,11 @@ public abstract class GuiCluster<C extends CustomCache> extends GuiMenuComponent
     }
 
     /**
-     * Sets the {@link GuiWindow} entrypoint of this cluster.
-     *
-     * @param entry The namespaced key of the {@link GuiWindow}. See {@link GuiWindow#getNamespacedKey()}
-     */
-    protected void setEntry(NamespacedKey entry) {
-        this.entry = entry;
-    }
-
-    /**
      * Registers the button in this cluster.
      *
      * @param button The button to register.
      */
-    public void registerButton(Button<C> button) {
+    public void registerButton(Button button) {
         button.init(this);
         buttons.putIfAbsent(button.getId(), button);
     }
@@ -96,7 +88,7 @@ public abstract class GuiCluster<C extends CustomCache> extends GuiMenuComponent
      *
      * @param guiWindow The GuiWindow to register.
      */
-    protected void registerGuiWindow(GuiWindow<C> guiWindow) {
+    protected void registerGuiWindow(GuiWindow guiWindow) {
         if (this.entry == null) {
             this.entry = guiWindow.getNamespacedKey();
         }
@@ -110,7 +102,7 @@ public abstract class GuiCluster<C extends CustomCache> extends GuiMenuComponent
      * @param id The id of the child window.
      * @return The GuiWindow of the id; otherwise null if there is no GuiWindow for that id.
      */
-    public GuiWindow<C> getGuiWindow(String id) {
+    public GuiWindow getGuiWindow(String id) {
         return guiWindows.get(id);
     }
 
@@ -123,7 +115,7 @@ public abstract class GuiCluster<C extends CustomCache> extends GuiMenuComponent
         return id;
     }
 
-    Map<String, GuiWindow<C>> getGuiWindows() {
+    Map<String, GuiWindow> getGuiWindows() {
         return guiWindows;
     }
 
@@ -145,35 +137,35 @@ public abstract class GuiCluster<C extends CustomCache> extends GuiMenuComponent
      * The button builder for this GuiCluster. It creates new instances of the builders using the instance of this GuiCluster.<br>
      * Therefor calling the {@link Button.Builder#register()} will then register the button into this GuiCluster.
      */
-    protected class ClusterButtonBuilder implements ButtonBuilder<C> {
+    protected class ClusterButtonBuilder implements ButtonBuilder {
 
         @Override
-        public ButtonChatInput.Builder<C> chatInput(String id) {
+        public ButtonChatInput.Builder chatInput(String id) {
             return new ButtonChatInput.Builder<>(GuiCluster.this, id);
         }
 
         @Override
-        public ButtonAction.Builder<C> action(String id) {
+        public ButtonAction.Builder action(String id) {
             return new ButtonAction.Builder<>(GuiCluster.this, id);
         }
 
         @Override
-        public ButtonDummy.Builder<C> dummy(String id) {
+        public ButtonDummy.Builder dummy(String id) {
             return new ButtonDummy.Builder<>(GuiCluster.this, id);
         }
 
         @Override
-        public ButtonItemInput.Builder<C> itemInput(String id) {
+        public ButtonItemInput.Builder itemInput(String id) {
             return new ButtonItemInput.Builder<>(GuiCluster.this, id);
         }
 
         @Override
-        public ButtonToggle.Builder<C> toggle(String id) {
+        public ButtonToggle.Builder toggle(String id) {
             return new ButtonToggle.Builder<>(GuiCluster.this, id);
         }
 
         @Override
-        public ButtonMultipleChoice.Builder<C> multiChoice(String id) {
+        public ButtonMultipleChoice.Builder multiChoice(String id) {
             return new ButtonMultipleChoice.Builder<>(GuiCluster.this, id);
         }
     }

@@ -59,17 +59,18 @@ import org.jetbrains.annotations.Nullable;
  * </ul>
  * <br>
  *
- * @param <C> The type of the {@link CustomCache}
+ * @param  The type of the {@link CustomCache}
  */
+@Deprecated(forRemoval = true)
 public class GuiHandler<C extends CustomCache> implements Listener {
 
     private final WolfyUtilsBukkit api;
-    private final InventoryAPI<C> invAPI;
+    private final InventoryAPI invAPI;
     private final UUID uuid;
-    private final Map<GuiCluster<C>, List<GuiWindow<C>>> clusterHistory;
-    private CallbackChatInput<C> chatInputAction = null;
-    private CallbackChatTabComplete<C> chatTabComplete = null;
-    private GuiCluster<C> cluster = null;
+    private final Map<GuiCluster, List<GuiWindow>> clusterHistory;
+    private CallbackChatInput chatInputAction = null;
+    private CallbackChatTabComplete chatTabComplete = null;
+    private GuiCluster cluster = null;
     private boolean isWindowOpen = false;
     private boolean helpEnabled = false;
     private boolean switchWindow = false;
@@ -78,7 +79,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
 
     private final C customCache;
 
-    public GuiHandler(Player player, WolfyUtilsBukkit api, InventoryAPI<C> invAPI, C customCache) {
+    public GuiHandler(Player player, WolfyUtilsBukkit api, InventoryAPI invAPI, C customCache) {
         this.api = api;
         this.invAPI = invAPI;
         this.uuid = player.getUniqueId();
@@ -109,7 +110,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      *
      * @return The InventoryAPI instance.
      */
-    public InventoryAPI<C> getInvAPI() {
+    public InventoryAPI getInvAPI() {
         return invAPI;
     }
 
@@ -137,7 +138,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
     /**
      * @return The active {@link GuiCluster}
      */
-    public GuiCluster<C> getCluster() {
+    public GuiCluster getCluster() {
         return cluster;
     }
 
@@ -155,7 +156,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      * @param windowKey The {@link BukkitNamespacedKey} of the window, to reload and replace the active window with.
      */
     public void reloadWindow(NamespacedKey windowKey) {
-        List<GuiWindow<C>> history = getHistory(invAPI.getGuiCluster(windowKey.getNamespace()));
+        List<GuiWindow> history = getHistory(invAPI.getGuiCluster(windowKey.getNamespace()));
         history.remove(history.get(0));
         openWindow(windowKey);
     }
@@ -164,7 +165,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      * @param clusterId The id of the cluster to get the active window for.
      * @return The active {@link GuiWindow} of this handler for the specified {@link GuiCluster}; Null if there isn't any active window.
      */
-    public GuiWindow<C> getWindow(String clusterId) {
+    public GuiWindow getWindow(String clusterId) {
         return getWindow(invAPI.getGuiCluster(clusterId));
     }
 
@@ -173,8 +174,8 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      * @return The active {@link GuiWindow} of this handler for the specified {@link GuiCluster}; Null if there isn't any active window.
      */
     @Nullable
-    public GuiWindow<C> getWindow(GuiCluster<C> cluster) {
-        List<GuiWindow<C>> history = getHistory(cluster);
+    public GuiWindow getWindow(GuiCluster cluster) {
+        List<GuiWindow> history = getHistory(cluster);
         return !history.isEmpty() ? invAPI.getGuiWindow(history.get(0).getNamespacedKey()) : null;
     }
 
@@ -182,7 +183,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      * @return The active {@link GuiWindow} of this handler; Null if there isn't any active window.
      */
     @Nullable
-    public GuiWindow<C> getWindow() {
+    public GuiWindow getWindow() {
         return getWindow(getCluster());
     }
 
@@ -191,7 +192,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      * @return The previous {@link GuiWindow} in history that was opened, or null if there isn't one.
      */
     @Nullable
-    public GuiWindow<C> getPreviousWindow(String clusterId) {
+    public GuiWindow getPreviousWindow(String clusterId) {
         return getPreviousWindow(invAPI.getGuiCluster(clusterId));
     }
 
@@ -200,7 +201,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      * @return The previous {@link GuiWindow} in history that was opened, or null if there isn't one.
      */
     @Nullable
-    public GuiWindow<C> getPreviousWindow(GuiCluster<C> cluster) {
+    public GuiWindow getPreviousWindow(GuiCluster cluster) {
         return getPreviousWindow(cluster, 1);
     }
 
@@ -210,7 +211,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      * @return The previous {@link GuiWindow} in history that was opened, or null if there isn't one.
      */
     @Nullable
-    public GuiWindow<C> getPreviousWindow(String clusterID, int stepsBack) {
+    public GuiWindow getPreviousWindow(String clusterID, int stepsBack) {
         return getPreviousWindow(invAPI.getGuiCluster(clusterID), stepsBack);
     }
 
@@ -220,8 +221,8 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      * @return The previous {@link GuiWindow} in history that was opened, or null if there isn't one.
      */
     @Nullable
-    public GuiWindow<C> getPreviousWindow(GuiCluster<C> cluster, int stepsBack) {
-        List<GuiWindow<C>> history = getHistory(cluster);
+    public GuiWindow getPreviousWindow(GuiCluster cluster, int stepsBack) {
+        List<GuiWindow> history = getHistory(cluster);
         if (stepsBack < history.size()) {
             return invAPI.getGuiWindow(history.get(stepsBack).getNamespacedKey());
         }
@@ -232,7 +233,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      * @return The previous {@link GuiWindow} in history that was opened, or null if there isn't one.
      */
     @Nullable
-    public GuiWindow<C> getPreviousWindow() {
+    public GuiWindow getPreviousWindow() {
         return getPreviousWindow(getCluster());
     }
 
@@ -241,7 +242,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      * @return The previous {@link GuiWindow} in history that was opened, or null if there isn't one.
      */
     @Nullable
-    public GuiWindow<C> getPreviousWindow(int stepsBack) {
+    public GuiWindow getPreviousWindow(int stepsBack) {
         return getPreviousWindow(getCluster(), stepsBack);
     }
 
@@ -253,7 +254,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
         openPreviousWindow(invAPI.getGuiCluster(clusterID));
     }
 
-    public void openPreviousWindow(GuiCluster<C> cluster) {
+    public void openPreviousWindow(GuiCluster cluster) {
         openPreviousWindow(cluster, 1);
     }
 
@@ -265,9 +266,9 @@ public class GuiHandler<C extends CustomCache> implements Listener {
         openPreviousWindow(invAPI.getGuiCluster(clusterID), stepsBack);
     }
 
-    public void openPreviousWindow(GuiCluster<C> cluster, int stepsBack) {
+    public void openPreviousWindow(GuiCluster cluster, int stepsBack) {
         openedPreviousWindow = true;
-        List<GuiWindow<C>> history = getHistory(cluster);
+        List<GuiWindow> history = getHistory(cluster);
         if (stepsBack < history.size()) {
             if (stepsBack > 0) {
                 history.subList(0, stepsBack).clear();
@@ -286,11 +287,11 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      * @param cluster The {@link GuiCluster} to get the history for.
      * @return A list of the {@link GuiCluster} history, or an empty list if non-existing.
      */
-    public List<GuiWindow<C>> getHistory(GuiCluster<C> cluster) {
+    public List<GuiWindow> getHistory(GuiCluster cluster) {
         return clusterHistory.computeIfAbsent(cluster, c -> new ArrayList<>());
     }
 
-    private void setHistory(GuiCluster<C> cluster, List<GuiWindow<C>> history) {
+    private void setHistory(GuiCluster cluster, List<GuiWindow> history) {
         clusterHistory.put(cluster, history);
     }
 
@@ -319,7 +320,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      *
      * @param window The {@link GuiWindow} to open.
      */
-    public void openWindow(GuiWindow<C> window) {
+    public void openWindow(GuiWindow window) {
         if (getPlayer() == null) {
             isWindowOpen = false;
             return;
@@ -329,7 +330,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
             isWindowOpen = false;
             return;
         }
-        final GuiCluster<C> cluster = window.getCluster();
+        final GuiCluster cluster = window.getCluster();
         Player player1 = getPlayer();
         if (player1.hasPermission(window.getPermission())) {
             // Cancels the chat input when a new window is opened to prevent
@@ -367,9 +368,9 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      *
      * @param cluster The {@link GuiCluster} to open.
      */
-    public void openCluster(GuiCluster<C> cluster) {
+    public void openCluster(GuiCluster cluster) {
         if (cluster == null) return;
-        GuiWindow<C> window = getWindow(cluster);
+        GuiWindow window = getWindow(cluster);
         if (window != null) {
             openWindow(window.getNamespacedKey());
         } else {
@@ -388,7 +389,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      * @return The active {@link CallbackChatInput} or null if not active.
      */
     @Nullable
-    public CallbackChatInput<C> getChatInputAction() {
+    public CallbackChatInput getChatInputAction() {
         return chatInputAction;
     }
 
@@ -397,7 +398,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      *
      * @param chatInputAction The new {@link CallbackChatInput}
      */
-    public void setChatInputAction(CallbackChatInput<C> chatInputAction) {
+    public void setChatInputAction(CallbackChatInput chatInputAction) {
         this.chatInputAction = chatInputAction;
     }
 
@@ -405,7 +406,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      * @return The active {@link CallbackChatTabComplete} or null if not active.
      */
     @Nullable
-    public CallbackChatTabComplete<C> getChatTabComplete() {
+    public CallbackChatTabComplete getChatTabComplete() {
         return chatTabComplete;
     }
 
@@ -415,7 +416,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      *
      * @param chatTabComplete The new {@link CallbackChatTabComplete}
      */
-    public void setChatTabComplete(CallbackChatTabComplete<C> chatTabComplete) {
+    public void setChatTabComplete(CallbackChatTabComplete chatTabComplete) {
         this.chatTabComplete = chatTabComplete;
     }
 
@@ -432,7 +433,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      * @param chatInputAction The new {@link CallbackChatInput}
      * @param chatTabComplete The new {@link CallbackChatTabComplete}
      */
-    public void setChatInput(@Nullable CallbackChatInput<C> chatInputAction, @Nullable CallbackChatTabComplete<C> chatTabComplete) {
+    public void setChatInput(@Nullable CallbackChatInput chatInputAction, @Nullable CallbackChatTabComplete chatTabComplete) {
         setChatInputAction(chatInputAction);
         setChatTabComplete(chatTabComplete);
     }
@@ -468,11 +469,11 @@ public class GuiHandler<C extends CustomCache> implements Listener {
         return true;
     }
 
-    final void setButton(GuiWindow<C> guiWindow, int slot, String id) {
+    final void setButton(GuiWindow guiWindow, int slot, String id) {
         customCache.setButton(guiWindow, slot, id);
     }
 
-    final Button<C> getButton(GuiWindow<C> guiWindow, int slot) {
+    final Button getButton(GuiWindow guiWindow, int slot) {
         String id = customCache.getButtons(guiWindow).get(slot);
         if (id != null && id.contains(":")) {
             return invAPI.getButton(BukkitNamespacedKey.of(id));
@@ -494,7 +495,7 @@ public class GuiHandler<C extends CustomCache> implements Listener {
      * @param guiInventory The {@link Inventory} that is closed.
      * @param event        The {@link InventoryCloseEvent} that caused this action.
      */
-    public void onClose(GUIHolder<C> holder) {
+    public void onClose(GUIHolder holder) {
         getWindowUpdateTask().ifPresent(BukkitTask::cancel);
         if (!clusterHistory.isEmpty() && !switchWindow) {
             if (holder.getWindow().onClose(holder)) {

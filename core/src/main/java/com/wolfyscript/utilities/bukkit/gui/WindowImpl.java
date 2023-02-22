@@ -3,15 +3,16 @@ package com.wolfyscript.utilities.bukkit.gui;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
-import com.wolfyscript.utilities.common.gui.Cluster;
-import com.wolfyscript.utilities.common.gui.ComponentStateDefault;
-import com.wolfyscript.utilities.common.gui.Data;
+import com.wolfyscript.utilities.common.gui.ComponentState;
 import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.InteractionCallback;
+import com.wolfyscript.utilities.common.gui.InteractionDetails;
+import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.RenderCallback;
 import com.wolfyscript.utilities.common.gui.RenderContext;
 import com.wolfyscript.utilities.common.gui.RenderPreCallback;
+import com.wolfyscript.utilities.common.gui.Router;
 import com.wolfyscript.utilities.common.gui.SlotComponent;
 import com.wolfyscript.utilities.common.gui.StateSelector;
 import com.wolfyscript.utilities.common.gui.Window;
@@ -20,6 +21,7 @@ import com.wolfyscript.utilities.common.gui.WindowState;
 import com.wolfyscript.utilities.common.gui.WindowStateBuilder;
 import com.wolfyscript.utilities.common.gui.WindowTitleUpdateCallback;
 import com.wolfyscript.utilities.common.gui.WindowType;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -33,15 +35,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 
-public class WindowImpl<D extends Data> extends WindowCommonImpl<D> {
+public class WindowImpl extends WindowCommonImpl {
 
-    protected WindowImpl(String id, Cluster<D> parent, WindowTitleUpdateCallback<D> titleUpdateCallback, StateSelector<D> stateSelector, WindowState<D>[] states, BiMap<String, ? extends SlotComponent<D>> children, Integer size, WindowType type) {
-        super(id, parent, titleUpdateCallback, stateSelector, states, children, size, type);
+    protected WindowImpl(String id, Router parent, WindowTitleUpdateCallback titleUpdateCallback, BiMap<String, ? extends SlotComponent> children, Integer size, WindowType type) {
+        super(id, parent, titleUpdateCallback, children, size, type);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public void open(GuiViewManager<D> handler, UUID player) {
+    public void open(GuiViewManager handler, UUID player) {
         /* TODO:
          if player has an open inv with holder:
           - Check if window is the same.
@@ -52,20 +53,25 @@ public class WindowImpl<D extends Data> extends WindowCommonImpl<D> {
           - Create inventory and set holder.
           - open inventory.
          */
+        Deque<com.wolfyscript.utilities.common.gui.Component> pathToRoot = getPathToRoot();
         Player bukkitPlayer = Bukkit.getPlayer(player);
         if (bukkitPlayer == null) return;
         Inventory topInventory = bukkitPlayer.getOpenInventory().getTopInventory();
-        if (topInventory.getHolder() instanceof GUIHolder<?> holder) {
+        if (topInventory.getHolder() instanceof GUIHolder holder) {
             if (Objects.equals(holder.getCurrentWindow(), this)) {
                 // Still in the same window, we can just update it.
-                RenderContext<D> renderContext = new RenderContextImpl<>(topInventory);
-                handler.getRoot().render((GuiHolder<D>) holder, handler.getData(), renderContext);
+                RenderContext renderContext = new RenderContextImpl(topInventory);
+                ComponentState rootState = ((GuiViewManagerImpl) holder.getViewManager()).getRootStateNode();
+                // TODO: Update window even if no state has changed? probably not!?
+                if (rootState.shouldUpdate()) {
+                    handler.getRoot().render(holder, rootState, renderContext);
+                }
                 return;
             }
         }
         // No active Window or it is another Window, need to recreate inventory
         final Inventory inventory;
-        final GUIHolder<D> holder = new GUIHolder<>(bukkitPlayer, handler, this);
+        final GUIHolder holder = new GUIHolder(bukkitPlayer, handler, this);
         final Component title = createTitle(holder);
         if (((WolfyUtilsBukkit) getWolfyUtils()).getCore().getCompatibilityManager().isPaper()) {
             // Paper has direct Adventure support, so use it for better titles!
@@ -77,8 +83,23 @@ public class WindowImpl<D extends Data> extends WindowCommonImpl<D> {
         }
         holder.setActiveInventory(inventory);
 
-        RenderContext<D> renderContext = new RenderContextImpl<>(inventory);
-        handler.getRoot().render(holder, handler.getData(), renderContext);
+        RenderContext renderContext = new RenderContextImpl(inventory);
+        GuiViewManagerImpl viewManager = ((GuiViewManagerImpl) holder.getViewManager());
+
+        if (!handler.getRoot().equals(pathToRoot.pop())) {
+            // This should not happen. Consider InvalidStateException
+            return;
+        }
+
+        // Create the state tree!
+        if (viewManager.getRootStateNode() == null || !viewManager.getRootStateNode().getOwner().equals(handler.getRoot())) {
+            ComponentStateImpl rootState = new ComponentStateImpl(null, handler.getRoot());
+            rootState.render(holder, renderContext);
+            viewManager.changeRootState(rootState);
+        } else {
+            viewManager.getRootStateNode().render(holder, renderContext);
+        }
+
     }
 
     private Optional<InventoryType> getInventoryType() {
@@ -90,71 +111,41 @@ public class WindowImpl<D extends Data> extends WindowCommonImpl<D> {
         });
     }
 
-    public static class BuilderImpl<D extends Data> extends WindowCommonImpl.Builder<D> {
-
-        protected BuilderImpl(String subID, Cluster<D> parent) {
-            super(subID, parent, new WindowImpl.ChildBuilderImpl<>(parent));
-        }
-
-        @Override
-        public Builder<D> state(Consumer<WindowStateBuilder<D>> stateBuilderConsumer) {
-            WindowStateBuilder<D> stateBuilder = null;
-            stateBuilderConsumer.accept(stateBuilder);
-            stateBuilders.add(stateBuilder);
-            return this;
-        }
-
-        @Override
-        protected Window<D> constructImplementation(String s, Cluster<D> cluster, StateSelector<D> stateSelector, WindowState<D>[] componentStates, BiMap<String, ? extends SlotComponent<D>> children, Integer size, WindowType type) {
-            return new WindowImpl<>(s, cluster, this.titleUpdateCallback, stateSelector, componentStates, children, size, type);
-        }
+    @Override
+    public InteractionResult interact(GuiHolder holder, ComponentState state, InteractionDetails interactionDetails) {
+        return null;
     }
 
-    public static class State<D extends Data> extends ComponentStateDefault<D> {
-
-        public Map<Integer, SlotComponent<D>> componentPositions;
-
-        protected State(String key, Map<Integer, SlotComponent<D>> childrenPositions, InteractionCallback<D> interactionCallback, RenderPreCallback<D> renderPreCallback, RenderCallback<D> renderCallback) {
-            super(key, interactionCallback, renderPreCallback, renderCallback);
-            this.componentPositions = Map.copyOf(childrenPositions);
-        }
-
-        public Map<Integer, SlotComponent<D>> getComponentPositions() {
-            return componentPositions;
-        }
-
-        public static class Builder<D extends Data> extends ComponentStateDefault.Builder<D> {
-
-            public Map<Integer, String> childrenPositions = new HashMap<>();
-            public Map<Integer, String[]> componentPositions = new HashMap<>();
-
-            protected Builder(String ownerID) {
-                super(ownerID);
-            }
-
-            public Builder<D> childSlot(int slot, String childComponentId) {
-                childrenPositions.put(slot, childComponentId);
-                return this;
-            }
-
-            public Builder<D> componentSlot(int slot, String... pathFromRoot) {
-                Preconditions.checkArgument(pathFromRoot != null && pathFromRoot.length > 0, "Path to component cannot be empty or null!");
-                componentPositions.put(slot, pathFromRoot);
-                return this;
-            }
-
-            @Override
-            public ComponentStateDefault<D> create() {
-                // TODO
-                return super.create();
-            }
-        }
+    @Override
+    public void render(GuiHolder holder, ComponentState state, RenderContext context) {
 
     }
 
-    public static class ChildBuilderImpl<D extends Data> extends WindowCommonImpl.ChildBuilder<D> {
+    @Override
+    public InteractionCallback interactCallback() {
+        return null;
+    }
 
-        protected ChildBuilderImpl(Cluster<D> parent) {
+    @Override
+    public RenderCallback renderCallback() {
+        return null;
+    }
+
+    public static class BuilderImpl extends WindowCommonImpl.Builder {
+
+        protected BuilderImpl(String subID, Router parent) {
+            super(subID, parent, new WindowImpl.ChildBuilderImpl(parent));
+        }
+
+        @Override
+        protected Window constructImplementation(String s, Router router, BiMap<String, ? extends SlotComponent> children, Integer size, WindowType type) {
+            return new WindowImpl(s, router, this.titleUpdateCallback, children, size, type);
+        }
+    }
+
+    public static class ChildBuilderImpl extends WindowCommonImpl.ChildBuilder {
+
+        protected ChildBuilderImpl(Router parent) {
             super(parent);
         }
     }

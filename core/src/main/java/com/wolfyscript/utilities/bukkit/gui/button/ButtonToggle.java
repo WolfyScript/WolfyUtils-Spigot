@@ -38,14 +38,14 @@ import org.jetbrains.annotations.Nullable;
  * The actions are not allowed to be null!
  * You can add a empty action, but then you should consider using a normal Button!
  *
- * @param <C> The type of the {@link CustomCache}
+ * @param  The type of the {@link CustomCache}
  */
-public class ButtonToggle<C extends CustomCache> extends Button<C> {
+public class ButtonToggle<C extends CustomCache> extends Button {
 
-    private final Pair<ButtonState<C>, ButtonState<C>> states;
+    private final Pair<ButtonState, ButtonState> states;
     private final boolean defaultState;
-    private final StateFunction<C> stateFunction;
-    private final HashMap<GuiHandler<C>, Boolean> settings;
+    private final StateFunction stateFunction;
+    private final HashMap<GuiHandler, Boolean> settings;
 
     /**
      * @param id            The id of the Button
@@ -54,7 +54,7 @@ public class ButtonToggle<C extends CustomCache> extends Button<C> {
      * @param state         The {@link ButtonState} that is rendered if the state is true.
      * @param state2        The {@link ButtonState} that is rendered if the state is false.
      */
-    ButtonToggle(String id, boolean defaultState, @Nullable ButtonToggle.StateFunction<C> stateFunction, @NotNull ButtonState<C> state, @NotNull ButtonState<C> state2) {
+    ButtonToggle(String id, boolean defaultState, @Nullable ButtonToggle.StateFunction stateFunction, @NotNull ButtonState state, @NotNull ButtonState state2) {
         super(id, ButtonType.TOGGLE);
         this.defaultState = defaultState;
         states = new Pair<>(state, state2);
@@ -62,54 +62,54 @@ public class ButtonToggle<C extends CustomCache> extends Button<C> {
         this.stateFunction = stateFunction == null ? (holder, cache, slot) -> settings.getOrDefault(holder.getGuiHandler(), defaultState) : stateFunction;
     }
 
-    public void setState(GuiHandler<C> guiHandler, boolean enabled) {
+    public void setState(GuiHandler guiHandler, boolean enabled) {
         settings.put(guiHandler, enabled);
     }
 
-    public ButtonState<C> getState(GuiHandler<C> guiHandler) {
+    public ButtonState getState(GuiHandler guiHandler) {
         return Boolean.TRUE.equals(settings.getOrDefault(guiHandler, defaultState)) ? states.getKey() : states.getValue();
     }
 
     @Override
-    public void init(GuiWindow<C> guiWindow) {
+    public void init(GuiWindow guiWindow) {
         initState(states.getKey(), guiWindow);
         initState(states.getValue(), guiWindow);
     }
 
     @Override
-    public void init(GuiCluster<C> guiCluster) {
+    public void init(GuiCluster guiCluster) {
         initState(states.getKey(), guiCluster);
         initState(states.getValue(), guiCluster);
     }
 
     @Override
-    public void postExecute(GUIHolder<C> holder, ItemStack itemStack, int slot) throws IOException {
-        ButtonState<C> state = getState(holder.getGuiHandler());
+    public void postExecute(GUIHolder holder, ItemStack itemStack, int slot) throws IOException {
+        ButtonState state = getState(holder.getGuiHandler());
         if (state.getPostAction() != null) {
             state.getPostAction().run(holder, holder.getGuiHandler().getCustomCache(), this, slot, itemStack, null); // TODO: Details
         }
     }
 
     @Override
-    public ButtonInteractionResult execute(GUIHolder<C> holder, int slot) throws IOException {
+    public ButtonInteractionResult execute(GUIHolder holder, int slot) throws IOException {
         ButtonInteractionResult result = getState(holder.getGuiHandler()).getAction().run(holder, holder.getGuiHandler().getCustomCache(),this, slot, null); // TODO: Details
         settings.put(holder.getGuiHandler(), !settings.getOrDefault(holder.getGuiHandler(), defaultState));
         return result;
     }
 
     @Override
-    public void preRender(GUIHolder<C> holder, ItemStack itemStack, int slot) {
+    public void preRender(GUIHolder holder, ItemStack itemStack, int slot) {
         boolean state = stateFunction.run(holder, holder.getGuiHandler().getCustomCache(), slot);
         settings.put(holder.getGuiHandler(), state);
-        ButtonState<C> buttonState = state ? states.getKey() : states.getValue();
+        ButtonState buttonState = state ? states.getKey() : states.getValue();
         if (buttonState.getPrepareRender() != null) {
             buttonState.getPrepareRender().run(holder, holder.getGuiHandler().getCustomCache(), this, slot, itemStack);
         }
     }
 
     @Override
-    public void render(GUIHolder<C> holder, Inventory queueInventory, int slot) {
-        ButtonState<C> activeState = getState(holder.getGuiHandler());
+    public void render(GUIHolder holder, Inventory queueInventory, int slot) {
+        ButtonState activeState = getState(holder.getGuiHandler());
         applyItem(holder, activeState, slot, queueInventory);
     }
 
@@ -122,51 +122,51 @@ public class ButtonToggle<C extends CustomCache> extends Button<C> {
          * @param slot       The slot in which the button is rendered.
          * @return a boolean indicating the state of the button.
          */
-        boolean run(GUIHolder<C> holder, C cache, int slot);
+        boolean run(GUIHolder holder, C cache, int slot);
 
     }
 
-    public static class Builder<C extends CustomCache> extends Button.Builder<C, ButtonToggle<C>, Builder<C>> {
+    public static class Builder<C extends CustomCache> extends Button.Builder<C, ButtonToggle, Builder> {
 
         protected boolean defaultState;
-        protected StateFunction<C> stateFunction;
-        protected ButtonState.Builder<C> enabledStateBuilder;
-        protected ButtonState.Builder<C> disabledStateBuilder;
+        protected StateFunction stateFunction;
+        protected ButtonState.Builder enabledStateBuilder;
+        protected ButtonState.Builder disabledStateBuilder;
 
-        public Builder(GuiWindow<C> window, String id) {
-            super(window, id, (Class<ButtonToggle<C>>) (Object) ButtonToggle.class);
+        public Builder(GuiWindow window, String id) {
+            super(window, id, (Class<ButtonToggle>) (Object) ButtonToggle.class);
             this.enabledStateBuilder = ButtonState.of(window, id);
             this.disabledStateBuilder = ButtonState.of(window, id);
         }
 
-        public Builder(GuiCluster<C> cluster, String id) {
-            super(cluster, id, (Class<ButtonToggle<C>>) (Object) ButtonToggle.class);
+        public Builder(GuiCluster cluster, String id) {
+            super(cluster, id, (Class<ButtonToggle>) (Object) ButtonToggle.class);
             this.enabledStateBuilder = ButtonState.of(cluster, id);
             this.disabledStateBuilder = ButtonState.of(cluster, id);
         }
 
-        public Builder<C> enabledState(Consumer<ButtonState.Builder<C>> builderConsumer) {
+        public Builder enabledState(Consumer<ButtonState.Builder> builderConsumer) {
             builderConsumer.accept(enabledStateBuilder);
             return this;
         }
 
-        public Builder<C> disabledState(Consumer<ButtonState.Builder<C>> builderConsumer) {
+        public Builder disabledState(Consumer<ButtonState.Builder> builderConsumer) {
             builderConsumer.accept(disabledStateBuilder);
             return this;
         }
 
-        public Builder<C> stateFunction(StateFunction<C> stateFunction) {
+        public Builder stateFunction(StateFunction stateFunction) {
             this.stateFunction = stateFunction;
             return this;
         }
 
-        public Builder<C> defaultState(boolean defaultState) {
+        public Builder defaultState(boolean defaultState) {
             this.defaultState = defaultState;
             return this;
         }
 
         @Override
-        public ButtonToggle<C> create() {
+        public ButtonToggle create() {
             return new ButtonToggle<>(key, defaultState, stateFunction, enabledStateBuilder.create(), disabledStateBuilder.create());
         }
     }
