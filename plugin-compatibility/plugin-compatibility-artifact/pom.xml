@@ -38,6 +38,10 @@
             <id>citizen</id>
             <url>https://repo.citizensnpcs.co</url>
         </repository>
+        <repository>
+            <id>phoenix</id>
+            <url>https://nexus.phoenixdevt.fr/repository/maven-public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -45,7 +49,7 @@
         <dependency>
             <groupId>com.github.Ssomar-Developement</groupId>
             <artifactId>SCore</artifactId>
-            <version>main-d90dd3b60e-1</version>
+            <version>3.9.25</version>
             <scope>provided</scope>
         </dependency>
         <!-- Denizen -->
@@ -92,11 +96,15 @@
         </dependency>
         <!-- Oraxen -->
         <dependency>
-            <groupId>io.th0rgal</groupId>
+            <groupId>com.github.oraxen</groupId>
             <artifactId>oraxen</artifactId>
-            <version>1.66.2</version>
+            <version>1.152.0</version>
             <scope>provided</scope>
-            <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion></exclusions>
         </dependency>
         <!-- Mythic Plugins -->
         <dependency>
@@ -107,10 +115,9 @@
         </dependency>
         <dependency>
             <groupId>net.Indyuce</groupId>
-            <artifactId>mmoitems</artifactId>
-            <version>6.6.2</version>
+            <artifactId>MMOItems-API</artifactId>
+            <version>6.9.2-SNAPSHOT</version>
             <scope>provided</scope>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.lumine.xikage</groupId>
