@@ -111,6 +111,7 @@ public class PlayerStorage {
      */
     public <T extends CustomPlayerData> Optional<T> getData(Class<T> dataType) {
         NamespacedKey dataID = core.getRegistries().getCustomPlayerData().getKey(dataType);
+        if (dataID == null) return Optional.empty(); // Might be null if the type wasn't registered. Check it just in case.
         T dataResult = dataType.cast(CACHED_DATA.get(dataID));
         if (dataResult == null) {
             // If there isn't any cached data yet
