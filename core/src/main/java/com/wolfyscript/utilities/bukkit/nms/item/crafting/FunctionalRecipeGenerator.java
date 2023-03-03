@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -180,7 +182,21 @@ public class FunctionalRecipeGenerator {
     public static void generateRecipeClasses() {
         if (!GENERATED_RECIPES.isEmpty()) return;
         try {
+            Logger logger = WolfyCoreBukkit.getInstance().getLogger();
+            logger.log(Level.FINER, "Thread Classloader: " + Thread.currentThread().getContextClassLoader());
+            logger.log(Level.FINER, "Plugin: " + WolfyCoreBukkit.class.getClassLoader());
+            logger.log(Level.FINER, "System: " + ClassLoader.getSystemClassLoader());
+            logger.log(Level.FINER, "Platform: " + ClassLoader.getPlatformClassLoader());
+            logger.log(Level.FINER, "Minecraft: " + MINECRAFT_SERVER_CLASS.getClassLoader());
             ClassPool classPool = ClassPool.getDefault();
+            classPool.appendClassPath(new LoaderClassPath(ClassLoader.getPlatformClassLoader()));
+            classPool.appendClassPath(new LoaderClassPath(ClassLoader.getSystemClassLoader()));
+            classPool.appendClassPath(new LoaderClassPath(WolfyCoreBukkit.class.getClassLoader()));
+            classPool.appendClassPath(new LoaderClassPath(MINECRAFT_SERVER_CLASS.getClassLoader()));
+            classPool.importPackage("java.util");
+            classPool.importPackage("org.bukkit");
+            classPool.importPackage("net.minecraft");
+
             generateUtils(classPool);
             GENERATED_RECIPES.put(FunctionalRecipeType.CAMPFIRE, inject(classPool, RECIPE_CAMPFIRE_CLASS));
             GENERATED_RECIPES.put(FunctionalRecipeType.SMELTING, inject(classPool, RECIPE_FURNACE_CLASS));
