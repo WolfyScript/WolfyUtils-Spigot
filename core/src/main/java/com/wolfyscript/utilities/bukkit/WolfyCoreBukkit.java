@@ -43,6 +43,7 @@ import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectDa
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
@@ -228,6 +229,8 @@ public final class WolfyCoreBukkit extends WUPlugin {
 
     @Override
     public void onLoad() {
+        getLogger().setLevel(Level.ALL);
+
         getLogger().info("Generate Functional Recipes");
         FunctionalRecipeGenerator.generateRecipeClasses();
 
