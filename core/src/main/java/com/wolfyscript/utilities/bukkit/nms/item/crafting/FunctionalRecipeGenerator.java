@@ -183,11 +183,11 @@ public class FunctionalRecipeGenerator {
         if (!GENERATED_RECIPES.isEmpty()) return;
         try {
             Logger logger = WolfyCoreBukkit.getInstance().getLogger();
-            logger.log(Level.FINER, "Thread Classloader: " + Thread.currentThread().getContextClassLoader());
-            logger.log(Level.FINER, "Plugin: " + WolfyCoreBukkit.class.getClassLoader());
-            logger.log(Level.FINER, "System: " + ClassLoader.getSystemClassLoader());
-            logger.log(Level.FINER, "Platform: " + ClassLoader.getPlatformClassLoader());
-            logger.log(Level.FINER, "Minecraft: " + MINECRAFT_SERVER_CLASS.getClassLoader());
+            logger.fine("Thread Classloader    : " + Thread.currentThread().getContextClassLoader());
+            logger.fine("Plugin Classloader    : " + WolfyCoreBukkit.class.getClassLoader());
+            logger.fine("System Classloader    : " + ClassLoader.getSystemClassLoader());
+            logger.fine("Platform Classloader  : " + ClassLoader.getPlatformClassLoader());
+            logger.fine("Minecraft Classloader : " + MINECRAFT_SERVER_CLASS.getClassLoader());
             ClassPool classPool = ClassPool.getDefault();
             classPool.appendClassPath(new LoaderClassPath(ClassLoader.getPlatformClassLoader()));
             classPool.appendClassPath(new LoaderClassPath(ClassLoader.getSystemClassLoader()));
