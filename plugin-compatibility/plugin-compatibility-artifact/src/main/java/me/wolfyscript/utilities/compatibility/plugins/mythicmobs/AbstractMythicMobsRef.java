@@ -70,7 +70,7 @@ public abstract class AbstractMythicMobsRef extends APIReference implements Myth
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        MythicMobsRefImpl that = (MythicMobsRefImpl) o;
+        AbstractMythicMobsRef that = (AbstractMythicMobsRef) o;
         return Objects.equals(itemName, that.itemName);
     }
 
