@@ -11,22 +11,22 @@ import java.util.UUID;
 
 public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
 
-    private ComponentStateImpl rootStateNode;
-    private final Map<Integer, ComponentStateImpl> tailStateNodes = new HashMap<>();
+    private ComponentStateImpl<?,?> rootStateNode;
+    private final Map<Integer, ComponentStateImpl<?,?>> tailStateNodes = new HashMap<>();
 
     protected GuiViewManagerImpl(WolfyUtils wolfyUtils, Router rootRouter, Set<UUID> viewers) {
         super(wolfyUtils, rootRouter, viewers);
     }
 
-    void changeRootState(ComponentStateImpl newState) {
+    void changeRootState(ComponentStateImpl<?,?> newState) {
         this.rootStateNode = newState;
     }
 
-    public ComponentStateImpl getRootStateNode() {
+    public ComponentStateImpl<?,?> getRootStateNode() {
         return rootStateNode;
     }
 
-    Optional<ComponentStateImpl> getTailNode(int slot) {
+    Optional<ComponentStateImpl<?,?>> getTailNode(int slot) {
         return Optional.ofNullable(tailStateNodes.get(slot));
     }
 }

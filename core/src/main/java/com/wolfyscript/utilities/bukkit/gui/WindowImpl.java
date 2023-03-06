@@ -2,7 +2,9 @@ package com.wolfyscript.utilities.bukkit.gui;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.ComponentState;
 import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
@@ -11,21 +13,18 @@ import com.wolfyscript.utilities.common.gui.InteractionDetails;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.RenderCallback;
 import com.wolfyscript.utilities.common.gui.RenderContext;
-import com.wolfyscript.utilities.common.gui.RenderPreCallback;
 import com.wolfyscript.utilities.common.gui.Router;
-import com.wolfyscript.utilities.common.gui.SlotComponent;
-import com.wolfyscript.utilities.common.gui.StateSelector;
+import com.wolfyscript.utilities.common.gui.RouterBuilder;
+import com.wolfyscript.utilities.common.gui.SizedComponent;
 import com.wolfyscript.utilities.common.gui.Window;
-import com.wolfyscript.utilities.common.gui.WindowCommonImpl;
-import com.wolfyscript.utilities.common.gui.WindowState;
-import com.wolfyscript.utilities.common.gui.WindowStateBuilder;
+import com.wolfyscript.utilities.common.gui.WindowChildComponentBuilder;
+import com.wolfyscript.utilities.common.gui.WindowComponentBuilder;
 import com.wolfyscript.utilities.common.gui.WindowTitleUpdateCallback;
 import com.wolfyscript.utilities.common.gui.WindowType;
 import java.util.Deque;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
@@ -35,10 +34,32 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 
-public class WindowImpl extends WindowCommonImpl {
+public final class WindowImpl implements Window {
 
-    protected WindowImpl(String id, Router parent, WindowTitleUpdateCallback titleUpdateCallback, BiMap<String, ? extends SlotComponent> children, Integer size, WindowType type) {
-        super(id, parent, titleUpdateCallback, children, size, type);
+    private final WolfyUtils wolfyUtils;
+    private final String id;
+    private final Router parent;
+    private final BiMap<String, SizedComponent> children;
+    private final Integer size;
+    private final WindowType type;
+    private final WindowTitleUpdateCallback titleUpdateCallback;
+    private final InteractionCallback interactionCallback;
+    private final RenderCallback renderCallback;
+
+    private WindowImpl(String id, Router parent, WindowTitleUpdateCallback titleUpdateCallback, Integer size, WindowType type, InteractionCallback interactionCallback, RenderCallback renderCallback) {
+        Preconditions.checkNotNull(id);
+        Preconditions.checkNotNull(interactionCallback);
+        Preconditions.checkNotNull(renderCallback);
+        Preconditions.checkArgument(size != null || type != null, "Either type or size must be specified!");
+        this.id = id;
+        this.parent = parent;
+        this.titleUpdateCallback = titleUpdateCallback;
+        this.wolfyUtils = parent.getWolfyUtils();
+        this.interactionCallback = interactionCallback;
+        this.renderCallback = renderCallback;
+        this.children = HashBiMap.create();
+        this.size = size;
+        this.type = type;
     }
 
     @Override
@@ -60,11 +81,11 @@ public class WindowImpl extends WindowCommonImpl {
         if (topInventory.getHolder() instanceof GUIHolder holder) {
             if (Objects.equals(holder.getCurrentWindow(), this)) {
                 // Still in the same window, we can just update it.
-                RenderContext renderContext = new RenderContextImpl(topInventory);
+                RenderContext renderContext = new RenderContextImpl<>(topInventory);
                 ComponentState rootState = ((GuiViewManagerImpl) holder.getViewManager()).getRootStateNode();
                 // TODO: Update window even if no state has changed? probably not!?
                 if (rootState.shouldUpdate()) {
-                    handler.getRoot().render(holder, rootState, renderContext);
+                    rootState.render(holder, renderContext);
                 }
                 return;
             }
@@ -93,7 +114,7 @@ public class WindowImpl extends WindowCommonImpl {
 
         // Create the state tree!
         if (viewManager.getRootStateNode() == null || !viewManager.getRootStateNode().getOwner().equals(handler.getRoot())) {
-            ComponentStateImpl rootState = new ComponentStateImpl(null, handler.getRoot());
+            ComponentStateRouterImpl rootState = new ComponentStateRouterImpl(null, handler.getRoot());
             rootState.render(holder, renderContext);
             viewManager.changeRootState(rootState);
         } else {
@@ -122,32 +143,154 @@ public class WindowImpl extends WindowCommonImpl {
     }
 
     @Override
+    public Class<? extends com.wolfyscript.utilities.common.gui.ComponentStateWindow> getComponentStateType() {
+        return ComponentStateWindowImpl.class;
+    }
+
+    @Override
     public InteractionCallback interactCallback() {
-        return null;
+        return interactionCallback;
     }
 
     @Override
     public RenderCallback renderCallback() {
-        return null;
+        return renderCallback;
     }
 
-    public static class BuilderImpl extends WindowCommonImpl.Builder {
+    @Override
+    public WolfyUtils getWolfyUtils() {
+        return wolfyUtils;
+    }
 
-        protected BuilderImpl(String subID, Router parent) {
-            super(subID, parent, new WindowImpl.ChildBuilderImpl(parent));
+    @Override
+    public String getID() {
+        return id;
+    }
+
+    @Override
+    public Set<? extends SizedComponent> childComponents() {
+        return children.values();
+    }
+
+    @Override
+    public Router parent() {
+        return parent;
+    }
+
+    @Override
+    public Optional<com.wolfyscript.utilities.common.gui.Component> getChild(String id) {
+        return Optional.ofNullable(children.get(id));
+    }
+
+    @Override
+    public void init() {
+
+    }
+
+    @Override
+    public Optional<Integer> getSize() {
+        return Optional.ofNullable(size);
+    }
+
+    @Override
+    public Optional<WindowType> getType() {
+        return Optional.ofNullable(type);
+    }
+
+    @Override
+    public net.kyori.adventure.text.Component createTitle(GuiHolder holder) {
+        return titleUpdateCallback.run(holder, this);
+    }
+
+    @Override
+    public int width() {
+        return size / height();
+    }
+
+    @Override
+    public int height() {
+        return size / 9;
+    }
+
+    public static class BuilderImpl implements WindowComponentBuilder {
+
+        protected final String windowID;
+        protected final RouterBuilder parent;
+        protected final WindowChildComponentBuilder childComponentBuilder;
+        protected Integer size;
+        protected WindowType type;
+        protected WindowTitleUpdateCallback titleUpdateCallback;
+        private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.cancel(true);
+        private RenderCallback renderCallback = (guiHolder, componentState) -> {};
+
+        protected BuilderImpl(String windowID, RouterImpl.Builder parent) {
+            this.windowID = windowID;
+            this.parent = parent;
+            this.childComponentBuilder = new ChildBuilderImpl();
         }
 
         @Override
-        protected Window constructImplementation(String s, Router router, BiMap<String, ? extends SlotComponent> children, Integer size, WindowType type) {
-            return new WindowImpl(s, router, this.titleUpdateCallback, children, size, type);
+        public WindowComponentBuilder size(int size) {
+            this.size = size;
+            return this;
         }
-    }
 
-    public static class ChildBuilderImpl extends WindowCommonImpl.ChildBuilder {
-
-        protected ChildBuilderImpl(Router parent) {
-            super(parent);
+        @Override
+        public WindowComponentBuilder type(WindowType type) {
+            this.type = type;
+            return this;
         }
+
+        @Override
+        public WindowComponentBuilder title(WindowTitleUpdateCallback titleUpdateCallback) {
+            this.titleUpdateCallback = titleUpdateCallback;
+            return this;
+        }
+
+        public WindowComponentBuilder children(Consumer<WindowChildComponentBuilder> childComponentBuilderConsumer) {
+            childComponentBuilderConsumer.accept(childComponentBuilder);
+            return this;
+        }
+
+        @Override
+        public Window create(Router parent) {
+            Window window = new WindowImpl(parent.getID() + "/" + windowID, parent, this.titleUpdateCallback, size, type, interactionCallback, renderCallback);
+            childComponentBuilder.applyTo(window);
+            return window;
+        }
+
+        @Override
+        public WindowComponentBuilder interact(InteractionCallback interactionCallback) {
+            Preconditions.checkNotNull(interactionCallback);
+            this.interactionCallback = interactionCallback;
+            return this;
+        }
+
+        @Override
+        public WindowComponentBuilder render(RenderCallback renderCallback) {
+            Preconditions.checkNotNull(renderCallback);
+            this.renderCallback = renderCallback;
+            return this;
+        }
+
+        public static class ChildBuilderImpl implements WindowChildComponentBuilder {
+
+            ChildBuilderImpl() {
+                super();
+            }
+
+            @Override
+            public BiMap<String, ? extends SizedComponent> create() {
+                return null;
+            }
+
+            @Override
+            public void applyTo(Window window) {
+                if (!(window instanceof WindowImpl parent)) return;
+
+            }
+        }
+
     }
 
 }

@@ -39,12 +39,7 @@ import org.jetbrains.annotations.Nullable;
  * It is possible to register Buttons and to open the chat for a player to request input.
  * <br>
  * Classes that are GUI menus:
- * <ul>
- *     <li>{@link GuiCluster}</li>
- *     <li>{@link GuiWindow}</li>
- * </ul>
  *
- * @param  The type of the CustomCache
  */
 @Deprecated(forRemoval = true)
 public abstract class GuiMenuComponent {
@@ -173,13 +168,6 @@ public abstract class GuiMenuComponent {
         getChat().sendMessage(guiHandler.getPlayer(), msg);
     }
 
-    /**
-     * Interface that contains methods to create new button builders.<br>
-     * It is implemented by either {@link GuiWindow} or {@link GuiCluster} and will create the builders accordingly.
-     * Calling the {@link Button.Builder#register()} will then register the button either into the {@link GuiWindow} or {@link GuiCluster} depending on from which one the builder was created.
-     *
-     * @param  The type of the custom cache.
-     */
     public interface ButtonBuilder {
 
         /**

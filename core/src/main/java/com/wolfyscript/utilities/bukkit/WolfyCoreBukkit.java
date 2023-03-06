@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.wolfyscript.jackson.dataformat.hocon.HoconMapper;
+import com.wolfyscript.utilities.Platform;
+import com.wolfyscript.utilities.bukkit.adapters.BukkitWrapper;
+import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl;
 import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
 import com.wolfyscript.utilities.bukkit.commands.ChatActionCommand;
 import com.wolfyscript.utilities.bukkit.commands.InfoCommand;
@@ -16,7 +19,7 @@ import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManager;
 import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManagerBukkit;
 import com.wolfyscript.utilities.bukkit.config.WUConfig;
 import com.wolfyscript.utilities.bukkit.console.Console;
-import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
+import com.wolfyscript.utilities.bukkit.gui.GuiAPIManagerImpl;
 import com.wolfyscript.utilities.bukkit.json.serialization.APIReferenceSerialization;
 import com.wolfyscript.utilities.bukkit.json.serialization.ColorSerialization;
 import com.wolfyscript.utilities.bukkit.json.serialization.DustOptionsSerialization;
@@ -29,6 +32,7 @@ import com.wolfyscript.utilities.bukkit.network.messages.MessageFactory;
 import com.wolfyscript.utilities.bukkit.network.messages.MessageHandler;
 import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import com.wolfyscript.utilities.bukkit.world.inventory.CreativeModeTab;
+import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.bukkit.world.items.CustomData;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItemBlockData;
@@ -120,6 +124,8 @@ import com.wolfyscript.utilities.bukkit.world.particles.timer.TimerPi;
 import com.wolfyscript.utilities.bukkit.world.particles.timer.TimerRandom;
 import com.wolfyscript.utilities.common.WolfyCore;
 import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.common.gui.GuiAPIManager;
+import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.nbt.NBTTagConfigBoolean;
 import com.wolfyscript.utilities.nbt.NBTTagConfigByte;
 import com.wolfyscript.utilities.nbt.NBTTagConfigByteArray;
@@ -178,6 +184,8 @@ import java.util.logging.Logger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.reflections.Reflections;
 
@@ -264,6 +272,11 @@ public final class WolfyCoreBukkit implements WolfyCore {
         return registries;
     }
 
+    @Override
+    public Platform getPlatform() {
+        return Platform.SPIGOT;
+    }
+
     /**
      * Gets or create the {@link WolfyUtilsBukkit} instance for the specified plugin.
      *
@@ -287,20 +300,7 @@ public final class WolfyCoreBukkit implements WolfyCore {
     }
 
     private WolfyUtilsBukkit getOrCreate(Plugin plugin, boolean init) {
-        return wolfyUtilsInstances.computeIfAbsent(plugin.getName(), s -> new WolfyUtilsBukkit(this, plugin, init));
-    }
-
-    /**
-     * Gets or create the {@link WolfyUtilsBukkit} instance for the specified plugin.
-     * This method also creates the InventoryAPI with the specified custom class of the {@link CustomCache}.<br>
-     * <b>You need to run {@link WolfyUtilsBukkit#initialize()} inside your onEnable() </b> to register required events!
-     *
-     * @param plugin           The plugin to get the instance from.
-     * @param customCacheClass The class of the custom cache you created. Must extend {@link CustomCache}
-     * @return The WolfyUtilities instance for the plugin.
-     */
-    public WolfyUtilsBukkit getOrCreate(Plugin plugin, Class<? extends CustomCache> customCacheClass) {
-        return wolfyUtilsInstances.computeIfAbsent(plugin.getName(), s -> new WolfyUtilsBukkit(this, plugin, customCacheClass));
+        return wolfyUtilsInstances.computeIfAbsent(plugin.getName(), s -> new WolfyUtilsBukkit(this, plugin));
     }
 
     /**
@@ -656,4 +656,32 @@ public final class WolfyCoreBukkit implements WolfyCore {
             return false;
         }
     }
+
+    //TODO:
+    private void testNewGUIAPI() {
+        GuiAPIManager guiManager = getWolfyUtils().getGUIManager();
+
+        guiManager.registerRouter("main", builder -> builder
+                .entry(entry -> entry.window("main_menu"))
+                .children(childBuilder -> childBuilder
+                        .window("main_menu", mainWindow -> mainWindow
+                                .size(9)
+                                .render((guiHolder, componentState) -> {
+                                    // Render components
+                                })
+                                .title((guiHolder, window) -> Component.text("Main Menu Inventory"))
+                        )
+                        .router("sub_pages", subPagesBuilder -> subPagesBuilder
+                                .interact((guiHolder, componentState, interactionDetails) -> InteractionResult.def())
+                        )
+                )
+        );
+
+
+
+
+    }
+
+
+
 }

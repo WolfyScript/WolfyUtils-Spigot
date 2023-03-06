@@ -2,6 +2,7 @@ package com.wolfyscript.utilities.bukkit.gui;
 
 import com.wolfyscript.utilities.common.gui.GuiHolderCommonImpl;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
+import com.wolfyscript.utilities.common.gui.Interactable;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.Window;
 import java.util.Objects;
@@ -31,12 +32,9 @@ public class GUIHolder extends GuiHolderCommonImpl implements InventoryHolder {
     void onClick(InventoryClickEvent event) {
         if (currentWindow == null || event.getClickedInventory() == null) return;
         if (Objects.equals(event.getClickedInventory().getHolder(), this)) {
-
-            InteractionResult result = ((GuiViewManagerImpl) viewManager).getTailNode(event.getSlot()).map(state -> {
-                var interactionDetails = new ClickInteractionDetailsImpl(event);
-                return state.getOwner().interact(this, state, interactionDetails);
-            }).orElse(InteractionResult.cancel(true));
-
+            InteractionResult result = ((GuiViewManagerImpl) viewManager).getTailNode(event.getSlot())
+                    .map(state -> state.interact(this, new ClickInteractionDetailsImpl(event)))
+                    .orElse(InteractionResult.cancel(true));
             event.setCancelled(result.isCancelled());
         } else if (!event.getAction().equals(InventoryAction.COLLECT_TO_CURSOR)) {
             event.setCancelled(false);
@@ -55,7 +53,7 @@ public class GUIHolder extends GuiHolderCommonImpl implements InventoryHolder {
         if (Objects.equals(event.getInventory().getHolder(), this)) {
             var interactionDetails = new DragInteractionDetailsImpl(event);
             for (int slot : event.getInventorySlots()) {
-                if (((GuiViewManagerImpl) viewManager).getTailNode(slot).map(node -> node.getOwner().interact(this, node, interactionDetails)).orElse(InteractionResult.cancel(true)).isCancelled()) {
+                if (((GuiViewManagerImpl) viewManager).getTailNode(slot).map(node -> node.interact(this, interactionDetails)).orElse(InteractionResult.cancel(true)).isCancelled()) {
                     event.setCancelled(true);
                 }
             }

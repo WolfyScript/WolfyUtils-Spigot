@@ -32,7 +32,6 @@ import com.wolfyscript.utilities.bukkit.gui.button.ButtonDummy;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonItemInput;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonMultipleChoice;
 import com.wolfyscript.utilities.bukkit.gui.button.ButtonToggle;
-import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import com.wolfyscript.utilities.bukkit.gui.callback.CallbackChatInput;
 import com.wolfyscript.utilities.bukkit.nms.inventory.InventoryUpdate;
 import com.wolfyscript.utilities.tuple.Pair;
@@ -48,9 +47,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.permissions.Permission;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * The GuiWindow represents an Inventory GUI in-game.
@@ -69,7 +66,6 @@ import org.jetbrains.annotations.Nullable;
  *     To register Buttons
  * </p>
  *
- * @param  The type of the {@link CustomCache}.
  */
 @Deprecated(forRemoval = true)
 public abstract class GuiWindow extends GuiMenuComponent implements Listener {

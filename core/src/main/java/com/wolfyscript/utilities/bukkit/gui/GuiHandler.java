@@ -18,30 +18,18 @@
 
 package com.wolfyscript.utilities.bukkit.gui;
 
-import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
-import com.wolfyscript.utilities.bukkit.gui.button.Button;
 import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import com.wolfyscript.utilities.bukkit.gui.callback.CallbackButtonAction;
 import com.wolfyscript.utilities.bukkit.gui.callback.CallbackButtonRender;
 import com.wolfyscript.utilities.bukkit.gui.callback.CallbackChatInput;
 import com.wolfyscript.utilities.bukkit.gui.callback.CallbackChatTabComplete;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitTask;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -50,16 +38,8 @@ import org.jetbrains.annotations.Nullable;
  * <br>
  * <br>
  * <strong>Data it stores per player:</strong>
- * <ul>
- *     <li>{@link CustomCache}</li>
- *     <li>Active {@link GuiCluster}</li>
- *     <li>The GUI history</li>
- *     <li>Possible active {@link CallbackChatInput} and {@link CallbackChatTabComplete}</li>
- *     <li>Other necessary data.</li>
- * </ul>
  * <br>
  *
- * @param  The type of the {@link CustomCache}
  */
 @Deprecated(forRemoval = true)
 public class GuiHandler<C extends CustomCache> implements Listener {
@@ -67,33 +47,16 @@ public class GuiHandler<C extends CustomCache> implements Listener {
     private final WolfyUtilsBukkit api;
     private final InventoryAPI invAPI;
     private final UUID uuid;
-    private final Map<GuiCluster, List<GuiWindow>> clusterHistory;
     private CallbackChatInput chatInputAction = null;
     private CallbackChatTabComplete chatTabComplete = null;
     private GuiCluster cluster = null;
-    private boolean isWindowOpen = false;
-    private boolean helpEnabled = false;
-    private boolean switchWindow = false;
-    boolean openedPreviousWindow = false;
     private BukkitTask windowUpdateTask = null;
-
-    private final C customCache;
 
     public GuiHandler(Player player, WolfyUtilsBukkit api, InventoryAPI invAPI, C customCache) {
         this.api = api;
         this.invAPI = invAPI;
         this.uuid = player.getUniqueId();
-        this.customCache = customCache;
-        this.clusterHistory = new HashMap<>();
         Bukkit.getPluginManager().registerEvents(this, api.getPlugin());
-    }
-
-    /**
-     * Used internally to prevent issues when switching to another window inventory.
-     * @param switchWindow If it currently switches to another window.
-     */
-    void setSwitchWindow(boolean switchWindow) {
-        this.switchWindow = switchWindow;
     }
 
     /**
@@ -106,15 +69,6 @@ public class GuiHandler<C extends CustomCache> implements Listener {
     }
 
     /**
-     * Gets the InventoryAPI instance that this GuiHandler belongs to.
-     *
-     * @return The InventoryAPI instance.
-     */
-    public InventoryAPI getInvAPI() {
-        return invAPI;
-    }
-
-    /**
      * This method only returns null if the player is offline or not found!<br>
      * If called directly in {@link GuiWindow#onUpdateSync(GuiUpdate)}, {@link GuiWindow#onUpdateAsync(GuiUpdate)}, {@link CallbackButtonAction}, {@link CallbackButtonRender}, etc. the player should always be available.<br>
      * <strong>However, if called a few ticks later or in a scheduler, the returned value might be null, as the player might have disconnected.</strong>
@@ -124,258 +78,6 @@ public class GuiHandler<C extends CustomCache> implements Listener {
     @Nullable
     public Player getPlayer() {
         return Bukkit.getPlayer(uuid);
-    }
-
-    /**
-     *
-     * @return If the player is available. True if available, else false.
-     * @see #getPlayer() More info about the player availability.
-     */
-    public boolean hasPlayer() {
-        return getPlayer() != null;
-    }
-
-    /**
-     * @return The active {@link GuiCluster}
-     */
-    public GuiCluster getCluster() {
-        return cluster;
-    }
-
-    /**
-     * @return If the {@link GuiWindow} is open.
-     */
-    public boolean isWindowOpen() {
-        return isWindowOpen;
-    }
-
-    /**
-     * Reloads the specified {@link GuiWindow}<br>
-     * This will remove the latest window in history and reopen the specified {@link GuiWindow}.<br>
-     *
-     * @param windowKey The {@link BukkitNamespacedKey} of the window, to reload and replace the active window with.
-     */
-    public void reloadWindow(NamespacedKey windowKey) {
-        List<GuiWindow> history = getHistory(invAPI.getGuiCluster(windowKey.getNamespace()));
-        history.remove(history.get(0));
-        openWindow(windowKey);
-    }
-
-    /**
-     * @param clusterId The id of the cluster to get the active window for.
-     * @return The active {@link GuiWindow} of this handler for the specified {@link GuiCluster}; Null if there isn't any active window.
-     */
-    public GuiWindow getWindow(String clusterId) {
-        return getWindow(invAPI.getGuiCluster(clusterId));
-    }
-
-    /**
-     * @param cluster The cluster to get the active window for.
-     * @return The active {@link GuiWindow} of this handler for the specified {@link GuiCluster}; Null if there isn't any active window.
-     */
-    @Nullable
-    public GuiWindow getWindow(GuiCluster cluster) {
-        List<GuiWindow> history = getHistory(cluster);
-        return !history.isEmpty() ? invAPI.getGuiWindow(history.get(0).getNamespacedKey()) : null;
-    }
-
-    /**
-     * @return The active {@link GuiWindow} of this handler; Null if there isn't any active window.
-     */
-    @Nullable
-    public GuiWindow getWindow() {
-        return getWindow(getCluster());
-    }
-
-    /**
-     * @param clusterId The id of the {@link GuiCluster}. (See {@linkplain GuiCluster#getId()})
-     * @return The previous {@link GuiWindow} in history that was opened, or null if there isn't one.
-     */
-    @Nullable
-    public GuiWindow getPreviousWindow(String clusterId) {
-        return getPreviousWindow(invAPI.getGuiCluster(clusterId));
-    }
-
-    /**
-     * @param cluster The {@link GuiCluster}
-     * @return The previous {@link GuiWindow} in history that was opened, or null if there isn't one.
-     */
-    @Nullable
-    public GuiWindow getPreviousWindow(GuiCluster cluster) {
-        return getPreviousWindow(cluster, 1);
-    }
-
-    /**
-     * @param clusterID The id of the cluster.
-     * @param stepsBack The amount of steps to go back in history.
-     * @return The previous {@link GuiWindow} in history that was opened, or null if there isn't one.
-     */
-    @Nullable
-    public GuiWindow getPreviousWindow(String clusterID, int stepsBack) {
-        return getPreviousWindow(invAPI.getGuiCluster(clusterID), stepsBack);
-    }
-
-    /**
-     * @param cluster The {@link GuiCluster}
-     * @param stepsBack The amount of steps to go back in history.
-     * @return The previous {@link GuiWindow} in history that was opened, or null if there isn't one.
-     */
-    @Nullable
-    public GuiWindow getPreviousWindow(GuiCluster cluster, int stepsBack) {
-        List<GuiWindow> history = getHistory(cluster);
-        if (stepsBack < history.size()) {
-            return invAPI.getGuiWindow(history.get(stepsBack).getNamespacedKey());
-        }
-        return null;
-    }
-
-    /**
-     * @return The previous {@link GuiWindow} in history that was opened, or null if there isn't one.
-     */
-    @Nullable
-    public GuiWindow getPreviousWindow() {
-        return getPreviousWindow(getCluster());
-    }
-
-    /**
-     * @param stepsBack The amount of steps to go back in history.
-     * @return The previous {@link GuiWindow} in history that was opened, or null if there isn't one.
-     */
-    @Nullable
-    public GuiWindow getPreviousWindow(int stepsBack) {
-        return getPreviousWindow(getCluster(), stepsBack);
-    }
-
-    public void openPreviousWindow() {
-        openPreviousWindow(getCluster());
-    }
-
-    public void openPreviousWindow(String clusterID) {
-        openPreviousWindow(invAPI.getGuiCluster(clusterID));
-    }
-
-    public void openPreviousWindow(GuiCluster cluster) {
-        openPreviousWindow(cluster, 1);
-    }
-
-    public void openPreviousWindow(int stepsBack) {
-        openPreviousWindow(getCluster(), stepsBack);
-    }
-
-    public void openPreviousWindow(String clusterID, int stepsBack) {
-        openPreviousWindow(invAPI.getGuiCluster(clusterID), stepsBack);
-    }
-
-    public void openPreviousWindow(GuiCluster cluster, int stepsBack) {
-        openedPreviousWindow = true;
-        List<GuiWindow> history = getHistory(cluster);
-        if (stepsBack < history.size()) {
-            if (stepsBack > 0) {
-                history.subList(0, stepsBack).clear();
-            }
-            openWindow(history.get(0).getNamespacedKey());
-        } else {
-            history.clear();
-            openCluster(cluster);
-        }
-    }
-
-    /**
-     * Gets the history of the specified cluster.<br>
-     * <b>It is not guaranteed that changes are reflected in the original List!</b>
-     *
-     * @param cluster The {@link GuiCluster} to get the history for.
-     * @return A list of the {@link GuiCluster} history, or an empty list if non-existing.
-     */
-    public List<GuiWindow> getHistory(GuiCluster cluster) {
-        return clusterHistory.computeIfAbsent(cluster, c -> new ArrayList<>());
-    }
-
-    private void setHistory(GuiCluster cluster, List<GuiWindow> history) {
-        clusterHistory.put(cluster, history);
-    }
-
-    /**
-     * Opens the {@link GuiWindow} of the specified key.<br>
-     * This method will use the current active {@link GuiCluster#getId()}. Make sure the targeted {@link GuiWindow} is part of that cluster!
-     *
-     * @param windowKey The key of the {@link GuiWindow}.
-     */
-    public void openWindow(String windowKey) {
-        openWindow(new BukkitNamespacedKey(getCluster().getId(), windowKey));
-    }
-
-    /**
-     * Opens the specified {@link GuiWindow} of the specified key.<br>
-     * This key must be the same or similar to the one from {@link GuiWindow#getNamespacedKey()}.
-     *
-     * @param windowNamespaceKey The key of the {@link GuiWindow}.
-     */
-    public void openWindow(@NotNull NamespacedKey windowNamespaceKey) {
-        openWindow(invAPI.getGuiWindow(windowNamespaceKey));
-    }
-
-    /**
-     * Opens the {@link GuiWindow} for this GuiHandler.
-     *
-     * @param window The {@link GuiWindow} to open.
-     */
-    public void openWindow(GuiWindow window) {
-        if (getPlayer() == null) {
-            isWindowOpen = false;
-            return;
-        }
-        if (window == null) {
-            getPlayer().closeInventory();
-            isWindowOpen = false;
-            return;
-        }
-        final GuiCluster cluster = window.getCluster();
-        Player player1 = getPlayer();
-        if (player1.hasPermission(window.getPermission())) {
-            // Cancels the chat input when a new window is opened to prevent
-            cancelChatInput();
-            var currentWindow = getWindow(cluster);
-            if (currentWindow == null || !currentWindow.getNamespacedKey().equals(window.getNamespacedKey())) {
-                getHistory(cluster).add(0, window);
-            }
-            this.cluster = cluster;
-            isWindowOpen = true;
-            window.create(this);
-            return;
-        }
-        window.getChat().sendMessage(player1, Component.text("You lack the permission ", NamedTextColor.RED).append(Component.text(window.getPermission().getName(), NamedTextColor.DARK_RED)));
-    }
-
-    /**
-     * Opens the current GuiCluster with the latest GuiWindow that was open.
-     */
-    public void openCluster() {
-        openCluster(getCluster());
-    }
-
-    /**
-     * Opens the GuiCluster with the latest GuiWindow that was open.
-     *
-     * @param clusterID The cluster key of the cluster to open.
-     */
-    public void openCluster(String clusterID) {
-        openCluster(invAPI.getGuiCluster(clusterID));
-    }
-
-    /**
-     * Opens the GuiCluster with the latest GuiWindow that was open.
-     *
-     * @param cluster The {@link GuiCluster} to open.
-     */
-    public void openCluster(GuiCluster cluster) {
-        if (cluster == null) return;
-        GuiWindow window = getWindow(cluster);
-        if (window != null) {
-            openWindow(window.getNamespacedKey());
-        } else {
-            openWindow(cluster.getEntry());
-        }
     }
 
     /**
@@ -403,50 +105,6 @@ public class GuiHandler<C extends CustomCache> implements Listener {
     }
 
     /**
-     * @return The active {@link CallbackChatTabComplete} or null if not active.
-     */
-    @Nullable
-    public CallbackChatTabComplete getChatTabComplete() {
-        return chatTabComplete;
-    }
-
-    /**
-     * Set the {@link CallbackChatTabComplete} to be used on the next Chat Input.
-     * Requires a {@link CallbackChatInput} to be called!
-     *
-     * @param chatTabComplete The new {@link CallbackChatTabComplete}
-     */
-    public void setChatTabComplete(CallbackChatTabComplete chatTabComplete) {
-        this.chatTabComplete = chatTabComplete;
-    }
-
-    /**
-     * @return If there is currently an active {@link CallbackChatInput}, that will be used for the next chat input.
-     */
-    public boolean hasChatTabComplete() {
-        return chatTabComplete != null;
-    }
-
-    /**
-     * Sets both the {@link CallbackChatInput} as well as the {@link CallbackChatTabComplete}.
-     *
-     * @param chatInputAction The new {@link CallbackChatInput}
-     * @param chatTabComplete The new {@link CallbackChatTabComplete}
-     */
-    public void setChatInput(@Nullable CallbackChatInput chatInputAction, @Nullable CallbackChatTabComplete chatTabComplete) {
-        setChatInputAction(chatInputAction);
-        setChatTabComplete(chatTabComplete);
-    }
-
-    /**
-     * Cancels the current active ChatInputAction and ChatTabComplete.
-     * After this is called no chat input will execute any actions anymore.
-     */
-    public void cancelChatInput() {
-        setChatInput(null, null);
-    }
-
-    /**
      * Closes the current open window.
      */
     public void close() {
@@ -455,54 +113,8 @@ public class GuiHandler<C extends CustomCache> implements Listener {
         if (player != null) player.closeInventory();
     }
 
-    /**
-     * @return The instance of the {@link CustomCache}
-     */
-    public C getCustomCache() {
-        return customCache;
-    }
-
-    public final boolean onChat(Player player, String msg, String[] args) {
-        if (isChatEventActive()) {
-            return chatInputAction.onChat(this, player, msg, args);
-        }
-        return true;
-    }
-
-    final void setButton(GuiWindow guiWindow, int slot, String id) {
-        customCache.setButton(guiWindow, slot, id);
-    }
-
-    final Button getButton(GuiWindow guiWindow, int slot) {
-        String id = customCache.getButtons(guiWindow).get(slot);
-        if (id != null && id.contains(":")) {
-            return invAPI.getButton(BukkitNamespacedKey.of(id));
-        }
-        return guiWindow.getButton(id);
-    }
-
-    void setWindowUpdateTask(BukkitTask windowUpdateTask) {
-        this.windowUpdateTask = windowUpdateTask;
-    }
-
     public Optional<BukkitTask> getWindowUpdateTask() {
         return Optional.ofNullable(windowUpdateTask);
     }
 
-    /**
-     * Called when the inventory is closed.
-     *
-     * @param guiInventory The {@link Inventory} that is closed.
-     * @param event        The {@link InventoryCloseEvent} that caused this action.
-     */
-    public void onClose(GUIHolder holder) {
-        getWindowUpdateTask().ifPresent(BukkitTask::cancel);
-        if (!clusterHistory.isEmpty() && !switchWindow) {
-            if (holder.getWindow().onClose(holder)) {
-                this.openCluster();
-            } else {
-                this.isWindowOpen = false;
-            }
-        }
-    }
 }

@@ -1,13 +1,11 @@
 package com.wolfyscript.utilities.bukkit;
 
 import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManagerBukkit;
-import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import com.wolfyscript.utilities.versioning.ServerVersion;
 import java.io.File;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -23,11 +21,6 @@ import org.reflections.util.ConfigurationBuilder;
  * It provides access to internal functionality like {@link BukkitRegistries}, {@link CompatibilityManagerBukkit}, and of course the creation of the API instance.<br>
  * <p>
  * To get an instance of the API ({@link WolfyUtilsBukkit}) for your plugin you need one of the following methods. <br>
- * <ul>
- *     <li>{@link #getAPI(Plugin)} - Simple method to get your instance. Only use this in your <strong>onEnable()</strong></li>
- *     <li>{@link #getAPI(Plugin, boolean)} - Specify if it should init Event Listeners. Can be used inside the onLoad(), or plugin constructor, if set to false; Else only use this in your <strong>onEnable()</strong></li>
- *     <li>{@link #getAPI(Plugin, Class)} - Specify the type of your {@link CustomCache}. Can be used inside the onLoad(), or plugin constructor.</li>
- * </ul>
  * </p>
  */
 public final class WolfyUtilBootstrap extends JavaPlugin {

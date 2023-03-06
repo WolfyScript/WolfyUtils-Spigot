@@ -6,10 +6,10 @@ import java.util.function.Function;
 
 public class StateHookImpl<V> implements StateHook<V> {
 
-    private final ComponentStateImpl owner;
+    private final ComponentStateImpl<?, ?> owner;
     private V value;
 
-    StateHookImpl(ComponentStateImpl owner, V defaultValue) {
+    StateHookImpl(ComponentStateImpl<?, ?> owner, V defaultValue) {
         this.value = defaultValue;
         this.owner = owner;
     }
@@ -23,7 +23,7 @@ public class StateHookImpl<V> implements StateHook<V> {
     public void set(V newValue) {
         if (!Objects.equals(newValue, value)) {
             value = newValue;
-            owner.markChildDirty(owner);
+            owner.markDirty();
         }
     }
 

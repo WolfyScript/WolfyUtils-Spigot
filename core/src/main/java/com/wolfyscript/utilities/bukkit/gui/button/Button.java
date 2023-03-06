@@ -34,10 +34,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @param  The type of the {@link CustomCache}
- */
-public abstract class Button<C extends CustomCache> {
+public abstract class Button {
 
     private final String id;
     private final ButtonType type;

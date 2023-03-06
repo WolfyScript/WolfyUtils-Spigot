@@ -1,12 +1,9 @@
 package com.wolfyscript.utilities.bukkit.chat;
 
 import com.google.common.base.Preconditions;
-import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.adapters.PlayerImpl;
-import com.wolfyscript.utilities.bukkit.gui.GuiCluster;
 import com.wolfyscript.utilities.common.chat.Chat;
-import com.wolfyscript.utilities.common.chat.ChatEvent;
 import com.wolfyscript.utilities.common.chat.ClickActionCallback;
 import com.wolfyscript.utilities.tuple.Pair;
 import java.util.Arrays;
@@ -24,7 +21,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -104,21 +100,6 @@ public class BukkitChat extends Chat implements IBukkitChat {
         }
     }
 
-    /**
-     * Sends a message to the player with legacy chat format.
-     *
-     * @param player  The player to send the message to.
-     * @param message The message to send.
-     * @deprecated Legacy chat format. This will convert the message multiple times (Not efficient!) {@link #sendMessage(Player, Component)} should be used instead!
-     */
-    @Deprecated
-    @Override
-    public void sendMessage(Player player, String message) {
-        if (player != null) {
-            sendMessage(player, true, LEGACY_SERIALIZER.deserialize(ChatColor.convert(languageAPI.replaceKeys(message))));
-        }
-    }
-
     @Override
     public void sendMessage(Player player, Component component) {
         if (player != null) {
@@ -136,20 +117,6 @@ public class BukkitChat extends Chat implements IBukkitChat {
         }
     }
 
-    @SafeVarargs
-    @Deprecated
-    @Override
-    public final void sendMessage(Player player, String message, Pair<String, String>... replacements) {
-        if (player == null) return;
-        if (replacements != null) {
-            message = getInGamePrefix() + languageAPI.replaceColoredKeys(message);
-            for (Pair<String, String> pair : replacements) {
-                message = message.replaceAll(pair.getKey(), pair.getValue());
-            }
-        }
-        player.sendMessage(ChatColor.convert(message));
-    }
-
     @Override
     public void sendMessages(Player player, Component... components) {
         if (player != null) {
@@ -164,69 +131,6 @@ public class BukkitChat extends Chat implements IBukkitChat {
         for (Component component : components) {
             sendMessage(player, prefix, component);
         }
-    }
-
-    /**
-     * Sends multiple messages to the player with legacy chat format.
-     *
-     * @param player   The player to send the message to.
-     * @param messages The messages to send.
-     * @deprecated Legacy chat format. This will convert the messages multiple times (Not efficient!) {@link #sendMessages(Player, Component...)} should be used instead!
-     */
-    @Deprecated
-    @Override
-    public void sendMessages(Player player, String... messages) {
-        if (player != null) {
-            for (String message : messages) {
-                sendMessage(player, true, LEGACY_SERIALIZER.deserialize(ChatColor.convert(languageAPI.replaceKeys(message))));
-            }
-        }
-    }
-
-    /**
-     * Sends a global message of the Cluster to the player.
-     *
-     * @param player
-     * @param clusterID
-     * @param msgKey
-     */
-    @Deprecated
-    @Override
-    public void sendKey(Player player, String clusterID, String msgKey) {
-        sendMessage(player, translated("inventories." + clusterID + ".global_messages." + msgKey, true));
-    }
-
-    /**
-     * Sends a global message of the Cluster to the player.
-     *
-     * @param player
-     * @param guiCluster
-     * @param msgKey
-     */
-    @Deprecated
-    @Override
-    public void sendKey(Player player, GuiCluster guiCluster, String msgKey) {
-        sendMessage(player, translated("inventories." + guiCluster.getId() + ".global_messages." + msgKey, true));
-    }
-
-    @Deprecated
-    @Override
-    public void sendKey(Player player, @NotNull NamespacedKey windowKey, String msgKey) {
-        sendMessage(player, translated("inventories." + windowKey.getNamespace() + "." + windowKey.getKey() + ".messages." + msgKey, true));
-    }
-
-    @Deprecated
-    @SafeVarargs
-    @Override
-    public final void sendKey(Player player, GuiCluster guiCluster, String msgKey, Pair<String, String>... replacements) {
-        sendMessage(player, translated("inventories." + guiCluster.getId() + ".global_messages." + msgKey, true, getTemplates(replacements)));
-    }
-
-    @Deprecated
-    @SafeVarargs
-    @Override
-    public final void sendKey(Player player, NamespacedKey namespacedKey, String msgKey, Pair<String, String>... replacements) {
-        sendMessage(player, translated("inventories." + namespacedKey.getNamespace() + "." + namespacedKey.getKey() + ".messages." + msgKey, true, getTemplates(replacements)));
     }
 
     private List<? extends TagResolver> getTemplates(Pair<String, String>[] replacements) {
@@ -257,67 +161,6 @@ public class BukkitChat extends Chat implements IBukkitChat {
         } while (CLICK_DATA_MAP.containsKey(id));
         CLICK_DATA_MAP.put(id, new PlayerAction((WolfyUtilsBukkit) wolfyUtils, player, action, discard));
         return net.kyori.adventure.text.event.ClickEvent.clickEvent(net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND, "/wua " + id);
-    }
-
-    /**
-     * Sends the clickable chat messages to the player.<br>
-     * It allows you to also include ClickData with executable code.
-     *
-     * @param player    The player to send the message to.
-     * @param clickData The click data of the message.
-     * @deprecated This was mostly used to run code, when a player clicks on a text in chat. That is now replaced by {@link #executable(Player, boolean, ClickAction)}, which can be used in combination of any {@link Component} and is way more flexible!
-     */
-    @Deprecated
-    @Override
-    public void sendActionMessage(Player player, ClickData... clickData) {
-        TextComponent[] textComponents = getActionMessage(getInGamePrefix(), player, clickData);
-        player.spigot().sendMessage(textComponents);
-    }
-
-    @Deprecated
-    @Override
-    public TextComponent[] getActionMessage(String prefix, Player player, ClickData... clickData) {
-        TextComponent[] textComponents = new TextComponent[clickData.length + 1];
-        textComponents[0] = new TextComponent(prefix == null ? "" : prefix);
-        for (int i = 1; i < textComponents.length; i++) {
-            ClickData data = clickData[i - 1];
-            TextComponent component = new TextComponent(languageAPI.replaceColoredKeys(data.getMessage()));
-            if (data.getClickAction() != null) {
-                UUID id;
-                do {
-                    id = UUID.randomUUID();
-                } while(CLICK_DATA_MAP.containsKey(id));
-                CLICK_DATA_MAP.put(id, new PlayerAction((WolfyUtilsBukkit) wolfyUtils, player, data));
-                component.setClickEvent(new net.md_5.bungee.api.chat.ClickEvent(net.md_5.bungee.api.chat.ClickEvent.Action.RUN_COMMAND, "/wua " + id));
-            }
-            for (ChatEvent<?, ?> chatEvent : data.getChatEvents()) {
-                if (chatEvent instanceof HoverEvent) {
-                    component.setHoverEvent(new net.md_5.bungee.api.chat.HoverEvent(((HoverEvent) chatEvent).getAction(), ((HoverEvent) chatEvent).getValue()));
-                } else if (chatEvent instanceof ClickEvent) {
-                    component.setClickEvent(new net.md_5.bungee.api.chat.ClickEvent(((ClickEvent) chatEvent).getAction(), ((ClickEvent) chatEvent).getValue()));
-                }
-            }
-            textComponents[i] = component;
-        }
-        return textComponents;
-    }
-
-    /**
-     * @return The chat prefix as a String.
-     * @deprecated Replaced by {@link #getChatPrefix()}
-     */
-    @Override
-    public String getInGamePrefix() {
-        return LEGACY_SERIALIZER.serialize(getChatPrefix());
-    }
-
-    /**
-     * @param inGamePrefix The chat prefix.
-     * @deprecated Replaced by {@link #setChatPrefix(Component)}
-     */
-    @Override
-    public void setInGamePrefix(String inGamePrefix) {
-        this.setChatPrefix(BukkitComponentSerializer.legacy().deserialize(inGamePrefix.trim()));
     }
 
     public static void removeClickData(UUID uuid) {

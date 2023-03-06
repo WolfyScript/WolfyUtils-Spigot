@@ -20,13 +20,6 @@ package com.wolfyscript.utilities.bukkit.gui;
 
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.gui.button.Button;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonAction;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonChatInput;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonDummy;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonItemInput;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonMultipleChoice;
-import com.wolfyscript.utilities.bukkit.gui.button.ButtonToggle;
-import com.wolfyscript.utilities.bukkit.gui.cache.CustomCache;
 import java.util.HashMap;
 import java.util.Map;
 import net.kyori.adventure.text.Component;
@@ -55,7 +48,6 @@ public abstract class GuiCluster extends GuiMenuComponent {
         this.id = id;
         this.guiWindows = new HashMap<>();
         this.entry = null;
-        this.buttonBuilder = new ClusterButtonBuilder();
     }
 
     /**
@@ -133,40 +125,4 @@ public abstract class GuiCluster extends GuiMenuComponent {
         return getChat().translated("inventories." + id + ".global_messages." + key, resolver);
     }
 
-    /**
-     * The button builder for this GuiCluster. It creates new instances of the builders using the instance of this GuiCluster.<br>
-     * Therefor calling the {@link Button.Builder#register()} will then register the button into this GuiCluster.
-     */
-    protected class ClusterButtonBuilder implements ButtonBuilder {
-
-        @Override
-        public ButtonChatInput.Builder chatInput(String id) {
-            return new ButtonChatInput.Builder<>(GuiCluster.this, id);
-        }
-
-        @Override
-        public ButtonAction.Builder action(String id) {
-            return new ButtonAction.Builder<>(GuiCluster.this, id);
-        }
-
-        @Override
-        public ButtonDummy.Builder dummy(String id) {
-            return new ButtonDummy.Builder<>(GuiCluster.this, id);
-        }
-
-        @Override
-        public ButtonItemInput.Builder itemInput(String id) {
-            return new ButtonItemInput.Builder<>(GuiCluster.this, id);
-        }
-
-        @Override
-        public ButtonToggle.Builder toggle(String id) {
-            return new ButtonToggle.Builder<>(GuiCluster.this, id);
-        }
-
-        @Override
-        public ButtonMultipleChoice.Builder multiChoice(String id) {
-            return new ButtonMultipleChoice.Builder<>(GuiCluster.this, id);
-        }
-    }
 }
