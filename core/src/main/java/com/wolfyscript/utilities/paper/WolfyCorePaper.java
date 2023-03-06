@@ -1,14 +1,15 @@
-package com.wolfyscript.utilities.bukkit;
+package com.wolfyscript.utilities.paper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.wolfyscript.jackson.dataformat.hocon.HoconMapper;
+import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
 import com.wolfyscript.utilities.bukkit.commands.ChatActionCommand;
 import com.wolfyscript.utilities.bukkit.commands.InfoCommand;
 import com.wolfyscript.utilities.bukkit.commands.InputCommand;
-import com.wolfyscript.utilities.bukkit.commands.QueryDebugCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleAnimationCommand;
 import com.wolfyscript.utilities.bukkit.commands.SpawnParticleEffectCommand;
+import com.wolfyscript.utilities.bukkit.commands.QueryDebugCommand;
 import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
 import com.wolfyscript.utilities.bukkit.items.CustomItemData;
 import com.wolfyscript.utilities.bukkit.listeners.EquipListener;
@@ -23,6 +24,7 @@ import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeBoolean;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeByte;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeByteArray;
+import com.wolfyscript.utilities.bukkit.nbt.QueryNodeCompound;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeDouble;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeFloat;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeInt;
@@ -34,19 +36,20 @@ import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListInt;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListLong;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListString;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeLong;
-import com.wolfyscript.utilities.bukkit.nbt.QueryNodeCompound;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeShort;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeString;
+import com.wolfyscript.utilities.bukkit.nms.item.crafting.FunctionalRecipeGenerator;
 import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
 import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectData;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
+import com.wolfyscript.utilities.common.chat.Chat;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
-import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
 import me.wolfyscript.utilities.api.console.Console;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomData;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
@@ -82,7 +85,7 @@ import me.wolfyscript.utilities.api.inventory.custom_items.meta.UnbreakableMeta;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.VanillaRef;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.WolfyUtilitiesRef;
-import com.wolfyscript.utilities.bukkit.nms.item.crafting.FunctionalRecipeGenerator;
+import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
 import me.wolfyscript.utilities.compatibility.CompatibilityManager;
 import me.wolfyscript.utilities.compatibility.CompatibilityManagerBukkit;
 import me.wolfyscript.utilities.main.configs.WUConfig;
@@ -150,15 +153,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-
-/**
- * The core implementation of WolfyUtils.<br>
- * It manages the core plugin of WolfyUtils and there is only one instance of it.<br>
- *
- * If you want to use the plugin specific API, see {@link com.wolfyscript.utilities.common.WolfyUtils} & {@link WolfyUtilsBukkit}
- */
-public final class WolfyCoreBukkit extends WolfyUtilCore {
+public class WolfyCorePaper extends WolfyUtilCore {
 
     private final Console console;
     private Metrics metrics;
@@ -170,7 +165,7 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
     private PersistentStorage persistentStorage;
     private final List<SimpleModule> jsonMapperModules = new ArrayList<>();
 
-    public WolfyCoreBukkit(boolean paper) {
+    public WolfyCorePaper(boolean paper) {
         this();
         //
     }
@@ -178,7 +173,7 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
     /**
      * Constructor invoked by Spigot when the plugin is loaded.
      */
-    public WolfyCoreBukkit() {
+    public WolfyCorePaper() {
         super();
         this.console = api.getConsole();
         api.getChat().setChatPrefix(Component.text("[", NamedTextColor.GRAY).append(Component.text("WU", NamedTextColor.AQUA)).append(Component.text("] ", NamedTextColor.DARK_GRAY)));
@@ -191,7 +186,7 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
     /**
      * Constructor invoked by MockBukkit to mock the plugin.
      */
-    private WolfyCoreBukkit(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
+    private WolfyCorePaper(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
         this.console = api.getConsole();
         api.getChat().setChatPrefix(Component.text("[", NamedTextColor.GRAY).append(Component.text("WU", NamedTextColor.AQUA)).append(Component.text("] ", NamedTextColor.DARK_GRAY)));
@@ -202,13 +197,13 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
 
     /**
      * Gets an instance of the core plugin.
-     * <strong>Only use this if necessary! First try to get the instance via your {@link WolfyUtilities} instance!</strong>
+     * <strong>Only use this if necessary! First try to get the instance via your {@link com.wolfyscript.utilities.common.WolfyUtils} instance!</strong>
      *
      * @return The instance of the core.
      */
     @Deprecated
-    public static WolfyCoreBukkit getInstance() {
-        return (WolfyCoreBukkit) WolfyUtilCore.getInstance();
+    public static WolfyCorePaper getInstance() {
+        return (WolfyCorePaper) WolfyUtilCore.getInstance();
     }
 
     @Override
@@ -423,7 +418,18 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
             registerCommands();
 
             CreativeModeTab.init();
+        } else {
+            onJUnitTests();
         }
+    }
+
+    /**
+     * Handles JUnit test startup
+     */
+    private void onJUnitTests() {
+        WorldUtils.load();
+
+        registerCommands();
     }
 
     @Override
@@ -487,8 +493,8 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
         return mapper;
     }
 
-    @Override
     public PersistentStorage getPersistentStorage() {
         return persistentStorage;
     }
+
 }

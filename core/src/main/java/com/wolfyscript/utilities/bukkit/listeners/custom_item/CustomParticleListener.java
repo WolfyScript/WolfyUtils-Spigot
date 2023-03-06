@@ -18,9 +18,9 @@
 
 package com.wolfyscript.utilities.bukkit.listeners.custom_item;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectData;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerStorage;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.util.entity.PlayerUtils;
 import org.bukkit.Material;
@@ -35,9 +35,9 @@ import org.bukkit.inventory.EquipmentSlot;
 
 public class CustomParticleListener implements Listener {
 
-    private final WolfyCoreBukkit core;
+    private final WolfyUtilCore core;
 
-    public CustomParticleListener(WolfyCoreBukkit core) {
+    public CustomParticleListener(WolfyUtilCore core) {
         this.core = core;
     }
 

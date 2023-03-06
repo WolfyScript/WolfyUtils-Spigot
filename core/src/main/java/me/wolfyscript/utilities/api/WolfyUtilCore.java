@@ -1,12 +1,15 @@
 package me.wolfyscript.utilities.api;
 
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
 import com.wolfyscript.utilities.common.WolfyCore;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
 import me.wolfyscript.utilities.compatibility.CompatibilityManager;
 import me.wolfyscript.utilities.compatibility.CompatibilityManagerBukkit;
+import me.wolfyscript.utilities.messages.MessageFactory;
+import me.wolfyscript.utilities.messages.MessageHandler;
 import me.wolfyscript.utilities.registry.Registries;
 import me.wolfyscript.utilities.util.version.ServerVersion;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -183,5 +186,11 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
      * @see me.wolfyscript.utilities.api.inventory.custom_items.CustomItem#registerAPIReferenceParser(APIReference.Parser)
      */
     public abstract void registerAPIReference(APIReference.Parser<?> parser);
+
+    public abstract MessageHandler getMessageHandler();
+
+    public abstract MessageFactory getMessageFactory();
+
+    public abstract PersistentStorage getPersistentStorage();
 
 }

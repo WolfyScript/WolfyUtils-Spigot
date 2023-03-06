@@ -21,7 +21,6 @@ package com.wolfyscript.utilities.bukkit.listeners;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.ArmorType;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
-import me.wolfyscript.utilities.main.WUPlugin;
 import me.wolfyscript.utilities.util.events.ArmorEquipEvent;
 import me.wolfyscript.utilities.util.events.EventFactory;
 import me.wolfyscript.utilities.util.inventory.InventoryUtils;
@@ -58,7 +57,7 @@ public class EquipListener implements Listener {
 
     private final WolfyUtilCore core;
 
-    public EquipListener(WUPlugin core) {
+    public EquipListener(WolfyUtilCore core) {
         this.core = core;
     }
 

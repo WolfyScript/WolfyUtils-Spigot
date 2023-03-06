@@ -7,6 +7,7 @@ import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageMultiPlace
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoragePlaceEvent;
 import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
 import com.wolfyscript.utilities.bukkit.persistent.world.ChunkStorage;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.util.events.CustomItemPlaceEvent;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
@@ -21,9 +22,9 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 
 public class CustomItemDataListener implements Listener {
 
-    private final WolfyCoreBukkit core;
+    private final WolfyUtilCore core;
 
-    public CustomItemDataListener(WolfyCoreBukkit core) {
+    public CustomItemDataListener(WolfyUtilCore core) {
         this.core = core;
     }
 

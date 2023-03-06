@@ -18,8 +18,8 @@
 
 package com.wolfyscript.utilities.bukkit.listeners.custom_item;
 
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
-import me.wolfyscript.utilities.main.WUPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
@@ -29,9 +29,9 @@ import org.bukkit.event.player.PlayerItemMendEvent;
 
 public class CustomDurabilityListener implements Listener {
 
-    private final WUPlugin plugin;
+    private final WolfyUtilCore plugin;
 
-    public CustomDurabilityListener(WUPlugin plugin) {
+    public CustomDurabilityListener(WolfyUtilCore plugin) {
         this.plugin = plugin;
     }
 

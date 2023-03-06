@@ -1,0 +1,58 @@
+name: WolfyUtilities
+version: '${project.version}'
+main: com.wolfyscript.utilities.paper.WolfyCorePaper
+api-version: '1.19' # This config was introduced in 1.19, so it can only be loaded on 1.19+ server!
+authors: [ WolfyScript ]
+load: STARTUP
+
+libraries:
+  - "com.google.inject:guice:5.1.0"
+  - "org.apache.commons:commons-lang3:3.12.0"
+
+loadbefore:
+  - ChatColor
+  - ChatColor2
+  - StackableItems
+  - DiSky
+  - EpicWorldGenerator
+
+softdepend:
+  - Magic
+  - LWC
+  - PlotSquared
+  - WorldGuard
+  - MythicMobs
+  - MMOItems
+  - BungeeChat
+  - mcMMO
+  - Oraxen
+  - ItemsAdder
+  - PlaceholderAPI
+  - eco
+  - zAuctionHouseV3
+  - SCore
+
+commands:
+  - wolfyutils:
+      usage: "/wolfyutils"
+      aliases: [ "wu" ]
+      description: "The main command of WolfyUtils"
+  - wui:
+      usage: "/wui <input>"
+      description: "Input for chat input actions"
+  - wua:
+      usage: "/wui <action_uuid>"
+      description: "Used to handle code execution on chat click events."
+  - particle_animation:
+      usage: "/particle_animation spawn"
+      description: "DEBUG! Spawns a test particle animation on the executor."
+  - particle_effect:
+      usage: "/particle_effect spawn"
+      description: "DEBUG! Spawns a test particle effect on the target block."
+  - query_item:
+      usage: "/query_item"
+
+permissions:
+  wolfyutilities.command.query_debug:
+    default: op
+    description: "Command to debug NBT querries on the item in the hand"
