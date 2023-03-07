@@ -8,6 +8,7 @@ import com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.WorldStorage;
 import dev.lone.itemsadder.api.Events.CustomBlockBreakEvent;
 import dev.lone.itemsadder.api.Events.CustomBlockPlaceEvent;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.compatibility.plugins.ItemsAdderImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
@@ -19,7 +20,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 public class CustomItemListener implements Listener {
 
     private final ItemsAdderImpl iaImpl;
-    private final WolfyCoreBukkit core;
+    private final WolfyUtilCore core;
 
     public CustomItemListener(ItemsAdderImpl iaImpl) {
         this.iaImpl = iaImpl;

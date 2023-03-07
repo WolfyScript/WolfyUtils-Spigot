@@ -18,13 +18,11 @@
 
 package me.wolfyscript.utilities.api;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import me.wolfyscript.utilities.api.chat.Chat;
 import me.wolfyscript.utilities.api.config.ConfigAPI;
 import me.wolfyscript.utilities.api.config.YamlConfiguration;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
-import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
@@ -67,15 +65,15 @@ public class WolfyUtilities extends WolfyUtilsBukkit {
         return hasPlugin("mcMMO");
     }
 
-    WolfyUtilities(WolfyCoreBukkit core, Plugin plugin, Class<? extends CustomCache> cacheType, boolean initialize) {
+    WolfyUtilities(WolfyUtilCore core, Plugin plugin, Class<? extends CustomCache> cacheType, boolean initialize) {
         super(core, plugin, cacheType, initialize);
     }
 
-    WolfyUtilities(WolfyCoreBukkit core, Plugin plugin, Class<? extends CustomCache> customCacheClass) {
+    WolfyUtilities(WolfyUtilCore core, Plugin plugin, Class<? extends CustomCache> customCacheClass) {
         this(core, plugin, customCacheClass, false);
     }
 
-    WolfyUtilities(WolfyCoreBukkit core, Plugin plugin, boolean init) {
+    WolfyUtilities(WolfyUtilCore core, Plugin plugin, boolean init) {
         this(core, plugin, CustomCache.class, init);
     }
 
