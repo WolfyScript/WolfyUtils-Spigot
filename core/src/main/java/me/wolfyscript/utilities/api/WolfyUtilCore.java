@@ -39,7 +39,6 @@ import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectData;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import com.wolfyscript.utilities.common.WolfyCore;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.commands.ChatActionCommand;
 import com.wolfyscript.utilities.bukkit.commands.InfoCommand;
 import com.wolfyscript.utilities.bukkit.commands.InputCommand;
@@ -541,7 +540,7 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
      * @return The WolfyUtilities instance for the plugin.
      */
     public WolfyUtilities getAPI(Plugin plugin, Class<? extends CustomCache> customCacheClass) {
-        return wolfyUtilsInstances.computeIfAbsent(plugin.getName(), s -> new WolfyUtilities((WolfyCoreBukkit) this, plugin, customCacheClass));
+        return wolfyUtilsInstances.computeIfAbsent(plugin.getName(), s -> new WolfyUtilities(this, plugin, customCacheClass));
     }
 
     /**

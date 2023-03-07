@@ -18,7 +18,6 @@
 
 package me.wolfyscript.utilities.util.world;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import java.nio.file.Files;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
@@ -37,7 +36,7 @@ import java.util.zip.GZIPInputStream;
 
 /**
  * Replaced by the {@link com.wolfyscript.utilities.bukkit.persistent.PersistentStorage}, that is
- * available using {@link WolfyCoreBukkit#getPersistentStorage()}.
+ * available using {@link WolfyUtilCore#getPersistentStorage()}.
  * @see com.wolfyscript.utilities.bukkit.persistent.PersistentStorage
  */
 @Deprecated

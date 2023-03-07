@@ -1,6 +1,5 @@
 package com.wolfyscript.utilities.bukkit.nms.item.crafting;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javassist.CannotCompileException;
 import javassist.ClassPool;
@@ -26,6 +24,8 @@ import javassist.LoaderClassPath;
 import javassist.Modifier;
 import javassist.NotFoundException;
 import javassist.bytecode.SignatureAttribute;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
+import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.nms.inventory.InjectGUIInventory;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.Reflection;
@@ -182,16 +182,16 @@ public class FunctionalRecipeGenerator {
     public static void generateRecipeClasses() {
         if (!GENERATED_RECIPES.isEmpty()) return;
         try {
-            Logger logger = WolfyCoreBukkit.getInstance().getLogger();
+            Logger logger = WolfyUtilCore.getInstance().getLogger();
             logger.fine("Thread Classloader    : " + Thread.currentThread().getContextClassLoader());
-            logger.fine("Plugin Classloader    : " + WolfyCoreBukkit.class.getClassLoader());
+            logger.fine("Plugin Classloader    : " + WolfyUtilCore.class.getClassLoader());
             logger.fine("System Classloader    : " + ClassLoader.getSystemClassLoader());
             logger.fine("Platform Classloader  : " + ClassLoader.getPlatformClassLoader());
             logger.fine("Minecraft Classloader : " + MINECRAFT_SERVER_CLASS.getClassLoader());
             ClassPool classPool = ClassPool.getDefault();
             classPool.appendClassPath(new LoaderClassPath(ClassLoader.getPlatformClassLoader()));
             classPool.appendClassPath(new LoaderClassPath(ClassLoader.getSystemClassLoader()));
-            classPool.appendClassPath(new LoaderClassPath(WolfyCoreBukkit.class.getClassLoader()));
+            classPool.appendClassPath(new LoaderClassPath(WolfyUtilCore.class.getClassLoader()));
             classPool.appendClassPath(new LoaderClassPath(MINECRAFT_SERVER_CLASS.getClassLoader()));
             classPool.importPackage("java.util");
             classPool.importPackage("org.bukkit");
@@ -421,7 +421,7 @@ public class FunctionalRecipeGenerator {
             generatedRecipeClass.addConstructor(generatedConstructor);
         }
 
-        generatedRecipeClass.writeFile(WolfyCoreBukkit.getInstance().getDataFolder().getPath() + "/generated_classes");
+        generatedRecipeClass.writeFile(WolfyUtilCore.getInstance().getDataFolder().getPath() + "/generated_classes");
         return generatedRecipeClass.toClass(FunctionalRecipe.class);
     }
 
@@ -465,7 +465,7 @@ public class FunctionalRecipeGenerator {
                 "CraftItemStack", CRAFT_ITEMSTACK_CLASS.getName()
         ));
         convertCraftItemStack.addMethod(CtNewMethod.make(convertItemStackMethod, convertCraftItemStack));
-        convertCraftItemStack.writeFile(WolfyCoreBukkit.getInstance().getDataFolder().getPath() + "/generated_classes");
+        convertCraftItemStack.writeFile(WolfyUtilCore.getInstance().getDataFolder().getPath() + "/generated_classes");
         convertCraftItemStack.toClass(FunctionalRecipe.class);
 
         // Functional Class to convert a list of Bukkit ItemStacks to NMS ItemStacks
@@ -490,7 +490,7 @@ public class FunctionalRecipeGenerator {
                 "BukkitItemStack", ItemStack.class.getName()
         ));
         convertRemainingItems.addMethod(CtNewMethod.make(convertRemainingItemsMethod, convertRemainingItems));
-        convertRemainingItems.writeFile(WolfyCoreBukkit.getInstance().getDataFolder().getPath() + "/generated_classes");
+        convertRemainingItems.writeFile(WolfyUtilCore.getInstance().getDataFolder().getPath() + "/generated_classes");
         convertRemainingItems.toClass(FunctionalRecipe.class);
     }
 
@@ -595,7 +595,7 @@ public class FunctionalRecipeGenerator {
         ));
         conversionUtils.addMethod(CtNewMethod.make(convertContainerToCraftBukkitMethod, conversionUtils));
 
-        conversionUtils.writeFile(WolfyCoreBukkit.getInstance().getDataFolder().getPath() + "/generated_classes");
+        conversionUtils.writeFile(WolfyUtilCore.getInstance().getDataFolder().getPath() + "/generated_classes");
         conversionUtils.toClass(FunctionalRecipe.class);
     }
 

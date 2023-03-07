@@ -18,10 +18,10 @@
 
 package me.wolfyscript.utilities.util.entity;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectData;
 import java.util.HashMap;
 import java.util.Optional;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +39,7 @@ public class PlayerUtils {
     }
 
     private static Optional<PlayerParticleEffectData> getParticleData(Player player) {
-        return WolfyCoreBukkit.getInstance().getPersistentStorage().getOrCreatePlayerStorage(player).getData(PlayerParticleEffectData.class);
+        return WolfyUtilCore.getInstance().getPersistentStorage().getOrCreatePlayerStorage(player).getData(PlayerParticleEffectData.class);
     }
 
     @Deprecated

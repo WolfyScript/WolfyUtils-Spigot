@@ -31,7 +31,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.items.CustomBlockSettings;
 import com.wolfyscript.utilities.bukkit.items.CustomItemData;
 import java.io.IOException;
@@ -1371,7 +1370,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     }
 
     private static NamespacedKey getKeyForData(Class<? extends CustomItemData> type) {
-        return WolfyCoreBukkit.getInstance().getRegistries().getCustomItemDataTypeRegistry().getKey(type);
+        return WolfyUtilCore.getInstance().getRegistries().getCustomItemDataTypeRegistry().getKey(type);
     }
 
     /**
@@ -1500,7 +1499,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     }
 
     public boolean isBlock() {
-        return type.isBlock() || (getApiReference() instanceof ItemsAdderRef iaRef && WolfyCoreBukkit.getInstance().getCompatibilityManager().getPlugins()
+        return type.isBlock() || (getApiReference() instanceof ItemsAdderRef iaRef && WolfyUtilCore.getInstance().getCompatibilityManager().getPlugins()
                 .evaluateIfAvailable("ItemsAdder", ItemsAdderIntegration.class, ia -> ia.getStackInstance(iaRef.getItemID()).map(CustomStack::isBlock).orElse(false)));
     }
 

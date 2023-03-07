@@ -125,6 +125,7 @@ public class PlayerStorage {
                         try {
                             return objectMapper.reader(new InjectableValues.Std()
                                             .addValue(WolfyCoreBukkit.class, core)
+                                            .addValue(WolfyUtilCore.class, core)
                                             .addValue(UUID.class, playerUUID)
                                     )
                                     .forType(CustomPlayerData.class)
