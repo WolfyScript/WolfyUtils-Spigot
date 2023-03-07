@@ -1,6 +1,5 @@
 package me.wolfyscript.utilities.api.nms.inventory;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -20,6 +19,7 @@ import javassist.LoaderClassPath;
 import javassist.Modifier;
 import javassist.NotFoundException;
 import javassist.bytecode.SignatureAttribute;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.gui.GuiHandler;
 import me.wolfyscript.utilities.api.inventory.gui.GuiWindow;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
@@ -204,7 +204,7 @@ public class InjectGUIInventory {
             wrappedInventory.addConstructor(generatedConstructor);
         }
 
-        wrappedInventory.writeFile(WolfyCoreBukkit.getInstance().getDataFolder().getPath() + "/generated_classes");
+        wrappedInventory.writeFile(WolfyUtilCore.getInstance().getDataFolder().getPath() + "/generated_classes");
         return wrappedInventory.toClass(PermissionReference.class);
     }
 

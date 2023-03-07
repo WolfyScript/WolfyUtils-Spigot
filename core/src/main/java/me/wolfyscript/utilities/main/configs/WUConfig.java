@@ -18,14 +18,14 @@
 
 package me.wolfyscript.utilities.main.configs;
 
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.config.ConfigAPI;
 import me.wolfyscript.utilities.api.config.YamlConfiguration;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
-import me.wolfyscript.utilities.main.WUPlugin;
 
 public class WUConfig extends YamlConfiguration {
 
-    public WUConfig(ConfigAPI configAPI, WUPlugin plugin) {
+    public WUConfig(ConfigAPI configAPI, WolfyUtilCore plugin) {
         super(configAPI, plugin.getDataFolder().getPath(), "config", "", "config", false);
     }
 

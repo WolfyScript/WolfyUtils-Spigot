@@ -1,27 +1,22 @@
-package com.wolfyscript.utilities.bukkit;
+package com.wolfyscript.utilities.paper;
 
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.compatibility.CompatibilityManager;
 import me.wolfyscript.utilities.compatibility.CompatibilityManagerBukkit;
+import net.kyori.adventure.Adventure;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * The core implementation of WolfyUtils.<br>
- * It manages the core plugin of WolfyUtils and there is only one instance of it.<br>
- *
- * If you want to use the plugin specific API, see {@link com.wolfyscript.utilities.common.WolfyUtils} & {@link WolfyUtilsBukkit}
- */
-public final class WolfyCoreBukkit extends WolfyUtilCore {
+public final class WolfyCorePaper extends WolfyUtilCore {
 
     private BukkitAudiences adventure;
 
     /**
      * Constructor invoked by Spigot when the plugin is loaded.
      */
-    public WolfyCoreBukkit() {
+    public WolfyCorePaper() {
         super();
         api.getChat().setChatPrefix(Component.text("[", NamedTextColor.GRAY).append(Component.text("WU", NamedTextColor.AQUA)).append(Component.text("] ", NamedTextColor.DARK_GRAY)));
     }
@@ -31,10 +26,21 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
         return new CompatibilityManagerBukkit(this);
     }
 
+    /**
+     * Gets an instance of the core plugin.
+     * <strong>Only use this if necessary! First try to get the instance via your {@link com.wolfyscript.utilities.common.WolfyUtils} instance!</strong>
+     *
+     * @return The instance of the core.
+     */
+    @Deprecated
+    public static WolfyCorePaper getInstance() {
+        return (WolfyCorePaper) WolfyUtilCore.getInstance();
+    }
+
     @Override
     @NotNull
     public BukkitAudiences getAdventure() {
-        if(this.adventure == null) {
+        if (this.adventure == null) {
             throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
         }
         return this.adventure;
@@ -47,13 +53,15 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
 
     @Override
     public void onEnable() {
-       super.onEnable();
+        super.onEnable();
+
+        this.adventure = BukkitAudiences.create(this);
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
-        if(this.adventure != null) {
+        if (this.adventure != null) {
             this.adventure.close();
             this.adventure = null;
         }

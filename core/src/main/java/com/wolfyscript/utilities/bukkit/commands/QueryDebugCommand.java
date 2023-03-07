@@ -1,55 +1,43 @@
-/*
- *       WolfyUtilities, APIs and Utilities for Minecraft Spigot plugins
- *                      Copyright (C) 2021  WolfyScript
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package com.wolfyscript.utilities.bukkit.commands;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.nbt.NBTQuery;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import java.io.File;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
+import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.util.List;
+public final class QueryDebugCommand extends Command implements PluginIdentifiableCommand {
 
-public class QueryDebugCommand implements TabExecutor {
+    private final WolfyUtilCore core;
 
-    private final WolfyCoreBukkit plugin;
+    public QueryDebugCommand(WolfyUtilCore core) {
+        super("query_item");
+        this.core = core;
+        setUsage("/query_item");
+        setPermission("wolfyutilities.command.query_debug");
+    }
 
-    public QueryDebugCommand(WolfyCoreBukkit plugin) {
-        this.plugin = plugin;
+    @NotNull
+    @Override
+    public Plugin getPlugin() {
+        return core;
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!(sender instanceof Player player)) return true;
-        if (!player.hasPermission("wolfyutilities.command.query_debug")) return true;
+    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
+        if (!(sender instanceof Player player) || !testPermission(sender)) return true;
         ItemStack stack = player.getEquipment().getItem(EquipmentSlot.HAND);
         if (!ItemUtils.isAirOrNull(stack)) {
-            File file = new File(plugin.getDataFolder(), "query_debug.json");
+            File file = new File(core.getDataFolder(), "query_debug.json");
             if (file.exists()) {
                 NBTQuery.of(file).ifPresent(nbtQuery -> {
                     NBTItem nbtItem = new NBTItem(stack);
@@ -70,8 +58,4 @@ public class QueryDebugCommand implements TabExecutor {
         return true;
     }
 
-    @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        return null;
-    }
 }

@@ -18,19 +18,19 @@
 
 package me.wolfyscript.utilities.messages;
 
-import me.wolfyscript.utilities.api.WolfyUtilities;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.network.messages.MessageAPI;
-import me.wolfyscript.utilities.main.WUPlugin;
 
 public class MessageHandler {
 
-    private final WUPlugin plugin;
-    private final WolfyUtilities wolfyUtils;
+    private final WolfyUtilCore plugin;
+    private final WolfyUtilsBukkit wolfyUtils;
     private final MessageAPI messageAPI;
 
-    public MessageHandler(WUPlugin wuPlugin) {
+    public MessageHandler(WolfyUtilCore wuPlugin) {
         this.plugin = wuPlugin;
-        this.wolfyUtils = wuPlugin.getWolfyUtilities();
+        this.wolfyUtils = wuPlugin.getWolfyUtils();
         this.messageAPI = this.wolfyUtils.getMessageAPI();
         //init(); //Disabled for now to prevent misuse from clients!
     }

@@ -1,6 +1,5 @@
 package me.wolfyscript.utilities.compatibility.plugins.itemsadder;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageBreakEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoragePlaceEvent;
 import com.wolfyscript.utilities.bukkit.listeners.PersistentStorageListener;
@@ -8,6 +7,7 @@ import com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.WorldStorage;
 import dev.lone.itemsadder.api.Events.CustomBlockBreakEvent;
 import dev.lone.itemsadder.api.Events.CustomBlockPlaceEvent;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.compatibility.plugins.ItemsAdderImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
@@ -19,11 +19,11 @@ import org.bukkit.metadata.FixedMetadataValue;
 public class CustomItemListener implements Listener {
 
     private final ItemsAdderImpl iaImpl;
-    private final WolfyCoreBukkit core;
+    private final WolfyUtilCore core;
 
     public CustomItemListener(ItemsAdderImpl iaImpl) {
         this.iaImpl = iaImpl;
-        this.core = WolfyCoreBukkit.getInstance();
+        this.core = WolfyUtilCore.getInstance();
     }
 
     @EventHandler
@@ -33,7 +33,7 @@ public class CustomItemListener implements Listener {
          */
         if (event.isCanBuild()) {
             Block block = event.getBlock();
-            WorldStorage worldStorage = WolfyCoreBukkit.getInstance().getPersistentStorage().getOrCreateWorldStorage(block.getWorld());
+            WorldStorage worldStorage = WolfyUtilCore.getInstance().getPersistentStorage().getOrCreateWorldStorage(block.getWorld());
             BlockStorage blockStorage = worldStorage.createBlockStorage(block.getLocation());
             var blockStorePlaceEvent = new BlockStoragePlaceEvent(block, blockStorage, event.getReplacedBlockState(), event.getPlacedAgainst(), event.getItemInHand(), event.getPlayer(), event.isCanBuild(),
                     // Since we do not get the hand used, we need to guess it.
@@ -55,7 +55,7 @@ public class CustomItemListener implements Listener {
         Doesn't look like this is actually required. Include it anyway just in case as it is just called if the stored data still exists!
          */
         var block = event.getBlock();
-        var worldStorage = WolfyCoreBukkit.getInstance().getPersistentStorage().getOrCreateWorldStorage(block.getWorld());
+        var worldStorage = WolfyUtilCore.getInstance().getPersistentStorage().getOrCreateWorldStorage(block.getWorld());
         worldStorage.getBlock(block.getLocation()).ifPresent(store -> {
             if (!store.isEmpty()) {
                 var blockStorageBreakEvent = new BlockStorageBreakEvent(event.getBlock(), store, event.getPlayer());

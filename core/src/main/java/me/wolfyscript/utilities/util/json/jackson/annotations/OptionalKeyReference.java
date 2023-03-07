@@ -37,7 +37,7 @@ import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.google.inject.Inject;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.registry.Registry;
 import me.wolfyscript.utilities.util.Keyed;
@@ -164,7 +164,7 @@ public @interface OptionalKeyReference {
         private static class Deserializer<T extends Keyed> extends StdDeserializer<T> implements ResolvableDeserializer {
 
             @Inject
-            private WolfyCoreBukkit core;
+            private WolfyUtilCore core;
             private final Class<T> genericType;
             private final JsonDeserializer<T> defaultDeserializer;
             private final NamespacedKey registryKey;

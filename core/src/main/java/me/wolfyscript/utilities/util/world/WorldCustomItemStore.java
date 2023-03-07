@@ -24,12 +24,12 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
 import com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.ChunkStorage;
 import java.io.IOException;
 import java.util.UUID;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -63,20 +63,20 @@ public class WorldCustomItemStore {
     @Deprecated
     public void remove(Location location) {
         if (location == null || location.getWorld() == null) return;
-        WolfyCoreBukkit.getInstance().getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).removeBlock(location);
+        WolfyUtilCore.getInstance().getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).removeBlock(location);
     }
 
     @Deprecated
     public boolean isStored(Location location) {
         if (location == null || location.getWorld() == null) return false;
-        return WolfyCoreBukkit.getInstance().getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).getBlock(location).isPresent();
+        return WolfyUtilCore.getInstance().getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).getBlock(location).isPresent();
     }
 
     @Deprecated
     @Nullable
     public BlockCustomItemStore get(Location location) {
         if (location == null || location.getWorld() == null) return null;
-        return WolfyCoreBukkit.getInstance().getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).getBlock(location)
+        return WolfyUtilCore.getInstance().getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).getBlock(location)
                 .flatMap(storage -> storage.getData(CustomItemBlockData.ID, CustomItemBlockData.class)).map(data -> new BlockCustomItemStore(data.getItem(), null)).orElse(null);
     }
 
@@ -107,9 +107,9 @@ public class WorldCustomItemStore {
     @Deprecated
     void setStore(Location location, BlockCustomItemStore blockStore) {
         if (location == null || location.getWorld() == null) return;
-        ChunkStorage chunkStorage = WolfyCoreBukkit.getInstance().getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).getOrCreateChunkStorage(location);
+        ChunkStorage chunkStorage = WolfyUtilCore.getInstance().getPersistentStorage().getOrCreateWorldStorage(location.getWorld()).getOrCreateChunkStorage(location);
         BlockStorage blockStorage = chunkStorage.getOrCreateBlockStorage(location);
-        blockStorage.addOrSetData(new CustomItemBlockData(WolfyCoreBukkit.getInstance(), chunkStorage, blockStorage.getPos(), blockStore.getCustomItemKey()));
+        blockStorage.addOrSetData(new CustomItemBlockData(WolfyUtilCore.getInstance(), chunkStorage, blockStorage.getPos(), blockStore.getCustomItemKey()));
         chunkStorage.setBlockStorageIfAbsent(blockStorage);
     }
 

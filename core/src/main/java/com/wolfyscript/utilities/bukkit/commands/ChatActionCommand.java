@@ -1,39 +1,34 @@
-/*
- *       WolfyUtilities, APIs and Utilities for Minecraft Spigot plugins
- *                      Copyright (C) 2021  WolfyScript
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package com.wolfyscript.utilities.bukkit.commands;
 
 import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
+import java.util.UUID;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.chat.PlayerAction;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
+import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.UUID;
+public class ChatActionCommand extends Command implements PluginIdentifiableCommand {
 
-public class ChatActionCommand implements TabExecutor {
+    private final WolfyUtilCore core;
+
+    public ChatActionCommand(WolfyUtilCore core) {
+        super("wua");
+        this.core = core;
+        setDescription("Used to handle code execution on chat click events.");
+    }
+
+    @NotNull
+    @Override
+    public Plugin getPlugin() {
+        return core;
+    }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
         if (!(sender instanceof Player player)) return true;
         if (args.length > 0) {
             UUID uuid;
@@ -51,10 +46,5 @@ public class ChatActionCommand implements TabExecutor {
             }
         }
         return true;
-    }
-
-    @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        return null;
     }
 }
