@@ -80,6 +80,11 @@
             <artifactId>nmsutil-v1_19_R2</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>nmsutil-v1_19_R3</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

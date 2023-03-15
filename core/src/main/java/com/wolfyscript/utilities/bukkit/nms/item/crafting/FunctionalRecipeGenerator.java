@@ -150,7 +150,7 @@ public class FunctionalRecipeGenerator {
         NONNULLLIST_WITH_SIZE_METHOD = Reflection.getMethod(NON_NULL_LIST_CLASS, "a", Integer.TYPE, Object.class);
         RECIPE_MATCHES_METHOD = Reflection.getMethod(RECIPE_CLASS, "a", CONTAINER_CLASS, WORLD_CLASS);
         RECIPE_ASSEMBLE_METHOD = Reflection.getMethod(RECIPE_CLASS, "a", CONTAINER_CLASS);
-        RECIPE_GET_REMAINING_ITEMS_METHOD = Reflection.getMethod(RECIPE_CLASS, "b", CONTAINER_CLASS);
+        RECIPE_GET_REMAINING_ITEMS_METHOD = Reflection.getMethod(RECIPE_CLASS, Reflection.NMSMapping.of(MinecraftVersion.of(1, 19, 4), "a").orElse("b"), CONTAINER_CLASS);
         RECIPE_MANAGER_ADD_RECIPE_METHOD = Reflection.getMethod(RECIPE_MANAGER_CLASS, "addRecipe", RECIPE_CLASS);
 
         /* ******************
