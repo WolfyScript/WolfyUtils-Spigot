@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.version.MinecraftVersion;
 import me.wolfyscript.utilities.util.version.ServerVersion;
@@ -56,7 +57,8 @@ public abstract class FunctionalRecipeBuilderCooking extends FunctionalRecipeBui
 
     public void createAndRegister() {
         try {
-            Class<?> recipeClass = FunctionalRecipeGenerator.getFunctionalRecipeClass(getType());
+            FunctionalRecipeGenerator functionalRecipeGenerator = WolfyUtilCore.getInstance().getFunctionalRecipeGenerator();
+            Class<?> recipeClass = functionalRecipeGenerator.getFunctionalRecipeClass(getType());
             Constructor<?> constructor;
             FunctionalRecipe<Inventory> recipe;
             if (ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 19, 3))) {
@@ -70,7 +72,7 @@ public abstract class FunctionalRecipeBuilderCooking extends FunctionalRecipeBui
                 );
                 recipe = (FunctionalRecipe<Inventory>) constructor.newInstance(key, recipeMatcher, recipeAssembler, remainingItemsFunction, group, ingredient, result, experience, cookingTime);
             }
-            FunctionalRecipeGenerator.addRecipeToRecipeManager(recipe);
+            functionalRecipeGenerator.addRecipeToRecipeManager(recipe);
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }

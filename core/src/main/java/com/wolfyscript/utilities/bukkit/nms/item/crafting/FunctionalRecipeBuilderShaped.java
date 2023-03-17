@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.version.MinecraftVersion;
 import me.wolfyscript.utilities.util.version.ServerVersion;
@@ -49,18 +50,19 @@ public class FunctionalRecipeBuilderShaped extends FunctionalRecipeBuilderCrafti
         try {
             Constructor<?> constructor;
             FunctionalRecipe<CraftingInventory> recipe;
+            FunctionalRecipeGenerator functionalRecipeGenerator = WolfyUtilCore.getInstance().getFunctionalRecipeGenerator();
             if (ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 19, 3))) {
-                constructor =  FunctionalRecipeGenerator.getFunctionalRecipeClass(getType()).getConstructor(
+                constructor =  functionalRecipeGenerator.getFunctionalRecipeClass(getType()).getConstructor(
                         NamespacedKey.class, RecipeMatcher.class, RecipeAssembler.class, RecipeRemainingItemsFunction.class, String.class, String.class, Integer.TYPE, Integer.TYPE, List.class, ItemStack.class
                 );
                 recipe = (FunctionalRecipe<CraftingInventory>) constructor.newInstance(key, recipeMatcher, recipeAssembler, remainingItemsFunction, group, "misc", width, height, choices, result);
             } else {
-                constructor = FunctionalRecipeGenerator.getFunctionalRecipeClass(getType()).getConstructor(
+                constructor = functionalRecipeGenerator.getFunctionalRecipeClass(getType()).getConstructor(
                         NamespacedKey.class, RecipeMatcher.class, RecipeAssembler.class, RecipeRemainingItemsFunction.class, String.class, Integer.TYPE, Integer.TYPE, List.class, ItemStack.class
                 );
                 recipe = (FunctionalRecipe<CraftingInventory>) constructor.newInstance(key, recipeMatcher, recipeAssembler, remainingItemsFunction, group, width, height, choices, result);
             }
-            FunctionalRecipeGenerator.addRecipeToRecipeManager(recipe);
+            functionalRecipeGenerator.addRecipeToRecipeManager(recipe);
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }

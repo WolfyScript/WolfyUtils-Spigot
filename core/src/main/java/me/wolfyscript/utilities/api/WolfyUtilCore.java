@@ -189,6 +189,7 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
     private final MessageHandler messageHandler;
     private final MessageFactory messageFactory;
     private final PersistentStorage persistentStorage;
+    private final FunctionalRecipeGenerator functionalRecipeGenerator;
 
     protected WolfyUtilCore() {
         super();
@@ -206,6 +207,7 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
         this.messageHandler = new MessageHandler(this);
         this.messageFactory = new MessageFactory(this);
         this.persistentStorage = new PersistentStorage(this);
+        this.functionalRecipeGenerator = new FunctionalRecipeGenerator(this);
     }
 
     protected abstract CompatibilityManager createCompatibilityManager();
@@ -219,7 +221,7 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
         getLogger().setLevel(Level.ALL);
 
         getLogger().info("Generate Functional Recipes");
-        FunctionalRecipeGenerator.generateRecipeClasses();
+        functionalRecipeGenerator.generateRecipeClasses();
 
         // Jackson Serializer
         getLogger().info("Register JSON de-/serializers");
@@ -584,6 +586,10 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
 
     public PersistentStorage getPersistentStorage() {
         return persistentStorage;
+    }
+
+    public FunctionalRecipeGenerator getFunctionalRecipeGenerator() {
+        return functionalRecipeGenerator;
     }
 
     @Override
