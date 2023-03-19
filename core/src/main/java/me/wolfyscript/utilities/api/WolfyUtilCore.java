@@ -175,6 +175,7 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
 
     //Static reference to the instance of this class.
     private static WolfyUtilCore instance;
+    public static final String NAME = "wolfyutils";
 
     private final CompatibilityManager compatibilityManager;
     private Metrics metrics;
@@ -460,7 +461,7 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
             return;
         }
         for (Command cmd : cmds) {
-            commandMap.register(cmd.getName(), cmd);
+            commandMap.register(NAME, cmd);
         }
     }
 
