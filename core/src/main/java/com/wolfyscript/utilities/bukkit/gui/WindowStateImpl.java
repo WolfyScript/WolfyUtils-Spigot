@@ -6,33 +6,29 @@ import com.google.inject.name.Names;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentState;
-import com.wolfyscript.utilities.common.gui.ComponentStateWindow;
+import com.wolfyscript.utilities.common.gui.WindowState;
 import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.RenderContext;
 import com.wolfyscript.utilities.common.gui.SizedComponent;
 import com.wolfyscript.utilities.common.gui.Window;
-import java.util.ArrayList;
-import java.util.List;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import java.util.Map;
 
-public class ComponentStateWindowImpl extends ComponentStateImpl<Window, ComponentStateRouterImpl> implements ComponentStateWindow {
+public class WindowStateImpl extends ComponentStateImpl<Window, ComponentStateRouterImpl> implements WindowState {
 
-    private final List<ComponentStateImpl<? extends SizedComponent, ComponentStateWindowImpl>> childComponentStates = new ArrayList<>();
+    private final Map<Integer, ComponentStateImpl<? extends SizedComponent, WindowStateImpl>> childComponentStates = new Int2ObjectOpenHashMap<>();
 
-    public ComponentStateWindowImpl(ComponentStateRouterImpl parent, WindowImpl owner) {
+    public WindowStateImpl(ComponentStateRouterImpl parent, WindowImpl owner) {
         super(parent, owner);
     }
 
     @Override
     public void render(GuiHolder holder, RenderContext context) {
-
         getOwner().renderCallback().render(holder, this);
-
-
-
     }
 
-    void pushNewChildState(ComponentStateImpl<? extends SizedComponent, ComponentStateWindowImpl> state) {
-        childComponentStates.add(state);
+    void pushNewChildState(int slot, ComponentStateImpl<? extends SizedComponent, WindowStateImpl> state) {
+        childComponentStates.put(slot, state);
     }
 
     @Override
@@ -42,12 +38,12 @@ public class ComponentStateWindowImpl extends ComponentStateImpl<Window, Compone
         Injector injector = Guice.createInjector(binder -> {
             binder.bindConstant().annotatedWith(Names.named("position")).to(slot);
             binder.bind(WolfyUtils.class).toInstance(component.getWolfyUtils());
-            binder.bind(ComponentStateWindow.class).toInstance(this);
+            binder.bind(WindowState.class).toInstance(this);
         });
         if (checkBoundsAtPos(slot, component)) {
             ComponentState state = injector.getInstance(component.getComponentStateType());
-            if (state instanceof ComponentStateImpl<?, ?> impl && impl.getParent() instanceof ComponentStateWindow) {
-                pushNewChildState((ComponentStateImpl<? extends SizedComponent, ComponentStateWindowImpl>) state);
+            if (state instanceof ComponentStateImpl<?, ?> impl && impl.getParent() instanceof WindowState) {
+                pushNewChildState(slot, (ComponentStateImpl<? extends SizedComponent, WindowStateImpl>) state);
             }
         } else {
             throw new IllegalArgumentException("Component does not fit inside of the Window!");
