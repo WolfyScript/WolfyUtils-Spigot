@@ -5,7 +5,9 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.common.gui.ButtonBuilder;
 import com.wolfyscript.utilities.common.gui.ComponentState;
+import com.wolfyscript.utilities.common.gui.WindowState;
 import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.InteractionCallback;
@@ -22,6 +24,7 @@ import com.wolfyscript.utilities.common.gui.WindowComponentBuilder;
 import com.wolfyscript.utilities.common.gui.WindowTitleUpdateCallback;
 import com.wolfyscript.utilities.common.gui.WindowType;
 import java.util.Deque;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -33,6 +36,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.Nullable;
 
 public final class WindowImpl implements Window {
 
@@ -44,9 +48,9 @@ public final class WindowImpl implements Window {
     private final WindowType type;
     private final WindowTitleUpdateCallback titleUpdateCallback;
     private final InteractionCallback interactionCallback;
-    private final RenderCallback renderCallback;
+    private final RenderCallback<WindowState> renderCallback;
 
-    private WindowImpl(String id, Router parent, WindowTitleUpdateCallback titleUpdateCallback, Integer size, WindowType type, InteractionCallback interactionCallback, RenderCallback renderCallback) {
+    private WindowImpl(String id, Router parent, WindowTitleUpdateCallback titleUpdateCallback, Integer size, WindowType type, InteractionCallback interactionCallback, RenderCallback<WindowState> renderCallback) {
         Preconditions.checkNotNull(id);
         Preconditions.checkNotNull(interactionCallback);
         Preconditions.checkNotNull(renderCallback);
@@ -138,13 +142,13 @@ public final class WindowImpl implements Window {
     }
 
     @Override
-    public void render(GuiHolder holder, ComponentState state, RenderContext context) {
+    public void render(GuiHolder holder, WindowState state, RenderContext context) {
 
     }
 
     @Override
-    public Class<? extends com.wolfyscript.utilities.common.gui.ComponentStateWindow> getComponentStateType() {
-        return ComponentStateWindowImpl.class;
+    public Class<? extends com.wolfyscript.utilities.common.gui.WindowState> getComponentStateType() {
+        return WindowStateImpl.class;
     }
 
     @Override
@@ -153,7 +157,7 @@ public final class WindowImpl implements Window {
     }
 
     @Override
-    public RenderCallback renderCallback() {
+    public RenderCallback<WindowState> renderCallback() {
         return renderCallback;
     }
 
@@ -212,8 +216,13 @@ public final class WindowImpl implements Window {
         return size / 9;
     }
 
-    public static class BuilderImpl implements WindowComponentBuilder {
+    void addNewChildComponent(String id, SizedComponent component) {
+        this.children.put(id, component);
+    }
 
+    public static class BuilderImpl implements WindowComponentBuilder, ComponentBuilder<Window, Router> {
+
+        private final WolfyUtils wolfyUtils;
         protected final String windowID;
         protected final RouterBuilder parent;
         protected final WindowChildComponentBuilder childComponentBuilder;
@@ -221,9 +230,10 @@ public final class WindowImpl implements Window {
         protected WindowType type;
         protected WindowTitleUpdateCallback titleUpdateCallback;
         private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.cancel(true);
-        private RenderCallback renderCallback = (guiHolder, componentState) -> {};
+        private RenderCallback<WindowState> renderCallback = (guiHolder, componentState) -> {};
 
-        protected BuilderImpl(String windowID, RouterImpl.Builder parent) {
+        protected BuilderImpl(WolfyUtils wolfyUtils, String windowID, RouterImpl.Builder parent) {
+            this.wolfyUtils = wolfyUtils;
             this.windowID = windowID;
             this.parent = parent;
             this.childComponentBuilder = new ChildBuilderImpl();
@@ -267,26 +277,40 @@ public final class WindowImpl implements Window {
         }
 
         @Override
-        public WindowComponentBuilder render(RenderCallback renderCallback) {
+        public WindowComponentBuilder render(RenderCallback<WindowState> renderCallback) {
             Preconditions.checkNotNull(renderCallback);
             this.renderCallback = renderCallback;
             return this;
         }
 
-        public static class ChildBuilderImpl implements WindowChildComponentBuilder {
+        public class ChildBuilderImpl implements WindowChildComponentBuilder {
+
+            private final BiMap<String, ComponentBuilder<? extends SizedComponent, SizedComponent>> children = HashBiMap.create();
 
             ChildBuilderImpl() {
                 super();
             }
 
             @Override
-            public BiMap<String, ? extends SizedComponent> create() {
-                return null;
+            public WindowChildComponentBuilder button(String buttonId, Consumer<ButtonBuilder> consumer) {
+                if (children.containsKey(buttonId)) {
+                    if (!(children.get(buttonId) instanceof ButtonImpl.Builder builder)) throw new IllegalArgumentException("A builder for '" + buttonId + "' of a different type already exists!");
+                    consumer.accept(builder);
+                    return this;
+                }
+                ButtonImpl.Builder builder = new ButtonImpl.Builder(buttonId, BuilderImpl.this.wolfyUtils);
+                children.putIfAbsent(buttonId, builder);
+                consumer.accept(builder);
+                return this;
             }
 
             @Override
             public void applyTo(Window window) {
-                if (!(window instanceof WindowImpl parent)) return;
+                if (!(window instanceof WindowImpl thisWindow)) return;
+
+                children.forEach((s, componentBuilder) -> {
+                    thisWindow.addNewChildComponent(s, componentBuilder.create(thisWindow));
+                });
 
             }
         }
