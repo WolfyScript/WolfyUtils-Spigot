@@ -20,7 +20,6 @@ package com.wolfyscript.utilities.bukkit.commands;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
-import com.wolfyscript.utilities.bukkit.gui.GuiHandler;
 import java.util.List;
 import java.util.Objects;
 import org.bukkit.Bukkit;
@@ -45,7 +44,6 @@ public class InputCommand implements TabExecutor {
             plugin.getAPIList().parallelStream()
                     .filter(WolfyUtilsBukkit::hasInventoryAPI)
                     .map(wolfyUtilities -> wolfyUtilities.getInventoryAPI().getGuiHandler(player))
-                    .filter(GuiHandler::isChatEventActive)
                     .forEach(guiHandler -> Bukkit.getScheduler().runTask(guiHandler.getWolfyUtils().getPlugin(), () -> {
                         //Handles ChatInput
                         if (!guiHandler.onChat(player, String.join(" ", args).trim(), args)) {
