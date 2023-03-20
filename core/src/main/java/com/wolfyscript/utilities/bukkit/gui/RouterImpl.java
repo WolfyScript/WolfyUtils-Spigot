@@ -21,9 +21,7 @@ package com.wolfyscript.utilities.bukkit.gui;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentState;
 import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
@@ -167,7 +165,7 @@ public final class RouterImpl implements Router {
         private final RouterEntryBuilderImpl routerEntryBuilder = new RouterEntryBuilderImpl();
         private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.cancel(true);
 
-        Builder(String routerID, Builder parent, WolfyUtils wolfyUtils) {
+        Builder(WolfyUtils wolfyUtils, String routerID, Builder parent) {
             Preconditions.checkNotNull(routerID);
             this.wolfyUtils = wolfyUtils;
             this.parent = parent;
@@ -261,14 +259,9 @@ public final class RouterImpl implements Router {
 
             ChildBuilder() { }
 
-            public <CT extends Component.Builder<? extends Window, ?>> RouterChildBuilder custom(String subID, NamespacedKey builderId, Class<CT> builderType, Consumer<CT> builderConsumer) {
-                // TODO
-                return this;
-            }
-
             @Override
             public RouterChildBuilder window(String id, Consumer<WindowComponentBuilder> windowComponentBuilderConsumer) {
-                var windowBuilder = new WindowImpl.BuilderImpl(id, Builder.this);
+                var windowBuilder = new WindowImpl.BuilderImpl(wolfyUtils, id, Builder.this);
                 windowComponentBuilderConsumer.accept(windowBuilder);
                 windowComponentBuilders.add(windowBuilder);
                 return this;
@@ -276,7 +269,7 @@ public final class RouterImpl implements Router {
 
             @Override
             public RouterChildBuilder router(String id, Consumer<RouterBuilder> clusterComponentBuilderConsumer) {
-                RouterBuilder clusterBuilder = new RouterImpl.Builder(id, Builder.this, wolfyUtils);
+                RouterBuilder clusterBuilder = new RouterImpl.Builder(wolfyUtils, id, Builder.this);
                 clusterComponentBuilderConsumer.accept(clusterBuilder);
                 routerBuilders.add(clusterBuilder);
                 return this;
