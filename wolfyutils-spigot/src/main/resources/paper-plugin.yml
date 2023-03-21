@@ -54,6 +54,8 @@ load-after:
     bootstrap: false
   - name: BungeeChat
     bootstrap: false
+  - name: SCore
+    bootstrap: false
 
 permissions:
   wolfyutilities.command.query_debug:
