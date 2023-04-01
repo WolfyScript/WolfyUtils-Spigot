@@ -163,7 +163,7 @@ public final class RouterImpl implements Router {
         final WolfyUtils wolfyUtils;
         private final ChildBuilder childComponentBuilder;
         private final RouterEntryBuilderImpl routerEntryBuilder = new RouterEntryBuilderImpl();
-        private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.cancel(true);
+        private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.def();
 
         Builder(WolfyUtils wolfyUtils, String routerID, Builder parent) {
             Preconditions.checkNotNull(routerID);

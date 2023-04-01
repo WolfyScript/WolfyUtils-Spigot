@@ -40,7 +40,7 @@ public abstract class ComponentStateImpl<OWNER extends Component, PARENT extends
         if (owner instanceof Interactable interactable) {
             return interactable.interactCallback().interact(holder, this, interactionDetails);
         }
-        return InteractionResult.cancel(true);
+        return InteractionResult.def();
     }
 
     public PARENT getParent() {

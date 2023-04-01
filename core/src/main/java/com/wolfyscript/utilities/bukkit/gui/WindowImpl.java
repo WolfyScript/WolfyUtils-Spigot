@@ -229,8 +229,9 @@ public final class WindowImpl implements Window {
         protected Integer size;
         protected WindowType type;
         protected WindowTitleUpdateCallback titleUpdateCallback;
-        private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.cancel(true);
-        private RenderCallback<WindowState> renderCallback = (guiHolder, componentState) -> {};
+        private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.def();
+        private RenderCallback<WindowState> renderCallback = (guiHolder, componentState) -> {
+        };
 
         protected BuilderImpl(WolfyUtils wolfyUtils, String windowID, RouterImpl.Builder parent) {
             this.wolfyUtils = wolfyUtils;
