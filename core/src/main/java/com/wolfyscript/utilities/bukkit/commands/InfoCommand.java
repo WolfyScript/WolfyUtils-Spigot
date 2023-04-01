@@ -41,8 +41,8 @@ public class InfoCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!(sender instanceof Player)) return true;
-        plugin.getWolfyUtils().getChat().sendMessages((Player) sender, true,
+        if (!(sender instanceof Player player)) return true;
+        plugin.getWolfyUtils().getChat().sendMessages(player, true,
                 Component.text("——————— ", NamedTextColor.GRAY).append(Component.text("WolfyUtilities", NamedTextColor.AQUA, TextDecoration.BOLD)).append(Component.text(" ———————")),
                 Component.empty(),
                 Component.text("Author: ", NamedTextColor.GRAY).append(Component.text(String.join(", ", plugin.getWolfyUtils().getPlugin().getDescription().getAuthors()), null, TextDecoration.BOLD)),
@@ -50,6 +50,7 @@ public class InfoCommand implements TabExecutor {
                 Component.text("Version: ", NamedTextColor.GRAY).append(Component.text(ServerVersion.getWUVersion().getVersion(), null, TextDecoration.BOLD)),
                 Component.text("———————————————————————", NamedTextColor.GRAY)
         );
+        plugin.getWolfyUtils().getGUIManager().createViewAndOpen("main", player.getUniqueId());
         return true;
     }
 
