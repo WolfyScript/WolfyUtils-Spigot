@@ -1,28 +1,54 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
+import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentState;
 import com.wolfyscript.utilities.common.gui.RenderContext;
-import com.wolfyscript.utilities.common.gui.SizedComponent;
 import com.wolfyscript.utilities.common.items.ItemStackConfig;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
-public class RenderContextImpl<S extends ComponentState> implements RenderContext {
+public class RenderContextImpl implements RenderContext {
 
     private final Inventory inventory;
-    private S currentNode;
+    private ComponentState currentNode;
+    private int slotOffsetToParent;
+    private final Deque<Component> componentPath = new ArrayDeque<>();
 
     public RenderContextImpl(Inventory inventory) {
         this.inventory = inventory;
+        this.slotOffsetToParent = 0;
         this.currentNode = null;
     }
 
-    void setCurrentNode(S node) {
+    void pushParentOnPath(Component component) {
+        componentPath.push(component);
+    }
+
+    void setSlotOffsetToParent(int offset) {
+        this.slotOffsetToParent = offset;
+    }
+
+    int getSlotOffsetToParent() {
+        return slotOffsetToParent;
+    }
+
+    void setCurrentNode(ComponentState node) {
         this.currentNode = node;
     }
 
+    Component nextChild() {
+        return componentPath.pop();
+    }
+
+    Inventory getInventory() {
+        return inventory;
+    }
+
     @Override
-    public S getCurrentState() {
+    public ComponentState getCurrentState() {
         return currentNode;
     }
 
@@ -30,13 +56,19 @@ public class RenderContextImpl<S extends ComponentState> implements RenderContex
     public void setStack(int i, ItemStackConfig<?> itemStackConfig) {
         // i > 0 && i < width * height
         if (itemStackConfig instanceof BukkitItemStackConfig bukkitItemStackConfig) {
-            if (!(currentNode.getOwner() instanceof SizedComponent sizedParent) || i > 0 && i < sizedParent.width() * sizedParent.height()) {
+            if (checkIfSlotInBounds(i)) {
                 inventory.setItem(i, bukkitItemStackConfig.constructItemStack());
-            } else {
-                throw new IllegalArgumentException("Slot "+ i +" out of bounds! Must be in the range of [" + 0 + "..." + (sizedParent.width() * sizedParent.height() - 1) + "] !");
             }
-
         }
+    }
+
+    public void setNativeStack(int i, ItemStack itemStack) {
+        if (checkIfSlotInBounds(i)) inventory.setItem(i, itemStack);
+    }
+
+    @Override
+    public Component next() {
+        return null;
     }
 
 }
