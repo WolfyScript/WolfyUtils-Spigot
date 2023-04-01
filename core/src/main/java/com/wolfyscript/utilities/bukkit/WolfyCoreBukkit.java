@@ -259,7 +259,7 @@ public final class WolfyCoreBukkit implements WolfyCore {
 
     @Override
     public Reflections getReflections() {
-        return null;
+        return plugin.getReflections();
     }
 
     /**
@@ -328,7 +328,7 @@ public final class WolfyCoreBukkit implements WolfyCore {
 
     public void load() {
         getLogger().info("Generate Functional Recipes");
-        FunctionalRecipeGenerator.generateRecipeClasses();
+        // FunctionalRecipeGenerator.generateRecipeClasses()
 
         // Jackson Serializer
         getLogger().info("Register JSON de-/serializers");
