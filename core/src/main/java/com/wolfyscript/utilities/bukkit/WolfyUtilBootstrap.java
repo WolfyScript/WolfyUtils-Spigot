@@ -32,20 +32,12 @@ public final class WolfyUtilBootstrap extends JavaPlugin {
     private BukkitAudiences adventure;
     private final Reflections reflections;
 
-    WolfyUtilBootstrap() {
+    public WolfyUtilBootstrap() {
         super();
         ServerVersion.setWUVersion(getDescription().getVersion());
         this.core = new WolfyCoreBukkit(this);
         this.reflections = initReflections();
-    }
-
-    WolfyUtilBootstrap(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
-        super(loader, description, dataFolder, file);
-        this.core = new WolfyCoreBukkit(this);
-        ServerVersion.setWUVersion(getDescription().getVersion());
-        ServerVersion.setIsJUnitTest(true);
-        System.setProperty("bstats.relocatecheck", "false");
-        this.reflections = initReflections();
+        instance = this;
     }
 
     private Reflections initReflections() {
