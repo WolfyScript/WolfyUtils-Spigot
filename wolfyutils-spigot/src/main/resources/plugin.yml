@@ -1,6 +1,6 @@
 name: WolfyUtilities
 version: '${project.version}'
-main: com.wolfyscript.utilities.bukkit.WolfyCoreBukkit
+main: com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap
 api-version: 1.16
 authors: [ WolfyScript ]
 load: STARTUP
