@@ -3,13 +3,14 @@ package com.wolfyscript.utilities.bukkit.gui;
 import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.MenuComponent;
 import com.wolfyscript.utilities.common.gui.RouterEntry;
+import com.wolfyscript.utilities.common.gui.RouterState;
 
 public class RouterEntryImpl implements RouterEntry {
 
-    private final MenuComponent component;
+    private final MenuComponent<RouterState> component;
     private final Type type;
 
-    public RouterEntryImpl(MenuComponent component, Type type) {
+    public RouterEntryImpl(MenuComponent<RouterState> component, Type type) {
         this.component = component;
         this.type = type;
     }
@@ -25,11 +26,11 @@ public class RouterEntryImpl implements RouterEntry {
     }
 
     @Override
-    public MenuComponent component() {
-        return null;
+    public MenuComponent<RouterState> component() {
+        return component;
     }
 
-    public MenuComponent getComponent() {
+    public MenuComponent<RouterState> getComponent() {
         return component;
     }
 }
