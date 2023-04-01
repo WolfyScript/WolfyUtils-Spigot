@@ -29,14 +29,17 @@ import com.wolfyscript.utilities.common.gui.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.InteractionDetails;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.MenuComponent;
+import com.wolfyscript.utilities.common.gui.RenderContext;
 import com.wolfyscript.utilities.common.gui.Router;
 import com.wolfyscript.utilities.common.gui.RouterBuilder;
 import com.wolfyscript.utilities.common.gui.RouterChildBuilder;
 import com.wolfyscript.utilities.common.gui.RouterEntry;
 import com.wolfyscript.utilities.common.gui.RouterEntryBuilder;
+import com.wolfyscript.utilities.common.gui.RouterState;
 import com.wolfyscript.utilities.common.gui.Window;
 import com.wolfyscript.utilities.common.gui.WindowComponentBuilder;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -107,14 +110,44 @@ public final class RouterImpl implements Router {
     }
 
     @Override
-    public Class<ComponentStateRouterImpl> getComponentStateType() {
-        return ComponentStateRouterImpl.class;
+    public RenderContext createContext(GuiViewManager guiViewManager, Deque<String> path, UUID uuid) {
+        RenderContextImpl context;
+        if (path.isEmpty()) {
+            // construct context for entry because path reached the end
+            context = (RenderContextImpl) entry().component().createContext(guiViewManager, path, uuid);
+        } else {
+            String childId = path.pop();
+            context = (RenderContextImpl) getChild(childId).map(window -> window.createContext(guiViewManager, path, uuid))
+                    .or(() -> getRoute(childId).map(router -> router.createContext(guiViewManager, path, uuid)))
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid path for MenuComponent! Cannot find child component/route '" + childId + "' of parent '" + getID() + "'!"));
+        }
+        context.pushParentOnPath(this);
+        return context;
     }
 
     @Override
-    public void open(GuiViewManager viewManager, UUID player) {
-        // Redirect and open the entry component
-        entry().component().open(viewManager, player);
+    public RouterState createState(ComponentState state) {
+        if (state == null) {
+            return new RouterStateImpl(null, this);
+        }
+        if (!(state instanceof RouterState parentState))
+            throw new IllegalArgumentException("Cannot create router state without a router parent!");
+        return new RouterStateImpl(parentState, this);
+    }
+
+    @Override
+    public void open(GuiViewManager viewManager, RouterState parentState, Deque<String> path, UUID player) {
+        RouterState currentState = createState(parentState);
+        String id = path.poll();
+        getChild(id)
+                .ifPresentOrElse(window -> window.open(viewManager, currentState, path, player), () ->
+                        getRoute(id)
+                                .ifPresentOrElse(childRouter -> childRouter.open(viewManager, currentState, path, player), () -> {
+                                    // open entry
+                                    MenuComponent<RouterState> childComponent = entry.component();
+                                    childComponent.open(viewManager, currentState, path, player);
+                                })
+                );
     }
 
     @Override
@@ -140,10 +173,6 @@ public final class RouterImpl implements Router {
     @Override
     public Set<? extends Router> childRoutes() {
         return routes.values();
-    }
-
-    public ComponentState createNewState(ComponentState componentState, int i) {
-        return null;
     }
 
     @Override
@@ -257,7 +286,8 @@ public final class RouterImpl implements Router {
             private final List<WindowComponentBuilder> windowComponentBuilders = new ArrayList<>();
             private final List<RouterBuilder> routerBuilders = new ArrayList<>();
 
-            ChildBuilder() { }
+            ChildBuilder() {
+            }
 
             @Override
             public RouterChildBuilder window(String id, Consumer<WindowComponentBuilder> windowComponentBuilderConsumer) {

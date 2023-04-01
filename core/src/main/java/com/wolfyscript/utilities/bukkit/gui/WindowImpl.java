@@ -7,7 +7,6 @@ import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.ButtonBuilder;
 import com.wolfyscript.utilities.common.gui.ComponentState;
-import com.wolfyscript.utilities.common.gui.WindowState;
 import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.InteractionCallback;
@@ -17,14 +16,15 @@ import com.wolfyscript.utilities.common.gui.RenderCallback;
 import com.wolfyscript.utilities.common.gui.RenderContext;
 import com.wolfyscript.utilities.common.gui.Router;
 import com.wolfyscript.utilities.common.gui.RouterBuilder;
+import com.wolfyscript.utilities.common.gui.RouterState;
 import com.wolfyscript.utilities.common.gui.SizedComponent;
 import com.wolfyscript.utilities.common.gui.Window;
 import com.wolfyscript.utilities.common.gui.WindowChildComponentBuilder;
 import com.wolfyscript.utilities.common.gui.WindowComponentBuilder;
+import com.wolfyscript.utilities.common.gui.WindowState;
 import com.wolfyscript.utilities.common.gui.WindowTitleUpdateCallback;
 import com.wolfyscript.utilities.common.gui.WindowType;
 import java.util.Deque;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -36,7 +36,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.jetbrains.annotations.Nullable;
 
 public final class WindowImpl implements Window {
 
@@ -67,36 +66,22 @@ public final class WindowImpl implements Window {
     }
 
     @Override
-    public void open(GuiViewManager handler, UUID player) {
-        /* TODO:
-         if player has an open inv with holder:
-          - Check if window is the same.
-           is the same window:
-            - Use existing holder and update.
-         otherwise:
-          - Otherwise create new GuiHolder for this window.
-          - Create inventory and set holder.
-          - open inventory.
-         */
-        Deque<com.wolfyscript.utilities.common.gui.Component> pathToRoot = getPathToRoot();
+    public RenderContext createContext(GuiViewManager viewManager, Deque<String> path, UUID player) {
         Player bukkitPlayer = Bukkit.getPlayer(player);
-        if (bukkitPlayer == null) return;
+        if (bukkitPlayer == null) return null;
         Inventory topInventory = bukkitPlayer.getOpenInventory().getTopInventory();
+
         if (topInventory.getHolder() instanceof GUIHolder holder) {
             if (Objects.equals(holder.getCurrentWindow(), this)) {
                 // Still in the same window, we can just update it.
-                RenderContext renderContext = new RenderContextImpl<>(topInventory);
-                ComponentState rootState = ((GuiViewManagerImpl) holder.getViewManager()).getRootStateNode();
-                // TODO: Update window even if no state has changed? probably not!?
-                if (rootState.shouldUpdate()) {
-                    rootState.render(holder, renderContext);
-                }
-                return;
+                RenderContextImpl context = new RenderContextImpl(topInventory);
+                context.pushParentOnPath(this);
+                return context;
             }
         }
         // No active Window or it is another Window, need to recreate inventory
         final Inventory inventory;
-        final GUIHolder holder = new GUIHolder(bukkitPlayer, handler, this);
+        final GUIHolder holder = new GUIHolder(bukkitPlayer, viewManager, this);
         final Component title = createTitle(holder);
         if (((WolfyUtilsBukkit) getWolfyUtils()).getCore().getCompatibilityManager().isPaper()) {
             // Paper has direct Adventure support, so use it for better titles!
@@ -107,23 +92,20 @@ public final class WindowImpl implements Window {
                     .orElseGet(() -> Bukkit.createInventory(holder, getSize().orElseThrow(() -> new IllegalStateException("Invalid window type/size definition.")), BukkitComponentSerializer.legacy().serialize(title)));
         }
         holder.setActiveInventory(inventory);
+        RenderContextImpl context = new RenderContextImpl(inventory);
+        context.pushParentOnPath(this);
+        return context;
+    }
 
-        RenderContext renderContext = new RenderContextImpl(inventory);
-        GuiViewManagerImpl viewManager = ((GuiViewManagerImpl) holder.getViewManager());
+    @Override
+    public WindowState createState(ComponentState state) {
+        if (!(state instanceof RouterState parentState))
+            throw new IllegalArgumentException("Cannot create window state without a router parent!");
+        return new WindowStateImpl(parentState, this);
+    }
 
-        if (!handler.getRoot().equals(pathToRoot.pop())) {
-            // This should not happen. Consider InvalidStateException
-            return;
-        }
-
-        // Create the state tree!
-        if (viewManager.getRootStateNode() == null || !viewManager.getRootStateNode().getOwner().equals(handler.getRoot())) {
-            ComponentStateRouterImpl rootState = new ComponentStateRouterImpl(null, handler.getRoot());
-            rootState.render(holder, renderContext);
-            viewManager.changeRootState(rootState);
-        } else {
-            viewManager.getRootStateNode().render(holder, renderContext);
-        }
+    @Override
+    public void open(GuiViewManager viewManager, RouterState parentState, Deque<String> path, UUID player) {
 
     }
 
@@ -144,11 +126,6 @@ public final class WindowImpl implements Window {
     @Override
     public void render(GuiHolder holder, WindowState state, RenderContext context) {
 
-    }
-
-    @Override
-    public Class<? extends com.wolfyscript.utilities.common.gui.WindowState> getComponentStateType() {
-        return WindowStateImpl.class;
     }
 
     @Override
@@ -295,7 +272,8 @@ public final class WindowImpl implements Window {
             @Override
             public WindowChildComponentBuilder button(String buttonId, Consumer<ButtonBuilder> consumer) {
                 if (children.containsKey(buttonId)) {
-                    if (!(children.get(buttonId) instanceof ButtonImpl.Builder builder)) throw new IllegalArgumentException("A builder for '" + buttonId + "' of a different type already exists!");
+                    if (!(children.get(buttonId) instanceof ButtonImpl.Builder builder))
+                        throw new IllegalArgumentException("A builder for '" + buttonId + "' of a different type already exists!");
                     consumer.accept(builder);
                     return this;
                 }
