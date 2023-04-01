@@ -41,6 +41,8 @@ public class InputCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof Player player) {
+            /*
+            TODO: Create & implement new input actions
             plugin.getAPIList().parallelStream()
                     .filter(WolfyUtilsBukkit::hasInventoryAPI)
                     .map(wolfyUtilities -> wolfyUtilities.getInventoryAPI().getGuiHandler(player))
@@ -54,6 +56,7 @@ public class InputCommand implements TabExecutor {
                             guiHandler.cancelChatInput();
                         }
                     }));
+            */
         }
         return true;
     }
@@ -61,11 +64,14 @@ public class InputCommand implements TabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         if (sender instanceof Player player) {
+            /*
+            TODO: Create & implement new input actions
             return plugin.getAPIList().stream()
                     .filter(WolfyUtilsBukkit::hasInventoryAPI)
                     .map(wolfyUtilities -> wolfyUtilities.getInventoryAPI().getGuiHandler(player))
                     .filter(guiHandler -> guiHandler.isChatEventActive() && guiHandler.hasChatTabComplete())
                     .map(guiHandler -> guiHandler.getChatTabComplete().onTabComplete(guiHandler, player, args)).filter(Objects::nonNull).findFirst().orElse(null);
+            */
         }
         return null;
     }
