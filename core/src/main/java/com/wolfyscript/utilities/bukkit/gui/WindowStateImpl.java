@@ -1,11 +1,9 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.name.Names;
-import com.wolfyscript.utilities.common.WolfyUtils;
+import com.google.inject.Inject;
 import com.wolfyscript.utilities.common.gui.Component;
-import com.wolfyscript.utilities.common.gui.ComponentState;
+import com.wolfyscript.utilities.common.gui.RouterState;
+import com.wolfyscript.utilities.common.gui.Stateful;
 import com.wolfyscript.utilities.common.gui.WindowState;
 import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.RenderContext;
@@ -14,17 +12,37 @@ import com.wolfyscript.utilities.common.gui.Window;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.util.Map;
 
-public class WindowStateImpl extends ComponentStateImpl<Window, ComponentStateRouterImpl> implements WindowState {
+public class WindowStateImpl extends ComponentStateImpl<Window, RouterState> implements WindowState {
 
     private final Map<Integer, ComponentStateImpl<? extends SizedComponent, WindowStateImpl>> childComponentStates = new Int2ObjectOpenHashMap<>();
 
-    public WindowStateImpl(ComponentStateRouterImpl parent, WindowImpl owner) {
+    @Inject
+    public WindowStateImpl(RouterState parent, Window owner) {
         super(parent, owner);
+        markDirty();
     }
 
     @Override
     public void render(GuiHolder holder, RenderContext context) {
+        if (!shouldUpdate()) return;
+        dirty = false;
         getOwner().renderCallback().render(holder, this);
+        childComponentStates.forEach((integer, childState) -> {
+            Component owner = childState.getOwner();
+            if (owner instanceof SizedComponent sized) {
+                int width = sized.width();
+                int height = sized.height();
+                for (int i = 0; i < height; i++) {
+                    for (int j = 0; j < width; j++) {
+                        int slot = integer + j + i * (9 - width);
+                        ((GuiViewManagerImpl) holder.getViewManager()).updateTailNodes(childState, slot);
+                    }
+                }
+            }
+            ((RenderContextImpl) context).setSlotOffsetToParent(integer);
+            ((RenderContextImpl) context).setCurrentNode(childState);
+            childState.render(holder, context);
+        });
     }
 
     void pushNewChildState(int slot, ComponentStateImpl<? extends SizedComponent, WindowStateImpl> state) {
@@ -34,16 +52,9 @@ public class WindowStateImpl extends ComponentStateImpl<Window, ComponentStateRo
     @Override
     public void setComponent(int slot, String componentID) {
         Component component = getOwner().getChild(componentID).orElseThrow(() -> new IllegalArgumentException("Cannot find child '" + componentID + "' for component!"));
-        //TODO: Create and add child state to current state
-        Injector injector = Guice.createInjector(binder -> {
-            binder.bindConstant().annotatedWith(Names.named("position")).to(slot);
-            binder.bind(WolfyUtils.class).toInstance(component.getWolfyUtils());
-            binder.bind(WindowState.class).toInstance(this);
-        });
         if (checkBoundsAtPos(slot, component)) {
-            ComponentState state = injector.getInstance(component.getComponentStateType());
-            if (state instanceof ComponentStateImpl<?, ?> impl && impl.getParent() instanceof WindowState) {
-                pushNewChildState(slot, (ComponentStateImpl<? extends SizedComponent, WindowStateImpl>) state);
+            if (component instanceof Stateful<?> stateful) {
+                pushNewChildState(slot, (ComponentStateImpl<? extends SizedComponent, WindowStateImpl>) stateful.createState(this));
             }
         } else {
             throw new IllegalArgumentException("Component does not fit inside of the Window!");
@@ -52,8 +63,8 @@ public class WindowStateImpl extends ComponentStateImpl<Window, ComponentStateRo
 
     private boolean checkBoundsAtPos(int i, Component component) throws IllegalStateException {
         if (component instanceof SizedComponent sizedComponent) {
-            int parentWidth = sizedComponent.width();
-            int parentHeight = sizedComponent.height();
+            int parentWidth = getOwner().width();
+            int parentHeight = getOwner().height();
             return i > 0 && i < parentWidth * parentHeight && (i / parentHeight) + sizedComponent.width() < parentWidth && (i / parentWidth) + sizedComponent.height() < parentHeight;
         }
         return false;
