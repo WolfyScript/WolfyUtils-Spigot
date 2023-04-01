@@ -19,7 +19,7 @@ import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManager;
 import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManagerBukkit;
 import com.wolfyscript.utilities.bukkit.config.WUConfig;
 import com.wolfyscript.utilities.bukkit.console.Console;
-import com.wolfyscript.utilities.bukkit.gui.GuiAPIManagerImpl;
+import com.wolfyscript.utilities.bukkit.gui.TestGUI;
 import com.wolfyscript.utilities.bukkit.json.serialization.APIReferenceSerialization;
 import com.wolfyscript.utilities.bukkit.json.serialization.ColorSerialization;
 import com.wolfyscript.utilities.bukkit.json.serialization.DustOptionsSerialization;
@@ -560,6 +560,9 @@ public final class WolfyCoreBukkit implements WolfyCore {
             registerListeners();
             registerCommands();
 
+            TestGUI testGUI = new TestGUI(this);
+            testGUI.init();
+
             CreativeModeTab.init();
         } else {
             onJUnitTests();
@@ -656,32 +659,4 @@ public final class WolfyCoreBukkit implements WolfyCore {
             return false;
         }
     }
-
-    //TODO:
-    private void testNewGUIAPI() {
-        GuiAPIManager guiManager = getWolfyUtils().getGUIManager();
-
-        guiManager.registerRouter("main", builder -> builder
-                .entry(entry -> entry.window("main_menu"))
-                .children(childBuilder -> childBuilder
-                        .window("main_menu", mainWindow -> mainWindow
-                                .size(9)
-                                .render((guiHolder, componentState) -> {
-                                    // Render components
-                                })
-                                .title((guiHolder, window) -> Component.text("Main Menu Inventory"))
-                        )
-                        .router("sub_pages", subPagesBuilder -> subPagesBuilder
-                                .interact((guiHolder, componentState, interactionDetails) -> InteractionResult.def())
-                        )
-                )
-        );
-
-
-
-
-    }
-
-
-
 }
