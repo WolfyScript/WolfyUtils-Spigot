@@ -20,11 +20,9 @@ public class ExecutableBlocksImpl extends PluginIntegrationAbstract implements E
     /**
      * The main constructor that is called whenever the integration is created.<br>
      *  @param core The WolfyUtilCore.
-     *
-     * @param pluginName The name of the associated plugin.
      */
-    protected ExecutableBlocksImpl(WolfyUtilCore core, String pluginName) {
-        super(core, pluginName);
+    protected ExecutableBlocksImpl(WolfyUtilCore core) {
+        super(core, ExecutableBlocksIntegration.PLUGIN_NAME);
     }
 
     @Override
