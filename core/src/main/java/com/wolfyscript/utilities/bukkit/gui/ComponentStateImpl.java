@@ -17,11 +17,12 @@ public abstract class ComponentStateImpl<OWNER extends Component, PARENT extends
     private final PARENT parent;
     private final OWNER owner;
     private final Map<String, StateHook<?>> hooks = new HashMap<>();
-    private boolean dirty = false;
+    boolean dirty = false;
 
     public ComponentStateImpl(PARENT parent, OWNER owner) {
         this.parent = parent;
         this.owner = owner;
+        markDirty();
     }
 
     @SuppressWarnings("unchecked")
@@ -53,7 +54,11 @@ public abstract class ComponentStateImpl<OWNER extends Component, PARENT extends
 
     @Override
     public boolean shouldUpdate() {
-        return dirty;
+        if (dirty) {
+            dirty = false;
+            return true;
+        }
+        return false;
     }
 
     /**
