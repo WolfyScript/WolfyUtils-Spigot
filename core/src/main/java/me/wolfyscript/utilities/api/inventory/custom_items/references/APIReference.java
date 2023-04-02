@@ -211,6 +211,11 @@ public abstract class APIReference {
             this.pluginName = pluginName;
         }
 
+        protected PluginParser(String pluginName, String id, int priority, String... aliases) {
+            super(id, priority, aliases);
+            this.pluginName = pluginName;
+        }
+
         /**
          * Can be used to initialize some values or API.
          * It is run when the parser is registered and the plugin that this parser requires is available.
