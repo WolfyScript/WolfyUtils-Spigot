@@ -57,7 +57,7 @@ public class ExecutableBlocksRef extends APIReference {
         private final ExecutableBlocksManagerInterface manager;
 
         public Parser(ExecutableBlocksIntegration integration, ExecutableBlocksManagerInterface manager) {
-            super(ExecutableBlocksIntegration.PLUGIN_NAME, ExecutableBlocksIntegration.PLUGIN_NAME.toLowerCase(Locale.ROOT));
+            super(ExecutableBlocksIntegration.PLUGIN_NAME, ExecutableBlocksIntegration.PLUGIN_NAME.toLowerCase(Locale.ROOT), 1000);
             this.integration = integration;
             this.manager = manager;
         }

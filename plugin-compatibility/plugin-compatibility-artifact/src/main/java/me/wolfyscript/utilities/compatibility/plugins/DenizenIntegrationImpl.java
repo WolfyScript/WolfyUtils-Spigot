@@ -29,7 +29,7 @@ public class DenizenIntegrationImpl extends PluginIntegrationAbstract {
 
     @Override
     public void init(Plugin plugin) {
-        core.registerAPIReference(new EcoRefImpl.Parser());
+        core.registerAPIReference(new DenizenRefImpl.Parser());
     }
 
     @Override

@@ -36,6 +36,7 @@ import com.wolfyscript.utilities.bukkit.items.CustomItemData;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -110,7 +111,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @param parser an {@link APIReference.Parser} instance.
      */
     public static void registerAPIReferenceParser(APIReference.Parser<?> parser) {
-        if (parser instanceof APIReference.PluginParser pluginParser) {
+        if (parser instanceof APIReference.PluginParser<?> pluginParser) {
             if (!WolfyUtilities.hasPlugin(pluginParser.getPluginName())) {
                 return;
             }
@@ -347,7 +348,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      */
     public static CustomItem getReferenceByItemStack(ItemStack itemStack) {
         if (itemStack != null) {
-            APIReference apiReference = API_REFERENCE_PARSER.values().stream().sorted(APIReference.Parser::compareTo).map(parser -> parser.construct(itemStack)).filter(Objects::nonNull).findFirst().orElse(null);
+            APIReference apiReference = API_REFERENCE_PARSER.values().stream().sorted(Comparator.reverseOrder()).map(parser -> parser.construct(itemStack)).filter(Objects::nonNull).findFirst().orElse(null);
             if (apiReference != null) {
                 apiReference.setAmount(itemStack.getAmount());
                 return new CustomItem(apiReference);

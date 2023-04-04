@@ -88,7 +88,7 @@ public class VanillaRef extends APIReference {
     public static class Parser extends APIReference.Parser<APIReference> {
 
         public Parser() {
-            super("item", 1000);
+            super("item", Integer.MIN_VALUE);
         }
 
         @Override
