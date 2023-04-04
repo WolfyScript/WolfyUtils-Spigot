@@ -111,7 +111,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @param parser an {@link APIReference.Parser} instance.
      */
     public static void registerAPIReferenceParser(APIReference.Parser<?> parser) {
-        if (parser instanceof APIReference.PluginParser pluginParser) {
+        if (parser instanceof APIReference.PluginParser<?> pluginParser) {
             if (!WolfyUtilities.hasPlugin(pluginParser.getPluginName())) {
                 return;
             }
