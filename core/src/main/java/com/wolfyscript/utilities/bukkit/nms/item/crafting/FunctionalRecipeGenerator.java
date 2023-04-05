@@ -1,5 +1,6 @@
 package com.wolfyscript.utilities.bukkit.nms.item.crafting;
 
+import com.wolfyscript.utilities.paper.WolfyCorePaper;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -247,11 +248,13 @@ public class FunctionalRecipeGenerator {
         if (!GENERATED_RECIPES.isEmpty()) return;
         try {
             Logger logger = WolfyUtilCore.getInstance().getLogger();
-            logger.fine("Thread Classloader    : " + Thread.currentThread().getContextClassLoader());
-            logger.fine("Plugin Classloader    : " + WolfyUtilCore.class.getClassLoader());
-            logger.fine("System Classloader    : " + ClassLoader.getSystemClassLoader());
-            logger.fine("Platform Classloader  : " + ClassLoader.getPlatformClassLoader());
-            logger.fine("Minecraft Classloader : " + MINECRAFT_SERVER_CLASS.getClassLoader());
+            if (!(core instanceof WolfyCorePaper)) { // Papers plugin Classloaders (The toString() method to be exact) cause a StackOverflow in some circumstances!!!
+                logger.fine("Thread Classloader    : " + Thread.currentThread().getContextClassLoader());
+                logger.fine("Plugin Classloader    : " + WolfyUtilCore.class.getClassLoader());
+                logger.fine("System Classloader    : " + ClassLoader.getSystemClassLoader());
+                logger.fine("Platform Classloader  : " + ClassLoader.getPlatformClassLoader());
+                logger.fine("Minecraft Classloader : " + MINECRAFT_SERVER_CLASS.getClassLoader());
+            }
             ClassPool classPool = ClassPool.getDefault();
             classPool.appendClassPath(new LoaderClassPath(ClassLoader.getPlatformClassLoader()));
             classPool.appendClassPath(new LoaderClassPath(ClassLoader.getSystemClassLoader()));
