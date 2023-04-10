@@ -59,6 +59,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -116,6 +117,10 @@ public class BukkitItemStackConfig extends ItemStackConfig<ItemStack> {
 
     @Override
     public ItemStack constructItemStack(EvalContext context) {
+        return constructItemStack(context, wolfyUtils.getChat().getMiniMessage(), TagResolver.empty());
+    }
+
+    public ItemStack constructItemStack(EvalContext context, MiniMessage miniMsg, TagResolver... tagResolvers) {
         Material type = Material.matchMaterial(itemId);
         if (type != null) {
             ItemStack itemStack = new ItemStack(type);
@@ -129,17 +134,16 @@ public class BukkitItemStackConfig extends ItemStackConfig<ItemStack> {
             // Apply ItemMeta afterwards to override possible NBT Tags
             ItemMeta meta = itemStack.getItemMeta();
             if (meta != null) {
-                MiniMessage miniMsg = wolfyUtils.getChat().getMiniMessage();
                 if (usePaperDisplayOptions) {
                     if (this.name != null) {
-                        meta.displayName(miniMsg.deserialize(this.name.getValue(context)));
+                        meta.displayName(miniMsg.deserialize(this.name.getValue(context), tagResolvers));
                     }
                     if (this.lore != null && !this.lore.isEmpty()) {
-                        meta.lore(this.lore.stream().filter(Objects::nonNull).map(stringValueProvider -> miniMsg.deserialize(stringValueProvider.getValue(context))).toList());
+                        meta.lore(this.lore.stream().filter(Objects::nonNull).map(stringValueProvider -> miniMsg.deserialize(stringValueProvider.getValue(context), tagResolvers)).toList());
                     }
                 } else {
-                    meta.setDisplayName(name.getValue(context));
-                    meta.setLore(lore.stream().map(line -> line.getValue(context)).toList());
+                    meta.setDisplayName(miniMsg.serialize(miniMsg.deserialize(name.getValue(context), tagResolvers)));
+                    meta.setLore(lore.stream().map(line -> miniMsg.serialize(miniMsg.deserialize(line.getValue(context), tagResolvers))).toList());
                 }
                 for (Map.Entry<String, ? extends ValueProvider<Integer>> entry : enchants.entrySet()) {
                     Enchantment enchant = Enchantment.getByKey(NamespacedKey.fromString(entry.getKey()));
