@@ -28,7 +28,7 @@ public class RouterStateImpl extends ComponentStateImpl<Router, RouterState> imp
 
     @Override
     public void render(GuiHolder holder, RenderContext context) {
-        if (!shouldUpdate()) return;
+        //if (!shouldUpdate()) return;
         dirty = false;
         Component nextChild = ((RenderContextImpl) context).nextChild();
         ComponentState state;
