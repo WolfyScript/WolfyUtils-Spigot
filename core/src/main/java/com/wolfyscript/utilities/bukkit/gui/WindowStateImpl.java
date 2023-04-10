@@ -11,6 +11,7 @@ import com.wolfyscript.utilities.common.gui.SizedComponent;
 import com.wolfyscript.utilities.common.gui.Window;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class WindowStateImpl extends ComponentStateImpl<Window, RouterState> implements WindowState {
 
@@ -24,9 +25,10 @@ public class WindowStateImpl extends ComponentStateImpl<Window, RouterState> imp
 
     @Override
     public void render(GuiHolder holder, RenderContext context) {
-        if (!shouldUpdate()) return;
+        if (shouldUpdate()) {
+            getOwner().renderCallback().render(holder, this);
+        }
         dirty = false;
-        getOwner().renderCallback().render(holder, this);
         childComponentStates.forEach((integer, childState) -> {
             Component owner = childState.getOwner();
             if (owner instanceof SizedComponent sized) {
@@ -65,7 +67,7 @@ public class WindowStateImpl extends ComponentStateImpl<Window, RouterState> imp
         if (component instanceof SizedComponent sizedComponent) {
             int parentWidth = getOwner().width();
             int parentHeight = getOwner().height();
-            return i > 0 && i < parentWidth * parentHeight && (i / parentHeight) + sizedComponent.width() < parentWidth && (i / parentWidth) + sizedComponent.height() < parentHeight;
+            return i > 0 && i < parentWidth * parentHeight && (i / parentHeight) + sizedComponent.width() <= parentWidth && (i / parentWidth) + sizedComponent.height() <= parentHeight;
         }
         return false;
     }
