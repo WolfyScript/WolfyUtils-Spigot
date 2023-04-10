@@ -13,27 +13,35 @@ import com.wolfyscript.utilities.common.gui.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.InteractionDetails;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.MenuComponent;
+import com.wolfyscript.utilities.common.gui.Signal;
 import com.wolfyscript.utilities.common.gui.SizedComponent;
 import com.wolfyscript.utilities.common.gui.Window;
 import com.wolfyscript.utilities.common.items.ItemStackConfig;
+import com.wolfyscript.utilities.eval.context.EvalContext;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.inventory.ItemStack;
 
 public class ButtonImpl implements Button {
 
+    private final Map<String, Signal<?>> signals;
     private final WolfyUtils wolfyUtils;
     private final String id;
     private final SizedComponent parent;
     private final InteractionCallback interactionCallback;
     private final ButtonIcon icon;
 
-    public ButtonImpl(WolfyUtils wolfyUtils, String id, SizedComponent parent, ButtonIcon icon, InteractionCallback interactionCallback) {
+    public ButtonImpl(WolfyUtils wolfyUtils, String id, SizedComponent parent, ButtonIcon icon, InteractionCallback interactionCallback, Map<String, Signal<?>> signals) {
         this.wolfyUtils = wolfyUtils;
         this.id = id;
         this.parent = parent;
         this.icon = icon;
         this.interactionCallback = interactionCallback;
+        this.signals = Map.copyOf(signals);
     }
 
     @Override
@@ -62,6 +70,11 @@ public class ButtonImpl implements Button {
     }
 
     @Override
+    public Map<String, Signal<?>> signals() {
+        return signals;
+    }
+
+    @Override
     public InteractionResult interact(GuiHolder guiHolder, ComponentState componentState, InteractionDetails interactionDetails) {
         return interactionCallback.interact(guiHolder, componentState, interactionDetails);
     }
@@ -81,8 +94,8 @@ public class ButtonImpl implements Button {
 
     public static class StaticIcon implements ButtonIcon {
 
-        private BukkitItemStackConfig config;
-        private ItemStack stack;
+        private final BukkitItemStackConfig config;
+        private final ItemStack stack;
 
         StaticIcon(BukkitItemStackConfig config) {
             this.config = config;
@@ -98,23 +111,31 @@ public class ButtonImpl implements Button {
             return config;
         }
 
+        public ItemStack create(MiniMessage miniMessage, EvalContext evalContext, TagResolver... tagResolvers) {
+            return stack;
+        }
+
         @Override
         public boolean isDynamic() {
             return false;
         }
     }
 
-    public static class IconImpl implements ButtonIcon {
+    public static class DynamicIcon implements ButtonIcon {
 
-        private BukkitItemStackConfig config;
+        private final BukkitItemStackConfig config;
 
-        IconImpl(BukkitItemStackConfig config) {
+        DynamicIcon(BukkitItemStackConfig config) {
             this.config = config;
         }
 
         @Override
         public ItemStackConfig<?> getStack() {
             return config;
+        }
+
+        public ItemStack create(MiniMessage miniMessage, EvalContext evalContext, TagResolver... tagResolvers) {
+            return config.constructItemStack(evalContext, miniMessage, tagResolvers);
         }
 
         @Override
@@ -129,11 +150,13 @@ public class ButtonImpl implements Button {
         private final WolfyUtils wolfyUtils;
         private InteractionCallback interactionCallback;
         private final IconBuilderImpl iconBuilder;
+        private final Map<String, Signal<?>> signals;
 
         public Builder(String id, WolfyUtils wolfyUtils) {
             this.wolfyUtils = wolfyUtils;
             this.id = id;
             this.iconBuilder = new IconBuilderImpl();
+            this.signals = new HashMap<>();
         }
 
         @Override
@@ -149,8 +172,16 @@ public class ButtonImpl implements Button {
         }
 
         @Override
+        public <T> ButtonBuilder useSignal(String key, Class<T> type, Consumer<Signal.Builder<T>> signalBuilder) {
+            SignalImpl.Builder<T> builder = new SignalImpl.Builder<>(key, type);
+            signalBuilder.accept(builder);
+            this.signals.put(key, builder.create());
+            return this;
+        }
+
+        @Override
         public Button create(SizedComponent parent) {
-            return new ButtonImpl(wolfyUtils, id, parent, iconBuilder.create(), interactionCallback);
+            return new ButtonImpl(wolfyUtils, id, parent, iconBuilder.create(), interactionCallback, signals);
         }
 
         public static class IconBuilderImpl implements IconBuilder {
@@ -188,7 +219,7 @@ public class ButtonImpl implements Button {
             @Override
             public ButtonIcon create() {
                 if (dynamic) {
-                    return new IconImpl(stackConfig);
+                    return new DynamicIcon(stackConfig);
                 }
                 return new StaticIcon(stackConfig);
             }

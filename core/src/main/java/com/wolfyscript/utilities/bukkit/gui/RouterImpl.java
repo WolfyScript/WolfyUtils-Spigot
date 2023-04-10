@@ -36,11 +36,14 @@ import com.wolfyscript.utilities.common.gui.RouterChildBuilder;
 import com.wolfyscript.utilities.common.gui.RouterEntry;
 import com.wolfyscript.utilities.common.gui.RouterEntryBuilder;
 import com.wolfyscript.utilities.common.gui.RouterState;
+import com.wolfyscript.utilities.common.gui.Signal;
 import com.wolfyscript.utilities.common.gui.Window;
-import com.wolfyscript.utilities.common.gui.WindowComponentBuilder;
+import com.wolfyscript.utilities.common.gui.WindowBuilder;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -51,12 +54,13 @@ public final class RouterImpl implements Router {
     private final WolfyUtils wolfyUtils;
     private final Router parent;
     private final String id;
+    private final Map<String, Signal<?>> signals;
     private final BiMap<String, Window> children = HashBiMap.create();
     private final BiMap<String, Router> routes = HashBiMap.create();
     private RouterEntry entry;
     private final InteractionCallback interactionCallback;
 
-    RouterImpl(String id, WolfyUtils wolfyUtils, Router parent, InteractionCallback interactionCallback) {
+    RouterImpl(String id, WolfyUtils wolfyUtils, Router parent, Map<String, Signal<?>> signals, InteractionCallback interactionCallback) {
         Preconditions.checkNotNull(id);
         Preconditions.checkNotNull(wolfyUtils);
         Preconditions.checkNotNull(interactionCallback);
@@ -64,6 +68,7 @@ public final class RouterImpl implements Router {
         this.wolfyUtils = wolfyUtils;
         this.id = id;
         this.interactionCallback = interactionCallback;
+        this.signals = Map.copyOf(signals);
     }
 
     void addChild(String id, Window child) {
@@ -136,6 +141,11 @@ public final class RouterImpl implements Router {
     }
 
     @Override
+    public Map<String, Signal<?>> signals() {
+        return signals;
+    }
+
+    @Override
     public void open(GuiViewManager viewManager, RouterState parentState, Deque<String> path, UUID player) {
         RouterState currentState = createState(parentState);
         String id = path.poll();
@@ -193,6 +203,7 @@ public final class RouterImpl implements Router {
         private final ChildBuilder childComponentBuilder;
         private final RouterEntryBuilderImpl routerEntryBuilder = new RouterEntryBuilderImpl();
         private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.def();
+        private final Map<String, Signal<?>> signals;
 
         Builder(WolfyUtils wolfyUtils, String routerID, Builder parent) {
             Preconditions.checkNotNull(routerID);
@@ -200,6 +211,15 @@ public final class RouterImpl implements Router {
             this.parent = parent;
             this.routerID = routerID;
             this.childComponentBuilder = new ChildBuilder();
+            this.signals = new HashMap<>();
+        }
+
+        @Override
+        public <T> RouterBuilder useSignal(String key, Class<T> type, Consumer<Signal.Builder<T>> signalBuilder) {
+            SignalImpl.Builder<T> builder = new SignalImpl.Builder<>(key, type);
+            signalBuilder.accept(builder);
+            this.signals.put(key, builder.create());
+            return this;
         }
 
         @Override
@@ -226,7 +246,7 @@ public final class RouterImpl implements Router {
 
         @Override
         public Router create(Router parent) {
-            RouterImpl router = new RouterImpl(routerID, wolfyUtils, parent, interactionCallback);
+            RouterImpl router = new RouterImpl(routerID, wolfyUtils, parent, signals, interactionCallback);
             childComponentBuilder.applyTo(router);
             Preconditions.checkState(!router.children.isEmpty() || router.routes.isEmpty(), "Cannot create Router without child Components and Routes!");
             router.setEntry(routerEntryBuilder.build(router));
@@ -283,14 +303,14 @@ public final class RouterImpl implements Router {
 
         final class ChildBuilder implements RouterChildBuilder {
 
-            private final List<WindowComponentBuilder> windowComponentBuilders = new ArrayList<>();
+            private final List<WindowBuilder> windowComponentBuilders = new ArrayList<>();
             private final List<RouterBuilder> routerBuilders = new ArrayList<>();
 
             ChildBuilder() {
             }
 
             @Override
-            public RouterChildBuilder window(String id, Consumer<WindowComponentBuilder> windowComponentBuilderConsumer) {
+            public RouterChildBuilder window(String id, Consumer<WindowBuilder> windowComponentBuilderConsumer) {
                 var windowBuilder = new WindowImpl.BuilderImpl(wolfyUtils, id, Builder.this);
                 windowComponentBuilderConsumer.accept(windowBuilder);
                 windowComponentBuilders.add(windowBuilder);
@@ -308,7 +328,7 @@ public final class RouterImpl implements Router {
             @Override
             public void applyTo(Router router) {
                 if (!(router instanceof RouterImpl parentRouter)) return;
-                for (WindowComponentBuilder windowComponentBuilder : windowComponentBuilders) {
+                for (WindowBuilder windowComponentBuilder : windowComponentBuilders) {
                     Window window = windowComponentBuilder.create(parentRouter);
                     parentRouter.addChild(window.getID(), window);
                 }

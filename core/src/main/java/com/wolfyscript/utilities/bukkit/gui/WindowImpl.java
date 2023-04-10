@@ -17,14 +17,17 @@ import com.wolfyscript.utilities.common.gui.RenderContext;
 import com.wolfyscript.utilities.common.gui.Router;
 import com.wolfyscript.utilities.common.gui.RouterBuilder;
 import com.wolfyscript.utilities.common.gui.RouterState;
+import com.wolfyscript.utilities.common.gui.Signal;
 import com.wolfyscript.utilities.common.gui.SizedComponent;
 import com.wolfyscript.utilities.common.gui.Window;
+import com.wolfyscript.utilities.common.gui.WindowBuilder;
 import com.wolfyscript.utilities.common.gui.WindowChildComponentBuilder;
-import com.wolfyscript.utilities.common.gui.WindowComponentBuilder;
 import com.wolfyscript.utilities.common.gui.WindowState;
 import com.wolfyscript.utilities.common.gui.WindowTitleUpdateCallback;
 import com.wolfyscript.utilities.common.gui.WindowType;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -42,6 +45,7 @@ public final class WindowImpl implements Window {
     private final WolfyUtils wolfyUtils;
     private final String id;
     private final Router parent;
+    private final Map<String, Signal<?>> signals;
     private final BiMap<String, SizedComponent> children;
     private final Integer size;
     private final WindowType type;
@@ -49,7 +53,13 @@ public final class WindowImpl implements Window {
     private final InteractionCallback interactionCallback;
     private final RenderCallback<WindowState> renderCallback;
 
-    private WindowImpl(String id, Router parent, WindowTitleUpdateCallback titleUpdateCallback, Integer size, WindowType type, InteractionCallback interactionCallback, RenderCallback<WindowState> renderCallback) {
+    private WindowImpl(String id,
+                       Router parent,
+                       WindowTitleUpdateCallback titleUpdateCallback,
+                       Integer size, WindowType type,
+                       InteractionCallback interactionCallback,
+                       RenderCallback<WindowState> renderCallback,
+                       Map<String, Signal<?>> signals) {
         Preconditions.checkNotNull(id);
         Preconditions.checkNotNull(interactionCallback);
         Preconditions.checkNotNull(renderCallback);
@@ -63,6 +73,7 @@ public final class WindowImpl implements Window {
         this.children = HashBiMap.create();
         this.size = size;
         this.type = type;
+        this.signals = signals == null ? new HashMap<>() : signals;
     }
 
     @Override
@@ -102,6 +113,11 @@ public final class WindowImpl implements Window {
         if (!(state instanceof RouterState parentState))
             throw new IllegalArgumentException("Cannot create window state without a router parent!");
         return new WindowStateImpl(parentState, this);
+    }
+
+    @Override
+    public Map<String, Signal<?>> signals() {
+        return signals;
     }
 
     @Override
@@ -197,7 +213,7 @@ public final class WindowImpl implements Window {
         this.children.put(id, component);
     }
 
-    public static class BuilderImpl implements WindowComponentBuilder, ComponentBuilder<Window, Router> {
+    public static class BuilderImpl implements WindowBuilder, ComponentBuilder<Window, Router> {
 
         private final WolfyUtils wolfyUtils;
         protected final String windowID;
@@ -209,53 +225,63 @@ public final class WindowImpl implements Window {
         private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.def();
         private RenderCallback<WindowState> renderCallback = (guiHolder, componentState) -> {
         };
+        private final Map<String, Signal<?>> signals;
 
         protected BuilderImpl(WolfyUtils wolfyUtils, String windowID, RouterImpl.Builder parent) {
             this.wolfyUtils = wolfyUtils;
             this.windowID = windowID;
             this.parent = parent;
             this.childComponentBuilder = new ChildBuilderImpl();
+            this.signals = new HashMap<>();
         }
 
         @Override
-        public WindowComponentBuilder size(int size) {
+        public WindowBuilder size(int size) {
             this.size = size;
             return this;
         }
 
         @Override
-        public WindowComponentBuilder type(WindowType type) {
+        public WindowBuilder type(WindowType type) {
             this.type = type;
             return this;
         }
 
         @Override
-        public WindowComponentBuilder title(WindowTitleUpdateCallback titleUpdateCallback) {
+        public WindowBuilder title(WindowTitleUpdateCallback titleUpdateCallback) {
             this.titleUpdateCallback = titleUpdateCallback;
             return this;
         }
 
-        public WindowComponentBuilder children(Consumer<WindowChildComponentBuilder> childComponentBuilderConsumer) {
+        @Override
+        public <T> WindowBuilder useSignal(String key, Class<T> type, Consumer<Signal.Builder<T>> signalBuilder) {
+            SignalImpl.Builder<T> builder = new SignalImpl.Builder<>(key, type);
+            signalBuilder.accept(builder);
+            this.signals.put(key, builder.create());
+            return this;
+        }
+
+        public WindowBuilder children(Consumer<WindowChildComponentBuilder> childComponentBuilderConsumer) {
             childComponentBuilderConsumer.accept(childComponentBuilder);
             return this;
         }
 
         @Override
         public Window create(Router parent) {
-            Window window = new WindowImpl(parent.getID() + "/" + windowID, parent, this.titleUpdateCallback, size, type, interactionCallback, renderCallback);
+            Window window = new WindowImpl(parent.getID() + "/" + windowID, parent, this.titleUpdateCallback, size, type, interactionCallback, renderCallback, signals);
             childComponentBuilder.applyTo(window);
             return window;
         }
 
         @Override
-        public WindowComponentBuilder interact(InteractionCallback interactionCallback) {
+        public WindowBuilder interact(InteractionCallback interactionCallback) {
             Preconditions.checkNotNull(interactionCallback);
             this.interactionCallback = interactionCallback;
             return this;
         }
 
         @Override
-        public WindowComponentBuilder render(RenderCallback<WindowState> renderCallback) {
+        public WindowBuilder render(RenderCallback<WindowState> renderCallback) {
             Preconditions.checkNotNull(renderCallback);
             this.renderCallback = renderCallback;
             return this;
