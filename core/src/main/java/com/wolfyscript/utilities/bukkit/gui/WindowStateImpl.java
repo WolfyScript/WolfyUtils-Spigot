@@ -53,14 +53,21 @@ public class WindowStateImpl extends ComponentStateImpl<Window, RouterState> imp
 
     @Override
     public void setComponent(int slot, String componentID) {
-        Component component = getOwner().getChild(componentID).orElseThrow(() -> new IllegalArgumentException("Cannot find child '" + componentID + "' for component!"));
-        if (checkBoundsAtPos(slot, component)) {
-            if (component instanceof Stateful<?> stateful) {
-                pushNewChildState(slot, (ComponentStateImpl<? extends SizedComponent, WindowStateImpl>) stateful.createState(this));
+        childComponentStates.compute(slot, (integer, activeState) -> {
+            if (activeState != null && activeState.getOwner().getID().equals(componentID)) {
+                return activeState;
             }
-        } else {
-            throw new IllegalArgumentException("Component does not fit inside of the Window!");
-        }
+            Component component = getOwner().getChild(componentID).orElseThrow(() -> new IllegalArgumentException("Cannot find child '" + componentID + "' for component!"));
+            if (checkBoundsAtPos(slot, component)) {
+                if (component instanceof Stateful<?> stateful) {
+                    return (ComponentStateImpl<? extends SizedComponent, WindowStateImpl>) stateful.createState(this);
+                }
+                // TODO: Non-Stateful components?
+            } else {
+                throw new IllegalArgumentException("Component does not fit inside of the Window!");
+            }
+            return null;
+        });
     }
 
     private boolean checkBoundsAtPos(int i, Component component) throws IllegalStateException {
