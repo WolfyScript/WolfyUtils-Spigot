@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.wolfyscript.jackson.dataformat.hocon.HoconMapper;
 import com.wolfyscript.utilities.Platform;
-import com.wolfyscript.utilities.bukkit.adapters.BukkitWrapper;
-import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl;
 import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
 import com.wolfyscript.utilities.bukkit.commands.ChatActionCommand;
 import com.wolfyscript.utilities.bukkit.commands.InfoCommand;
@@ -19,7 +17,13 @@ import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManager;
 import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManagerBukkit;
 import com.wolfyscript.utilities.bukkit.config.WUConfig;
 import com.wolfyscript.utilities.bukkit.console.Console;
+import com.wolfyscript.utilities.bukkit.gui.ButtonBuilderImpl;
+import com.wolfyscript.utilities.bukkit.gui.ButtonImpl;
+import com.wolfyscript.utilities.bukkit.gui.RouterBuilderImpl;
+import com.wolfyscript.utilities.bukkit.gui.RouterImpl;
 import com.wolfyscript.utilities.bukkit.gui.TestGUI;
+import com.wolfyscript.utilities.bukkit.gui.WindowBuilderImpl;
+import com.wolfyscript.utilities.bukkit.gui.WindowImpl;
 import com.wolfyscript.utilities.bukkit.json.serialization.APIReferenceSerialization;
 import com.wolfyscript.utilities.bukkit.json.serialization.ColorSerialization;
 import com.wolfyscript.utilities.bukkit.json.serialization.DustOptionsSerialization;
@@ -32,7 +36,6 @@ import com.wolfyscript.utilities.bukkit.network.messages.MessageFactory;
 import com.wolfyscript.utilities.bukkit.network.messages.MessageHandler;
 import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import com.wolfyscript.utilities.bukkit.world.inventory.CreativeModeTab;
-import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.bukkit.world.items.CustomData;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItemBlockData;
@@ -97,7 +100,6 @@ import com.wolfyscript.utilities.bukkit.nbt.QueryNodeListString;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeLong;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeShort;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeString;
-import com.wolfyscript.utilities.bukkit.nms.item.crafting.FunctionalRecipeGenerator;
 import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
 import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectData;
@@ -124,8 +126,6 @@ import com.wolfyscript.utilities.bukkit.world.particles.timer.TimerPi;
 import com.wolfyscript.utilities.bukkit.world.particles.timer.TimerRandom;
 import com.wolfyscript.utilities.common.WolfyCore;
 import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.common.gui.GuiAPIManager;
-import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.nbt.NBTTagConfigBoolean;
 import com.wolfyscript.utilities.nbt.NBTTagConfigByte;
 import com.wolfyscript.utilities.nbt.NBTTagConfigByteArray;
@@ -184,8 +184,6 @@ import java.util.logging.Logger;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.reflections.Reflections;
 
@@ -523,6 +521,17 @@ public final class WolfyCoreBukkit implements WolfyCore {
         nbtQueryNodes.register(QueryNodeListFloat.class);
         nbtQueryNodes.register(QueryNodeListString.class);
         nbtQueryNodes.register(QueryNodeListCompound.class);
+
+        // Register GUI things
+        var guiComponents = getRegistries().getGuiComponents();
+        guiComponents.register(RouterImpl.class);
+        guiComponents.register(WindowImpl.class);
+        guiComponents.register(ButtonImpl.class);
+
+        var guiComponentBuilders = getRegistries().getGuiComponentBuilders();
+        guiComponentBuilders.register(ButtonBuilderImpl.class);
+        guiComponentBuilders.register(RouterBuilderImpl.class);
+        guiComponentBuilders.register(WindowBuilderImpl.class);
 
         // Register the Registries to resolve type references in JSON
         KeyedTypeIdResolver.registerTypeRegistry(CustomItemData.class, registries.getCustomItemDataTypeRegistry());
