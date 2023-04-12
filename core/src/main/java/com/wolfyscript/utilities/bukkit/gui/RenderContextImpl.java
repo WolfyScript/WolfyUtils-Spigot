@@ -54,11 +54,12 @@ public class RenderContextImpl implements RenderContext {
 
     @Override
     public void setStack(int i, ItemStackConfig<?> itemStackConfig) {
+        if(!checkIfSlotInBounds(i)) return;
         // i > 0 && i < width * height
         if (itemStackConfig instanceof BukkitItemStackConfig bukkitItemStackConfig) {
-            if (checkIfSlotInBounds(i)) {
-                inventory.setItem(i, bukkitItemStackConfig.constructItemStack());
-            }
+            inventory.setItem(i, bukkitItemStackConfig.constructItemStack());
+        } else {
+            inventory.setItem(i, null);
         }
     }
 
