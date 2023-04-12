@@ -20,7 +20,6 @@ package com.wolfyscript.utilities.bukkit.registry;
 
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
 import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
@@ -37,8 +36,10 @@ import com.wolfyscript.utilities.bukkit.world.particles.ParticleEffect;
 import com.wolfyscript.utilities.bukkit.world.particles.animators.Animator;
 import com.wolfyscript.utilities.bukkit.world.particles.shapes.Shape;
 import com.wolfyscript.utilities.bukkit.world.particles.timer.Timer;
+import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.registry.Registries;
 import com.wolfyscript.utilities.common.registry.Registry;
+import com.wolfyscript.utilities.common.registry.RegistryGUIComponentBuilders;
 import com.wolfyscript.utilities.common.registry.RegistrySimple;
 import com.wolfyscript.utilities.common.registry.TypeRegistry;
 import com.wolfyscript.utilities.common.registry.UniqueTypeRegistrySimple;
@@ -64,6 +65,9 @@ public class BukkitRegistries extends Registries {
     public static final BukkitNamespacedKey ITEM_EVENT_VALUES = BukkitNamespacedKey.wolfyutilties("custom_item/events/values");
     public static final BukkitNamespacedKey ITEM_EVENT_TYPES = BukkitNamespacedKey.wolfyutilties("custom_item/events/types");
 
+    public static final BukkitNamespacedKey GUI_COMPONENTS = BukkitNamespacedKey.wolfyutilties("gui/components");
+    public static final BukkitNamespacedKey GUI_COMPONENT_BUILDERS = BukkitNamespacedKey.wolfyutilties("gui/component_builders");
+
     public static final BukkitNamespacedKey ITEM_CUSTOM_DATA = BukkitNamespacedKey.wolfyutilties("custom_item/data");
     public static final BukkitNamespacedKey ITEM_NBT_CHECKS = BukkitNamespacedKey.wolfyutilties("custom_item/nbt_checks");
 
@@ -83,6 +87,9 @@ public class BukkitRegistries extends Registries {
     private final TypeRegistry<Meta> customItemNbtChecks;
     private final TypeRegistry<Action<?>> customItemActions;
     private final TypeRegistry<Event<?>> customItemEvents;
+
+    private final TypeRegistry<Component> guiComponents;
+    private final RegistryGUIComponentBuilders guiComponentBuilders;
 
     private final TypeRegistry<CustomBlockData> customBlockData;
     private final TypeRegistry<CustomPlayerData> customPlayerData;
@@ -116,6 +123,9 @@ public class BukkitRegistries extends Registries {
         customBlockData = new UniqueTypeRegistrySimple<>(new BukkitNamespacedKey(core.getWolfyUtils(), "persistent/block"), this);
 
         this.nbtQueryNodes = new UniqueTypeRegistrySimple<>(new BukkitNamespacedKey(core.getWolfyUtils(), "nbt/query/nodes"), this);
+
+        guiComponents = new RegistryGUIComponent(GUI_COMPONENTS, this);
+        guiComponentBuilders = new RegistryGUIComponentBuilder(GUI_COMPONENT_BUILDERS, this);
     }
 
     @Override
@@ -233,5 +243,15 @@ public class BukkitRegistries extends Registries {
 
     public RegistryItemReferences getItemReferences() {
         return itemReferences;
+    }
+
+    @Override
+    public TypeRegistry<Component> getGuiComponents() {
+        return guiComponents;
+    }
+
+    @Override
+    public RegistryGUIComponentBuilders getGuiComponentBuilders() {
+        return guiComponentBuilders;
     }
 }
