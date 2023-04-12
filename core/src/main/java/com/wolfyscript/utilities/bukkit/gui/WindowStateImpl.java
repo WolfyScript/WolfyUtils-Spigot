@@ -1,7 +1,11 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
+import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
+import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.gui.Component;
+import com.wolfyscript.utilities.common.gui.ComponentState;
 import com.wolfyscript.utilities.common.gui.RouterState;
 import com.wolfyscript.utilities.common.gui.Stateful;
 import com.wolfyscript.utilities.common.gui.WindowState;
@@ -11,11 +15,11 @@ import com.wolfyscript.utilities.common.gui.SizedComponent;
 import com.wolfyscript.utilities.common.gui.Window;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class WindowStateImpl extends ComponentStateImpl<Window, RouterState> implements WindowState {
 
     private final Map<Integer, ComponentStateImpl<? extends SizedComponent, WindowStateImpl>> childComponentStates = new Int2ObjectOpenHashMap<>();
+    private final Map<Integer, ComponentStateImpl<? extends SizedComponent, WindowStateImpl>> updatedStateCache = new Int2ObjectOpenHashMap<>();
 
     @Inject
     public WindowStateImpl(RouterState parent, Window owner) {
@@ -26,36 +30,37 @@ public class WindowStateImpl extends ComponentStateImpl<Window, RouterState> imp
     @Override
     public void render(GuiHolder holder, RenderContext context) {
         if (shouldUpdate()) {
+            updatedStateCache.clear();
             getOwner().renderCallback().render(holder, this);
-        }
-        dirty = false;
-        childComponentStates.forEach((integer, childState) -> {
-            Component owner = childState.getOwner();
-            if (owner instanceof SizedComponent sized) {
-                int width = sized.width();
-                int height = sized.height();
-                for (int i = 0; i < height; i++) {
-                    for (int j = 0; j < width; j++) {
-                        int slot = integer + j + i * (9 - width);
-                        ((GuiViewManagerImpl) holder.getViewManager()).updateTailNodes(childState, slot);
-                    }
-                }
+            // Free up unused space/slots
+            for (var entry : childComponentStates.entrySet()) {
+                var updatedState = updatedStateCache.get(entry.getKey());
+                if (updatedState != null && updatedState.getOwner().getID().equals(entry.getValue().getOwner().getID())) continue;
+                entry.getValue().getOwner().executeForAllSlots(entry.getKey(), slot -> {
+                    ((GuiViewManagerImpl) holder.getViewManager()).updateTailNodes(null, slot);
+                    context.setStack(slot, null);
+                });
             }
-            ((RenderContextImpl) context).setSlotOffsetToParent(integer);
+            childComponentStates.clear();
+            childComponentStates.putAll(updatedStateCache);
+        }
+        childComponentStates.forEach((slot, childState) -> {
+            childState.getOwner().executeForAllSlots(slot, slot2 -> ((GuiViewManagerImpl) holder.getViewManager()).updateTailNodes(childState, slot2));
+            ((RenderContextImpl) context).setSlotOffsetToParent(slot);
             ((RenderContextImpl) context).setCurrentNode(childState);
             childState.render(holder, context);
         });
     }
 
-    void pushNewChildState(int slot, ComponentStateImpl<? extends SizedComponent, WindowStateImpl> state) {
-        childComponentStates.put(slot, state);
-    }
-
     @Override
     public void setComponent(int slot, String componentID) {
-        childComponentStates.compute(slot, (integer, activeState) -> {
-            if (activeState != null && activeState.getOwner().getID().equals(componentID)) {
-                return activeState;
+        updatedStateCache.compute(slot, (slotKey, currentState) -> {
+            // Keep existing states intact so that they are not reset to their initial value
+            ComponentStateImpl<? extends SizedComponent, WindowStateImpl> activeState = childComponentStates.get(slot);
+            if (activeState != null) {
+                if (activeState.getOwner().getID().equals(componentID)) {
+                    return activeState;
+                }
             }
             Component component = getOwner().getChild(componentID).orElseThrow(() -> new IllegalArgumentException("Cannot find child '" + componentID + "' for component!"));
             if (checkBoundsAtPos(slot, component)) {
