@@ -43,7 +43,11 @@ public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
     }
 
     void updateTailNodes(ComponentState state, int slot) {
-        tailStateNodes.put(slot, state);
+        if (state == null) {
+            tailStateNodes.remove(slot);
+        } else {
+            tailStateNodes.put(slot, state);
+        }
     }
 
     @Override
