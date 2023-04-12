@@ -16,7 +16,7 @@ public class GuiAPIManagerImpl extends GuiAPIManagerCommonImpl {
 
     @Override
     public void registerRouter(String id, Consumer<RouterBuilder> consumer) {
-        RouterBuilder builder = new RouterImpl.Builder(wolfyUtils, id, null);
+        RouterBuilder builder = new RouterBuilderImpl(id, wolfyUtils, null);
         consumer.accept(builder);
         registerCluster(builder.create(null));
     }

@@ -2,7 +2,6 @@ package com.wolfyscript.utilities.bukkit.gui;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -163,12 +162,12 @@ public class WindowBuilderImpl extends AbstractBukkitComponentBuilder<Window, Ro
         @Override
         public WindowChildComponentBuilder button(String buttonId, Consumer<ButtonBuilder> consumer) {
             if (children.containsKey(buttonId)) {
-                if (!(children.get(buttonId) instanceof ButtonImpl.Builder builder))
+                if (!(children.get(buttonId) instanceof ButtonBuilderImpl builder))
                     throw new IllegalArgumentException("A builder for '" + buttonId + "' of a different type already exists!");
                 consumer.accept(builder);
                 return this;
             }
-            ButtonImpl.Builder builder = new ButtonImpl.Builder(buttonId, getWolfyUtils());
+            ButtonBuilderImpl builder = new ButtonBuilderImpl(buttonId, getWolfyUtils());
             children.putIfAbsent(buttonId, builder);
             consumer.accept(builder);
             return this;
