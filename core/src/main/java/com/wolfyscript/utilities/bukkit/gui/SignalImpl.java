@@ -1,5 +1,8 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.common.gui.ComponentState;
 import com.wolfyscript.utilities.common.gui.Signal;
@@ -71,15 +74,27 @@ public class SignalImpl<MT> implements Signal<MT> {
         }
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Builder<T> implements Signal.Builder<T> {
 
         private final String key;
         private final Class<T> messageValueType;
         private Function<ComponentState, T> defaultValueFunction = state -> null;
 
-        public Builder(String key, Class<T> messageValueType) {
+        @JsonCreator
+        public Builder(@JsonProperty("key") String key, @JsonProperty("type") Class<T> messageValueType) {
             this.key = key;
             this.messageValueType = messageValueType;
+        }
+
+        @Override
+        public String getKey() {
+            return key;
+        }
+
+        @Override
+        public Class<T> getValueType() {
+            return messageValueType;
         }
 
         @Override
