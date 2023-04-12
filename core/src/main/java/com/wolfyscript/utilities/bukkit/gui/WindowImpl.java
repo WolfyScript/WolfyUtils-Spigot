@@ -1,11 +1,23 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Stage;
+import com.wolfyscript.utilities.KeyedStaticId;
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.ButtonBuilder;
+import com.wolfyscript.utilities.common.gui.ComponentBuilder;
+import com.wolfyscript.utilities.common.gui.ComponentBuilderSettings;
 import com.wolfyscript.utilities.common.gui.ComponentState;
 import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
@@ -25,6 +37,7 @@ import com.wolfyscript.utilities.common.gui.WindowChildComponentBuilder;
 import com.wolfyscript.utilities.common.gui.WindowState;
 import com.wolfyscript.utilities.common.gui.WindowTitleUpdateCallback;
 import com.wolfyscript.utilities.common.gui.WindowType;
+import com.wolfyscript.utilities.common.registry.RegistryGUIComponentBuilders;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,19 +45,15 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Consumer;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 
-public final class WindowImpl implements Window {
+@KeyedStaticId(key = "window")
+public final class WindowImpl extends AbstractBukkitComponent implements Window {
 
-    private final WolfyUtils wolfyUtils;
-    private final String id;
-    private final Router parent;
     private final Map<String, Signal<?>> signals;
     private final BiMap<String, SizedComponent> children;
     private final Integer size;
@@ -53,27 +62,35 @@ public final class WindowImpl implements Window {
     private final InteractionCallback interactionCallback;
     private final RenderCallback<WindowState> renderCallback;
 
-    private WindowImpl(String id,
-                       Router parent,
-                       WindowTitleUpdateCallback titleUpdateCallback,
-                       Integer size, WindowType type,
-                       InteractionCallback interactionCallback,
-                       RenderCallback<WindowState> renderCallback,
-                       Map<String, Signal<?>> signals) {
+    WindowImpl(String id,
+               Router parent,
+               WindowTitleUpdateCallback titleUpdateCallback,
+               Integer size, WindowType type,
+               InteractionCallback interactionCallback,
+               RenderCallback<WindowState> renderCallback,
+               Map<String, Signal<?>> signals) {
+        super(id, parent.getWolfyUtils(), parent);
         Preconditions.checkNotNull(id);
         Preconditions.checkNotNull(interactionCallback);
         Preconditions.checkNotNull(renderCallback);
         Preconditions.checkArgument(size != null || type != null, "Either type or size must be specified!");
-        this.id = id;
-        this.parent = parent;
         this.titleUpdateCallback = titleUpdateCallback;
-        this.wolfyUtils = parent.getWolfyUtils();
         this.interactionCallback = interactionCallback;
         this.renderCallback = renderCallback;
         this.children = HashBiMap.create();
         this.size = size;
         this.type = type;
         this.signals = signals == null ? new HashMap<>() : signals;
+    }
+
+    @Override
+    public Router parent() {
+        return (Router) super.parent();
+    }
+
+    @Override
+    public void init() {
+
     }
 
     @Override
@@ -93,7 +110,7 @@ public final class WindowImpl implements Window {
         // No active Window or it is another Window, need to recreate inventory
         final Inventory inventory;
         final GUIHolder holder = new GUIHolder(bukkitPlayer, viewManager, this);
-        final Component title = createTitle(holder);
+        final net.kyori.adventure.text.Component title = createTitle(holder);
         if (((WolfyUtilsBukkit) getWolfyUtils()).getCore().getCompatibilityManager().isPaper()) {
             // Paper has direct Adventure support, so use it for better titles!
             inventory = getInventoryType().map(inventoryType -> Bukkit.createInventory(holder, inventoryType, title))
@@ -155,33 +172,13 @@ public final class WindowImpl implements Window {
     }
 
     @Override
-    public WolfyUtils getWolfyUtils() {
-        return wolfyUtils;
-    }
-
-    @Override
-    public String getID() {
-        return id;
-    }
-
-    @Override
     public Set<? extends SizedComponent> childComponents() {
         return children.values();
     }
 
     @Override
-    public Router parent() {
-        return parent;
-    }
-
-    @Override
     public Optional<com.wolfyscript.utilities.common.gui.Component> getChild(String id) {
         return Optional.ofNullable(children.get(id));
-    }
-
-    @Override
-    public void init() {
-
     }
 
     @Override
@@ -211,115 +208,6 @@ public final class WindowImpl implements Window {
 
     void addNewChildComponent(String id, SizedComponent component) {
         this.children.put(id, component);
-    }
-
-    public static class BuilderImpl implements WindowBuilder, ComponentBuilder<Window, Router> {
-
-        private final WolfyUtils wolfyUtils;
-        protected final String windowID;
-        protected final RouterBuilder parent;
-        protected final WindowChildComponentBuilder childComponentBuilder;
-        protected Integer size;
-        protected WindowType type;
-        protected WindowTitleUpdateCallback titleUpdateCallback;
-        private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.def();
-        private RenderCallback<WindowState> renderCallback = (guiHolder, componentState) -> {
-        };
-        private final Map<String, Signal<?>> signals;
-
-        protected BuilderImpl(WolfyUtils wolfyUtils, String windowID, RouterImpl.Builder parent) {
-            this.wolfyUtils = wolfyUtils;
-            this.windowID = windowID;
-            this.parent = parent;
-            this.childComponentBuilder = new ChildBuilderImpl();
-            this.signals = new HashMap<>();
-        }
-
-        @Override
-        public WindowBuilder size(int size) {
-            this.size = size;
-            return this;
-        }
-
-        @Override
-        public WindowBuilder type(WindowType type) {
-            this.type = type;
-            return this;
-        }
-
-        @Override
-        public WindowBuilder title(WindowTitleUpdateCallback titleUpdateCallback) {
-            this.titleUpdateCallback = titleUpdateCallback;
-            return this;
-        }
-
-        @Override
-        public <T> WindowBuilder useSignal(String key, Class<T> type, Consumer<Signal.Builder<T>> signalBuilder) {
-            SignalImpl.Builder<T> builder = new SignalImpl.Builder<>(key, type);
-            signalBuilder.accept(builder);
-            this.signals.put(key, builder.create());
-            return this;
-        }
-
-        public WindowBuilder children(Consumer<WindowChildComponentBuilder> childComponentBuilderConsumer) {
-            childComponentBuilderConsumer.accept(childComponentBuilder);
-            return this;
-        }
-
-        @Override
-        public Window create(Router parent) {
-            Window window = new WindowImpl(parent.getID() + "/" + windowID, parent, this.titleUpdateCallback, size, type, interactionCallback, renderCallback, signals);
-            childComponentBuilder.applyTo(window);
-            return window;
-        }
-
-        @Override
-        public WindowBuilder interact(InteractionCallback interactionCallback) {
-            Preconditions.checkNotNull(interactionCallback);
-            this.interactionCallback = interactionCallback;
-            return this;
-        }
-
-        @Override
-        public WindowBuilder render(RenderCallback<WindowState> renderCallback) {
-            Preconditions.checkNotNull(renderCallback);
-            this.renderCallback = renderCallback;
-            return this;
-        }
-
-        public class ChildBuilderImpl implements WindowChildComponentBuilder {
-
-            private final BiMap<String, ComponentBuilder<? extends SizedComponent, SizedComponent>> children = HashBiMap.create();
-
-            ChildBuilderImpl() {
-                super();
-            }
-
-            @Override
-            public WindowChildComponentBuilder button(String buttonId, Consumer<ButtonBuilder> consumer) {
-                if (children.containsKey(buttonId)) {
-                    if (!(children.get(buttonId) instanceof ButtonImpl.Builder builder))
-                        throw new IllegalArgumentException("A builder for '" + buttonId + "' of a different type already exists!");
-                    consumer.accept(builder);
-                    return this;
-                }
-                ButtonImpl.Builder builder = new ButtonImpl.Builder(buttonId, BuilderImpl.this.wolfyUtils);
-                children.putIfAbsent(buttonId, builder);
-                consumer.accept(builder);
-                return this;
-            }
-
-            @Override
-            public void applyTo(Window window) {
-                if (!(window instanceof WindowImpl thisWindow)) return;
-
-                children.forEach((s, componentBuilder) -> {
-                    thisWindow.addNewChildComponent(s, componentBuilder.create(thisWindow));
-                });
-
-            }
-        }
-
     }
 
 }
