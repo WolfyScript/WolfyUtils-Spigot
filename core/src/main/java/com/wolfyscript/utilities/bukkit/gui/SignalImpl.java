@@ -26,12 +26,12 @@ public class SignalImpl<MT> implements Signal<MT> {
     }
 
     @Override
-    public Class<MT> messageType() {
+    public Class<MT> valueType() {
         return messageValueType;
     }
 
     @Override
-    public Value<MT> createMessage(ComponentState componentState) {
+    public Value<MT> createValue(ComponentState componentState) {
         MT value = defaultValueFunction.apply(componentState);
         return new ValueImpl<>((ComponentStateImpl<?, ?>) componentState, this, value);
     }
@@ -59,13 +59,13 @@ public class SignalImpl<MT> implements Signal<MT> {
         }
 
         @Override
-        public void update(T newValue) {
+        public void set(T newValue) {
             state.updateMessage(new ValueImpl<>(state, signal, newValue));
         }
 
         @Override
         public void update(Function<T, T> function) {
-            update(function.apply(value));
+            set(function.apply(value));
         }
 
         @Override
