@@ -30,21 +30,26 @@ public class TestGUI {
                         .window("mainmenu", mainMenu -> mainMenu
                                 .title((guiHolder, window) -> Component.text("Main Menu"))
                                 .size(27)
-                                // Specifies/Creates the signal this component will track
-                                .useSignal(COUNT, Integer.class, count -> count.defaultValue(state -> 0))
-                                // Renders the child components into the inventory GUI. Called everytime the signal has been updated.
-                                .render((guiHolder, state) -> {
-                                    // The state of a component is only reconstructed if the slot changes
-                                    Signal.Value<Integer> count = state.captureSignal(COUNT, Integer.class);
-                                    // Here the slot will always have the same type of component, so the state is created only once.
-                                    state.setComponent(4, "count_up");
-                                    state.setComponent(13, "counter");
-                                    if (count.get() > 0) {
-                                        // These components may be cleared when count == 0, so the state is recreated whenever the count changes from 0 to >0.
-                                        state.setComponent(22, "count_down");
-                                        state.setComponent(10, "reset");
-                                    }
-                                })
+                                // Creates the signal this component will track and children can listen to
+                                .createSignal(COUNT, Integer.class, count -> count.defaultValue(state -> 0))
+                                .render(rendering -> rendering
+                                        .position(4, "count_up")
+                                        .position(13, "counter")
+                                        .position(22, "count_down")
+                                        .position(10, "reset")
+                                        // Can be used to further customize when components should be rendered. Called everytime the signal has been updated. Replaces the static rendering!
+                                        .custom((guiHolder, state) -> {
+                                            // Here the slot will always have the same type of component, so the state is created only once.
+                                            state.renderComponent("count_up");
+                                            state.renderComponent("counter");
+                                            // The state of a component is only reconstructed if the slot changes
+                                            if (state.captureSignal(COUNT, Integer.class).get() > 0) {
+                                                // These components may be cleared when count == 0, so the state is recreated whenever the count changes from 0 to >0.
+                                                state.renderComponent("count_down");
+                                                state.renderComponent("reset");
+                                            }
+                                        })
+                                )
                                 // The children that can be used inside of this window.
                                 .children(mainMenuChildren -> mainMenuChildren
                                         .button("counter", settingsBtn -> settingsBtn
@@ -80,7 +85,7 @@ public class TestGUI {
                                                 .interact((guiHolder, componentState, interactionDetails) -> {
                                                     // Children can capture the signals of their parents, but not the other way around.
                                                     Signal.Value<Integer> count = componentState.getParent().captureSignal(COUNT, Integer.class);
-                                                    count.update(0); // The update method changes the value of the signal and prompts the listener of the signal to re-render.
+                                                    count.set(0); // The set method changes the value of the signal and prompts the listener of the signal to re-render.
                                                     return InteractionResult.cancel(true);
                                                 })
                                         )
