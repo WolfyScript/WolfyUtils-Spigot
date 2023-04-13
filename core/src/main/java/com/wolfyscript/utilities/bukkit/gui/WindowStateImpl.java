@@ -1,18 +1,15 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
-import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
-import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentState;
-import com.wolfyscript.utilities.common.gui.RouterState;
-import com.wolfyscript.utilities.common.gui.Stateful;
-import com.wolfyscript.utilities.common.gui.WindowState;
 import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.RenderContext;
+import com.wolfyscript.utilities.common.gui.RouterState;
 import com.wolfyscript.utilities.common.gui.SizedComponent;
+import com.wolfyscript.utilities.common.gui.Stateful;
 import com.wolfyscript.utilities.common.gui.Window;
+import com.wolfyscript.utilities.common.gui.WindowState;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.util.Map;
 
@@ -31,11 +28,15 @@ public class WindowStateImpl extends ComponentStateImpl<Window, RouterState> imp
     public void render(GuiHolder holder, RenderContext context) {
         if (shouldUpdate()) {
             updatedStateCache.clear();
-            getOwner().renderCallback().render(holder, this);
+            getOwner().getRenderOptions().renderCallback().ifPresentOrElse(
+                    renderCallback -> renderCallback.render(holder, this),
+                    () -> getOwner().getRenderOptions().placement().forEach(this::renderComponent)
+            );
             // Free up unused space/slots
             for (var entry : childComponentStates.entrySet()) {
                 var updatedState = updatedStateCache.get(entry.getKey());
-                if (updatedState != null && updatedState.getOwner().getID().equals(entry.getValue().getOwner().getID())) continue;
+                if (updatedState != null && updatedState.getOwner().getID().equals(entry.getValue().getOwner().getID()))
+                    continue;
                 entry.getValue().getOwner().executeForAllSlots(entry.getKey(), slot -> {
                     ((GuiViewManagerImpl) holder.getViewManager()).updateTailNodes(null, slot);
                     context.setStack(slot, null);
@@ -53,16 +54,23 @@ public class WindowStateImpl extends ComponentStateImpl<Window, RouterState> imp
     }
 
     @Override
-    public void setComponent(int slot, String componentID) {
+    public void renderComponent(int slot, String componentID) {
+        renderComponent(slot, getOwner().getChild(componentID).orElseThrow(() -> new IllegalArgumentException("Cannot find child '" + componentID + "' for component!")));
+    }
+
+    @Override
+    public void renderComponent(String componentID) {
+        Component component = getOwner().getChild(componentID).orElseThrow(() -> new IllegalArgumentException("Cannot find child '" + componentID + "' for component!"));
+        for (int slot : getOwner().getRenderOptions().getSlotsFor(component)) {
+            renderComponent(slot, component);
+        }
+    }
+
+    private void renderComponent(int slot, Component component) {
         updatedStateCache.compute(slot, (slotKey, currentState) -> {
             // Keep existing states intact so that they are not reset to their initial value
             ComponentStateImpl<? extends SizedComponent, WindowStateImpl> activeState = childComponentStates.get(slot);
-            if (activeState != null) {
-                if (activeState.getOwner().getID().equals(componentID)) {
-                    return activeState;
-                }
-            }
-            Component component = getOwner().getChild(componentID).orElseThrow(() -> new IllegalArgumentException("Cannot find child '" + componentID + "' for component!"));
+            if (isSameComponent(activeState, component.getID())) return activeState;
             if (checkBoundsAtPos(slot, component)) {
                 if (component instanceof Stateful<?> stateful) {
                     return (ComponentStateImpl<? extends SizedComponent, WindowStateImpl>) stateful.createState(this);
@@ -75,6 +83,10 @@ public class WindowStateImpl extends ComponentStateImpl<Window, RouterState> imp
         });
     }
 
+    private boolean isSameComponent(ComponentState activeState, String componentID) {
+        return activeState != null && activeState.getOwner().getID().equals(componentID);
+    }
+
     private boolean checkBoundsAtPos(int i, Component component) throws IllegalStateException {
         if (component instanceof SizedComponent sizedComponent) {
             int parentWidth = getOwner().width();
@@ -83,5 +95,4 @@ public class WindowStateImpl extends ComponentStateImpl<Window, RouterState> imp
         }
         return false;
     }
-
 }
