@@ -1,23 +1,11 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
-import com.fasterxml.jackson.annotation.JacksonInject;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Stage;
 import com.wolfyscript.utilities.KeyedStaticId;
-import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
-import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.common.gui.ButtonBuilder;
-import com.wolfyscript.utilities.common.gui.ComponentBuilder;
-import com.wolfyscript.utilities.common.gui.ComponentBuilderSettings;
+import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentState;
 import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
@@ -27,7 +15,6 @@ import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.RenderCallback;
 import com.wolfyscript.utilities.common.gui.RenderContext;
 import com.wolfyscript.utilities.common.gui.Router;
-import com.wolfyscript.utilities.common.gui.RouterBuilder;
 import com.wolfyscript.utilities.common.gui.RouterState;
 import com.wolfyscript.utilities.common.gui.Signal;
 import com.wolfyscript.utilities.common.gui.SizedComponent;
@@ -37,15 +24,17 @@ import com.wolfyscript.utilities.common.gui.WindowChildComponentBuilder;
 import com.wolfyscript.utilities.common.gui.WindowState;
 import com.wolfyscript.utilities.common.gui.WindowTitleUpdateCallback;
 import com.wolfyscript.utilities.common.gui.WindowType;
-import com.wolfyscript.utilities.common.registry.RegistryGUIComponentBuilders;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -60,27 +49,33 @@ public final class WindowImpl extends AbstractBukkitComponent implements Window 
     private final WindowType type;
     private final WindowTitleUpdateCallback titleUpdateCallback;
     private final InteractionCallback interactionCallback;
-    private final RenderCallback<WindowState> renderCallback;
+    private final RenderOptions renderOptions;
 
     WindowImpl(String id,
                Router parent,
+               Integer size,
+               WindowType type,
                WindowTitleUpdateCallback titleUpdateCallback,
-               Integer size, WindowType type,
                InteractionCallback interactionCallback,
-               RenderCallback<WindowState> renderCallback,
+               WindowChildComponentBuilder childComponentBuilder,
+               WindowBuilder.RenderOptionsBuilder renderOptionsBuilder,
                Map<String, Signal<?>> signals) {
         super(id, parent.getWolfyUtils(), parent);
         Preconditions.checkNotNull(id);
         Preconditions.checkNotNull(interactionCallback);
-        Preconditions.checkNotNull(renderCallback);
         Preconditions.checkArgument(size != null || type != null, "Either type or size must be specified!");
-        this.titleUpdateCallback = titleUpdateCallback;
-        this.interactionCallback = interactionCallback;
-        this.renderCallback = renderCallback;
-        this.children = HashBiMap.create();
         this.size = size;
         this.type = type;
+        this.titleUpdateCallback = titleUpdateCallback;
+        this.interactionCallback = interactionCallback;
+        this.children = HashBiMap.create();
+        childComponentBuilder.applyTo(this);
         this.signals = signals == null ? new HashMap<>() : signals;
+        this.renderOptions = renderOptionsBuilder.create(this);
+    }
+
+    void addNewChildComponent(String id, SizedComponent component) {
+        this.children.put(id, component);
     }
 
     @Override
@@ -168,7 +163,7 @@ public final class WindowImpl extends AbstractBukkitComponent implements Window 
 
     @Override
     public RenderCallback<WindowState> renderCallback() {
-        return renderCallback;
+        return renderOptions.renderCallback().orElseGet(() -> (guiHolder, windowState) -> {});
     }
 
     @Override
@@ -206,8 +201,41 @@ public final class WindowImpl extends AbstractBukkitComponent implements Window 
         return size / 9;
     }
 
-    void addNewChildComponent(String id, SizedComponent component) {
-        this.children.put(id, component);
+    @Override
+    public RenderOptions getRenderOptions() {
+        return renderOptions;
+    }
+
+    public static class RenderOptionsImpl implements RenderOptions {
+
+        private final RenderCallback<WindowState> renderCallback;
+        private final Map<Integer, Component> placement;
+        private final Map<Component, int[]> reversePlacement;
+
+        public RenderOptionsImpl(RenderCallback<WindowState> renderCallback, Map<Integer, ? extends Component> placement) {
+            this.renderCallback = renderCallback;
+
+            this.placement = Collections.unmodifiableMap(placement);
+            this.reversePlacement = new HashMap<>();
+            for (Map.Entry<Integer, ? extends Component> entry : placement.entrySet()) {
+                reversePlacement.merge(entry.getValue(), new int[]{entry.getKey()}, ArrayUtils::addAll);
+            }
+        }
+
+        @Override
+        public Optional<RenderCallback<WindowState>> renderCallback() {
+            return Optional.ofNullable(renderCallback);
+        }
+
+        @Override
+        public Map<Integer, ? extends Component> placement() {
+            return placement;
+        }
+
+        @Override
+        public int[] getSlotsFor(Component component) {
+            return reversePlacement.getOrDefault(component, new int[0]);
+        }
     }
 
 }

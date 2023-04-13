@@ -16,6 +16,7 @@ import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.ButtonBuilder;
+import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentBuilder;
 import com.wolfyscript.utilities.common.gui.ComponentBuilderSettings;
 import com.wolfyscript.utilities.common.gui.InteractionCallback;
@@ -32,10 +33,12 @@ import com.wolfyscript.utilities.common.gui.WindowState;
 import com.wolfyscript.utilities.common.gui.WindowTitleUpdateCallback;
 import com.wolfyscript.utilities.common.gui.WindowType;
 import com.wolfyscript.utilities.common.registry.RegistryGUIComponentBuilders;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @KeyedStaticId(key = "window")
 @ComponentBuilderSettings(base = WindowBuilder.class, component = Window.class)
@@ -48,7 +51,7 @@ public class WindowBuilderImpl extends AbstractBukkitComponentBuilder<Window, Ro
     protected WindowType type;
     protected WindowTitleUpdateCallback titleUpdateCallback;
     private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.def();
-    private RenderCallback<WindowState> renderCallback = (guiHolder, componentState) -> {};
+    private final RenderOptionsBuilder renderOptionsBuilder = new RenderOptionsBuilderImpl();
     private final Map<String, Signal<?>> signals;
 
     @Inject
@@ -85,7 +88,7 @@ public class WindowBuilderImpl extends AbstractBukkitComponentBuilder<Window, Ro
     }
 
     @Override
-    public <T> WindowBuilder useSignal(String key, Class<T> type, Consumer<Signal.Builder<T>> signalBuilder) {
+    public <T> WindowBuilder createSignal(String key, Class<T> type, Consumer<Signal.Builder<T>> signalBuilder) {
         SignalImpl.Builder<T> builder = new SignalImpl.Builder<>(key, type);
         signalBuilder.accept(builder);
         this.signals.put(key, builder.create());
@@ -101,13 +104,6 @@ public class WindowBuilderImpl extends AbstractBukkitComponentBuilder<Window, Ro
     }
 
     @Override
-    public Window create(Router parent) {
-        Window window = new WindowImpl(parent.getID() + "/" + getID(), parent, this.titleUpdateCallback, size, type, interactionCallback, renderCallback, signals);
-        childComponentBuilder.applyTo(window);
-        return window;
-    }
-
-    @Override
     public WindowBuilder interact(InteractionCallback interactionCallback) {
         Preconditions.checkNotNull(interactionCallback);
         this.interactionCallback = interactionCallback;
@@ -115,12 +111,17 @@ public class WindowBuilderImpl extends AbstractBukkitComponentBuilder<Window, Ro
     }
 
     @Override
-    public WindowBuilder render(RenderCallback<WindowState> renderCallback) {
-        Preconditions.checkNotNull(renderCallback);
-        this.renderCallback = renderCallback;
+    public WindowBuilder render(Consumer<RenderOptionsBuilder> consumer) {
+        consumer.accept(renderOptionsBuilder);
         return this;
     }
 
+    @Override
+    public Window create(Router parent) {
+        return new WindowImpl(parent.getID() + "/" + getID(), parent, size, type, this.titleUpdateCallback, interactionCallback, childComponentBuilder, renderOptionsBuilder, signals);
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public class ChildBuilderImpl implements WindowChildComponentBuilder {
 
         private final BiMap<String, ComponentBuilder<? extends SizedComponent, SizedComponent>> children = HashBiMap.create();
@@ -176,12 +177,48 @@ public class WindowBuilderImpl extends AbstractBukkitComponentBuilder<Window, Ro
         @Override
         public void applyTo(Window window) {
             if (!(window instanceof WindowImpl thisWindow)) return;
-
-            children.forEach((s, componentBuilder) -> {
-                thisWindow.addNewChildComponent(s, componentBuilder.create(thisWindow));
-            });
-
+            children.forEach((s, componentBuilder) -> thisWindow.addNewChildComponent(s, componentBuilder.create(thisWindow)));
         }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class RenderOptionsBuilderImpl implements RenderOptionsBuilder {
+
+        private final Map<Integer, String> placement = new Int2ObjectOpenHashMap<>();
+        private RenderCallback<WindowState> renderCallback = null;
+
+        @JsonSetter("placement")
+        private void loadPlacement(List<Placement> placementList) {
+            for (Placement element : placementList) {
+                position(element.slot(), element.component());
+            }
+        }
+
+        @Override
+        public RenderOptionsBuilder position(int slot, String componentID) {
+            if (placement.containsKey(slot))
+                throw new IllegalArgumentException("There already exists a Component at that position!");
+            placement.put(slot, componentID);
+            return this;
+        }
+
+        @Override
+        public RenderOptionsBuilder custom(RenderCallback<WindowState> renderCallback) {
+            this.renderCallback = renderCallback;
+            return this;
+        }
+
+        @Override
+        public Window.RenderOptions create(Window window) {
+            Map<Integer, ? extends Component> componentPlacement = placement.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+                String componentID = entry.getValue();
+                return window.getChild(componentID).orElseThrow(() -> new IllegalArgumentException(String.format("Cannot find child Component with id '%s'", componentID)));
+            }));
+            return new WindowImpl.RenderOptionsImpl(renderCallback, componentPlacement);
+        }
+
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        private record Placement(int slot, String component) { }
     }
 
 }
