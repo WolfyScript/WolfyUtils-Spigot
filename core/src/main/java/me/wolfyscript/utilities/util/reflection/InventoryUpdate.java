@@ -99,7 +99,7 @@ public final class InventoryUpdate {
                 case 19 -> "bU";
                 default -> "activeContainer";
             });
-            windowIdField = (version > 16) ? CONTAINER_CLASS.getField("j") : CONTAINER_CLASS.getField("windowId");
+            windowIdField = CONTAINER_CLASS.getField("j");
         } catch (ReflectiveOperationException exception) {
             exception.printStackTrace();
         }
