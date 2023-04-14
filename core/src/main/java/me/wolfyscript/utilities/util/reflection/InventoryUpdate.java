@@ -90,13 +90,17 @@ public final class InventoryUpdate {
 
             // Initialize fields.
             int version = ServerVersion.getVersion().getMinor();
-            activeContainerField = ENTITY_PLAYER_CLASS.getField(switch (ServerVersion.getVersion().getMinor()) {
+            int patchVersion = ServerVersion.getVersion().getPatch();
+            activeContainerField = ENTITY_PLAYER_CLASS.getField(switch (version) {
                 case 17 -> "bV";
-                case 18 -> switch (ServerVersion.getVersion().getPatch()) {
+                case 18 -> switch (patchVersion) {
                     case 0, 1 -> "bW";
                     default -> "bV";
                 };
-                case 19 -> "bU";
+                case 19 -> switch (patchVersion) {
+                    case 0, 1, 2, 3 -> "bU";
+                    default -> "bP";
+                };
                 default -> "activeContainer";
             });
             windowIdField = CONTAINER_CLASS.getField("j");
