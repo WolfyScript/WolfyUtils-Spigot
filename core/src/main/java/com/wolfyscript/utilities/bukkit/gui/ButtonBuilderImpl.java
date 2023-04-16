@@ -1,6 +1,10 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.wolfyscript.utilities.KeyedStaticId;
@@ -30,9 +34,9 @@ public class ButtonBuilderImpl extends AbstractBukkitComponentBuilder<Button, Si
 
     @JsonCreator
     @Inject
-    public ButtonBuilderImpl(String id, WolfyUtils wolfyUtils) {
+    public ButtonBuilderImpl(@JsonProperty("id") String id, @JsonProperty("icon") IconBuilderImpl iconBuilder, @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils) {
         super(id, wolfyUtils);
-        this.iconBuilder = new IconBuilderImpl();
+        this.iconBuilder = iconBuilder;
         this.signals = new HashMap<>();
     }
 
@@ -62,10 +66,23 @@ public class ButtonBuilderImpl extends AbstractBukkitComponentBuilder<Button, Si
         return new ButtonImpl(getWolfyUtils(), getID(), parent, iconBuilder.create(), interactionCallback, signals);
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class IconBuilderImpl implements IconBuilder {
 
+        @JsonProperty("stack")
         private BukkitItemStackConfig stackConfig;
+        @JsonProperty("dynamic")
         private boolean dynamic = false;
+
+        @JsonSetter("stack")
+        private void setStack(BukkitItemStackConfig config) {
+            this.stackConfig = config;
+        }
+
+        @JsonSetter("dynamic")
+        private void setDynamic(boolean dynamic) {
+            this.dynamic = dynamic;
+        }
 
         @Override
         public IconBuilder stack(ItemStackConfig<?> itemStackConfig) {

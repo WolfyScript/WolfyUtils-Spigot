@@ -3,6 +3,8 @@ package com.wolfyscript.utilities.bukkit;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.wolfyscript.jackson.dataformat.hocon.HoconMapper;
 import com.wolfyscript.utilities.Platform;
 import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
@@ -126,6 +128,7 @@ import com.wolfyscript.utilities.bukkit.world.particles.timer.TimerPi;
 import com.wolfyscript.utilities.bukkit.world.particles.timer.TimerRandom;
 import com.wolfyscript.utilities.common.WolfyCore;
 import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.common.gui.ComponentBuilder;
 import com.wolfyscript.utilities.nbt.NBTTagConfigBoolean;
 import com.wolfyscript.utilities.nbt.NBTTagConfigByte;
 import com.wolfyscript.utilities.nbt.NBTTagConfigByteArray;
@@ -327,6 +330,12 @@ public final class WolfyCoreBukkit implements WolfyCore {
     public void load() {
         getLogger().info("Generate Functional Recipes");
         // FunctionalRecipeGenerator.generateRecipeClasses()
+
+        // Required to use the KeyedTypeIdResolver
+        Injector injector = Guice.createInjector(binder -> {
+            binder.bind(WolfyCore.class).toInstance(this);
+            binder.requestStaticInjection(KeyedTypeIdResolver.class);
+        });
 
         // Jackson Serializer
         getLogger().info("Register JSON de-/serializers");
@@ -547,6 +556,7 @@ public final class WolfyCoreBukkit implements WolfyCore {
         KeyedTypeIdResolver.registerTypeRegistry((Class<QueryNode<?>>) (Object)QueryNode.class, nbtQueryNodes);
         KeyedTypeIdResolver.registerTypeRegistry(CustomBlockData.class, customBlockData);
         KeyedTypeIdResolver.registerTypeRegistry(CustomPlayerData.class, registries.getCustomPlayerData());
+        KeyedTypeIdResolver.registerTypeRegistry((Class<ComponentBuilder<?,?>>)(Object) ComponentBuilder.class, guiComponentBuilders);
     }
 
     public void enable() {
@@ -570,9 +580,13 @@ public final class WolfyCoreBukkit implements WolfyCore {
             registerCommands();
 
             TestGUI testGUI = new TestGUI(this);
-            testGUI.init();
+
+            plugin.saveResource("com/wolfyscript/utilities/common/gui/counter/counter_router.conf", true);
+            plugin.saveResource("com/wolfyscript/utilities/common/gui/counter/main_menu.conf", true);
+            testGUI.initWithConfig();
 
             CreativeModeTab.init();
+
         } else {
             onJUnitTests();
         }

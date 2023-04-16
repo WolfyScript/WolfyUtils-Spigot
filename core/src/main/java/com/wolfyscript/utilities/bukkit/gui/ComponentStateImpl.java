@@ -32,7 +32,7 @@ public abstract class ComponentStateImpl<OWNER extends Component, PARENT extends
     private void initSignals() {
         if (!(owner instanceof Stateful<?> stateful)) return;
         for (Signal<?> signal : stateful.signals().values()) {
-            updateMessage(signal.createMessage(this));
+            updateMessage(signal.createValue(this));
         }
     }
 
@@ -45,7 +45,7 @@ public abstract class ComponentStateImpl<OWNER extends Component, PARENT extends
     public <T> Signal.Value<T> captureSignal(String signalKey, Class<T> msgType) {
         Signal.Value<?> message = messageValues.get(signalKey);
         if (message == null) return null;
-        Preconditions.checkState(Objects.equals(message.signal().key(), signalKey) && message.signal().messageType() == msgType, "Failed to capture Signal! Invalid key or type! Expected %s, but got %s", message.signal().messageType(), msgType);
+        Preconditions.checkState(Objects.equals(message.signal().key(), signalKey) && message.signal().valueType() == msgType, "Failed to capture Signal! Invalid key or type! Expected %s, but got %s", message.signal().valueType(), msgType);
         @SuppressWarnings("unchecked") Signal.Value<T> msg = (Signal.Value<T>) message;
         return msg;
     }

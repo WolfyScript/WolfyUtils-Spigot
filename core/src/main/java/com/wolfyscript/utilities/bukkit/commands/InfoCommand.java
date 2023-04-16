@@ -50,7 +50,7 @@ public class InfoCommand implements TabExecutor {
                 Component.text("Version: ", NamedTextColor.GRAY).append(Component.text(ServerVersion.getWUVersion().getVersion(), null, TextDecoration.BOLD)),
                 Component.text("———————————————————————", NamedTextColor.GRAY)
         );
-        plugin.getWolfyUtils().getGUIManager().createViewAndOpen("main", player.getUniqueId());
+        plugin.getWolfyUtils().getGUIManager().createViewAndOpen("counter", player.getUniqueId());
         return true;
     }
 
