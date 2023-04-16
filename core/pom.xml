@@ -114,6 +114,14 @@
                     <include>**/*.gwt.xml</include>
                 </includes>
             </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+                <filtering>true
+                </filtering> <!-- this replaces, filters, all placeholders in the resources' folder (such as ${project.version} in plugin.yml) -->
+            </resource>
         </resources>
     </build>
 
