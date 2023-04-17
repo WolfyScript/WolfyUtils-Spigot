@@ -41,13 +41,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import javax.inject.Named;
 
 @KeyedStaticId(key = "window")
 @ComponentBuilderSettings(base = WindowBuilder.class, component = Window.class)
 @KeyedBaseType(baseType = ComponentBuilder.class)
 public class WindowBuilderImpl extends AbstractBukkitComponentBuilder<Window, Router> implements WindowBuilder {
 
-    protected final RouterBuilder parent;
     private RenderOptionsBuilder renderOptionsBuilder;
     private ChildBuilderImpl childComponentBuilder;
     protected int size;
@@ -58,9 +58,9 @@ public class WindowBuilderImpl extends AbstractBukkitComponentBuilder<Window, Ro
 
     @Inject
     @JsonCreator
-    protected WindowBuilderImpl(@JsonProperty("id") String windowID, @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils, @JacksonInject("parent") RouterBuilderImpl parent) {
+    protected WindowBuilderImpl(@JsonProperty("id") String windowID,
+                                @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils) {
         super(windowID, wolfyUtils);
-        this.parent = parent;
     }
 
     @JsonSetter("render")

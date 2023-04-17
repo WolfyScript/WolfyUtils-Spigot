@@ -10,6 +10,8 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.common.WolfyUtils;
@@ -25,7 +27,6 @@ import com.wolfyscript.utilities.common.gui.RouterEntry;
 import com.wolfyscript.utilities.common.gui.RouterEntryBuilder;
 import com.wolfyscript.utilities.common.gui.RouterState;
 import com.wolfyscript.utilities.common.gui.Signal;
-import com.wolfyscript.utilities.common.gui.Window;
 import com.wolfyscript.utilities.common.gui.WindowBuilder;
 import com.wolfyscript.utilities.common.registry.RegistryGUIComponentBuilders;
 import com.wolfyscript.utilities.json.annotations.KeyedBaseType;
@@ -42,7 +43,6 @@ import java.util.stream.Collectors;
 @KeyedBaseType(baseType = ComponentBuilder.class)
 public final class RouterBuilderImpl extends AbstractBukkitComponentBuilder<Router, Router> implements RouterBuilder {
 
-    private final RouterBuilderImpl parent;
     private ChildBuilder childComponentBuilder;
     private final RouterEntryBuilderImpl routerEntryBuilder = new RouterEntryBuilderImpl();
     private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.def();
@@ -50,9 +50,9 @@ public final class RouterBuilderImpl extends AbstractBukkitComponentBuilder<Rout
 
     @Inject
     @JsonCreator
-    RouterBuilderImpl(@JsonProperty("id") String routerID, @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils, @JacksonInject("parent") RouterBuilderImpl parent) {
+    RouterBuilderImpl(@JsonProperty("id") String routerID,
+                      @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils) {
         super(routerID, wolfyUtils);
-        this.parent = parent;
         this.signals = new HashMap<>();
     }
 
@@ -230,7 +230,7 @@ public final class RouterBuilderImpl extends AbstractBukkitComponentBuilder<Rout
             }
             Injector injector = Guice.createInjector(Stage.PRODUCTION, binder -> {
                 binder.bind(WolfyUtils.class).toInstance(wolfyUtils);
-                binder.bind(ComponentBuilder.class).toInstance(parentBuilder);
+                binder.bind(new TypeLiteral<ComponentBuilder<?,?>>(){}).annotatedWith(Names.named("parent")).toInstance(parentBuilder);
                 binder.bind(String.class).toInstance(componentId);
             });
             B builder = injector.getInstance(builderImplType);
