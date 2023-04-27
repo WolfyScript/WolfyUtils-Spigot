@@ -120,15 +120,21 @@ public class PlayerStorage {
                 var objectMapper = core.getWolfyUtils().getJacksonMapperUtil().getGlobalMapper();
                 org.bukkit.NamespacedKey key = bukkitDataID.bukkit();
                 if (dataContainer.has(key, PersistentDataType.STRING)) {
-                    try {
-                        return objectMapper.reader(new InjectableValues.Std()
-                                        .addValue(WolfyCoreBukkit.class, core)
-                                        .addValue(UUID.class, playerUUID)
-                                )
-                                .forType(CustomPlayerData.class)
-                                .readValue(dataContainer.get(key, PersistentDataType.STRING));
-                    } catch (JsonProcessingException e) {
-                        e.printStackTrace();
+                    String jsonData = dataContainer.get(key, PersistentDataType.STRING);
+                    if (jsonData != null && !jsonData.equals("null") && !jsonData.isBlank()) {
+                        try {
+                            return objectMapper.reader(new InjectableValues.Std()
+                                            .addValue(WolfyCoreBukkit.class, core)
+                                            .addValue(UUID.class, playerUUID)
+                                    )
+                                    .forType(CustomPlayerData.class)
+                                    .readValue(jsonData);
+                        } catch (JsonProcessingException e) {
+                            core.getLogger().warning("Unable to load custom data from '" + jsonData + "'! Removing it now to prevent further issues!");
+                            // Directly modify the container instead of calling removeData() as the unload method will never be called anyway.
+                            dataContainer.remove(key);
+                            container.set(DATA_KEY, PersistentDataType.TAG_CONTAINER, dataContainer);
+                        }
                     }
                 }
                 return null;
