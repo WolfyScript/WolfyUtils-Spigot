@@ -180,6 +180,13 @@ public class FunctionalRecipeGenerator {
         if (!GENERATED_RECIPES.isEmpty()) return;
         try {
             ClassPool classPool = ClassPool.getDefault();
+            classPool.appendClassPath(new LoaderClassPath(ClassLoader.getPlatformClassLoader()));
+            classPool.appendClassPath(new LoaderClassPath(ClassLoader.getSystemClassLoader()));
+            classPool.appendClassPath(new LoaderClassPath(WolfyCoreBukkit.class.getClassLoader()));
+            classPool.appendClassPath(new LoaderClassPath(MINECRAFT_SERVER_CLASS.getClassLoader()));
+            classPool.importPackage("java.util");
+            classPool.importPackage("org.bukkit");
+            classPool.importPackage("net.minecraft");
             generateUtils(classPool);
             GENERATED_RECIPES.put(FunctionalRecipeType.CAMPFIRE, inject(classPool, RECIPE_CAMPFIRE_CLASS));
             GENERATED_RECIPES.put(FunctionalRecipeType.SMELTING, inject(classPool, RECIPE_FURNACE_CLASS));
