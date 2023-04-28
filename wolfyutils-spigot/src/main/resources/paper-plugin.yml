@@ -34,6 +34,8 @@ dependencies:
     required: false
   - name: SCore
     required: false
+  - name: Denizen
+    required: false
 
 load-before:
   - name: CustomCrafting
