@@ -41,7 +41,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import javax.inject.Named;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 @KeyedStaticId(key = "window")
 @ComponentBuilderSettings(base = WindowBuilder.class, component = Window.class)
@@ -52,7 +53,7 @@ public class WindowBuilderImpl extends AbstractBukkitComponentBuilder<Window, Ro
     private ChildBuilderImpl childComponentBuilder;
     protected int size;
     protected WindowType type;
-    protected WindowTitleUpdateCallback titleUpdateCallback = (guiHolder, window) -> net.kyori.adventure.text.Component.empty();
+    protected WindowTitleUpdateCallback titleUpdateCallback = (guiHolder, window, state) -> net.kyori.adventure.text.Component.empty();
     private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.def();
     private final Map<String, Signal.Builder<?>> signalBuilderMap = new HashMap<>();
 
@@ -61,6 +62,17 @@ public class WindowBuilderImpl extends AbstractBukkitComponentBuilder<Window, Ro
     protected WindowBuilderImpl(@JsonProperty("id") String windowID,
                                 @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils) {
         super(windowID, wolfyUtils);
+    }
+
+    @JsonSetter("title")
+    private void setTitle(String title) {
+        if (title != null) {
+            titleUpdateCallback = (guiHolder, window, state) -> getWolfyUtils().getChat().getMiniMessage().deserialize(title, TagResolver.resolver("signal", (argumentQueue, context1) -> {
+                if (state == null) return Tag.inserting(net.kyori.adventure.text.Component.empty());
+                Object value = state.captureSignal(argumentQueue.popOr("Missing signal id!").value()).get();
+                return Tag.inserting(context1.deserialize(String.valueOf(value)));
+            }));
+        }
     }
 
     @JsonSetter("render")

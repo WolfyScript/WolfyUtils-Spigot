@@ -1,6 +1,8 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
 import com.google.inject.Inject;
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.nms.inventory.InventoryUpdate;
 import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentState;
 import com.wolfyscript.utilities.common.gui.GuiHolder;
@@ -28,10 +30,16 @@ public class WindowStateImpl extends ComponentStateImpl<Window, RouterState> imp
     public void render(GuiHolder holder, RenderContext context) {
         if (shouldUpdate()) {
             updatedStateCache.clear();
+            if (holder instanceof GUIHolder guiHolder) {
+                InventoryUpdate.updateInventory(((WolfyCoreImpl) getOwner().getWolfyUtils().getCore()).getWolfyUtils().getPlugin(),
+                        guiHolder.getPlayer(),
+                        getOwner().createTitle(holder, this));
+            }
             getOwner().getRenderOptions().renderCallback().ifPresentOrElse(
                     renderCallback -> renderCallback.render(holder, this),
                     () -> getOwner().getRenderOptions().placement().forEach(this::renderComponent)
             );
+
             // Free up unused space/slots
             for (var entry : childComponentStates.entrySet()) {
                 var updatedState = updatedStateCache.get(entry.getKey());

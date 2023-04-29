@@ -25,7 +25,7 @@ public class TestGUI {
         manager.registerRouter("counter", builder -> builder
                 .children(children -> children
                         .window("mainmenu", mainMenu -> mainMenu
-                                .title((guiHolder, window) -> Component.text("Main Menu"))
+                                .title((guiHolder, window, state) -> Component.text("Main Menu"))
                                 .size(27)
                                 // Creates the signal this component will track and children can listen to
                                 .createSignal(COUNT, Integer.class, count -> count.defaultValue(state -> 0))

@@ -11,6 +11,7 @@ import com.wolfyscript.utilities.Platform;
 import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
 import com.wolfyscript.utilities.bukkit.commands.ChatActionCommand;
 import com.wolfyscript.utilities.bukkit.commands.DebugSimpleStackConfigCommand;
+import com.wolfyscript.utilities.bukkit.commands.GuiExampleCommand;
 import com.wolfyscript.utilities.bukkit.commands.InfoCommand;
 import com.wolfyscript.utilities.bukkit.commands.InputCommand;
 import com.wolfyscript.utilities.bukkit.commands.QueryDebugCommand;
@@ -595,7 +596,8 @@ public abstract class WolfyCoreImpl implements WolfyCore {
                 new SpawnParticleAnimationCommand(this),
                 new SpawnParticleEffectCommand(this),
                 new QueryDebugCommand(this),
-                new DebugSimpleStackConfigCommand(this)
+                new DebugSimpleStackConfigCommand(this),
+                new GuiExampleCommand(this)
         );
     }
 

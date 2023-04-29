@@ -19,10 +19,6 @@
 package com.wolfyscript.utilities.bukkit.commands;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
-import com.wolfyscript.utilities.versioning.ServerVersion;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
@@ -30,14 +26,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-public class InfoCommand extends Command implements PluginIdentifiableCommand {
+public class GuiExampleCommand extends Command implements PluginIdentifiableCommand {
 
     private final WolfyCoreImpl core;
 
-    public InfoCommand(WolfyCoreImpl core) {
-        super("wolfyutils");
+    public GuiExampleCommand(WolfyCoreImpl core) {
+        super("gui_example");
         this.core = core;
-        setDescription("Displays info about the plugin version, etc.");
+        setDescription("Opens the specified example GUI.");
     }
 
     @NotNull
@@ -49,14 +45,13 @@ public class InfoCommand extends Command implements PluginIdentifiableCommand {
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
         if (!(sender instanceof Player player)) return true;
-        core.getWolfyUtils().getChat().sendMessages((Player) sender, true,
-                Component.text("——————— ", NamedTextColor.GRAY).append(Component.text("WolfyUtilities", NamedTextColor.AQUA, TextDecoration.BOLD)).append(Component.text(" ———————")),
-                Component.empty(),
-                Component.text("Author: ", NamedTextColor.GRAY).append(Component.text(String.join(", ", core.getWolfyUtils().getPlugin().getDescription().getAuthors()), null, TextDecoration.BOLD)),
-                Component.empty(),
-                Component.text("Version: ", NamedTextColor.GRAY).append(Component.text(ServerVersion.getWUVersion().getVersion(), null, TextDecoration.BOLD)),
-                Component.text("———————————————————————", NamedTextColor.GRAY)
-        );
+        if (args.length > 0) {
+            // counter
+            // ... tbd
+            core.getWolfyUtils().getGUIManager().createViewAndOpen(args[0], player.getUniqueId());
+        } else {
+            core.getWolfyUtils().getGUIManager().createViewAndOpen("counter", player.getUniqueId());
+        }
         return true;
     }
 

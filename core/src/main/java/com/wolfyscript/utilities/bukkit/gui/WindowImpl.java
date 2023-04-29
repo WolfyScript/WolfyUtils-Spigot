@@ -105,7 +105,7 @@ public final class WindowImpl extends AbstractBukkitComponent implements Window 
         // No active Window or it is another Window, need to recreate inventory
         final Inventory inventory;
         final GUIHolder holder = new GUIHolder(bukkitPlayer, viewManager, this);
-        final net.kyori.adventure.text.Component title = createTitle(holder);
+        final net.kyori.adventure.text.Component title = createTitle(holder, null);
         if (((WolfyUtilsBukkit) getWolfyUtils()).getCore().getCompatibilityManager().isPaper()) {
             // Paper has direct Adventure support, so use it for better titles!
             inventory = getInventoryType().map(inventoryType -> Bukkit.createInventory(holder, inventoryType, title))
@@ -187,8 +187,8 @@ public final class WindowImpl extends AbstractBukkitComponent implements Window 
     }
 
     @Override
-    public net.kyori.adventure.text.Component createTitle(GuiHolder holder) {
-        return titleUpdateCallback.run(holder, this);
+    public net.kyori.adventure.text.Component createTitle(GuiHolder holder, WindowState state) {
+        return titleUpdateCallback.run(holder, this, state);
     }
 
     @Override
