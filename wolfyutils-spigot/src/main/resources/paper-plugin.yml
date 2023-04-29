@@ -1,6 +1,6 @@
 name: WolfyUtilities
 version: '${project.version}'
-main: com.wolfyscript.utilities.paper.WolfyCorePaper
+main: com.wolfyscript.utilities.paper.WolfyCorePaperBootstrap
 api-version: '1.19' # This config was introduced in 1.19, so it can only be loaded on 1.19+ servers!
 authors: [ WolfyScript ]
 load: STARTUP

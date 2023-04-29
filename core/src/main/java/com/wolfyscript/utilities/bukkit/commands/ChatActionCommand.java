@@ -42,7 +42,7 @@ public class ChatActionCommand extends Command implements PluginIdentifiableComm
     @NotNull
     @Override
     public Plugin getPlugin() {
-        return core;
+        return core.getWolfyUtils().getPlugin();
     }
 
     @Override

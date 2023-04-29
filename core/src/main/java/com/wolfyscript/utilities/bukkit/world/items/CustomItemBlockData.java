@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.events.CustomItemBreakEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageBreakEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoragePlaceEvent;
@@ -20,8 +19,6 @@ import com.wolfyscript.utilities.common.WolfyCore;
 import java.util.Optional;
 import java.util.UUID;
 import org.bukkit.Bukkit;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 

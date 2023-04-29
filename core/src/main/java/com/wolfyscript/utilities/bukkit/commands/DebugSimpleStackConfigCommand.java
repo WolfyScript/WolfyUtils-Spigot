@@ -82,6 +82,6 @@ public class DebugSimpleStackConfigCommand extends Command implements PluginIden
     @NotNull
     @Override
     public Plugin getPlugin() {
-        return plugin;
+        return plugin.getWolfyUtils().getPlugin();
     }
 }

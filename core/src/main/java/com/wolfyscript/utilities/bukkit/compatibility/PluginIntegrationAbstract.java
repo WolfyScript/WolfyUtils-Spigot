@@ -19,16 +19,14 @@
 package com.wolfyscript.utilities.bukkit.compatibility;
 
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
-import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import org.bukkit.plugin.Plugin;
 
 /**
  * To add a PluginIntegration you need to extend this class and add the annotation {@link WUPluginIntegration} to that class.<br>
  * <br>
- * The constructor must have only one parameter of type {@link WolfyCoreBukkit}, that is passed to the super class.<br>
+ * The constructor must have only one parameter of type {@link WolfyCoreImpl}, that is passed to the super class.<br>
  * <br>
  * To effectively pass the plugin name to the annotation and PluginIntegration it is recommended to create a constant.
  * <br>

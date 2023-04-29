@@ -1,8 +1,6 @@
 package com.wolfyscript.utilities.bukkit.persistent.world;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
-import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.math.Vec2i;
 import java.util.HashMap;
 import java.util.Map;

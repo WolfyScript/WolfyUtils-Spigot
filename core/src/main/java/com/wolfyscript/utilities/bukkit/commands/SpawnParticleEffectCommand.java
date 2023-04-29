@@ -56,7 +56,7 @@ public final class SpawnParticleEffectCommand extends Command implements PluginI
     @NotNull
     @Override
     public Plugin getPlugin() {
-        return core;
+        return core.getWolfyUtils().getPlugin();
     }
 
     @Override

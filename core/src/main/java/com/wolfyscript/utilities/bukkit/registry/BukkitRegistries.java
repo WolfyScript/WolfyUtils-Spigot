@@ -19,9 +19,7 @@
 package com.wolfyscript.utilities.bukkit.registry;
 
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
-import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
 import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;

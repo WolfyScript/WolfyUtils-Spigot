@@ -3,7 +3,6 @@ package me.wolfyscript.utilities.compatibility.plugins;
 import com.google.inject.Inject;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
-import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.fancybags.FancyBagsItemsRef;
 import org.bukkit.plugin.Plugin;

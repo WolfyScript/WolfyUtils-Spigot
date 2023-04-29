@@ -43,21 +43,21 @@ public class InfoCommand extends Command implements PluginIdentifiableCommand {
     @NotNull
     @Override
     public Plugin getPlugin() {
-        return core;
+        return core.getWolfyUtils().getPlugin();
     }
 
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
-        if (!(sender instanceof Player)) return true;
+        if (!(sender instanceof Player player)) return true;
         core.getWolfyUtils().getChat().sendMessages((Player) sender, true,
                 Component.text("——————— ", NamedTextColor.GRAY).append(Component.text("WolfyUtilities", NamedTextColor.AQUA, TextDecoration.BOLD)).append(Component.text(" ———————")),
                 Component.empty(),
-                Component.text("Author: ", NamedTextColor.GRAY).append(Component.text(String.join(", ", core.getDescription().getAuthors()), null, TextDecoration.BOLD)),
+                Component.text("Author: ", NamedTextColor.GRAY).append(Component.text(String.join(", ", core.getWolfyUtils().getPlugin().getDescription().getAuthors()), null, TextDecoration.BOLD)),
                 Component.empty(),
                 Component.text("Version: ", NamedTextColor.GRAY).append(Component.text(ServerVersion.getWUVersion().getVersion(), null, TextDecoration.BOLD)),
                 Component.text("———————————————————————", NamedTextColor.GRAY)
         );
-        plugin.getWolfyUtils().getGUIManager().createViewAndOpen("counter", player.getUniqueId());
+        core.getWolfyUtils().getGUIManager().createViewAndOpen("counter", player.getUniqueId());
         return true;
     }
 

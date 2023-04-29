@@ -37,15 +37,7 @@ public class WolfyUtilsBukkit extends WolfyUtils {
     private final ConfigAPI configAPI;
     private final GuiAPIManagerImpl guiAPIManager;
 
-    WolfyUtilsBukkit(WolfyCoreImpl core, Plugin plugin, Class<? extends CustomCache> customCacheClass) {
-        this(core, plugin, customCacheClass, false);
-    }
-
-    WolfyUtilsBukkit(WolfyCoreImpl core, Plugin plugin, boolean init) {
-        this(core, plugin, CustomCache.class, init);
-    }
-
-    WolfyUtilsBukkit(WolfyCoreImpl core, Plugin plugin, Class<? extends CustomCache> cacheType, boolean init) {
+    WolfyUtilsBukkit(WolfyCoreImpl core, Plugin plugin) {
         this.core = core;
         this.plugin = plugin;
         this.languageAPI = new LangAPISpigot(this);

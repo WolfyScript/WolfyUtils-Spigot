@@ -1,9 +1,7 @@
 package com.wolfyscript.utilities.bukkit.persistent;
 
 import com.google.common.base.Preconditions;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
-import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.WorldStorage;
 import java.util.HashMap;

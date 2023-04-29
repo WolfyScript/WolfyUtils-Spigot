@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import java.io.IOException;
 import java.util.Objects;
-import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.plugins.DenizenIntegrationImpl;
 import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;

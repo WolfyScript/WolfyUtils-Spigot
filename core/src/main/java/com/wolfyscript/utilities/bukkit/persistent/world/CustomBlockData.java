@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import com.wolfyscript.utilities.Keyed;
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItemBlockData;
 import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
@@ -26,7 +25,7 @@ import com.wolfyscript.utilities.json.KeyedTypeResolver;
  * The String content is then deserialized to that type using Jackson.<br>
  * There are injectable values that can be used in the constructor to get access to the Core, ChunkStorage, Position, etc.<br>
  * <ul>
- *     <li>{@link WolfyUtilBootstrap}</li>
+ *     <li>{@link com.wolfyscript.utilities.bukkit.WolfyCoreImpl}</li>
  *     <li>{@link ChunkStorage}</li>
  *     <li>{@link org.bukkit.util.Vector}</li>
  * </ul>

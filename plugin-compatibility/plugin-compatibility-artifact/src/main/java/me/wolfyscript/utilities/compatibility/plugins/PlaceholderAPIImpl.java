@@ -24,7 +24,6 @@ import com.wolfyscript.utilities.bukkit.compatibility.plugins.PlaceholderAPIInte
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.events.ExpansionsLoadedEvent;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
-import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.placeholderapi.value_providers.ValueProviderFloatPAPI;
 import me.wolfyscript.utilities.compatibility.plugins.placeholderapi.value_providers.ValueProviderIntegerPAPI;

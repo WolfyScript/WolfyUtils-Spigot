@@ -64,7 +64,7 @@ public final class SpawnParticleAnimationCommand extends Command implements Plug
     @NotNull
     @Override
     public Plugin getPlugin() {
-        return core;
+        return core.getWolfyUtils().getPlugin();
     }
 
     @Override

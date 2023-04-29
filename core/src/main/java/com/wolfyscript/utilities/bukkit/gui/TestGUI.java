@@ -1,19 +1,21 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.gui.ButtonBuilder;
 import com.wolfyscript.utilities.common.gui.GuiAPIManager;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.Signal;
 import com.wolfyscript.utilities.eval.value_provider.ValueProviderStringConst;
+import java.io.File;
 import net.kyori.adventure.text.Component;
 
 public class TestGUI {
 
-    private WolfyCoreBukkit core;
+    private WolfyCoreImpl core;
 
-    public TestGUI(WolfyCoreBukkit core) {
+    public TestGUI(WolfyCoreImpl core) {
         this.core = core;
     }
 
@@ -108,7 +110,7 @@ public class TestGUI {
     public void initWithConfig() {
         GuiAPIManager manager = core.getWolfyUtils().getGUIManager();
         final String COUNT = "count";
-        manager.readFromFile(core.getWolfyUtils().getDataFolder().getPath() + "/com/wolfyscript/utilities/common/gui/counter/counter_router.conf", builder -> builder
+        manager.registerRouterFromFile(new File(core.getWolfyUtils().getDataFolder().getPath(), "com/wolfyscript/utilities/common/gui/counter/counter_router.conf"), builder -> builder
                 .children(children -> children
                         .window("main_menu", mainMenu -> mainMenu
                                 // Creates the signal this component will track and children can listen to

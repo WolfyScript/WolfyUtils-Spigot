@@ -20,7 +20,6 @@ package com.wolfyscript.utilities.bukkit.world.particles;
 
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;

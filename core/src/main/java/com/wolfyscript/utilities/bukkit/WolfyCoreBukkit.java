@@ -1,18 +1,10 @@
 package com.wolfyscript.utilities.bukkit;
 
-import com.fasterxml.jackson.databind.InjectableValues;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.wolfyscript.jackson.dataformat.hocon.HoconMapper;
-import com.wolfyscript.utilities.Platform;
-import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
 import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManager;
 import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManagerBukkit;
-import com.wolfyscript.utilities.bukkit.gui.TestGUI;
 import com.wolfyscript.utilities.common.WolfyCore;
-import org.reflections.Reflections;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The core implementation of WolfyUtils.<br>
@@ -22,15 +14,14 @@ import org.reflections.Reflections;
  */
 public final class WolfyCoreBukkit extends WolfyCoreImpl implements WolfyCore {
 
-    private final WolfyUtilsBukkit api;
+    private BukkitAudiences adventure;
     private final CompatibilityManager compatibilityManager;
 
     /**
      * Constructor invoked by Spigot when the plugin is loaded.
      */
-    public WolfyCoreBukkit(WolfyUtilBootstrap plugin) {
+    public WolfyCoreBukkit(WolfyCoreBukkitBootstrap plugin) {
         super(plugin);
-        this.api = getOrCreate(plugin);
         this.compatibilityManager = new CompatibilityManagerBukkit(this);
     }
 
@@ -42,7 +33,7 @@ public final class WolfyCoreBukkit extends WolfyCoreImpl implements WolfyCore {
      */
     @Deprecated
     public static WolfyCoreBukkit getInstance() {
-        return WolfyUtilBootstrap.getInstance().getCore();
+        return (WolfyCoreBukkit) WolfyCoreBukkitBootstrap.getInstance().getCore();
     }
 
     @Override
@@ -50,14 +41,12 @@ public final class WolfyCoreBukkit extends WolfyCoreImpl implements WolfyCore {
         return compatibilityManager;
     }
 
-    /**
-     * Gets the {@link Reflections} instance of the plugins' package.
-     *
-     * @return The Reflection of the plugins' package.
-     */
-    @Override
-    public WolfyUtilsBukkit getWolfyUtils() {
-        return api;
+    @NotNull
+    public BukkitAudiences getAdventure() {
+        if (this.adventure == null) {
+            throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
+        }
+        return this.adventure;
     }
 
     @Override
@@ -67,22 +56,17 @@ public final class WolfyCoreBukkit extends WolfyCoreImpl implements WolfyCore {
 
     @Override
     public void enable() {
+        this.adventure = BukkitAudiences.create(getPlugin());
         super.enable();
-        TestGUI testGUI = new TestGUI(this);
-
-        plugin.saveResource("com/wolfyscript/utilities/common/gui/counter/counter_router.conf", true);
-        plugin.saveResource("com/wolfyscript/utilities/common/gui/counter/main_menu.conf", true);
-        testGUI.initWithConfig();
     }
 
     @Override
     public void disable() {
         super.disable();
-    }
-
-    @Override
-    public BukkitChat getChat() {
-        return api.getChat();
+        if (this.adventure != null) {
+            this.adventure.close();
+            this.adventure = null;
+        }
     }
 
 }

@@ -18,6 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.commands;
 
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import java.util.List;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -40,7 +41,7 @@ public final class InputCommand extends Command implements PluginIdentifiableCom
     @NotNull
     @Override
     public Plugin getPlugin() {
-        return core;
+        return core.getWolfyUtils().getPlugin();
     }
 
     @Override

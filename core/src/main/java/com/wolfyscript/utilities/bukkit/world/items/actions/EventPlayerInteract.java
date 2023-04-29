@@ -21,7 +21,6 @@ package com.wolfyscript.utilities.bukkit.world.items.actions;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import java.util.List;
 import org.bukkit.block.BlockFace;

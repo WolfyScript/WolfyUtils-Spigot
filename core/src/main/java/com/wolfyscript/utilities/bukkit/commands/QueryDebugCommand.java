@@ -47,7 +47,7 @@ public final class QueryDebugCommand extends Command implements PluginIdentifiab
     @NotNull
     @Override
     public Plugin getPlugin() {
-        return core;
+        return core.getWolfyUtils().getPlugin();
     }
 
     @Override
@@ -55,7 +55,7 @@ public final class QueryDebugCommand extends Command implements PluginIdentifiab
         if (!(sender instanceof Player player) || !testPermission(sender)) return true;
         ItemStack stack = player.getEquipment().getItem(EquipmentSlot.HAND);
         if (!ItemUtils.isAirOrNull(stack)) {
-            File file = new File(core.getDataFolder(), "query_debug.json");
+            File file = new File(core.getWolfyUtils().getDataFolder(), "query_debug.json");
             if (file.exists()) {
                 NBTQuery.of(file).ifPresent(nbtQuery -> {
                     NBTItem nbtItem = new NBTItem(stack);
