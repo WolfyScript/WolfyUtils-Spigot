@@ -18,37 +18,44 @@
 
 package com.wolfyscript.utilities.bukkit.commands;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.nbt.NBTQuery;
+import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import java.io.File;
-import java.util.List;
-import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
+import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class DebugNBTQueryCommand implements TabExecutor {
+public final class QueryDebugCommand extends Command implements PluginIdentifiableCommand {
 
-    private final WolfyCoreBukkit plugin;
+    private final WolfyCoreImpl core;
 
-    public DebugNBTQueryCommand(WolfyCoreBukkit plugin) {
-        this.plugin = plugin;
+    public QueryDebugCommand(WolfyCoreImpl core) {
+        super("query_item");
+        this.core = core;
+        setUsage("/query_item");
+        setPermission("wolfyutilities.command.query_debug");
+    }
+
+    @NotNull
+    @Override
+    public Plugin getPlugin() {
+        return core;
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!(sender instanceof Player player)) return true;
-        if (!player.hasPermission("wolfyutilities.command.query_debug")) return true;
+    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
+        if (!(sender instanceof Player player) || !testPermission(sender)) return true;
         ItemStack stack = player.getEquipment().getItem(EquipmentSlot.HAND);
         if (!ItemUtils.isAirOrNull(stack)) {
-            File file = new File(plugin.getWolfyUtils().getDataFolder(), "query_debug.json");
+            File file = new File(core.getDataFolder(), "query_debug.json");
             if (file.exists()) {
                 NBTQuery.of(file).ifPresent(nbtQuery -> {
                     NBTItem nbtItem = new NBTItem(stack);
@@ -69,8 +76,4 @@ public class DebugNBTQueryCommand implements TabExecutor {
         return true;
     }
 
-    @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        return null;
-    }
 }

@@ -3,6 +3,7 @@ package com.wolfyscript.utilities.bukkit.nms.item.crafting;
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.versioning.MinecraftVersion;
 import com.wolfyscript.utilities.versioning.ServerVersion;
 import java.lang.reflect.Constructor;
@@ -57,21 +58,22 @@ public abstract class FunctionalRecipeBuilderCooking extends FunctionalRecipeBui
 
     public void createAndRegister() {
         try {
-            Class<?> recipeClass = FunctionalRecipeGenerator.getFunctionalRecipeClass(getType());
+            FunctionalRecipeGenerator functionalRecipeGenerator = WolfyCoreImpl.getInstance().getFunctionalRecipeGenerator();
+            Class<?> recipeClass = functionalRecipeGenerator.getFunctionalRecipeClass(getType());
             Constructor<?> constructor;
             FunctionalRecipe<Inventory> recipe;
             if (ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 19, 3))) {
                 constructor = recipeClass.getConstructor(
-                        BukkitNamespacedKey.class, RecipeMatcher.class, RecipeAssembler.class, RecipeRemainingItemsFunction.class, String.class, String.class, RecipeChoice.class, ItemStack.class, Float.TYPE, Integer.TYPE
+                        NamespacedKey.class, RecipeMatcher.class, RecipeAssembler.class, RecipeRemainingItemsFunction.class, String.class, String.class, RecipeChoice.class, ItemStack.class, Float.TYPE, Integer.TYPE
                 );
                 recipe = (FunctionalRecipe<Inventory>) constructor.newInstance(key, recipeMatcher, recipeAssembler, remainingItemsFunction, group, "misc", ingredient, result, experience, cookingTime);
             } else {
                 constructor = recipeClass.getConstructor(
-                        BukkitNamespacedKey.class, RecipeMatcher.class, RecipeAssembler.class, RecipeRemainingItemsFunction.class, String.class, RecipeChoice.class, ItemStack.class, Float.TYPE, Integer.TYPE
+                        NamespacedKey.class, RecipeMatcher.class, RecipeAssembler.class, RecipeRemainingItemsFunction.class, String.class, RecipeChoice.class, ItemStack.class, Float.TYPE, Integer.TYPE
                 );
                 recipe = (FunctionalRecipe<Inventory>) constructor.newInstance(key, recipeMatcher, recipeAssembler, remainingItemsFunction, group, ingredient, result, experience, cookingTime);
             }
-            FunctionalRecipeGenerator.addRecipeToRecipeManager(recipe);
+            functionalRecipeGenerator.addRecipeToRecipeManager(recipe);
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }

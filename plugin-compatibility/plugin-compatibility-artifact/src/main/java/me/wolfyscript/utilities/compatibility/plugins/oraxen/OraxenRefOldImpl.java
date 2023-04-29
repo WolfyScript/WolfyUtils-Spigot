@@ -21,11 +21,12 @@ package me.wolfyscript.utilities.compatibility.plugins.oraxen;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.wolfyscript.utilities.bukkit.compatibility.plugins.oraxen.OraxenRef;
+import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
+import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import io.th0rgal.oraxen.items.OraxenItems;
 import java.io.IOException;
 import java.util.Objects;
-import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
-import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -96,7 +97,7 @@ public class OraxenRefOldImpl extends APIReference implements OraxenRef {
         return new OraxenRefOldImpl(this);
     }
 
-    public static class Parser extends PluginParser<OraxenRefOldImpl> {
+    public static class Parser extends APIReference.PluginParser<OraxenRefOldImpl> {
 
         public Parser() {
             super("Oraxen", "oraxen");

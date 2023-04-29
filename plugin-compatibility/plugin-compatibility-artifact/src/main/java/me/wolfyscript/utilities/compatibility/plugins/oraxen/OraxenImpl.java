@@ -16,29 +16,36 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.compatibility.plugins;
+package me.wolfyscript.utilities.compatibility.plugins.oraxen;
 
-import com.google.inject.Inject;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.OraxenIntegration;
-import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
+import com.wolfyscript.utilities.bukkit.compatibility.plugins.oraxen.OraxenRef;
 import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
-import me.wolfyscript.utilities.compatibility.plugins.oraxen.OraxenRefImpl;
 import org.bukkit.plugin.Plugin;
 
 @WUPluginIntegration(pluginName = OraxenIntegration.KEY)
 public class OraxenImpl extends PluginIntegrationAbstract implements OraxenIntegration {
 
-    @Inject
-    protected OraxenImpl(WolfyCoreBukkit core) {
+    private final boolean IS_LATEST_API = WolfyCoreImpl.hasClass("io.th0rgal.oraxen.api.OraxenItems");
+
+    protected OraxenImpl(WolfyCoreImpl core) {
         super(core, OraxenIntegration.KEY);
     }
 
     @Override
     public void init(Plugin plugin) {
-        core.registerAPIReference(new OraxenRefImpl.Parser());
+        if (IS_LATEST_API) {
+            core.registerAPIReference(new OraxenRefImpl.Parser());
+        } else {
+            core.registerAPIReference(new OraxenRefOldImpl.Parser());
+        }
+    }
+
+    public boolean isLatestAPI() {
+        return IS_LATEST_API;
     }
 
     @Override
@@ -48,6 +55,6 @@ public class OraxenImpl extends PluginIntegrationAbstract implements OraxenInteg
 
     @Override
     public boolean isAPIReferenceIncluded(APIReference reference) {
-        return reference instanceof OraxenRefImpl;
+        return reference instanceof OraxenRef;
     }
 }

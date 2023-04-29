@@ -18,9 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.compatibility;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
-import com.wolfyscript.utilities.common.WolfyCore;
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,11 +26,11 @@ public final class CompatibilityManagerBukkit implements CompatibilityManager {
 
 
     private static final Map<String, Boolean> classes = new HashMap<>();
-    private final WolfyCore core;
+    private final WolfyCoreImpl core;
     private final PluginsBukkit pluginsBukkit;
     private final boolean isPaper;
 
-    public CompatibilityManagerBukkit(WolfyCoreBukkit core) {
+    public CompatibilityManagerBukkit(WolfyCoreImpl core) {
         this.core = core;
         this.pluginsBukkit = new PluginsBukkit(core);
         this.isPaper = hasClass("com.destroystokyo.paper.utils.PaperPluginLogger");

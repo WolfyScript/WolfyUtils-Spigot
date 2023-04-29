@@ -19,15 +19,16 @@
 package com.wolfyscript.utilities.bukkit.network.messages;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 
 public class MessageHandler {
 
-    private final WolfyCoreBukkit coreBukkit;
+    private final WolfyCoreImpl coreBukkit;
     private final WolfyUtilsBukkit wolfyUtils;
     private final MessageAPI messageAPI;
 
-    public MessageHandler(WolfyCoreBukkit coreBukkit) {
+    public MessageHandler(WolfyCoreImpl coreBukkit) {
         this.coreBukkit = coreBukkit;
         this.wolfyUtils = coreBukkit.getWolfyUtils();
         this.messageAPI = this.wolfyUtils.getMessageAPI();

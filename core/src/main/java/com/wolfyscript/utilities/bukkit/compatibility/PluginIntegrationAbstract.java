@@ -20,6 +20,7 @@ package com.wolfyscript.utilities.bukkit.compatibility;
 
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import org.bukkit.plugin.Plugin;
@@ -53,7 +54,7 @@ import org.bukkit.plugin.Plugin;
 public abstract class PluginIntegrationAbstract implements PluginIntegration {
 
     private final String pluginName;
-    protected final WolfyCoreBukkit core;
+    protected final WolfyCoreImpl core;
     private boolean enabled = false;
     private boolean ignore = false;
 
@@ -63,7 +64,7 @@ public abstract class PluginIntegrationAbstract implements PluginIntegration {
      * @param core The WolfyUtilCore.
      * @param pluginName The name of the associated plugin.
      */
-    protected PluginIntegrationAbstract(WolfyCoreBukkit core, String pluginName) {
+    protected PluginIntegrationAbstract(WolfyCoreImpl core, String pluginName) {
         this.core = core;
         this.pluginName = pluginName;
     }
@@ -90,7 +91,7 @@ public abstract class PluginIntegrationAbstract implements PluginIntegration {
         return pluginName;
     }
 
-    public final WolfyCoreBukkit getCore() {
+    public final WolfyCoreImpl getCore() {
         return core;
     }
 

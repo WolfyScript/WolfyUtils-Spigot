@@ -19,6 +19,7 @@
 package com.wolfyscript.utilities.bukkit.listeners;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.events.ArmorEquipEvent;
 import com.wolfyscript.utilities.bukkit.events.EventFactory;
 import com.wolfyscript.utilities.bukkit.world.inventory.InventoryUtils;
@@ -54,9 +55,9 @@ import org.bukkit.util.BoundingBox;
 
 public class EquipListener implements Listener {
 
-    private final WolfyCoreBukkit core;
+    private final WolfyCoreImpl core;
 
-    public EquipListener(WolfyCoreBukkit core) {
+    public EquipListener(WolfyCoreImpl core) {
         this.core = core;
     }
 

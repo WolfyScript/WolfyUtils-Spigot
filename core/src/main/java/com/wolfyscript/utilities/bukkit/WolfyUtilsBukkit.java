@@ -13,6 +13,7 @@ import com.wolfyscript.utilities.bukkit.world.items.BookUtil;
 import com.wolfyscript.utilities.bukkit.world.items.Items;
 import com.wolfyscript.utilities.common.Identifiers;
 import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.common.gui.GuiAPIManager;
 import com.wolfyscript.utilities.common.language.LanguageAPI;
 import com.wolfyscript.utilities.exceptions.InvalidCacheTypeException;
 import java.io.File;
@@ -23,10 +24,8 @@ import org.bukkit.plugin.Plugin;
 
 public class WolfyUtilsBukkit extends WolfyUtils {
 
-    private final WolfyCoreBukkit core;
-
+    private final WolfyCoreImpl core;
     private final Plugin plugin;
-
     private final BukkitChat chat;
     private final LanguageAPI languageAPI;
     private final Console console;
@@ -43,15 +42,15 @@ public class WolfyUtilsBukkit extends WolfyUtils {
 
     private final boolean initialize;
 
-    WolfyUtilsBukkit(WolfyCoreBukkit core, Plugin plugin, Class<? extends CustomCache> customCacheClass) {
+    WolfyUtilsBukkit(WolfyCoreImpl core, Plugin plugin, Class<? extends CustomCache> customCacheClass) {
         this(core, plugin, customCacheClass, false);
     }
 
-    WolfyUtilsBukkit(WolfyCoreBukkit core, Plugin plugin, boolean init) {
+    WolfyUtilsBukkit(WolfyCoreImpl core, Plugin plugin, boolean init) {
         this(core, plugin, CustomCache.class, init);
     }
 
-    WolfyUtilsBukkit(WolfyCoreBukkit core, Plugin plugin, Class<? extends CustomCache> cacheType, boolean init) {
+    WolfyUtilsBukkit(WolfyCoreImpl core, Plugin plugin, Class<? extends CustomCache> cacheType, boolean init) {
         this.core = core;
         this.plugin = plugin;
         this.languageAPI = new LangAPISpigot(this);
@@ -76,7 +75,7 @@ public class WolfyUtilsBukkit extends WolfyUtils {
 
     @Override
     public WolfyCoreBukkit getCore() {
-        return core;
+        return (WolfyCoreBukkit) core;
     }
 
     public BukkitRegistries getRegistries() {
@@ -115,6 +114,11 @@ public class WolfyUtilsBukkit extends WolfyUtils {
     @Override
     public Identifiers getIdentifiers() {
         return identifiers;
+    }
+
+    @Override
+    public GuiAPIManager getGUIManager() {
+        return null;
     }
 
     /**
