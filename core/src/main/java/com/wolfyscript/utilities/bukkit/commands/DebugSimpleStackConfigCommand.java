@@ -19,31 +19,33 @@
 package com.wolfyscript.utilities.bukkit.commands;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemReference;
 import com.wolfyscript.utilities.bukkit.world.items.reference.SimpleBukkitItemReference;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
+import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class DebugSimpleStackConfigCommand implements TabExecutor {
+public class DebugSimpleStackConfigCommand extends Command implements PluginIdentifiableCommand {
 
-    private final WolfyCoreBukkit plugin;
+    private final WolfyCoreImpl plugin;
 
-    public DebugSimpleStackConfigCommand(WolfyCoreBukkit plugin) {
+    public DebugSimpleStackConfigCommand(WolfyCoreImpl plugin) {
+        super("simple_bukkit_stack");
         this.plugin = plugin;
+        setUsage("/simple_bukkit_stack");
+        setDescription("DEBUG!");
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) return true;
         if (!player.hasPermission("wolfyutilities.command.simple_bukkit_stack_debug")) return true;
         if (!ItemUtils.isAirOrNull(player.getEquipment().getItemInMainHand())) {
@@ -77,8 +79,9 @@ public class DebugSimpleStackConfigCommand implements TabExecutor {
         return true;
     }
 
+    @NotNull
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        return null;
+    public Plugin getPlugin() {
+        return plugin;
     }
 }

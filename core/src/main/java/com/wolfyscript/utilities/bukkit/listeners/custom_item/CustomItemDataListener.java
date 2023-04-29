@@ -1,6 +1,7 @@
 package com.wolfyscript.utilities.bukkit.listeners.custom_item;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.events.CustomItemPlaceEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageBreakEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageDropItemsEvent;
@@ -21,9 +22,9 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 
 public class CustomItemDataListener implements Listener {
 
-    private final WolfyCoreBukkit core;
+    private final WolfyCoreImpl core;
 
-    public CustomItemDataListener(WolfyCoreBukkit core) {
+    public CustomItemDataListener(WolfyCoreImpl core) {
         this.core = core;
     }
 

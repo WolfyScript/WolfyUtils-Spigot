@@ -21,10 +21,8 @@ import org.bukkit.plugin.Plugin;
 
 public class WolfyUtilsBukkit extends WolfyUtils {
 
-    private final WolfyCoreBukkit core;
-
+    private final WolfyCoreImpl core;
     private final Plugin plugin;
-
     private final BukkitChat chat;
     private final LanguageAPI languageAPI;
     private final Console console;
@@ -39,7 +37,15 @@ public class WolfyUtilsBukkit extends WolfyUtils {
     private final ConfigAPI configAPI;
     private final GuiAPIManagerImpl guiAPIManager;
 
-    WolfyUtilsBukkit(WolfyCoreBukkit core, Plugin plugin) {
+    WolfyUtilsBukkit(WolfyCoreImpl core, Plugin plugin, Class<? extends CustomCache> customCacheClass) {
+        this(core, plugin, customCacheClass, false);
+    }
+
+    WolfyUtilsBukkit(WolfyCoreImpl core, Plugin plugin, boolean init) {
+        this(core, plugin, CustomCache.class, init);
+    }
+
+    WolfyUtilsBukkit(WolfyCoreImpl core, Plugin plugin, Class<? extends CustomCache> cacheType, boolean init) {
         this.core = core;
         this.plugin = plugin;
         this.languageAPI = new LangAPISpigot(this);
@@ -62,7 +68,7 @@ public class WolfyUtilsBukkit extends WolfyUtils {
 
     @Override
     public WolfyCoreBukkit getCore() {
-        return core;
+        return (WolfyCoreBukkit) core;
     }
 
     public BukkitRegistries getRegistries() {

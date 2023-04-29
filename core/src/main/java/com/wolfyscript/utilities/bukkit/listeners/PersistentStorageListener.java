@@ -1,6 +1,7 @@
 package com.wolfyscript.utilities.bukkit.listeners;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageBreakEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageDropItemsEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageMultiPlaceEvent;
@@ -55,10 +56,10 @@ public class PersistentStorageListener implements Listener {
 
     public static final String PREVIOUS_BROKEN_STORE = "previous_store";
 
-    private final WolfyCoreBukkit core;
+    private final WolfyCoreImpl core;
     private final PersistentStorage persistentStorage;
 
-    public PersistentStorageListener(WolfyCoreBukkit core) {
+    public PersistentStorageListener(WolfyCoreImpl core) {
         this.core = core;
         this.persistentStorage = core.getPersistentStorage();
     }
@@ -138,7 +139,7 @@ public class PersistentStorageListener implements Listener {
     public void onBlockPlaceMulti(BlockMultiPlaceEvent event) {
         WorldStorage worldStorage = persistentStorage.getOrCreateWorldStorage(event.getBlock().getWorld());
         List<BlockStorage> storages = event.getReplacedBlockStates().stream().map(state -> worldStorage.createBlockStorage(state.getLocation())).toList();
-        var blockStorageMultiPlaceEvent = new BlockStorageMultiPlaceEvent(event.getReplacedBlockStates(), storages, event.getBlockAgainst(), event.getItemInHand(), event.getPlayer(), event.canBuild());
+        var blockStorageMultiPlaceEvent = new BlockStorageMultiPlaceEvent(event.getReplacedBlockStates(), storages, event.getBlockAgainst(), event.getItemInHand(), event.getPlayer(), event.canBuild(), event.getHand());
         blockStorageMultiPlaceEvent.setCancelled(event.isCancelled());
         Bukkit.getPluginManager().callEvent(blockStorageMultiPlaceEvent);
         event.setCancelled(blockStorageMultiPlaceEvent.isCancelled());

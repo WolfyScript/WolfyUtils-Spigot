@@ -2,6 +2,7 @@ package com.wolfyscript.utilities.bukkit.nms.item.crafting;
 
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.nms.Reflection;
 import com.wolfyscript.utilities.versioning.MinecraftVersion;
 import com.wolfyscript.utilities.versioning.ServerVersion;
@@ -54,6 +55,7 @@ public class FunctionalRecipeGenerator {
     private static final Class<?> MINECRAFT_SERVER_CLASS;
     private static final Class<?> COOKING_BOOK_CATEGORY;
     private static final Class<?> CRAFTING_BOOK_CATEGORY;
+    private static final Class<?> CUSTOM_REGISTRY_CLASS;
 
     // Recipe classes
     private static final Class<?> RECIPE_CAMPFIRE_CLASS;
@@ -119,6 +121,11 @@ public class FunctionalRecipeGenerator {
             COOKING_BOOK_CATEGORY = null;
             CRAFTING_BOOK_CATEGORY = null;
         }
+        if (ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 19, 4))) {
+            CUSTOM_REGISTRY_CLASS = Reflection.getNMS("core", "IRegistryCustom");
+        } else {
+            CUSTOM_REGISTRY_CLASS = null;
+        }
 
         RECIPE_CAMPFIRE_CLASS = Reflection.getNMS("world.item.crafting", "RecipeCampfire");
         RECIPE_FURNACE_CLASS = Reflection.getNMS("world.item.crafting", "FurnaceRecipe");
@@ -146,8 +153,14 @@ public class FunctionalRecipeGenerator {
         MINECRAFT_SERVER_GET_RECIPE_MANAGER_METHOD = Arrays.stream(MINECRAFT_SERVER_CLASS.getMethods()).filter(method -> method.getReturnType().equals(RECIPE_MANAGER_CLASS)).findFirst().orElseGet(() -> Reflection.getMethod(MINECRAFT_SERVER_CLASS, "getCraftingManager"));
         NONNULLLIST_WITH_SIZE_METHOD = Reflection.getMethod(NON_NULL_LIST_CLASS, "a", Integer.TYPE, Object.class);
         RECIPE_MATCHES_METHOD = Reflection.getMethod(RECIPE_CLASS, "a", CONTAINER_CLASS, WORLD_CLASS);
-        RECIPE_ASSEMBLE_METHOD = Reflection.getMethod(RECIPE_CLASS, "a", CONTAINER_CLASS);
-        RECIPE_GET_REMAINING_ITEMS_METHOD = Reflection.getMethod(RECIPE_CLASS, "b", CONTAINER_CLASS);
+
+        RECIPE_ASSEMBLE_METHOD = ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 19, 4)) ?
+                Reflection.getMethod(RECIPE_CLASS, "a", CONTAINER_CLASS, CUSTOM_REGISTRY_CLASS) :
+                Reflection.getMethod(RECIPE_CLASS, "a", CONTAINER_CLASS);
+
+        RECIPE_GET_REMAINING_ITEMS_METHOD = Reflection.getMethod(RECIPE_CLASS, Reflection.NMSMapping.of(
+                        MinecraftVersion.of(1, 19, 4), "a")
+                .orElse("b"), CONTAINER_CLASS);
         RECIPE_MANAGER_ADD_RECIPE_METHOD = Reflection.getMethod(RECIPE_MANAGER_CLASS, "addRecipe", RECIPE_CLASS);
 
         /* ******************
@@ -170,16 +183,78 @@ public class FunctionalRecipeGenerator {
         }
     }
 
+    private final WolfyCoreImpl core;
+    private final Map<String, String> mappings;
+
+    public FunctionalRecipeGenerator(WolfyCoreImpl core) {
+        this.core = core;
+
+        this.mappings = Map.ofEntries(
+                // Java classes
+                entry("Optional", Optional.class.getName()),
+                entry("List", List.class.getName()),
+                entry("ArrayList", ArrayList.class.getName()),
+
+                // NMS
+                entry("NMS_ItemStack", ITEMSTACK_CLASS.getName()),
+                entry("NMS_ItemStack_Empty", ITEMSTACK_EMPTY_CONST.getName()),
+                entry("Level", WORLD_CLASS.getName()),
+                entry("ItemStack", ITEMSTACK_CLASS.getName()),
+                entry("Container", CONTAINER_CLASS.getName()),
+                entry("CraftingContainer", CRAFTING_CONTAINER_CLASS.getName()),
+                entry("NonNullList", NON_NULL_LIST_CLASS.getName()),
+                entry("NonNullList_Create", NONNULLLIST_WITH_SIZE_METHOD.getName()),
+                entry("RecipeMatchesMethod", RECIPE_MATCHES_METHOD.getName()),
+                entry("RecipeAssembleMethod", RECIPE_ASSEMBLE_METHOD.getName()),
+                entry("RemainingItemsMethod", RECIPE_GET_REMAINING_ITEMS_METHOD.getName()),
+                entry("Ingredient_Empty", RECIPE_ITEMSTACK_EMPTY_CONST.getName()),
+                entry("Ingredient", RECIPE_ITEMSTACK_CLASS.getName()),
+                entry("Ingredient_Choices",
+                        // Minecraft 1.17+
+                        Arrays.stream(RECIPE_ITEMSTACK_CLASS.getMethods()).filter(field -> field.getReturnType().equals(ITEMSTACK_CLASS.arrayType())).findFirst().map(method -> method.getName() + "()")
+                                // Minecraft 1.16
+                                .or(() -> Arrays.stream(RECIPE_ITEMSTACK_CLASS.getFields()).filter(field -> field.getType().equals(ITEMSTACK_CLASS.arrayType())).map(Field::getName).findFirst())
+                                // Fallback
+                                .orElse("choices")
+                ),
+                //// 1.19.4
+                entry("1_19_4_AssembleRegistry", ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 19, 4)) ? (", " + CUSTOM_REGISTRY_CLASS.getName() + " registry") : ""),
+                entry("1_19_4_AssembleRegistrySuper", ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 19, 4)) ? ", registry" : ""),
+
+                // CraftBukkit
+                entry("Material", Material.class.getName()),
+                entry("RecipeChoice", RecipeChoice.class.getName()),
+                entry("BukkitItemStack", ItemStack.class.getName()),
+                entry("CraftItemStack", CRAFT_ITEMSTACK_CLASS.getName()),
+                entry("CraftInventory", CRAFT_INVENTORY_CLASS.getName()),
+                entry("CraftInventoryCrafting", CRAFT_INVENTORY_CRAFTING_CLASS.getName()),
+                entry("resultInventory", "resultInventory")
+        );
+    }
+
+    private String applyMappings(String value) {
+        return StrSubstitutor.replace(value, mappings);
+    }
+
     /**
      * Generates the internal FunctionalRecipe classes and caches them.<br>
      * Get them using {@link #getFunctionalRecipeClass(FunctionalRecipeType)}.<br>
      *
      * <b>Only the first invocation generates the classes! Any invocation afterwards does nothing.</b>
      */
-    public static void generateRecipeClasses() {
+    public void generateRecipeClasses() {
         if (!GENERATED_RECIPES.isEmpty()) return;
         try {
             ClassPool classPool = ClassPool.getDefault();
+            classPool.appendClassPath(new LoaderClassPath(ClassLoader.getPlatformClassLoader()));
+            classPool.appendClassPath(new LoaderClassPath(ClassLoader.getSystemClassLoader()));
+            classPool.appendClassPath(new LoaderClassPath(WolfyCoreImpl.class.getClassLoader()));
+            classPool.appendClassPath(new LoaderClassPath(MINECRAFT_SERVER_CLASS.getClassLoader()));
+            classPool.importPackage("java.util");
+            classPool.importPackage("org.bukkit");
+            classPool.importPackage("net.minecraft");
+
+
             generateUtils(classPool);
             GENERATED_RECIPES.put(FunctionalRecipeType.CAMPFIRE, inject(classPool, RECIPE_CAMPFIRE_CLASS));
             GENERATED_RECIPES.put(FunctionalRecipeType.SMELTING, inject(classPool, RECIPE_FURNACE_CLASS));
@@ -198,7 +273,7 @@ public class FunctionalRecipeGenerator {
      * @param type The type of the recipe
      * @return The class associated with the type; Null if not available
      */
-    public static Class<?> getFunctionalRecipeClass(FunctionalRecipeType type) {
+    public Class<?> getFunctionalRecipeClass(FunctionalRecipeType type) {
         return GENERATED_RECIPES.get(type);
     }
 
@@ -208,7 +283,7 @@ public class FunctionalRecipeGenerator {
      * @param recipe The FunctionalRecipe to add to Minecraft.
      * @return True when the recipe was added successfully; False if an error occurred.
      */
-    public static boolean addRecipeToRecipeManager(FunctionalRecipe<?> recipe) {
+    public boolean addRecipeToRecipeManager(FunctionalRecipe<?> recipe) {
         try {
             RECIPE_MANAGER_ADD_RECIPE_METHOD.invoke(MINECRAFT_SERVER, recipe);
             return true;
@@ -225,7 +300,7 @@ public class FunctionalRecipeGenerator {
      * @throws NotFoundException
      * @throws CannotCompileException
      */
-    private static Class<?> inject(ClassPool classPool, Class<?> originalClass) throws NotFoundException, CannotCompileException, IOException {
+    private Class<?> inject(ClassPool classPool, Class<?> originalClass) throws NotFoundException, CannotCompileException, IOException {
         final String funcRecipeClass = "Functional" + originalClass.getSimpleName();
         final CtClass generatedRecipeClass = classPool.makeClass(GENERATOR_PACKAGE + "." + funcRecipeClass);
 
@@ -255,60 +330,44 @@ public class FunctionalRecipeGenerator {
         remainingItemsFunctionField.setModifiers(Modifier.setPrivate(Modifier.FINAL)); // private final
         generatedRecipeClass.addField(remainingItemsFunctionField);
 
-        Map<String, String> mappings = Map.ofEntries(
-                entry("Optional", Optional.class.getName()),
-                entry("Level", WORLD_CLASS.getName()),
-                entry("ItemStack", ITEMSTACK_CLASS.getName()),
-                entry("Container", CONTAINER_CLASS.getName()),
-                entry("NonNullList", NON_NULL_LIST_CLASS.getName()),
-                entry("RecipeMatchesMethod", RECIPE_MATCHES_METHOD.getName()),
-                entry("RecipeAssembleMethod", RECIPE_ASSEMBLE_METHOD.getName()),
-                entry("RemainingItemsMethod", RECIPE_GET_REMAINING_ITEMS_METHOD.getName()),
-                entry("List", List.class.getName()),
-                entry("NMSItemStack", ITEMSTACK_CLASS.getName()),
-                entry("BukkitItemStack", ItemStack.class.getName()),
-                entry("CraftItemStack", CRAFT_ITEMSTACK_CLASS.getName()),
-                entry("NonNullList_Create", NONNULLLIST_WITH_SIZE_METHOD.getName()),
-                entry("NMSItemStack_Empty", ITEMSTACK_EMPTY_CONST.getName()),
-                entry("CraftInventory", CRAFT_INVENTORY_CLASS.getName()),
-                entry("CraftingContainer", CRAFTING_CONTAINER_CLASS.getName()),
-                entry("CraftInventoryCrafting", CRAFT_INVENTORY_CRAFTING_CLASS.getName()),
-                entry("resultInventory", "resultInventory")
-        );
-
-        generatedRecipeClass.addMethod(CtNewMethod.make(StrSubstitutor.replace("""
+        generatedRecipeClass.addMethod(CtNewMethod.make(applyMappings("""
                 public ${Optional} getMatcher() {
                     return ${Optional}.ofNullable(this.matcher);
                 }
-                """, Map.of("Optional", Optional.class.getName())), generatedRecipeClass));
+                """), generatedRecipeClass));
         generatedRecipeClass.addMethod(CtNewMethod.getter("getNamespacedKey", recipeIDField));
         generatedRecipeClass.addMethod(CtNewMethod.getter("getAssembler", assemblerField));
         generatedRecipeClass.addMethod(CtNewMethod.getter("getRemainingItemsFunction", remainingItemsFunctionField));
 
         // Matches the Recipe with either the custom or default check
-        String matchesMethod = StrSubstitutor.replace("""
+        String matchesMethod = applyMappings("""
                 public boolean ${RecipeMatchesMethod}(${Container} container, ${Level} level) {
                     if (getMatcher().isPresent()) {
-                        return matches(ConversionUtils.containerToBukkit(container), level.getWorld());
+                        if (level != null) {
+                            return matches(ConversionUtils.containerToBukkit(container), level.getWorld());
+                        }
+                        return matches(ConversionUtils.containerToBukkit(container), null);
                     }
                     return super.${RecipeMatchesMethod}(container, level);
                 }
-                """, mappings);
+                """);
         generatedRecipeClass.addMethod(CtNewMethod.make(matchesMethod, generatedRecipeClass));
 
         // Assemble method injection
-        String assembleMethod = StrSubstitutor.replace("""
-                public ${ItemStack} ${RecipeAssembleMethod}(${Container} container) {
-                    ${Optional} item = assemble(ConversionUtils.containerToBukkit(container)).map(new ConvertCraftItemStackToNMS()); if (item.isPresent()) {
-                        return (${ItemStack}) item.get();
+        // In 1.19.4 we need to add the registry parameter. However, it is just ignored and not used. Seems like they are used in MC for the new Smithing recipes, but these recipes do not require it!
+        String assembleMethod = applyMappings("""
+                public ${NMS_ItemStack} ${RecipeAssembleMethod}(${Container} container${1_19_4_AssembleRegistry}) {
+                    ${Optional} item = assemble(ConversionUtils.containerToBukkit(container)).map(new ConvertCraftItemStackToNMS());
+                    if (item.isPresent()) {
+                        return (${NMS_ItemStack}) item.get();
                     }
-                    return super.${RecipeAssembleMethod}(container);
+                    return super.${RecipeAssembleMethod}(container${1_19_4_AssembleRegistrySuper});
                 }
-                """, mappings);
+                """);
         generatedRecipeClass.addMethod(CtNewMethod.make(assembleMethod, generatedRecipeClass));
 
         // Remaining Items method injection
-        String remainingItemsMethod = StrSubstitutor.replace("""
+        String remainingItemsMethod = applyMappings("""
                 public ${NonNullList} ${RemainingItemsMethod}(${Container} container) {
                     ${Optional} nmsItems = getRemainingItems(ConversionUtils.containerToBukkit(container)).map(new ConvertRemainingItemsToNMS());
                     if (nmsItems.isPresent()) {
@@ -316,7 +375,7 @@ public class FunctionalRecipeGenerator {
                     }
                     return super.${RemainingItemsMethod}(container);
                 }
-                """, mappings);
+                """);
         generatedRecipeClass.addMethod(CtNewMethod.make(remainingItemsMethod, generatedRecipeClass));
 
         // Create constructor
@@ -394,15 +453,15 @@ public class FunctionalRecipeGenerator {
             bodyBuilder.append("    this.remainingItems = var3;\n");
             bodyBuilder.append('}');
 
-            CtConstructor generatedConstructor = CtNewConstructor.make(signatureBuilder.toString() + bodyBuilder, generatedRecipeClass);
+            CtConstructor generatedConstructor = CtNewConstructor.make(signatureBuilder.toString() + bodyBuilder.toString(), generatedRecipeClass);
             generatedRecipeClass.addConstructor(generatedConstructor);
         }
 
-        generatedRecipeClass.writeFile(WolfyCoreBukkit.getInstance().getWolfyUtils().getDataFolder().getPath() + "/generated_classes");
+        generatedRecipeClass.writeFile(WolfyCoreImpl.getInstance().getWolfyUtils().getDataFolder().getPath() + "/generated_classes");
         return generatedRecipeClass.toClass(FunctionalRecipe.class);
     }
 
-    private static void generateUtils(ClassPool classPool) throws CannotCompileException, IOException, NotFoundException {
+    private void generateUtils(ClassPool classPool) throws CannotCompileException, IOException, NotFoundException {
         generateConverterFunctions(classPool);
         generateConversionUtils(classPool);
     }
@@ -416,7 +475,7 @@ public class FunctionalRecipeGenerator {
      * @throws CannotCompileException
      * @throws IOException
      */
-    private static void generateConverterFunctions(ClassPool classPool) throws NotFoundException, CannotCompileException, IOException {
+    private void generateConverterFunctions(ClassPool classPool) throws NotFoundException, CannotCompileException, IOException {
         // Functional Class to convert a Bukkit ItemStack to a NMS ItemStack
         final CtClass convertCraftItemStack = classPool.makeClass(GENERATOR_PACKAGE + ".ConvertCraftItemStackToNMS");
         classPool.importPackage(GENERATOR_PACKAGE);
@@ -431,110 +490,77 @@ public class FunctionalRecipeGenerator {
                 }
         );
         convertCraftItemStack.setGenericSignature(classSignature.encode());
-        String convertItemStackMethod = StrSubstitutor.replace("""
+        String convertItemStackMethod = applyMappings("""
                 public Object apply(Object itemStack) {
                     return ${CraftItemStack}.asNMSCopy((${BukkitItemStack}) itemStack);
                 }
-                """, Map.of(
-                //"Object", Object.class,
-                "NMSItemStack", ITEMSTACK_CLASS.getName(),
-                "BukkitItemStack", ItemStack.class.getName(),
-                "CraftItemStack", CRAFT_ITEMSTACK_CLASS.getName()
-        ));
+                """);
         convertCraftItemStack.addMethod(CtNewMethod.make(convertItemStackMethod, convertCraftItemStack));
-        convertCraftItemStack.writeFile(WolfyCoreBukkit.getInstance().getWolfyUtils().getDataFolder().getPath() + "/generated_classes");
+        convertCraftItemStack.writeFile(WolfyCoreImpl.getInstance().getWolfyUtils().getDataFolder().getPath() + "/generated_classes");
         convertCraftItemStack.toClass(FunctionalRecipe.class);
 
         // Functional Class to convert a list of Bukkit ItemStacks to NMS ItemStacks
         final CtClass convertRemainingItems = classPool.makeClass(GENERATOR_PACKAGE + ".ConvertRemainingItemsToNMS");
         classPool.importPackage(GENERATOR_PACKAGE);
         convertRemainingItems.addInterface(classPool.get(Function.class.getName()));
-        String convertRemainingItemsMethod = StrSubstitutor.replace("""
+        String convertRemainingItemsMethod = applyMappings("""
                 public Object apply(Object itemStacks) {
-                    ${NonNullList} items = ${NonNullList}.${NonNullList_Create}(((${List}) itemStacks).size(), ${NMSItemStack}.${NMSItemStack_Empty});
+                    ${NonNullList} items = ${NonNullList}.${NonNullList_Create}(((${List}) itemStacks).size(), ${NMS_ItemStack}.${NMS_ItemStack_Empty});
                     for(int i = 0; i < ((${List}) itemStacks).size(); i++) {
                         items.set(i, ${CraftItemStack}.asNMSCopy((${BukkitItemStack}) ((${List}) itemStacks).get(i)));
                     }
                     return items;
                 }
-                """, Map.of(
-                "List", List.class.getName(),
-                "NonNullList", NON_NULL_LIST_CLASS.getName(),
-                "NonNullList_Create", NONNULLLIST_WITH_SIZE_METHOD.getName(),
-                "NMSItemStack_Empty", ITEMSTACK_EMPTY_CONST.getName(),
-                "NMSItemStack", ITEMSTACK_CLASS.getName(),
-                "CraftItemStack", CRAFT_ITEMSTACK_CLASS.getName(),
-                "BukkitItemStack", ItemStack.class.getName()
-        ));
+                """);
         convertRemainingItems.addMethod(CtNewMethod.make(convertRemainingItemsMethod, convertRemainingItems));
-        convertRemainingItems.writeFile(WolfyCoreBukkit.getInstance().getWolfyUtils().getDataFolder().getPath() + "/generated_classes");
+        convertRemainingItems.writeFile(WolfyCoreImpl.getInstance().getWolfyUtils().getDataFolder().getPath() + "/generated_classes");
         convertRemainingItems.toClass(FunctionalRecipe.class);
     }
 
-    private static void generateConversionUtils(ClassPool classPool) throws CannotCompileException, IOException {
+    private void generateConversionUtils(ClassPool classPool) throws CannotCompileException, IOException {
         // Other conversion utils
         final CtClass conversionUtils = classPool.makeClass(GENERATOR_PACKAGE + ".ConversionUtils");
         classPool.importPackage(GENERATOR_PACKAGE);
         // Find the Ingredient.EMPTY field
         Field emptyIngredientField = Arrays.stream(RECIPE_ITEMSTACK_CLASS.getDeclaredFields()).filter(field -> field.getType().equals(RECIPE_ITEMSTACK_CLASS)).findFirst().orElse(null);
 
-        /*
-         * Converts the Bukkit RecipeChoice to the NMS Ingredient
-         */
-        String recipeChoiceConverterMethod = StrSubstitutor.replace("""
-                public static ${ingredient} recipeChoiceToNMS(${recipe_choice} bukkit, boolean requireNotEmpty) {
-                    ${ingredient} stack;
+        // Converts the Bukkit RecipeChoice to the NMS Ingredient
+        String recipeChoiceConverterMethod = applyMappings("""
+                public static ${Ingredient} recipeChoiceToNMS(${RecipeChoice} bukkit, boolean requireNotEmpty) {
+                    ${Ingredient} stack;
                     if (bukkit == null) {
-                        stack = ${ingredient}.${empty_ingredient};
-                    } else if (bukkit instanceof ${recipe_choice}.MaterialChoice) {
-                        ${list} valueList = new ${arraylist}();
-                        ${list} materials = ((${recipe_choice}.MaterialChoice) bukkit).getChoices();
+                        stack = ${Ingredient}.${Ingredient_Empty};
+                    } else if (bukkit instanceof ${RecipeChoice}.MaterialChoice) {
+                        ${List} valueList = new ${ArrayList}();
+                        ${List} materials = ((${RecipeChoice}.MaterialChoice) bukkit).getChoices();
                         for (int i = 0; i < materials.size(); i++) {
-                            valueList.add(new ${ingredient}.StackProvider(${craftitemstack}.asNMSCopy(new ${itemstack}((${material}) materials.get(i)))));
+                            valueList.add(new ${Ingredient}.StackProvider(${CraftItemStack}.asNMSCopy(new ${BukkitItemStack}((${Material}) materials.get(i)))));
                         }
-                        stack = new ${ingredient}(valueList.stream());
+                        stack = new ${Ingredient}(valueList.stream());
                     } else {
-                        if (!(bukkit instanceof ${recipe_choice}.ExactChoice)) {
+                        if (!(bukkit instanceof ${RecipeChoice}.ExactChoice)) {
                             throw new java.lang.IllegalArgumentException("Unknown recipe stack instance " + bukkit);
                         }
-                        ${list} valueList = new ${arraylist}();
-                        ${list} itemStacks = ((${recipe_choice}.ExactChoice) bukkit).getChoices();
+                        ${List} valueList = new ${ArrayList}();
+                        ${List} itemStacks = ((${RecipeChoice}.ExactChoice) bukkit).getChoices();
                         for (int i = 0; i < itemStacks.size(); i++) {
-                            valueList.add(new ${ingredient}.StackProvider(${craftitemstack}.asNMSCopy((${itemstack}) itemStacks.get(i))));
+                            valueList.add(new ${Ingredient}.StackProvider(${CraftItemStack}.asNMSCopy((${BukkitItemStack}) itemStacks.get(i))));
                         }
-                        stack = new ${ingredient}(valueList.stream());
+                        stack = new ${Ingredient}(valueList.stream());
                         stack.exact = true;
                     }
                             
-                    if (requireNotEmpty && stack.${ingredient_choices}.length == 0) {
+                    if (requireNotEmpty && stack.${Ingredient_Choices}.length == 0) {
                         throw new java.lang.IllegalArgumentException("Recipe requires at least one non-air choice!");
                     } else {
                         return stack;
                     }
                 }
-                """, Map.of(
-                "list", List.class.getName(),
-                "arraylist", ArrayList.class.getName(),
-                "ingredient", RECIPE_ITEMSTACK_CLASS.getName(),
-                "recipe_choice", RecipeChoice.class.getName(),
-                "material", Material.class.getName(),
-                "itemstack", ItemStack.class.getName(),
-                "empty_ingredient", emptyIngredientField.getName(),
-                "craftitemstack", CRAFT_ITEMSTACK_CLASS.getName(),
-                "ingredient_choices",
-                // Minecraft 1.17+
-                Arrays.stream(RECIPE_ITEMSTACK_CLASS.getMethods()).filter(field -> field.getReturnType().equals(ITEMSTACK_CLASS.arrayType())).findFirst().map(method -> method.getName() + "()")
-                        // Minecraft 1.16
-                        .or(() -> Arrays.stream(RECIPE_ITEMSTACK_CLASS.getFields()).filter(field -> field.getType().equals(ITEMSTACK_CLASS.arrayType())).map(Field::getName).findFirst())
-                        // Fallback
-                        .orElse("choices")
-        ));
+                """);
         conversionUtils.addMethod(CtNewMethod.make(recipeChoiceConverterMethod, conversionUtils));
 
-        /*
-         * Converts Lists of Bukkit RecipeChoices to Lists of NMS Ingredients
-         */
-        String convertRecipeChoicesToIngredientsMethod = StrSubstitutor.replace("""
+        // Converts Lists of Bukkit RecipeChoices to Lists of NMS Ingredients
+        String convertRecipeChoicesToIngredientsMethod = applyMappings("""
                 public static ${NonNullList} recipeChoicesToIngredients(${List} choices) {
                     ${NonNullList} ingredients = ${NonNullList}.${NonNullList_Create}(choices.size(), ${Ingredient}.${Ingredient_Empty});
                     for(int i = 0; i < choices.size(); i++) {
@@ -542,20 +568,11 @@ public class FunctionalRecipeGenerator {
                     }
                     return ingredients;
                 }
-                """, Map.of(
-                "List", List.class.getName(),
-                "NonNullList", NON_NULL_LIST_CLASS.getName(),
-                "NonNullList_Create", NONNULLLIST_WITH_SIZE_METHOD.getName(),
-                "Ingredient_Empty", RECIPE_ITEMSTACK_EMPTY_CONST.getName(),
-                "Ingredient", RECIPE_ITEMSTACK_CLASS.getName(),
-                "RecipeChoice", RecipeChoice.class.getName()
-        ));
+                """);
         conversionUtils.addMethod(CtNewMethod.make(convertRecipeChoicesToIngredientsMethod, conversionUtils));
 
-        /*
-         * Creates CraftInventories based on the type of the Container.
-         */
-        String convertContainerToCraftBukkitMethod = StrSubstitutor.replace("""
+        // Creates CraftInventories based on the type of the Container.
+        String convertContainerToCraftBukkitMethod = applyMappings("""
                 public static ${CraftInventory} containerToBukkit(${Container} container) {
                     if (container instanceof ${CraftingContainer}) {
                         ${CraftingContainer} containerCrafting = (${CraftingContainer}) container;
@@ -563,16 +580,10 @@ public class FunctionalRecipeGenerator {
                     }
                     return new ${CraftInventory}(container);
                 }
-                """, Map.of(
-                "Container", CONTAINER_CLASS.getName(),
-                "CraftInventory", CRAFT_INVENTORY_CLASS.getName(),
-                "CraftingContainer", CRAFTING_CONTAINER_CLASS.getName(),
-                "CraftInventoryCrafting", CRAFT_INVENTORY_CRAFTING_CLASS.getName(),
-                "resultInventory", "resultInventory"
-        ));
+                """);
         conversionUtils.addMethod(CtNewMethod.make(convertContainerToCraftBukkitMethod, conversionUtils));
 
-        conversionUtils.writeFile(WolfyCoreBukkit.getInstance().getWolfyUtils().getDataFolder().getPath() + "/generated_classes");
+        conversionUtils.writeFile(WolfyCoreImpl.getInstance().getWolfyUtils().getDataFolder().getPath() + "/generated_classes");
         conversionUtils.toClass(FunctionalRecipe.class);
     }
 

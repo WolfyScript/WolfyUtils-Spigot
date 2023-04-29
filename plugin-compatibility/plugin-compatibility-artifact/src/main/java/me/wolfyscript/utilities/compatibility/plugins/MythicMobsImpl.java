@@ -20,6 +20,7 @@ package me.wolfyscript.utilities.compatibility.plugins;
 
 import com.google.inject.Inject;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.MythicMobsIntegration;
 import io.lumine.xikage.mythicmobs.MythicMobs;
 import io.lumine.xikage.mythicmobs.adapters.bukkit.BukkitAdapter;
@@ -43,7 +44,7 @@ public class MythicMobsImpl extends PluginIntegrationAbstract implements MythicM
 
     @Override
     public void init(Plugin plugin) {
-        if (WolfyCoreBukkit.hasClass("io.lumine.mythic.bukkit.MythicBukkit")) {
+        if (WolfyCoreImpl.hasClass("io.lumine.mythic.bukkit.MythicBukkit")) {
             core.registerAPIReference(new MythicMobs5RefImpl.Parser());
         } else {
             core.registerAPIReference(new MythicMobsRefImpl.Parser());

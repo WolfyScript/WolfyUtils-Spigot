@@ -34,9 +34,9 @@
         <plugin_version.specialsource>1.2.4</plugin_version.specialsource>
         <plugin_version.license>2.0.0</plugin_version.license>
         <!-- The dependency versions -->
-        <depend_version.spigotapi>1.19-R0.1-SNAPSHOT</depend_version.spigotapi>
+        <depend_version.spigotapi>1.19.3-R0.1-SNAPSHOT</depend_version.spigotapi>
         <depend_version.mojang-authlib>1.5.21</depend_version.mojang-authlib>
-        <depend_version.jackson>2.14.0</depend_version.jackson>
+        <depend_version.jackson>2.14.0-rc1</depend_version.jackson>
         <depend_version.jetbrains-annotations>23.0.0</depend_version.jetbrains-annotations>
         <depend_version.netty>4.1.85.Final</depend_version.netty>
         <depend_version.guice>5.1.0</depend_version.guice>
@@ -105,27 +105,27 @@
             <url>https://maven.enginehub.org/repo/</url>
         </repository>
         <!--
-        WolfyScript private repo
-        This repository requires you to have credentials to access private plugins.
-        You can use the public repo and then provide your local installed  jars.
-
-        Additionally, this repo is used as a proxy for all the other required repositories.
-        In future that will probably be changed back, as it was mainly for download speed issues.
-        The plugin compatibility modules already directly use the specific repos.
-
-        Public repo: https://maven.wolfyscript.com/repository/public/
+        This repo is used as a proxy to many other repositories.
+        In future that'll probably be changed, as it was mainly for download speed issues.
+        The plugin-compatibility module uses the non-proxied repos already.
         -->
         <repository>
-            <id>wolfyscript-private</id>
-            <url>https://maven.wolfyscript.com/repository/private/</url>
+            <id>wolfyscript-public</id>
+            <url>https://maven.wolfyscript.com/repository/public/</url>
         </repository>
     </repositories>
 
     <dependencies>
         <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>${depend_version.spigotapi}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.18.2-R0.1-SNAPSHOT</version>
+            <version>${depend_version.spigotapi}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

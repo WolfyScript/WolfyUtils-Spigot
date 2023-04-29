@@ -9,6 +9,8 @@ import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.events.CustomItemBreakEvent;
+import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageBreakEvent;
+import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoragePlaceEvent;
 import com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.ChunkStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
@@ -75,7 +77,7 @@ public class CustomItemBlockData extends CustomBlockData {
         this.particleAnimationID = particleAnimationID;
     }
 
-    public void onPlace(BlockPlaceEvent event) {
+    public void onPlace(BlockStoragePlaceEvent event) {
         getCustomItem().ifPresent(customItem -> {
             var animation = customItem.getParticleContent().getAnimation(ParticleLocation.BLOCK);
             if (animation != null) {
@@ -84,7 +86,7 @@ public class CustomItemBlockData extends CustomBlockData {
         });
     }
 
-    public void onBreak(BlockBreakEvent event) {
+    public void onBreak(BlockStorageBreakEvent event) {
         getCustomItem().ifPresent(customItem -> {
             var event1 = new CustomItemBreakEvent(customItem, event);
             Bukkit.getPluginManager().callEvent(event1);

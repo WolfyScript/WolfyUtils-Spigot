@@ -18,51 +18,55 @@
 
 package com.wolfyscript.utilities.bukkit.commands;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import java.util.List;
-import java.util.Objects;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
+import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class InputCommand implements TabExecutor {
+public final class InputCommand extends Command implements PluginIdentifiableCommand {
 
-    private final WolfyCoreBukkit plugin;
+    private final WolfyCoreImpl core;
 
-    public InputCommand(WolfyCoreBukkit plugin) {
-        this.plugin = plugin;
+    public InputCommand(WolfyCoreImpl core) {
+        super("wui");
+        this.core = core;
+        setUsage("/wui <input>");
+        setDescription("Input for chat input actions");
+    }
+
+    @NotNull
+    @Override
+    public Plugin getPlugin() {
+        return core;
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (sender instanceof Player player) {
-            /*
-            TODO: Create & implement new input actions
-            plugin.getAPIList().parallelStream()
-                    .filter(WolfyUtilsBukkit::hasInventoryAPI)
-                    .map(wolfyUtilities -> wolfyUtilities.getInventoryAPI().getGuiHandler(player))
-                    .forEach(guiHandler -> Bukkit.getScheduler().runTask(guiHandler.getWolfyUtils().getPlugin(), () -> {
-                        //Handles ChatInput
-                        if (!guiHandler.onChat(player, String.join(" ", args).trim(), args)) {
-                            guiHandler.setChatInputAction(null);
-                            guiHandler.openCluster();
-                        }
-                        if (guiHandler.isChatEventActive()) {
-                            guiHandler.cancelChatInput();
-                        }
-                    }));
-            */
-        }
+    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
+        if (!(sender instanceof Player player)) return true;
+        /*
+        core.getAPIList().parallelStream()
+                .filter(WolfyUtilsBukkit::hasInventoryAPI)
+                .map(wolfyUtilities -> wolfyUtilities.getInventoryAPI().getGuiHandler(player))
+                .filter(GuiHandler::isChatEventActive)
+                .forEach(guiHandler -> Bukkit.getScheduler().runTask(WolfyCoreImpl.getInstance(), () -> {
+                    //Handles ChatInput
+                    if (!guiHandler.onChat(player, String.join(" ", args).trim(), args)) {
+                        guiHandler.setChatInputAction(null);
+                        guiHandler.openCluster();
+                    }
+                    if (guiHandler.isChatEventActive()) {
+                        guiHandler.cancelChatInput();
+                    }
+                }));*/
         return true;
     }
 
+    @NotNull
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+    public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) throws IllegalArgumentException {
         if (sender instanceof Player player) {
             /*
             TODO: Create & implement new input actions
@@ -73,6 +77,6 @@ public class InputCommand implements TabExecutor {
                     .map(guiHandler -> guiHandler.getChatTabComplete().onTabComplete(guiHandler, player, args)).filter(Objects::nonNull).findFirst().orElse(null);
             */
         }
-        return null;
+        return super.tabComplete(sender, alias, args);
     }
 }

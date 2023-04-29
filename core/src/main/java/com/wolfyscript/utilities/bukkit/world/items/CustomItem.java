@@ -241,6 +241,10 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
         for (Map.Entry<NamespacedKey, CustomData> entry : customItem.customDataMap.entrySet()) {
             this.customDataMap.put(entry.getKey(), entry.getValue().clone());
         }
+        this.indexedData.clear();
+        for (Map.Entry<NamespacedKey, CustomItemData> entry : customItem.indexedData.entrySet()) {
+            this.indexedData.put(entry.getKey(), entry.getValue().copy());
+        }
         this.equipmentSlots = new ArrayList<>(customItem.equipmentSlots);
         this.particleContent = customItem.particleContent;
         this.blockPlacement = customItem.blockPlacement;

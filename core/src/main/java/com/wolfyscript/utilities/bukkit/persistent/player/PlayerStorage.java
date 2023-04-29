@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.InjectableValues;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.WolfyUtilBootstrap;
 import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import java.util.HashMap;
@@ -31,11 +32,11 @@ public class PlayerStorage {
 
     private static final org.bukkit.NamespacedKey DATA_KEY = new org.bukkit.NamespacedKey("wolfyutils", "data");
 
-    private final WolfyCoreBukkit core;
+    private final WolfyCoreImpl core;
     private final UUID playerUUID;
     private final Map<NamespacedKey, CustomPlayerData> CACHED_DATA = new HashMap<>();
 
-    public PlayerStorage(WolfyCoreBukkit core, UUID playerUUID) {
+    public PlayerStorage(WolfyCoreImpl core, UUID playerUUID) {
         this.core = core;
         this.playerUUID = playerUUID;
     }
@@ -112,6 +113,7 @@ public class PlayerStorage {
      */
     public <T extends CustomPlayerData> Optional<T> getData(Class<T> dataType) {
         NamespacedKey dataID = core.getRegistries().getCustomPlayerData().getKey(dataType);
+        if (dataID == null) return Optional.empty(); // Might be null if the type wasn't registered. Check it just in case.
         T dataResult = dataType.cast(CACHED_DATA.get(dataID));
         if (dataID instanceof BukkitNamespacedKey bukkitDataID && dataResult == null) {
             // If there isn't any cached data yet
@@ -120,15 +122,21 @@ public class PlayerStorage {
                 var objectMapper = core.getWolfyUtils().getJacksonMapperUtil().getGlobalMapper();
                 org.bukkit.NamespacedKey key = bukkitDataID.bukkit();
                 if (dataContainer.has(key, PersistentDataType.STRING)) {
-                    try {
-                        return objectMapper.reader(new InjectableValues.Std()
-                                        .addValue(WolfyCoreBukkit.class, core)
-                                        .addValue(UUID.class, playerUUID)
-                                )
-                                .forType(CustomPlayerData.class)
-                                .readValue(dataContainer.get(key, PersistentDataType.STRING));
-                    } catch (JsonProcessingException e) {
-                        e.printStackTrace();
+                    String jsonData = dataContainer.get(key, PersistentDataType.STRING);
+                    if (jsonData != null && !jsonData.equals("null") && !jsonData.isBlank()) {
+                        try {
+                            return objectMapper.reader(new InjectableValues.Std()
+                                            .addValue(WolfyCoreBukkit.class, core)
+                                            .addValue(UUID.class, playerUUID)
+                                    )
+                                    .forType(CustomPlayerData.class)
+                                    .readValue(jsonData);
+                        } catch (JsonProcessingException e) {
+                            core.getLogger().warning("Unable to load custom data from '" + jsonData + "'! Removing it now to prevent further issues!");
+                            // Directly modify the container instead of calling removeData() as the unload method will never be called anyway.
+                            dataContainer.remove(key);
+                            container.set(DATA_KEY, PersistentDataType.TAG_CONTAINER, dataContainer);
+                        }
                     }
                 }
                 return null;
