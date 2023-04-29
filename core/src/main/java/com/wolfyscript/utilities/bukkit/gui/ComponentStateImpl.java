@@ -44,14 +44,18 @@ public abstract class ComponentStateImpl<OWNER extends Component, PARENT extends
     @Override
     public <T> Signal.Value<T> captureSignal(String signalKey, Class<T> msgType) {
         Signal.Value<?> message = messageValues.get(signalKey);
-        if (message == null) return null;
+        if (message == null)
+            return getParent() != null ? getParent().captureSignal(signalKey, msgType) : null;
         Preconditions.checkState(Objects.equals(message.signal().key(), signalKey) && message.signal().valueType() == msgType, "Failed to capture Signal! Invalid key or type! Expected %s, but got %s", message.signal().valueType(), msgType);
-        @SuppressWarnings("unchecked") Signal.Value<T> msg = (Signal.Value<T>) message;
-        return msg;
+        return (Signal.Value<T>) message;
     }
 
     public Signal.Value<?> captureSignal(String signalKey) {
-        return messageValues.get(signalKey);
+        Signal.Value<?> value = messageValues.get(signalKey);
+        if (value == null) {
+            return getParent() != null ? getParent().captureSignal(signalKey) : null;
+        }
+        return value;
     }
 
     public abstract void render(GuiHolder holder, RenderContext context);

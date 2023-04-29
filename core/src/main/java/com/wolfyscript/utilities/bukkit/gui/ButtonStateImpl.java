@@ -31,18 +31,8 @@ public class ButtonStateImpl extends ComponentStateImpl<Button, ComponentState> 
                             new EvalContextPlayer(((GUIHolder) holder).getPlayer()),
                             WolfyCoreBukkit.getInstance().getWolfyUtils().getChat().getMiniMessage(),
                             TagResolver.resolver("signal", (argumentQueue, context1) -> {
-                                String key = argumentQueue.popOr("Missing signal id!").value();
-                                int lvlUp = 0;
-                                if (argumentQueue.hasNext()) {
-                                    lvlUp = argumentQueue.pop().asInt().orElse(0);
-                                }
-                                ComponentState state = this;
-                                for (int i = 0; i < lvlUp; i++) {
-                                    if (state.getParent() == null) break;
-                                    state = state.getParent();
-                                }
-                                Object value = state.captureSignal(key).get();
-                                return Tag.inserting(value == null ? Component.text("null") : context1.deserialize(value.toString()));
+                                Object value = captureSignal(argumentQueue.popOr("Missing signal id!").value()).get();
+                                return Tag.inserting(context1.deserialize(String.valueOf(value)));
                             })
                     )
             );
