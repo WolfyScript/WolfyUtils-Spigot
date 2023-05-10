@@ -16,7 +16,7 @@ import com.google.inject.Stage;
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.common.gui.ButtonBuilder;
+import com.wolfyscript.utilities.common.gui.components.ButtonBuilder;
 import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentBuilder;
 import com.wolfyscript.utilities.common.gui.ComponentBuilderSettings;
@@ -24,7 +24,6 @@ import com.wolfyscript.utilities.common.gui.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.RenderCallback;
 import com.wolfyscript.utilities.common.gui.Router;
-import com.wolfyscript.utilities.common.gui.RouterBuilder;
 import com.wolfyscript.utilities.common.gui.Signal;
 import com.wolfyscript.utilities.common.gui.SizedComponent;
 import com.wolfyscript.utilities.common.gui.Window;
@@ -33,6 +32,7 @@ import com.wolfyscript.utilities.common.gui.WindowChildComponentBuilder;
 import com.wolfyscript.utilities.common.gui.WindowState;
 import com.wolfyscript.utilities.common.gui.WindowTitleUpdateCallback;
 import com.wolfyscript.utilities.common.gui.WindowType;
+import com.wolfyscript.utilities.common.gui.components.CallbackInitComponent;
 import com.wolfyscript.utilities.common.registry.RegistryGUIComponentBuilders;
 import com.wolfyscript.utilities.json.annotations.KeyedBaseType;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -56,6 +56,7 @@ public class WindowBuilderImpl extends AbstractBukkitComponentBuilder<Window, Ro
     protected WindowTitleUpdateCallback titleUpdateCallback = (guiHolder, window, state) -> net.kyori.adventure.text.Component.empty();
     private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.def();
     private final Map<String, Signal.Builder<?>> signalBuilderMap = new HashMap<>();
+    private CallbackInitComponent initCallback = (guiHolder, renderFunction) -> {};
 
     @Inject
     @JsonCreator
@@ -161,8 +162,9 @@ public class WindowBuilderImpl extends AbstractBukkitComponentBuilder<Window, Ro
     }
 
     @Override
-    public WindowBuilder render(Consumer<RenderOptionsBuilder> consumer) {
-        consumer.accept(getRenderOptionsBuilder());
+    public WindowBuilder render(CallbackInitComponent render) {
+        Preconditions.checkNotNull(render);
+        this.initCallback = render;
         return this;
     }
 
@@ -176,6 +178,7 @@ public class WindowBuilderImpl extends AbstractBukkitComponentBuilder<Window, Ro
                 this.titleUpdateCallback,
                 interactionCallback,
                 getChildBuilder(),
+                initCallback,
                 getRenderOptionsBuilder(),
                 signalBuilderMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().create()))
         );

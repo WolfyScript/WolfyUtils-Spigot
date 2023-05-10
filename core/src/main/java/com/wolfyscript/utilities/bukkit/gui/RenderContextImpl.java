@@ -31,7 +31,8 @@ public class RenderContextImpl implements RenderContext {
         this.slotOffsetToParent = offset;
     }
 
-    int getSlotOffsetToParent() {
+    @Override
+    public int getCurrentOffset() {
         return slotOffsetToParent;
     }
 
@@ -54,22 +55,21 @@ public class RenderContextImpl implements RenderContext {
 
     @Override
     public void setStack(int i, ItemStackConfig<?> itemStackConfig) {
-        if(!checkIfSlotInBounds(i)) return;
-        // i > 0 && i < width * height
-        if (itemStackConfig instanceof BukkitItemStackConfig bukkitItemStackConfig) {
-            inventory.setItem(i, bukkitItemStackConfig.constructItemStack());
-        } else {
-            inventory.setItem(i, null);
-        }
-    }
+        checkIfSlotInBounds(i);
+        if (!(itemStackConfig instanceof BukkitItemStackConfig bukkitItemStackConfig))
+            throw new IllegalArgumentException(String.format("Cannot render stack config! Invalid stack config type! Expected '%s' but received '%s'.", ItemStack.class.getName(), itemStackConfig.getClass().getName()));
 
-    public void setNativeStack(int i, ItemStack itemStack) {
-        if (checkIfSlotInBounds(i)) inventory.setItem(i, itemStack);
+        // i > 0 && i < width * height
+        inventory.setItem(i, bukkitItemStackConfig.constructItemStack());
     }
 
     @Override
-    public Component next() {
-        return null;
+    public void setNativeStack(int i, Object object) {
+        checkIfSlotInBounds(i);
+        if (!(object instanceof ItemStack itemStack))
+            throw new IllegalArgumentException(String.format("Cannot render native stack! Invalid native stack type! Expected '%s' but received '%s'.", ItemStack.class.getName(), object.getClass().getName()));
+
+        inventory.setItem(i, itemStack);
     }
 
 }

@@ -33,7 +33,7 @@ public class WindowStateImpl extends ComponentStateImpl<Window, RouterState> imp
             if (holder instanceof GUIHolder guiHolder) {
                 InventoryUpdate.updateInventory(((WolfyCoreImpl) getOwner().getWolfyUtils().getCore()).getWolfyUtils().getPlugin(),
                         guiHolder.getPlayer(),
-                        getOwner().createTitle(holder, this));
+                        getOwner().createTitle(holder));
             }
             getOwner().getRenderOptions().renderCallback().ifPresentOrElse(
                     renderCallback -> renderCallback.render(holder, this),

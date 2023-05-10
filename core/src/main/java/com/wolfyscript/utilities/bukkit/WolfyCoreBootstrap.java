@@ -1,24 +1,21 @@
 package com.wolfyscript.utilities.bukkit;
 
-import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManagerBukkit;
-import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import com.wolfyscript.utilities.common.WolfyCore;
 import com.wolfyscript.utilities.versioning.ServerVersion;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.reflections.util.ConfigurationBuilder;
 
 /**
- * This abstract class is the actual core of the plugin (This class is being extended by the plugin instance).<br>
+ * This abstract class is the plugin of WolfyUtils core. It bootstraps the actual WolfyCore and provides it via the service manager.<br>
+ * That way you don't need to use the static getter to get the instance of the core.
  * <p>
- * It provides access to internal functionality like {@link BukkitRegistries}, {@link CompatibilityManagerBukkit}, and of course the creation of the API instance.<br>
- * <p>
- * To get an instance of the API ({@link WolfyUtilsBukkit}) for your plugin you need one of the following methods. <br>
+ *     With v5 and the Paper Plugin introduction the Core implementation may be different on other server software.
+ *     To get the API of the core you need to use the {@link org.bukkit.plugin.ServicesManager} provided by Bukkit.
+ *     <pre><code>WolfyCore core = getServer().getServicesManager().load(WolfyCore.class);</code></pre>
  * </p>
  */
 public abstract class WolfyCoreBootstrap extends JavaPlugin {
@@ -49,11 +46,13 @@ public abstract class WolfyCoreBootstrap extends JavaPlugin {
     public void onEnable() {
         this.metrics = new Metrics(this, 5114);
         getCore().enable();
+
     }
 
     @Override
     public void onDisable() {
         getCore().disable();
+        getServer().getServicesManager().unregisterAll(this);
     }
 
     /**

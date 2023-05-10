@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wolfyscript.jackson.dataformat.hocon.HoconMapper;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.ComponentBuilder;
 import com.wolfyscript.utilities.common.gui.GuiAPIManagerCommonImpl;
@@ -37,14 +37,14 @@ public class GuiAPIManagerImpl extends GuiAPIManagerCommonImpl {
 
     @Override
     public void registerRouterFromFile(File file, Consumer<RouterBuilder> consumer) {
-        ObjectMapper mapper = wolfyUtils.getJacksonMapperUtil().getGlobalMapper();
+        HoconMapper mapper = wolfyUtils.getJacksonMapperUtil().getGlobalMapper(HoconMapper.class);
         try {
             CustomInjectableValues injectableValues = new CustomInjectableValues();
             injectableValues.addValue("parent", null);
             injectableValues.addValue(WolfyUtils.class, wolfyUtils);
             injectableValues.addValue("wolfyUtils", wolfyUtils);
+
             ComponentBuilder<?,?> builder = mapper.readerFor(new TypeReference<ComponentBuilder<?,?>>() {}).with(injectableValues).readValue(file);
-            System.out.println(builder);
             if (builder instanceof RouterBuilder routerBuilder) {
                 consumer.accept(routerBuilder);
                 registerCluster(routerBuilder.create(null));

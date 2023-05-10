@@ -24,10 +24,10 @@ import com.wolfyscript.utilities.common.gui.WindowChildComponentBuilder;
 import com.wolfyscript.utilities.common.gui.WindowState;
 import com.wolfyscript.utilities.common.gui.WindowTitleUpdateCallback;
 import com.wolfyscript.utilities.common.gui.WindowType;
+import com.wolfyscript.utilities.common.gui.components.CallbackInitComponent;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -50,6 +50,7 @@ public final class WindowImpl extends AbstractBukkitComponent implements Window 
     private final WindowTitleUpdateCallback titleUpdateCallback;
     private final InteractionCallback interactionCallback;
     private final RenderOptions renderOptions;
+    private final CallbackInitComponent initCallback;
 
     WindowImpl(String id,
                Router parent,
@@ -58,9 +59,11 @@ public final class WindowImpl extends AbstractBukkitComponent implements Window 
                WindowTitleUpdateCallback titleUpdateCallback,
                InteractionCallback interactionCallback,
                WindowChildComponentBuilder childComponentBuilder,
+               CallbackInitComponent initCallback,
                WindowBuilder.RenderOptionsBuilder renderOptionsBuilder,
                Map<String, Signal<?>> signals) {
         super(id, parent.getWolfyUtils(), parent);
+        this.initCallback = initCallback;
         Preconditions.checkNotNull(id);
         Preconditions.checkNotNull(interactionCallback);
         Preconditions.checkArgument(size != null || type != null, "Either type or size must be specified!");
@@ -152,11 +155,6 @@ public final class WindowImpl extends AbstractBukkitComponent implements Window 
     }
 
     @Override
-    public void render(GuiHolder holder, WindowState state, RenderContext context) {
-
-    }
-
-    @Override
     public InteractionCallback interactCallback() {
         return interactionCallback;
     }
@@ -204,6 +202,11 @@ public final class WindowImpl extends AbstractBukkitComponent implements Window 
     @Override
     public RenderOptions getRenderOptions() {
         return renderOptions;
+    }
+
+    @Override
+    public CallbackInitComponent getInitCallback() {
+        return initCallback;
     }
 
     public static class RenderOptionsImpl implements RenderOptions {

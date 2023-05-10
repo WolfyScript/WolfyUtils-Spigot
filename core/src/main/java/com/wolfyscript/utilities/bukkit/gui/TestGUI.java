@@ -1,12 +1,11 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
-import com.wolfyscript.utilities.common.gui.ButtonBuilder;
 import com.wolfyscript.utilities.common.gui.GuiAPIManager;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.Signal;
+import com.wolfyscript.utilities.common.gui.components.ButtonBuilder;
 import com.wolfyscript.utilities.eval.value_provider.ValueProviderStringConst;
 import java.io.File;
 import net.kyori.adventure.text.Component;
@@ -29,24 +28,31 @@ public class TestGUI {
                                 .size(27)
                                 // Creates the signal this component will track and children can listen to
                                 .createSignal(COUNT, Integer.class, count -> count.defaultValue(state -> 0))
-                                .render(rendering -> rendering
-                                        .position(4, "count_up")
-                                        .position(13, "counter")
-                                        .position(22, "count_down")
-                                        .position(10, "reset")
-                                        // Can be used to further customize when components should be rendered. Called everytime the signal has been updated. Replaces the static rendering!
-                                        .custom((guiHolder, state) -> {
+                                .render((holder, rendering) -> {
+                                    Signal.Value<Integer> count = rendering.createSignal(COUNT, Integer.class, () -> 0);
+
+                                    rendering
+                                            // The state of a component is only reconstructed if the slot it is positioned at changes.
+
                                             // Here the slot will always have the same type of component, so the state is created only once.
-                                            state.renderComponent("count_up");
-                                            state.renderComponent("counter");
-                                            // The state of a component is only reconstructed if the slot changes
-                                            if (state.captureSignal(COUNT, Integer.class).get() > 0) {
-                                                // These components may be cleared when count == 0, so the state is recreated whenever the count changes from 0 to >0.
-                                                state.renderComponent("count_down");
-                                                state.renderComponent("reset");
-                                            }
-                                        })
-                                )
+                                            // Static rendering, slots do not change
+                                            .component(4, "count_up")
+                                            .component(13, "counter")
+                                            .component(22, "count_down")
+                                            .component(10, "reset")
+                                            // Dynamic rendering, Replaces the static rendering!
+                                            .component("count_up")
+                                            .component("counter")
+
+                                            // Reactive parts are called everytime the signal is updated.
+                                            .reactive(count, signal -> {
+                                                if (signal.get() > 0) {
+                                                    // These components may be cleared when count == 0, so the state is recreated whenever the count changes from 0 to >0.
+                                                    rendering.component("count_down")
+                                                            .component("reset");
+                                                }
+                                            });
+                                })
                                 // The children that can be used inside of this window.
                                 .children(mainMenuChildren -> mainMenuChildren
                                         .button("counter", settingsBtn -> settingsBtn
@@ -115,20 +121,23 @@ public class TestGUI {
                         .window("main_menu", mainMenu -> mainMenu
                                 // Creates the signal this component will track and children can listen to
                                 .createSignal(COUNT, Integer.class, count -> count.defaultValue(state -> 0))
-                                .render(rendering -> rendering
-                                        // Can be used to further customize when components should be rendered. Called everytime the signal has been updated. Replaces the static rendering!
-                                        .custom((guiHolder, state) -> {
+                                .render((holder, rendering) -> {
+                                    Signal.Value<Integer> count = rendering.createSignal(COUNT, Integer.class, () -> 0);
+
+                                    rendering
+                                            // The state of a component is only reconstructed if the slot it is positioned at changes.
                                             // Here the slot will always have the same type of component, so the state is created only once.
-                                            state.renderComponent("count_up");
-                                            state.renderComponent("counter");
-                                            // The state of a component is only reconstructed if the slot changes
-                                            if (state.captureSignal(COUNT, Integer.class).get() > 0) {
-                                                // These components may be cleared when count == 0, so the state is recreated whenever the count changes from 0 to >0.
-                                                state.renderComponent("count_down");
-                                                state.renderComponent("reset");
-                                            }
-                                        })
-                                )
+                                            .component("count_up")
+                                            .component("counter")
+                                            // Reactive parts are called everytime the signal is updated.
+                                            .reactive(count, signal -> {
+                                                if (signal.get() > 0) {
+                                                    // These components may be cleared when count == 0, so the state is recreated whenever the count changes from 0 to >0.
+                                                    rendering.component("count_down")
+                                                            .component("reset");
+                                                }
+                                            });
+                                })
                                 // The children that can be used inside of this window.
                                 .children(mainMenuChildren -> mainMenuChildren
                                         .button("count_up", settingsBtn -> settingsBtn

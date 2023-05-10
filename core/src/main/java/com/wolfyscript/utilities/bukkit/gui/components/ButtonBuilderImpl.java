@@ -1,4 +1,4 @@
-package com.wolfyscript.utilities.bukkit.gui;
+package com.wolfyscript.utilities.bukkit.gui.components;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -8,11 +8,13 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.wolfyscript.utilities.KeyedStaticId;
+import com.wolfyscript.utilities.bukkit.gui.AbstractBukkitComponentBuilder;
+import com.wolfyscript.utilities.bukkit.gui.SignalImpl;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.common.gui.Button;
-import com.wolfyscript.utilities.common.gui.ButtonBuilder;
-import com.wolfyscript.utilities.common.gui.ButtonIcon;
+import com.wolfyscript.utilities.common.gui.components.Button;
+import com.wolfyscript.utilities.common.gui.components.ButtonBuilder;
+import com.wolfyscript.utilities.common.gui.components.ButtonIcon;
 import com.wolfyscript.utilities.common.gui.ComponentBuilderSettings;
 import com.wolfyscript.utilities.common.gui.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
