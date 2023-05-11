@@ -7,22 +7,27 @@ import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentState;
 import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.RenderContext;
-import com.wolfyscript.utilities.common.gui.RouterState;
+import com.wolfyscript.utilities.common.gui.Signal;
+import com.wolfyscript.utilities.common.gui.components.RenderFunction;
+import com.wolfyscript.utilities.common.gui.components.RouterState;
 import com.wolfyscript.utilities.common.gui.SizedComponent;
 import com.wolfyscript.utilities.common.gui.Stateful;
-import com.wolfyscript.utilities.common.gui.Window;
-import com.wolfyscript.utilities.common.gui.WindowState;
+import com.wolfyscript.utilities.common.gui.components.Window;
+import com.wolfyscript.utilities.common.gui.components.WindowState;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 public class WindowStateImpl extends ComponentStateImpl<Window, RouterState> implements WindowState {
 
     private final Map<Integer, ComponentStateImpl<? extends SizedComponent, WindowStateImpl>> childComponentStates = new Int2ObjectOpenHashMap<>();
     private final Map<Integer, ComponentStateImpl<? extends SizedComponent, WindowStateImpl>> updatedStateCache = new Int2ObjectOpenHashMap<>();
+    private final Map<String, RenderFunction> reactiveRenderFunctions = new HashMap<>();
+    private RenderFunction renderFunction;
 
     @Inject
     public WindowStateImpl(RouterState parent, Window owner) {
-        super(parent, owner);
+        super(parent, owner, null);
         markDirty();
     }
 
@@ -33,8 +38,11 @@ public class WindowStateImpl extends ComponentStateImpl<Window, RouterState> imp
             if (holder instanceof GUIHolder guiHolder) {
                 InventoryUpdate.updateInventory(((WolfyCoreImpl) getOwner().getWolfyUtils().getCore()).getWolfyUtils().getPlugin(),
                         guiHolder.getPlayer(),
-                        getOwner().createTitle(holder));
+                        getOwner().createTitle(holder, this));
             }
+
+            reactiveRenderFunctions.get("");
+
             getOwner().getRenderOptions().renderCallback().ifPresentOrElse(
                     renderCallback -> renderCallback.render(holder, this),
                     () -> getOwner().getRenderOptions().placement().forEach(this::renderComponent)

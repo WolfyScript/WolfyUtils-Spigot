@@ -16,7 +16,7 @@ import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.MenuComponent;
 import com.wolfyscript.utilities.common.gui.Signal;
 import com.wolfyscript.utilities.common.gui.SizedComponent;
-import com.wolfyscript.utilities.common.gui.Window;
+import com.wolfyscript.utilities.common.gui.components.Window;
 import com.wolfyscript.utilities.common.items.ItemStackConfig;
 import com.wolfyscript.utilities.eval.context.EvalContext;
 import java.util.Map;
@@ -68,7 +68,7 @@ public class ButtonImpl extends AbstractBukkitComponent implements Button {
     }
 
     @Override
-    public ButtonComponentState createState(ComponentState state) {
+    public ButtonComponentState createState(ComponentState state, GuiHolder holder) {
         Component parent = state.getOwner();
         if (parent instanceof MenuComponent<?> && !(parent instanceof Window))
             throw new IllegalArgumentException("Cannot create window state without a router parent!");

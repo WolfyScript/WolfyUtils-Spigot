@@ -3,7 +3,7 @@ package com.wolfyscript.utilities.bukkit.gui;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.ComponentState;
 import com.wolfyscript.utilities.common.gui.GuiViewManagerCommonImpl;
-import com.wolfyscript.utilities.common.gui.Router;
+import com.wolfyscript.utilities.common.gui.components.Router;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;

@@ -29,27 +29,28 @@ public class TestGUI {
                                 // Creates the signal this component will track and children can listen to
                                 .createSignal(COUNT, Integer.class, count -> count.defaultValue(state -> 0))
                                 .render((holder, rendering) -> {
-                                    Signal.Value<Integer> count = rendering.createSignal(COUNT, Integer.class, () -> 0);
+                                    Signal.Value<Integer> count = rendering.useSignal(COUNT, Integer.class, () -> 0);
 
                                     rendering
                                             // The state of a component is only reconstructed if the slot it is positioned at changes.
 
                                             // Here the slot will always have the same type of component, so the state is created only once.
-                                            // Static rendering, slots do not change
-                                            .component(4, "count_up")
-                                            .component(13, "counter")
-                                            .component(22, "count_down")
-                                            .component(10, "reset")
-                                            // Dynamic rendering, Replaces the static rendering!
-                                            .component("count_up")
-                                            .component("counter")
+                                            // Positioning, does not directly render the components, it just positions them. (Recommend to use via configs! This overrides config values!)
+                                            .position(4, "count_up")
+                                            .position(13, "counter")
+                                            .position(22, "count_down")
+                                            .position(10, "reset")
+
+                                            // Static Rendering, uses the positions specified previously!
+                                            .render("count_up")
+                                            .render("counter")
 
                                             // Reactive parts are called everytime the signal is updated.
-                                            .reactive(count, signal -> {
+                                            .reactive(count, (renderer, signal) -> {
                                                 if (signal.get() > 0) {
                                                     // These components may be cleared when count == 0, so the state is recreated whenever the count changes from 0 to >0.
-                                                    rendering.component("count_down")
-                                                            .component("reset");
+                                                    renderer.render("count_down")
+                                                            .render("reset");
                                                 }
                                             });
                                 })
@@ -122,7 +123,7 @@ public class TestGUI {
                                 // Creates the signal this component will track and children can listen to
                                 .createSignal(COUNT, Integer.class, count -> count.defaultValue(state -> 0))
                                 .render((holder, rendering) -> {
-                                    Signal.Value<Integer> count = rendering.createSignal(COUNT, Integer.class, () -> 0);
+                                    Signal.Value<Integer> count = rendering.useSignal(COUNT, Integer.class, () -> 0);
 
                                     rendering
                                             // The state of a component is only reconstructed if the slot it is positioned at changes.

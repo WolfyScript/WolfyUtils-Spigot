@@ -4,7 +4,7 @@ import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.GuiHolderCommonImpl;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
-import com.wolfyscript.utilities.common.gui.Window;
+import com.wolfyscript.utilities.common.gui.components.Window;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Objects;

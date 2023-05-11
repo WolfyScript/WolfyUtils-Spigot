@@ -14,15 +14,14 @@ import com.wolfyscript.utilities.common.gui.InteractionDetails;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.RenderCallback;
 import com.wolfyscript.utilities.common.gui.RenderContext;
-import com.wolfyscript.utilities.common.gui.Router;
-import com.wolfyscript.utilities.common.gui.RouterState;
+import com.wolfyscript.utilities.common.gui.components.Router;
+import com.wolfyscript.utilities.common.gui.components.RouterState;
 import com.wolfyscript.utilities.common.gui.Signal;
 import com.wolfyscript.utilities.common.gui.SizedComponent;
-import com.wolfyscript.utilities.common.gui.Window;
-import com.wolfyscript.utilities.common.gui.WindowBuilder;
-import com.wolfyscript.utilities.common.gui.WindowChildComponentBuilder;
-import com.wolfyscript.utilities.common.gui.WindowState;
-import com.wolfyscript.utilities.common.gui.WindowTitleUpdateCallback;
+import com.wolfyscript.utilities.common.gui.components.Window;
+import com.wolfyscript.utilities.common.gui.components.WindowChildComponentBuilder;
+import com.wolfyscript.utilities.common.gui.components.WindowState;
+import com.wolfyscript.utilities.common.gui.components.WindowTitleUpdateCallback;
 import com.wolfyscript.utilities.common.gui.WindowType;
 import com.wolfyscript.utilities.common.gui.components.CallbackInitComponent;
 import java.util.Collections;
@@ -49,7 +48,6 @@ public final class WindowImpl extends AbstractBukkitComponent implements Window 
     private final WindowType type;
     private final WindowTitleUpdateCallback titleUpdateCallback;
     private final InteractionCallback interactionCallback;
-    private final RenderOptions renderOptions;
     private final CallbackInitComponent initCallback;
 
     WindowImpl(String id,
@@ -60,7 +58,6 @@ public final class WindowImpl extends AbstractBukkitComponent implements Window 
                InteractionCallback interactionCallback,
                WindowChildComponentBuilder childComponentBuilder,
                CallbackInitComponent initCallback,
-               WindowBuilder.RenderOptionsBuilder renderOptionsBuilder,
                Map<String, Signal<?>> signals) {
         super(id, parent.getWolfyUtils(), parent);
         this.initCallback = initCallback;
@@ -74,7 +71,6 @@ public final class WindowImpl extends AbstractBukkitComponent implements Window 
         this.children = HashBiMap.create();
         childComponentBuilder.applyTo(this);
         this.signals = signals == null ? new HashMap<>() : signals;
-        this.renderOptions = renderOptionsBuilder.create(this);
     }
 
     void addNewChildComponent(String id, SizedComponent component) {
@@ -124,7 +120,7 @@ public final class WindowImpl extends AbstractBukkitComponent implements Window 
     }
 
     @Override
-    public WindowState createState(ComponentState state) {
+    public WindowState createState(ComponentState state, GuiHolder holder) {
         if (!(state instanceof RouterState parentState))
             throw new IllegalArgumentException("Cannot create window state without a router parent!");
         return new WindowStateImpl(parentState, this);
@@ -160,11 +156,6 @@ public final class WindowImpl extends AbstractBukkitComponent implements Window 
     }
 
     @Override
-    public RenderCallback<WindowState> renderCallback() {
-        return renderOptions.renderCallback().orElseGet(() -> (guiHolder, windowState) -> {});
-    }
-
-    @Override
     public Set<? extends SizedComponent> childComponents() {
         return children.values();
     }
@@ -197,11 +188,6 @@ public final class WindowImpl extends AbstractBukkitComponent implements Window 
     @Override
     public int height() {
         return size / 9;
-    }
-
-    @Override
-    public RenderOptions getRenderOptions() {
-        return renderOptions;
     }
 
     @Override

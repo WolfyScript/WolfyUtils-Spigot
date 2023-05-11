@@ -5,10 +5,10 @@ import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentState;
 import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.RenderContext;
-import com.wolfyscript.utilities.common.gui.Router;
-import com.wolfyscript.utilities.common.gui.RouterState;
-import com.wolfyscript.utilities.common.gui.Window;
-import com.wolfyscript.utilities.common.gui.WindowState;
+import com.wolfyscript.utilities.common.gui.components.Router;
+import com.wolfyscript.utilities.common.gui.components.RouterState;
+import com.wolfyscript.utilities.common.gui.components.Window;
+import com.wolfyscript.utilities.common.gui.components.WindowState;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -33,9 +33,9 @@ public class RouterStateImpl extends ComponentStateImpl<Router, RouterState> imp
         Component nextChild = ((RenderContextImpl) context).nextChild();
         ComponentState state;
         if (nextChild instanceof Window window) {
-            state = Objects.requireNonNull(childComponentStates.computeIfAbsent(window.getID(), s -> window.createState(this)), () -> String.format("Failed to create child state for component '%s' of parent '%s'", window.getID(), getOwner().getID()));
+            state = Objects.requireNonNull(childComponentStates.computeIfAbsent(window.getID(), s -> window.createState(this, holder)), () -> String.format("Failed to create child state for component '%s' of parent '%s'", window.getID(), getOwner().getID()));
         } else if (nextChild instanceof Router router) {
-            state = Objects.requireNonNull(childRouteStates.computeIfAbsent(router.getID(), s -> router.createState(this)), () -> String.format("Failed to create child state for router '%s' of parent '%s'", router.getID(), getOwner().getID()));
+            state = Objects.requireNonNull(childRouteStates.computeIfAbsent(router.getID(), s -> router.createState(this, holder)), () -> String.format("Failed to create child state for router '%s' of parent '%s'", router.getID(), getOwner().getID()));
         } else {
             throw new IllegalStateException("Unhandled Component! Cannot render component '" + nextChild.getID() + "'!");
         }

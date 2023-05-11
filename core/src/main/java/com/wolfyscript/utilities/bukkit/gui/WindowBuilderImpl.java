@@ -23,14 +23,14 @@ import com.wolfyscript.utilities.common.gui.ComponentBuilderSettings;
 import com.wolfyscript.utilities.common.gui.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.RenderCallback;
-import com.wolfyscript.utilities.common.gui.Router;
+import com.wolfyscript.utilities.common.gui.components.Router;
 import com.wolfyscript.utilities.common.gui.Signal;
 import com.wolfyscript.utilities.common.gui.SizedComponent;
-import com.wolfyscript.utilities.common.gui.Window;
-import com.wolfyscript.utilities.common.gui.WindowBuilder;
-import com.wolfyscript.utilities.common.gui.WindowChildComponentBuilder;
-import com.wolfyscript.utilities.common.gui.WindowState;
-import com.wolfyscript.utilities.common.gui.WindowTitleUpdateCallback;
+import com.wolfyscript.utilities.common.gui.components.Window;
+import com.wolfyscript.utilities.common.gui.components.WindowBuilder;
+import com.wolfyscript.utilities.common.gui.components.WindowChildComponentBuilder;
+import com.wolfyscript.utilities.common.gui.components.WindowState;
+import com.wolfyscript.utilities.common.gui.components.WindowTitleUpdateCallback;
 import com.wolfyscript.utilities.common.gui.WindowType;
 import com.wolfyscript.utilities.common.gui.components.CallbackInitComponent;
 import com.wolfyscript.utilities.common.registry.RegistryGUIComponentBuilders;
@@ -179,7 +179,6 @@ public class WindowBuilderImpl extends AbstractBukkitComponentBuilder<Window, Ro
                 interactionCallback,
                 getChildBuilder(),
                 initCallback,
-                getRenderOptionsBuilder(),
                 signalBuilderMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().create()))
         );
     }
