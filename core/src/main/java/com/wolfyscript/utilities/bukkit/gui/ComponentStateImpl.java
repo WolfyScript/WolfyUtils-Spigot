@@ -9,41 +9,21 @@ import com.wolfyscript.utilities.common.gui.InteractionDetails;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.RenderContext;
 import com.wolfyscript.utilities.common.gui.Signal;
-import com.wolfyscript.utilities.common.gui.Stateful;
-import com.wolfyscript.utilities.common.gui.components.RenderFunction;
-import com.wolfyscript.utilities.common.gui.components.Window;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 public abstract class ComponentStateImpl<OWNER extends Component, PARENT extends ComponentState> implements ComponentState {
 
     private final PARENT parent;
     private final OWNER owner;
-    private final GuiHolder holder;
     protected final Map<String, Signal.Value<?>> messageValues = new HashMap<>();
     boolean dirty = false;
 
-    public ComponentStateImpl(PARENT parent, OWNER owner, GuiHolder holder) {
+    public ComponentStateImpl(PARENT parent, OWNER owner) {
         this.parent = parent;
         this.owner = owner;
-        this.holder = holder;
         markDirty();
-        initSignals();
-    }
-
-    private void initSignals() {
-        if (!(owner instanceof Stateful<?> stateful)) return;
-
-        if (owner instanceof Window window) {
-            RenderFunction renderFunction = new RenderFunctionImpl(this);
-            window.getInitCallback().run(holder, renderFunction);
-        }
-
-        for (Signal<?> signal : stateful.signals().values()) {
-            updateMessage(signal.createValue(this));
-        }
     }
 
     void updateMessage(Signal.Value<?> message) {

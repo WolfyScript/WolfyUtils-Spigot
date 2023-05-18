@@ -19,73 +19,43 @@ import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.components.ButtonBuilder;
 import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentBuilder;
-import com.wolfyscript.utilities.common.gui.ComponentBuilderSettings;
 import com.wolfyscript.utilities.common.gui.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
-import com.wolfyscript.utilities.common.gui.RenderCallback;
 import com.wolfyscript.utilities.common.gui.components.Router;
 import com.wolfyscript.utilities.common.gui.Signal;
-import com.wolfyscript.utilities.common.gui.SizedComponent;
 import com.wolfyscript.utilities.common.gui.components.Window;
 import com.wolfyscript.utilities.common.gui.components.WindowBuilder;
 import com.wolfyscript.utilities.common.gui.components.WindowChildComponentBuilder;
-import com.wolfyscript.utilities.common.gui.components.WindowState;
 import com.wolfyscript.utilities.common.gui.components.WindowTitleUpdateCallback;
 import com.wolfyscript.utilities.common.gui.WindowType;
-import com.wolfyscript.utilities.common.gui.components.CallbackInitComponent;
 import com.wolfyscript.utilities.common.registry.RegistryGUIComponentBuilders;
 import com.wolfyscript.utilities.json.annotations.KeyedBaseType;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import net.kyori.adventure.text.minimessage.tag.Tag;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 @KeyedStaticId(key = "window")
-@ComponentBuilderSettings(base = WindowBuilder.class, component = Window.class)
 @KeyedBaseType(baseType = ComponentBuilder.class)
-public class WindowBuilderImpl extends AbstractBukkitComponentBuilder<Window, Router> implements WindowBuilder {
+public class WindowBuilderImpl  implements WindowBuilder {
 
-    private RenderOptionsBuilder renderOptionsBuilder;
+    private final String id;
+    private final WolfyUtils wolfyUtils;
     private ChildBuilderImpl childComponentBuilder;
     protected int size;
     protected WindowType type;
     protected WindowTitleUpdateCallback titleUpdateCallback = (guiHolder, window, state) -> net.kyori.adventure.text.Component.empty();
     private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.def();
     private final Map<String, Signal.Builder<?>> signalBuilderMap = new HashMap<>();
-    private CallbackInitComponent initCallback = (guiHolder, renderFunction) -> {};
+    private final WindowRenderer.Builder rendererBuilder;
 
     @Inject
     @JsonCreator
     protected WindowBuilderImpl(@JsonProperty("id") String windowID,
                                 @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils) {
-        super(windowID, wolfyUtils);
-    }
-
-    @JsonSetter("title")
-    private void setTitle(String title) {
-        if (title != null) {
-            titleUpdateCallback = (guiHolder, window, state) -> getWolfyUtils().getChat().getMiniMessage().deserialize(title, TagResolver.resolver("signal", (argumentQueue, context1) -> {
-                if (state == null) return Tag.inserting(net.kyori.adventure.text.Component.empty());
-                Object value = state.captureSignal(argumentQueue.popOr("Missing signal id!").value()).get();
-                return Tag.inserting(context1.deserialize(String.valueOf(value)));
-            }));
-        }
-    }
-
-    @JsonSetter("render")
-    private void setRenderOptionsBuilder(RenderOptionsBuilderImpl renderOptionsBuilder) {
-        this.renderOptionsBuilder = renderOptionsBuilder;
-    }
-
-    private RenderOptionsBuilder getRenderOptionsBuilder() {
-        if (renderOptionsBuilder == null) {
-            this.renderOptionsBuilder = new RenderOptionsBuilderImpl();
-        }
-        return renderOptionsBuilder;
+        this.id = windowID;
+        this.wolfyUtils = wolfyUtils;
+        this.rendererBuilder = new WindowRenderer.Builder(null);
     }
 
     @JsonSetter("children")
@@ -96,7 +66,7 @@ public class WindowBuilderImpl extends AbstractBukkitComponentBuilder<Window, Ro
 
     private WindowChildComponentBuilder getChildBuilder() {
         if (childComponentBuilder == null) {
-            childComponentBuilder = new ChildBuilderImpl(getWolfyUtils());
+            childComponentBuilder = new ChildBuilderImpl(wolfyUtils);
             childComponentBuilder.setParentBuilder(this);
         }
         return childComponentBuilder;
@@ -162,31 +132,30 @@ public class WindowBuilderImpl extends AbstractBukkitComponentBuilder<Window, Ro
     }
 
     @Override
-    public WindowBuilder render(CallbackInitComponent render) {
+    public WindowBuilder render(Consumer<com.wolfyscript.utilities.common.gui.WindowRenderer.Builder> render) {
         Preconditions.checkNotNull(render);
-        this.initCallback = render;
+        render.accept(rendererBuilder);
         return this;
     }
 
     @Override
     public Window create(Router parent) {
         return new WindowImpl(
-                parent.getID() + "/" + getID(),
+                parent.getID() + "/" + id,
                 parent,
                 size,
                 type,
                 this.titleUpdateCallback,
                 interactionCallback,
                 getChildBuilder(),
-                initCallback,
-                signalBuilderMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().create()))
+                rendererBuilder
         );
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ChildBuilderImpl implements WindowChildComponentBuilder {
 
-        private final BiMap<String, ComponentBuilder<? extends SizedComponent, SizedComponent>> children = HashBiMap.create();
+        private final BiMap<String, ComponentBuilder<? extends Component, Component>> children = HashBiMap.create();
         private final WolfyUtils wolfyUtils;
         private WindowBuilder parentBuilder;
 
@@ -201,14 +170,14 @@ public class WindowBuilderImpl extends AbstractBukkitComponentBuilder<Window, Ro
         }
 
         @JsonSetter("values")
-        private void createChildBuilders(List<ComponentBuilder<? extends SizedComponent, SizedComponent>> children) {
-            for (ComponentBuilder<? extends SizedComponent, SizedComponent> child : children) {
+        private void createChildBuilders(List<ComponentBuilder<? extends Component, Component>> children) {
+            for (ComponentBuilder<? extends Component, Component> child : children) {
                 this.children.put(child.getID(), child);
             }
         }
 
         @Override
-        public <B extends ComponentBuilder<? extends SizedComponent, SizedComponent>> WindowChildComponentBuilder custom(String componentId, Class<B> builderType, Consumer<B> builderConsumer) {
+        public <B extends ComponentBuilder<? extends Component, Component>> WindowChildComponentBuilder custom(String componentId, Class<B> builderType, Consumer<B> builderConsumer) {
             RegistryGUIComponentBuilders registry = wolfyUtils.getRegistries().getGuiComponentBuilders();
             NamespacedKey key = registry.getKey(builderType);
             Preconditions.checkArgument(key != null, "Failed to create component '%s'! Cannot find builder '%s' in registry!", componentId, builderType.getName());
@@ -223,7 +192,7 @@ public class WindowBuilderImpl extends AbstractBukkitComponentBuilder<Window, Ro
             }
             Injector injector = Guice.createInjector(Stage.PRODUCTION, binder -> {
                 binder.bind(WolfyUtils.class).toInstance(wolfyUtils);
-                binder.bind(ComponentBuilder.class).toInstance(parentBuilder);
+                binder.bind(WindowBuilder.class).toInstance(parentBuilder);
                 binder.bind(String.class).toInstance(componentId);
             });
             B builder = injector.getInstance(builderImplType);
@@ -240,50 +209,9 @@ public class WindowBuilderImpl extends AbstractBukkitComponentBuilder<Window, Ro
         @Override
         public void applyTo(Window window) {
             if (!(window instanceof WindowImpl thisWindow)) return;
-            children.forEach((s, componentBuilder) -> thisWindow.addNewChildComponent(s, componentBuilder.create(thisWindow)));
+            children.forEach((s, componentBuilder) -> thisWindow.addNewChildComponent(s, componentBuilder.create(null)));
         }
 
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class RenderOptionsBuilderImpl implements RenderOptionsBuilder {
-
-        private final Map<Integer, String> placement = new Int2ObjectOpenHashMap<>();
-        private RenderCallback<WindowState> renderCallback = null;
-
-        @JsonSetter("placement")
-        private void loadPlacement(List<Placement> placementList) {
-            for (Placement element : placementList) {
-                position(element.slot(), element.component());
-            }
-        }
-
-        @Override
-        public RenderOptionsBuilder position(int slot, String componentID) {
-            if (placement.containsKey(slot))
-                throw new IllegalArgumentException("There already exists a Component at that position!");
-            placement.put(slot, componentID);
-            return this;
-        }
-
-        @Override
-        public RenderOptionsBuilder custom(RenderCallback<WindowState> renderCallback) {
-            this.renderCallback = renderCallback;
-            return this;
-        }
-
-        @Override
-        public Window.RenderOptions create(Window window) {
-            Map<Integer, ? extends Component> componentPlacement = placement.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
-                String componentID = entry.getValue();
-                return window.getChild(componentID).orElseThrow(() -> new IllegalArgumentException(String.format("Cannot find child Component with id '%s'", componentID)));
-            }));
-            return new WindowImpl.RenderOptionsImpl(renderCallback, componentPlacement);
-        }
-
-        @JsonIgnoreProperties(ignoreUnknown = true)
-        private record Placement(int slot, String component) {
-        }
     }
 
 }

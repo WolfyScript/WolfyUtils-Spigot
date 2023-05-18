@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.common.gui.ComponentState;
 import com.wolfyscript.utilities.common.gui.Signal;
+import com.wolfyscript.utilities.common.gui.Signalable;
+import java.util.Objects;
 import java.util.function.Function;
 
 public class SignalImpl<MT> implements Signal<MT> {
@@ -36,11 +38,24 @@ public class SignalImpl<MT> implements Signal<MT> {
         return new ValueImpl<>((ComponentStateImpl<?, ?>) componentState, this, value);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SignalImpl<?> signal = (SignalImpl<?>) o;
+        return Objects.equals(key, signal.key) && Objects.equals(messageValueType, signal.messageValueType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(key, messageValueType);
+    }
+
     public static class ValueImpl<T> implements Value<T> {
 
         private final ComponentStateImpl<?, ?> state;
         private final Signal<T> signal;
-        private final T value;
+        private T value;
 
         public ValueImpl(ComponentStateImpl<?, ?> state, Signal<T> signal, T value) {
             this.state = state;
@@ -60,7 +75,10 @@ public class SignalImpl<MT> implements Signal<MT> {
 
         @Override
         public void set(T newValue) {
-            state.updateMessage(new ValueImpl<>(state, signal, newValue));
+            this.value = newValue;
+            if (state instanceof Signalable signalable) {
+                signalable.receiveUpdate(this);
+            }
         }
 
         @Override

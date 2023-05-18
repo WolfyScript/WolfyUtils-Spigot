@@ -10,7 +10,7 @@ import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.ComponentBuilder;
 import com.wolfyscript.utilities.common.gui.GuiAPIManagerCommonImpl;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
-import com.wolfyscript.utilities.common.gui.RouterBuilder;
+import com.wolfyscript.utilities.common.gui.components.RouterBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;

@@ -5,6 +5,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentState;
 import com.wolfyscript.utilities.common.gui.GuiHolder;
@@ -12,83 +13,81 @@ import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.InteractionDetails;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
-import com.wolfyscript.utilities.common.gui.RenderCallback;
 import com.wolfyscript.utilities.common.gui.RenderContext;
+import com.wolfyscript.utilities.common.gui.Renderer;
 import com.wolfyscript.utilities.common.gui.components.Router;
-import com.wolfyscript.utilities.common.gui.components.RouterState;
-import com.wolfyscript.utilities.common.gui.Signal;
-import com.wolfyscript.utilities.common.gui.SizedComponent;
 import com.wolfyscript.utilities.common.gui.components.Window;
 import com.wolfyscript.utilities.common.gui.components.WindowChildComponentBuilder;
 import com.wolfyscript.utilities.common.gui.components.WindowState;
 import com.wolfyscript.utilities.common.gui.components.WindowTitleUpdateCallback;
 import com.wolfyscript.utilities.common.gui.WindowType;
-import com.wolfyscript.utilities.common.gui.components.CallbackInitComponent;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
-import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 
 @KeyedStaticId(key = "window")
-public final class WindowImpl extends AbstractBukkitComponent implements Window {
+public final class WindowImpl implements Window {
 
-    private final Map<String, Signal<?>> signals;
-    private final BiMap<String, SizedComponent> children;
+    private final String id;
+    private final Router router;
+    private final WolfyUtils wolfyUtils;
+    private final BiMap<String, Component> children;
     private final Integer size;
     private final WindowType type;
     private final WindowTitleUpdateCallback titleUpdateCallback;
     private final InteractionCallback interactionCallback;
-    private final CallbackInitComponent initCallback;
+    private final WindowRenderer windowRenderer;
 
     WindowImpl(String id,
-               Router parent,
+               Router router,
                Integer size,
                WindowType type,
                WindowTitleUpdateCallback titleUpdateCallback,
                InteractionCallback interactionCallback,
                WindowChildComponentBuilder childComponentBuilder,
-               CallbackInitComponent initCallback,
-               Map<String, Signal<?>> signals) {
-        super(id, parent.getWolfyUtils(), parent);
-        this.initCallback = initCallback;
+               WindowRenderer.Builder rendererBuilder) {
         Preconditions.checkNotNull(id);
         Preconditions.checkNotNull(interactionCallback);
         Preconditions.checkArgument(size != null || type != null, "Either type or size must be specified!");
+        this.id = id;
+        this.router = router;
+        this.wolfyUtils = router.getWolfyUtils();
+        this.windowRenderer = rendererBuilder.create(this);
         this.size = size;
         this.type = type;
         this.titleUpdateCallback = titleUpdateCallback;
         this.interactionCallback = interactionCallback;
         this.children = HashBiMap.create();
         childComponentBuilder.applyTo(this);
-        this.signals = signals == null ? new HashMap<>() : signals;
     }
 
-    void addNewChildComponent(String id, SizedComponent component) {
+    void addNewChildComponent(String id, Component component) {
         this.children.put(id, component);
     }
 
     @Override
-    public Router parent() {
-        return (Router) super.parent();
+    public WolfyUtils getWolfyUtils() {
+        return wolfyUtils;
     }
 
     @Override
-    public void init() {
-
+    public String getID() {
+        return null;
     }
 
     @Override
-    public RenderContext createContext(GuiViewManager viewManager, Deque<String> path, UUID player) {
+    public Router router() {
+        return router;
+    }
+
+    @Override
+    public RenderContext createContext(GuiViewManager viewManager, UUID player) {
         Player bukkitPlayer = Bukkit.getPlayer(player);
         if (bukkitPlayer == null) return null;
         Inventory topInventory = bukkitPlayer.getOpenInventory().getTopInventory();
@@ -96,9 +95,7 @@ public final class WindowImpl extends AbstractBukkitComponent implements Window 
         if (topInventory.getHolder() instanceof GUIHolder holder) {
             if (Objects.equals(holder.getCurrentWindow(), this)) {
                 // Still in the same window, we can just update it.
-                RenderContextImpl context = new RenderContextImpl(topInventory);
-                context.pushParentOnPath(this);
-                return context;
+                return new RenderContextImpl(topInventory);
             }
         }
         // No active Window or it is another Window, need to recreate inventory
@@ -114,26 +111,12 @@ public final class WindowImpl extends AbstractBukkitComponent implements Window 
                     .orElseGet(() -> Bukkit.createInventory(holder, getSize().orElseThrow(() -> new IllegalStateException("Invalid window type/size definition.")), BukkitComponentSerializer.legacy().serialize(title)));
         }
         holder.setActiveInventory(inventory);
-        RenderContextImpl context = new RenderContextImpl(inventory);
-        context.pushParentOnPath(this);
-        return context;
+        return new RenderContextImpl(inventory);
     }
 
     @Override
-    public WindowState createState(ComponentState state, GuiHolder holder) {
-        if (!(state instanceof RouterState parentState))
-            throw new IllegalArgumentException("Cannot create window state without a router parent!");
-        return new WindowStateImpl(parentState, this);
-    }
-
-    @Override
-    public Map<String, Signal<?>> signals() {
-        return signals;
-    }
-
-    @Override
-    public void open(GuiViewManager viewManager, RouterState parentState, Deque<String> path, UUID player) {
-
+    public WindowState createState(GuiViewManager guiViewManager) {
+        return new WindowStateImpl(this, guiViewManager);
     }
 
     private Optional<InventoryType> getInventoryType() {
@@ -156,7 +139,7 @@ public final class WindowImpl extends AbstractBukkitComponent implements Window 
     }
 
     @Override
-    public Set<? extends SizedComponent> childComponents() {
+    public Set<? extends Component> childComponents() {
         return children.values();
     }
 
@@ -191,40 +174,12 @@ public final class WindowImpl extends AbstractBukkitComponent implements Window 
     }
 
     @Override
-    public CallbackInitComponent getInitCallback() {
-        return initCallback;
+    public WindowRenderer getRenderer() {
+        return windowRenderer;
     }
 
-    public static class RenderOptionsImpl implements RenderOptions {
+    @Override
+    public void open(GuiViewManager guiViewManager) {
 
-        private final RenderCallback<WindowState> renderCallback;
-        private final Map<Integer, Component> placement;
-        private final Map<Component, int[]> reversePlacement;
-
-        public RenderOptionsImpl(RenderCallback<WindowState> renderCallback, Map<Integer, ? extends Component> placement) {
-            this.renderCallback = renderCallback;
-
-            this.placement = Collections.unmodifiableMap(placement);
-            this.reversePlacement = new HashMap<>();
-            for (Map.Entry<Integer, ? extends Component> entry : placement.entrySet()) {
-                reversePlacement.merge(entry.getValue(), new int[]{entry.getKey()}, ArrayUtils::addAll);
-            }
-        }
-
-        @Override
-        public Optional<RenderCallback<WindowState>> renderCallback() {
-            return Optional.ofNullable(renderCallback);
-        }
-
-        @Override
-        public Map<Integer, ? extends Component> placement() {
-            return placement;
-        }
-
-        @Override
-        public int[] getSlotsFor(Component component) {
-            return reversePlacement.getOrDefault(component, new int[0]);
-        }
     }
-
 }

@@ -31,139 +31,81 @@ import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.InteractionDetails;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
-import com.wolfyscript.utilities.common.gui.MenuComponent;
 import com.wolfyscript.utilities.common.gui.RenderContext;
-import com.wolfyscript.utilities.common.gui.Router;
-import com.wolfyscript.utilities.common.gui.RouterEntry;
-import com.wolfyscript.utilities.common.gui.RouterState;
-import com.wolfyscript.utilities.common.gui.Signal;
-import com.wolfyscript.utilities.common.gui.Window;
+import com.wolfyscript.utilities.common.gui.components.Router;
+import com.wolfyscript.utilities.common.gui.components.Window;
+import com.wolfyscript.utilities.common.gui.components.WindowBuilder;
+import java.util.Arrays;
 import java.util.Deque;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 @KeyedStaticId(key = "router")
-public final class RouterImpl extends AbstractBukkitComponent implements Router {
+public final class RouterImpl implements Router {
 
-    private final Map<String, Signal<?>> signals;
-    private final BiMap<String, Window> children = HashBiMap.create();
-    private final BiMap<String, Router> routes = HashBiMap.create();
-    private RouterEntry entry;
+    private final String id;
+    private final WolfyUtils wolfyUtils;
+    private final Window window;
+    private final Router parent;
+    private final BiMap<String, Router> subRoutes = HashBiMap.create();
     private final InteractionCallback interactionCallback;
 
     @Inject
     @JsonCreator
-    RouterImpl(String id, WolfyUtils wolfyUtils, Router parent, Map<String, Signal<?>> signals, InteractionCallback interactionCallback) {
-        super(id, wolfyUtils, parent);
+    RouterImpl(String id, WolfyUtils wolfyUtils, WindowBuilder windowBuilder, Router parent, InteractionCallback interactionCallback) {
         Preconditions.checkNotNull(interactionCallback);
+        this.id = id;
+        this.window = windowBuilder.create(this);
+        this.parent = parent;
+        this.wolfyUtils = wolfyUtils;
         this.interactionCallback = interactionCallback;
-        this.signals = Map.copyOf(signals);
-    }
-
-    @Override
-    public Router parent() {
-        return (Router) super.parent();
-    }
-
-    public void init() {
-
-    }
-
-    void addChild(String id, Window child) {
-        Preconditions.checkArgument(id != null);
-        Preconditions.checkArgument(child != null);
-        this.children.put(id, child);
-    }
-
-    void addRoute(String id, Router route) {
-        Preconditions.checkArgument(id != null);
-        Preconditions.checkArgument(route != null);
-        this.routes.put(id, route);
-    }
-
-    void setEntry(RouterEntry entry) {
-        Preconditions.checkNotNull(entry);
-        Preconditions.checkNotNull(entry.id());
-        Preconditions.checkNotNull(entry.type());
-        this.entry = entry;
-    }
-
-    @Override
-    public RouterEntry entry() {
-        return entry;
     }
 
     @Override
     public RenderContext createContext(GuiViewManager guiViewManager, Deque<String> path, UUID uuid) {
-        RenderContextImpl context;
-        if (path.isEmpty()) {
-            // construct context for entry because path reached the end
-            context = (RenderContextImpl) entry().component().createContext(guiViewManager, path, uuid);
+        return null;
+    }
+
+    @Override
+    public Window open(GuiViewManager viewManager, String... path) {
+        if (path == null || path.length == 0) {
+            Window window1 = getWindow()
+                    .orElseThrow(() -> new IllegalArgumentException(String.format("Path not found for router '%s'", id)));
+            window1.open(viewManager);
+            return window1;
         } else {
-            String childId = path.pop();
-            context = (RenderContextImpl) getChild(childId).map(window -> window.createContext(guiViewManager, path, uuid))
-                    .or(() -> getRoute(childId).map(router -> router.createContext(guiViewManager, path, uuid)))
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid path for MenuComponent! Cannot find child component/route '" + childId + "' of parent '" + getID() + "'!"));
+            Router subRoute = subRoutes.get(path[0]);
+            if (subRoute != null) {
+                String[] subPath = Arrays.copyOfRange(path, 1, path.length);
+                return subRoute.open(viewManager, subPath);
+            }
         }
-        context.pushParentOnPath(this);
-        return context;
+        return null;
     }
 
     @Override
-    public RouterState createState(ComponentState state) {
-        if (state == null) {
-            return new RouterStateImpl(null, this);
-        }
-        if (!(state instanceof RouterState parentState))
-            throw new IllegalArgumentException("Cannot create router state without a router parent!");
-        return new RouterStateImpl(parentState, this);
+    public String getID() {
+        return id;
     }
 
     @Override
-    public Map<String, Signal<?>> signals() {
-        return signals;
+    public WolfyUtils getWolfyUtils() {
+        return wolfyUtils;
     }
 
     @Override
-    public void open(GuiViewManager viewManager, RouterState parentState, Deque<String> path, UUID player) {
-        RouterState currentState = createState(parentState);
-        String id = path.poll();
-        getChild(id)
-                .ifPresentOrElse(window -> window.open(viewManager, currentState, path, player), () ->
-                        getRoute(id)
-                                .ifPresentOrElse(childRouter -> childRouter.open(viewManager, currentState, path, player), () -> {
-                                    // open entry
-                                    MenuComponent<RouterState> childComponent = entry.component();
-                                    childComponent.open(viewManager, currentState, path, player);
-                                })
-                );
+    public Router parent() {
+        return parent;
     }
 
     @Override
-    public Optional<Window> getChild(String id) {
-        return Optional.ofNullable(children.get(id));
+    public Optional<Router> getSubRoute(String routeID) {
+        return Optional.ofNullable(subRoutes.get(routeID));
     }
 
     @Override
-    public Optional<Window> getChild(String... strings) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Router> getRoute(String routeID) {
-        return Optional.ofNullable(routes.get(routeID));
-    }
-
-    @Override
-    public Set<? extends Window> childComponents() {
-        return children.values();
-    }
-
-    @Override
-    public Set<? extends Router> childRoutes() {
-        return routes.values();
+    public Optional<Window> getWindow() {
+        return Optional.ofNullable(window);
     }
 
     @Override

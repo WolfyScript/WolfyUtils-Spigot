@@ -2,11 +2,11 @@ package com.wolfyscript.utilities.bukkit.gui;
 
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.ComponentState;
+import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.GuiViewManagerCommonImpl;
 import com.wolfyscript.utilities.common.gui.components.Router;
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Deque;
+import com.wolfyscript.utilities.common.gui.components.Window;
+import com.wolfyscript.utilities.common.gui.components.WindowState;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -17,46 +17,42 @@ import org.bukkit.entity.Player;
 
 public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
 
-    private ComponentState rootStateNode;
-    private final Map<Integer, ComponentState> tailStateNodes = new HashMap<>();
+    private WindowState currentRootState;
+    private final Map<Integer, ComponentState> leaveNodes = new HashMap<>();
 
     protected GuiViewManagerImpl(WolfyUtils wolfyUtils, Router rootRouter, Set<UUID> viewers) {
         super(wolfyUtils, rootRouter, viewers);
     }
 
-    void changeRootState(ComponentStateImpl<?,?> newState) {
-        this.rootStateNode = newState;
+    Optional<ComponentState> getLeaveNode(int slot) {
+        return Optional.ofNullable(leaveNodes.get(slot));
     }
 
-    public ComponentState getRootStateNode() {
-        return rootStateNode;
-    }
-
-    Optional<ComponentState> getTailNode(int slot) {
-        return Optional.ofNullable(tailStateNodes.get(slot));
-    }
-
-    void updateTailNodes(ComponentState state, int... slots) {
+    void updateLeaveNodes(ComponentState state, int... slots) {
         for (int slot : slots) {
-            updateTailNodes(state, slot);
+            updateLeaveNodes(state, slot);
         }
     }
 
-    void updateTailNodes(ComponentState state, int slot) {
+    void updateLeaveNodes(ComponentState state, int slot) {
         if (state == null) {
-            tailStateNodes.remove(slot);
+            leaveNodes.remove(slot);
         } else {
-            tailStateNodes.put(slot, state);
+            leaveNodes.put(slot, state);
         }
     }
 
     @Override
     public void openNew(String... path) {
+        Window window = getRoot().open(this, path);
+        setCurrentRoot(window);
+        if (currentRootState == null) {
+            currentRootState = window.createState(this);
+        }
         for (UUID viewer : getViewers()) {
             Player player = Bukkit.getPlayer(viewer);
             if (player == null) continue;
-            Deque<String> pathStack = new ArrayDeque<>(Arrays.asList(path));
-            RenderContextImpl context = (RenderContextImpl) getRoot().createContext(this, pathStack, viewer);
+            RenderContextImpl context = (RenderContextImpl) window.createContext(this, viewer);
             renderFor(player, context);
         }
     }
@@ -65,9 +61,6 @@ public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
         if (player.getOpenInventory().getTopInventory() != context.getInventory()) {
             player.openInventory(context.getInventory());
         }
-        if (rootStateNode == null) {
-            rootStateNode = getRoot().createState(null);
-        }
-        rootStateNode.render((GUIHolder) context.getInventory().getHolder(), context);
+        
     }
 }

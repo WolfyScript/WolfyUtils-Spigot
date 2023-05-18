@@ -9,7 +9,7 @@ import com.wolfyscript.utilities.json.annotations.KeyedBaseType;
 
 
 @KeyedBaseType(baseType = ComponentBuilder.class)
-public abstract class AbstractBukkitComponentBuilder<OWNER extends Component, PARENT extends Component> implements ComponentBuilder<OWNER, PARENT> {
+public abstract class AbstractBukkitComponentBuilder<OWNER extends Component, PARENT> implements ComponentBuilder<OWNER, PARENT> {
 
     @JsonProperty("type")
     private final NamespacedKey type;

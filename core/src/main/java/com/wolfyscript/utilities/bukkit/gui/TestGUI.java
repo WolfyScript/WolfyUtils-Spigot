@@ -22,92 +22,85 @@ public class TestGUI {
         GuiAPIManager manager = core.getWolfyUtils().getGUIManager();
         final String COUNT = "count";
         manager.registerRouter("counter", builder -> builder
-                .children(children -> children
-                        .window("mainmenu", mainMenu -> mainMenu
-                                .title((guiHolder, window, state) -> Component.text("Main Menu"))
-                                .size(27)
-                                // Creates the signal this component will track and children can listen to
-                                .createSignal(COUNT, Integer.class, count -> count.defaultValue(state -> 0))
-                                .render((holder, rendering) -> {
-                                    Signal.Value<Integer> count = rendering.useSignal(COUNT, Integer.class, () -> 0);
+                .window(mainMenu -> mainMenu
+                        .size(27)
+                        // Creates the signal this component will track and children can listen to
+                        .render(rendering -> {
+                            Signal<Integer> count = rendering.useSignal(COUNT, Integer.class, state -> 0);
 
-                                    rendering
-                                            // The state of a component is only reconstructed if the slot it is positioned at changes.
+                            rendering
+                                    .title(Component.text("Main Menu"))
+                                    // The state of a component is only reconstructed if the slot it is positioned at changes.
 
-                                            // Here the slot will always have the same type of component, so the state is created only once.
-                                            // Positioning, does not directly render the components, it just positions them. (Recommend to use via configs! This overrides config values!)
-                                            .position(4, "count_up")
-                                            .position(13, "counter")
-                                            .position(22, "count_down")
-                                            .position(10, "reset")
+                                    // Here the slot will always have the same type of component, so the state is created only once.
+                                    // Positioning, does not directly render the components, it just positions them. (Recommend to use via configs! This overrides config values!)
+                                    .position(4, "count_up")
+                                    .position(13, "counter")
+                                    .position(22, "count_down")
+                                    .position(10, "reset")
 
-                                            // Static Rendering, uses the positions specified previously!
-                                            .render("count_up")
-                                            .render("counter")
+                                    // Static Rendering, uses the positions specified previously!
+                                    .render("count_up")
+                                    .render("counter")
 
-                                            // Reactive parts are called everytime the signal is updated.
-                                            .reactive(count, (renderer, signal) -> {
-                                                if (signal.get() > 0) {
-                                                    // These components may be cleared when count == 0, so the state is recreated whenever the count changes from 0 to >0.
-                                                    renderer.render("count_down")
-                                                            .render("reset");
-                                                }
-                                            });
-                                })
-                                // The children that can be used inside of this window.
-                                .children(mainMenuChildren -> mainMenuChildren
-                                        .button("counter", settingsBtn -> settingsBtn
-                                                .icon(icon -> icon
-                                                        .stack(() -> {
-                                                            BukkitItemStackConfig config = new BukkitItemStackConfig(core.getWolfyUtils(), "minecraft:redstone");
-                                                            config.setName(new ValueProviderStringConst(core.getWolfyUtils(), "<!italic>Clicked <b><signal:count:1></b> times!"));
-                                                            return config;
-                                                        })
-                                                        .dynamic()
-                                                )
-                                        )
-                                        .button("count_up", settingsBtn -> settingsBtn
-                                                .icon(icon -> icon
-                                                        .stack(() -> {
-                                                            BukkitItemStackConfig config = new BukkitItemStackConfig(core.getWolfyUtils(), "minecraft:green_concrete");
-                                                            config.setName(new ValueProviderStringConst(core.getWolfyUtils(), "<green><b>Count Up"));
-                                                            return config;
-                                                        })
-                                                        .dynamic()
-                                                )
-                                                .interact((guiHolder, componentState, interactionDetails) -> {
-                                                    componentState.getParent().captureSignal(COUNT, Integer.class).update(integer -> ++integer);
-                                                    return InteractionResult.cancel(true);
-                                                })
-                                        )
-                                        .button("reset", resetBtn -> resetBtn
-                                                .icon(icon -> icon.stack(() -> {
-                                                    BukkitItemStackConfig config = new BukkitItemStackConfig(core.getWolfyUtils(), "minecraft:tnt");
-                                                    config.setName(new ValueProviderStringConst(core.getWolfyUtils(), "<b><red>Reset Clicks!"));
+                                    // Reactive parts are called everytime the signal is updated.
+                                    // These components may be cleared when count == 0, so the state is recreated whenever the count changes from 0 to >0.
+                                    .render(count, value -> value.get() > 0 ? "count_down" : null)
+                                    .render(count, value -> value.get() > 0 ? "reset" : null);
+                        })
+                        // The children that can be used inside of this window.
+                        .children(mainMenuChildren -> mainMenuChildren
+                                .button("counter", settingsBtn -> settingsBtn
+                                        .icon(icon -> icon
+                                                .stack(() -> {
+                                                    BukkitItemStackConfig config = new BukkitItemStackConfig(core.getWolfyUtils(), "minecraft:redstone");
+                                                    config.setName(new ValueProviderStringConst(core.getWolfyUtils(), "<!italic>Clicked <b><signal:count:1></b> times!"));
                                                     return config;
-                                                }))
-                                                .interact((guiHolder, componentState, interactionDetails) -> {
-                                                    // Children can capture the signals of their parents, but not the other way around.
-                                                    Signal.Value<Integer> count = componentState.getParent().captureSignal(COUNT, Integer.class);
-                                                    count.set(0); // The set method changes the value of the signal and prompts the listener of the signal to re-render.
-                                                    return InteractionResult.cancel(true);
                                                 })
+                                                .dynamic()
                                         )
-                                        // Instead of using the pre-made builders you can use custom builders
-                                        .custom("count_down", ButtonBuilder.class, buttonBuilder -> buttonBuilder
-                                                .icon(icon -> icon
-                                                        .stack(() -> {
-                                                            BukkitItemStackConfig config = new BukkitItemStackConfig(core.getWolfyUtils(), "minecraft:red_concrete");
-                                                            config.setName(new ValueProviderStringConst(core.getWolfyUtils(), "<red><b>Count Down"));
-                                                            return config;
-                                                        })
-                                                        .dynamic()
-                                                )
-                                                .interact((guiHolder, componentState, interactionDetails) -> {
-                                                    componentState.getParent().captureSignal(COUNT, Integer.class).update(integer -> --integer);
-                                                    return InteractionResult.cancel(true);
+                                )
+                                .button("count_up", settingsBtn -> settingsBtn
+                                        .icon(icon -> icon
+                                                .stack(() -> {
+                                                    BukkitItemStackConfig config = new BukkitItemStackConfig(core.getWolfyUtils(), "minecraft:green_concrete");
+                                                    config.setName(new ValueProviderStringConst(core.getWolfyUtils(), "<green><b>Count Up"));
+                                                    return config;
                                                 })
+                                                .dynamic()
                                         )
+                                        .interact((guiHolder, componentState, interactionDetails) -> {
+                                            componentState.getParent().captureSignal(COUNT, Integer.class).update(integer -> ++integer);
+                                            return InteractionResult.cancel(true);
+                                        })
+                                )
+                                .button("reset", resetBtn -> resetBtn
+                                        .icon(icon -> icon.stack(() -> {
+                                            BukkitItemStackConfig config = new BukkitItemStackConfig(core.getWolfyUtils(), "minecraft:tnt");
+                                            config.setName(new ValueProviderStringConst(core.getWolfyUtils(), "<b><red>Reset Clicks!"));
+                                            return config;
+                                        }))
+                                        .interact((guiHolder, componentState, interactionDetails) -> {
+                                            // Children can capture the signals of their parents, but not the other way around.
+                                            Signal.Value<Integer> count = componentState.getParent().captureSignal(COUNT, Integer.class);
+                                            count.set(0); // The set method changes the value of the signal and prompts the listener of the signal to re-render.
+                                            return InteractionResult.cancel(true);
+                                        })
+                                )
+                                // Instead of using the pre-made builders you can use custom builders
+                                .custom("count_down", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                                        .icon(icon -> icon
+                                                .stack(() -> {
+                                                    BukkitItemStackConfig config = new BukkitItemStackConfig(core.getWolfyUtils(), "minecraft:red_concrete");
+                                                    config.setName(new ValueProviderStringConst(core.getWolfyUtils(), "<red><b>Count Down"));
+                                                    return config;
+                                                })
+                                                .dynamic()
+                                        )
+                                        .interact((guiHolder, componentState, interactionDetails) -> {
+                                            componentState.getParent().captureSignal(COUNT, Integer.class).update(integer -> --integer);
+                                            return InteractionResult.cancel(true);
+                                        })
                                 )
                         )
                 )
@@ -118,50 +111,44 @@ public class TestGUI {
         GuiAPIManager manager = core.getWolfyUtils().getGUIManager();
         final String COUNT = "count";
         manager.registerRouterFromFile(new File(core.getWolfyUtils().getDataFolder().getPath(), "com/wolfyscript/utilities/common/gui/counter/counter_router.conf"), builder -> builder
-                .children(children -> children
-                        .window("main_menu", mainMenu -> mainMenu
-                                // Creates the signal this component will track and children can listen to
-                                .createSignal(COUNT, Integer.class, count -> count.defaultValue(state -> 0))
-                                .render((holder, rendering) -> {
-                                    Signal.Value<Integer> count = rendering.useSignal(COUNT, Integer.class, () -> 0);
+                .window(mainMenu -> mainMenu
+                        // Creates the signal this component will track and children can listen to
+                        .render((rendering) -> {
+                            // This is only called upon creation of the state. So this is not called when the signal is updated!
+                            Signal<Integer> count = rendering.useSignal(COUNT, Integer.class, state -> 0);
 
-                                    rendering
-                                            // The state of a component is only reconstructed if the slot it is positioned at changes.
-                                            // Here the slot will always have the same type of component, so the state is created only once.
-                                            .component("count_up")
-                                            .component("counter")
-                                            // Reactive parts are called everytime the signal is updated.
-                                            .reactive(count, signal -> {
-                                                if (signal.get() > 0) {
-                                                    // These components may be cleared when count == 0, so the state is recreated whenever the count changes from 0 to >0.
-                                                    rendering.component("count_down")
-                                                            .component("reset");
-                                                }
-                                            });
-                                })
-                                // The children that can be used inside of this window.
-                                .children(mainMenuChildren -> mainMenuChildren
-                                        .button("count_up", settingsBtn -> settingsBtn
-                                                .interact((guiHolder, componentState, interactionDetails) -> {
-                                                    componentState.getParent().captureSignal(COUNT, Integer.class).update(integer -> ++integer);
-                                                    return InteractionResult.cancel(true);
-                                                })
-                                        )
-                                        .button("reset", resetBtn -> resetBtn
-                                                .interact((guiHolder, componentState, interactionDetails) -> {
-                                                    // Children can capture the signals of their parents, but not the other way around.
-                                                    Signal.Value<Integer> count = componentState.getParent().captureSignal(COUNT, Integer.class);
-                                                    count.set(0); // The set method changes the value of the signal and prompts the listener of the signal to re-render.
-                                                    return InteractionResult.cancel(true);
-                                                })
-                                        )
-                                        // Instead of using the pre-made builders you can use custom builders
-                                        .custom("count_down", ButtonBuilder.class, buttonBuilder -> buttonBuilder
-                                                .interact((guiHolder, componentState, interactionDetails) -> {
-                                                    componentState.getParent().captureSignal(COUNT, Integer.class).update(integer -> --integer);
-                                                    return InteractionResult.cancel(true);
-                                                })
-                                        )
+                            rendering
+                                    // The state of a component is only reconstructed if the slot it is positioned at changes.
+                                    // Here the slot will always have the same type of component, so the state is created only once.
+                                    .render("count_up")
+                                    .render("counter")
+                                    // Reactive parts are called everytime the signal is updated.
+                                    // These components may be cleared when count == 0, so the state is recreated whenever the count changes from 0 to >0.
+                                    .render(count, value -> value.get() > 0 ? "count_down" : null)
+                                    .render(count, value -> value.get() > 0 ? "reset" : null);
+                        })
+                        // The children that can be used inside of this window.
+                        .children(mainMenuChildren -> mainMenuChildren
+                                .button("count_up", settingsBtn -> settingsBtn
+                                        .interact((guiHolder, componentState, interactionDetails) -> {
+                                            componentState.getParent().captureSignal(COUNT, Integer.class).update(integer -> ++integer);
+                                            return InteractionResult.cancel(true);
+                                        })
+                                )
+                                .button("reset", resetBtn -> resetBtn
+                                        .interact((guiHolder, componentState, interactionDetails) -> {
+                                            // Children can capture the signals of their parents, but not the other way around.
+                                            Signal.Value<Integer> count = componentState.getParent().captureSignal(COUNT, Integer.class);
+                                            count.set(0); // The set method changes the value of the signal and prompts the listener of the signal to re-render.
+                                            return InteractionResult.cancel(true);
+                                        })
+                                )
+                                // Instead of using the pre-made builders you can use custom builders
+                                .custom("count_down", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                                        .interact((guiHolder, componentState, interactionDetails) -> {
+                                            componentState.getParent().captureSignal(COUNT, Integer.class).update(integer -> --integer);
+                                            return InteractionResult.cancel(true);
+                                        })
                                 )
                         )
                 )

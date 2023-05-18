@@ -36,7 +36,7 @@ public class GUIHolder extends GuiHolderCommonImpl implements InventoryHolder {
         if (currentWindow == null || event.getClickedInventory() == null) return;
         if (Objects.equals(event.getClickedInventory().getHolder(), this)) {
             GuiViewManagerImpl guiViewManager = (GuiViewManagerImpl) viewManager;
-            InteractionResult result = guiViewManager.getTailNode(event.getSlot())
+            InteractionResult result = guiViewManager.getLeaveNode(event.getSlot())
                     .map(state -> state.interact(this, new ClickInteractionDetailsImpl(event)))
                     .orElse(InteractionResult.cancel(true));
             event.setCancelled(result.isCancelled());
@@ -46,6 +46,7 @@ public class GUIHolder extends GuiHolderCommonImpl implements InventoryHolder {
         }
         // TODO: update window & necessary components
         Deque<String> pathStack = currentWindow.getPathToRoot().stream().map(Component::getID).skip(1).collect(Collectors.toCollection(ArrayDeque::new));
+
         RenderContextImpl context = (RenderContextImpl) viewManager.getRoot().createContext(viewManager, pathStack, event.getWhoClicked().getUniqueId());
         ((GuiViewManagerImpl) viewManager).renderFor(player, context);
     }
@@ -59,11 +60,12 @@ public class GUIHolder extends GuiHolderCommonImpl implements InventoryHolder {
         if (Objects.equals(event.getInventory().getHolder(), this)) {
             var interactionDetails = new DragInteractionDetailsImpl(event);
             for (int slot : event.getInventorySlots()) {
-                if (((GuiViewManagerImpl) viewManager).getTailNode(slot).map(node -> node.interact(this, interactionDetails)).orElse(InteractionResult.cancel(true)).isCancelled()) {
+                if (((GuiViewManagerImpl) viewManager).getLeaveNode(slot).map(node -> node.interact(this, interactionDetails)).orElse(InteractionResult.cancel(true)).isCancelled()) {
                     event.setCancelled(true);
                 }
             }
             Deque<String> pathStack = currentWindow.getPathToRoot().stream().map(Component::getID).skip(1).collect(Collectors.toCollection(ArrayDeque::new));
+
             RenderContextImpl context = (RenderContextImpl) viewManager.getRoot().createContext(viewManager, pathStack, event.getWhoClicked().getUniqueId());
             ((GuiViewManagerImpl) viewManager).renderFor(player, context);
         }

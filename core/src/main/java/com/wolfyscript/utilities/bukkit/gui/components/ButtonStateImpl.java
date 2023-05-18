@@ -18,8 +18,8 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 public class ButtonStateImpl extends ComponentStateImpl<Button, ComponentState> implements ButtonComponentState {
 
     @Inject
-    public ButtonStateImpl(ComponentState parent, Button button) {
-        super(parent, button);
+    public ButtonStateImpl(ComponentState parent, Button button, GuiHolder holder) {
+        super(parent, button, holder);
     }
 
     @Override

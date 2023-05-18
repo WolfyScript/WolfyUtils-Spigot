@@ -13,10 +13,7 @@ import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.InteractionDetails;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
-import com.wolfyscript.utilities.common.gui.MenuComponent;
 import com.wolfyscript.utilities.common.gui.Signal;
-import com.wolfyscript.utilities.common.gui.SizedComponent;
-import com.wolfyscript.utilities.common.gui.components.Window;
 import com.wolfyscript.utilities.common.items.ItemStackConfig;
 import com.wolfyscript.utilities.eval.context.EvalContext;
 import java.util.Map;
@@ -31,15 +28,11 @@ public class ButtonImpl extends AbstractBukkitComponent implements Button {
     private final InteractionCallback interactionCallback;
     private final ButtonIcon icon;
 
-    public ButtonImpl(WolfyUtils wolfyUtils, String id, SizedComponent parent, ButtonIcon icon, InteractionCallback interactionCallback, Map<String, Signal<?>> signals) {
+    public ButtonImpl(WolfyUtils wolfyUtils, String id, Component parent, ButtonIcon icon, InteractionCallback interactionCallback, Map<String, Signal<?>> signals) {
         super(id, wolfyUtils, parent);
         this.icon = icon;
         this.interactionCallback = interactionCallback;
         this.signals = Map.copyOf(signals);
-    }
-
-    public SizedComponent parent() {
-        return (SizedComponent) super.parent();
     }
 
     @Override
@@ -69,10 +62,7 @@ public class ButtonImpl extends AbstractBukkitComponent implements Button {
 
     @Override
     public ButtonComponentState createState(ComponentState state, GuiHolder holder) {
-        Component parent = state.getOwner();
-        if (parent instanceof MenuComponent<?> && !(parent instanceof Window))
-            throw new IllegalArgumentException("Cannot create window state without a router parent!");
-        return new ButtonStateImpl(state, this);
+        return new ButtonStateImpl(state, this, holder);
     }
 
     public static class StaticIcon implements ButtonIcon {

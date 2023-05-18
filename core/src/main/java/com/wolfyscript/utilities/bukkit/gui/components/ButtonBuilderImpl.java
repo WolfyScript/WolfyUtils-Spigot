@@ -12,6 +12,7 @@ import com.wolfyscript.utilities.bukkit.gui.AbstractBukkitComponentBuilder;
 import com.wolfyscript.utilities.bukkit.gui.SignalImpl;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.components.Button;
 import com.wolfyscript.utilities.common.gui.components.ButtonBuilder;
 import com.wolfyscript.utilities.common.gui.components.ButtonIcon;
@@ -19,7 +20,6 @@ import com.wolfyscript.utilities.common.gui.ComponentBuilderSettings;
 import com.wolfyscript.utilities.common.gui.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.Signal;
-import com.wolfyscript.utilities.common.gui.SizedComponent;
 import com.wolfyscript.utilities.common.items.ItemStackConfig;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +28,7 @@ import java.util.function.Supplier;
 
 @KeyedStaticId(key = "button")
 @ComponentBuilderSettings(base = ButtonBuilder.class, component = Button.class)
-public class ButtonBuilderImpl extends AbstractBukkitComponentBuilder<Button, SizedComponent> implements ButtonBuilder {
+public class ButtonBuilderImpl extends AbstractBukkitComponentBuilder<Button, Component> implements ButtonBuilder {
 
     private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.cancel(true);
     private final IconBuilderImpl iconBuilder;
@@ -64,7 +64,7 @@ public class ButtonBuilderImpl extends AbstractBukkitComponentBuilder<Button, Si
     }
 
     @Override
-    public Button create(SizedComponent parent) {
+    public Button create(Component parent) {
         return new ButtonImpl(getWolfyUtils(), getID(), parent, iconBuilder.create(), interactionCallback, signals);
     }
 
