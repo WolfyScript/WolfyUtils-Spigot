@@ -4,6 +4,8 @@ import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentState;
 import com.wolfyscript.utilities.common.gui.RenderContext;
+import com.wolfyscript.utilities.common.gui.Router;
+import com.wolfyscript.utilities.common.gui.Window;
 import com.wolfyscript.utilities.common.items.ItemStackConfig;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -13,18 +15,18 @@ import org.bukkit.inventory.ItemStack;
 public class RenderContextImpl implements RenderContext {
 
     private final Inventory inventory;
+    private final Window window;
+    private final Router router;
     private ComponentState currentNode;
     private int slotOffsetToParent;
     private final Deque<Component> componentPath = new ArrayDeque<>();
 
-    public RenderContextImpl(Inventory inventory) {
+    public RenderContextImpl(Inventory inventory, Router router, Window window) {
         this.inventory = inventory;
+        this.router = router;
+        this.window = window;
         this.slotOffsetToParent = 0;
         this.currentNode = null;
-    }
-
-    void pushParentOnPath(Component component) {
-        componentPath.push(component);
     }
 
     void setSlotOffsetToParent(int offset) {

@@ -110,7 +110,7 @@ public class TestGUI {
     public void initWithConfig() {
         GuiAPIManager manager = core.getWolfyUtils().getGUIManager();
         final String COUNT = "count";
-        manager.registerRouterFromFile(new File(core.getWolfyUtils().getDataFolder().getPath(), "com/wolfyscript/utilities/common/gui/counter/counter_router.conf"), builder -> builder
+        manager.registerRouterFromFile(new File(core.getWolfyUtils().getDataFolder().getPath(), "com/wolfyscript/utilities/common/gui/example/counter/counter_router.conf"), builder -> builder
                 .window(mainMenu -> mainMenu
                         // Creates the signal this component will track and children can listen to
                         .render((rendering) -> {

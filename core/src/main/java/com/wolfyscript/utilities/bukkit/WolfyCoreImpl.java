@@ -530,14 +530,10 @@ public abstract class WolfyCoreImpl implements WolfyCore {
 
         // Register GUI things
         var guiComponents = getRegistries().getGuiComponents();
-        guiComponents.register(RouterImpl.class);
-        guiComponents.register(WindowImpl.class);
         guiComponents.register(ButtonImpl.class);
 
         var guiComponentBuilders = getRegistries().getGuiComponentBuilders();
         guiComponentBuilders.register(ButtonBuilderImpl.class);
-        guiComponentBuilders.register(RouterBuilderImpl.class);
-        guiComponentBuilders.register(WindowBuilderImpl.class);
 
         // Register the Registries to resolve type references in JSON
         KeyedTypeIdResolver.registerTypeRegistry(CustomItemData.class, registries.getCustomItemDataTypeRegistry());
@@ -576,8 +572,8 @@ public abstract class WolfyCoreImpl implements WolfyCore {
 
         TestGUI testGUI = new TestGUI(this);
 
-        plugin.saveResource("com/wolfyscript/utilities/common/gui/counter/counter_router.conf", true);
-        plugin.saveResource("com/wolfyscript/utilities/common/gui/counter/main_menu.conf", true);
+        plugin.saveResource("com/wolfyscript/utilities/common/gui/example/counter/counter_router.conf", true);
+        plugin.saveResource("com/wolfyscript/utilities/common/gui/example/counter/main_menu.conf", true);
         testGUI.initWithConfig();
 
         CreativeModeTab.init();

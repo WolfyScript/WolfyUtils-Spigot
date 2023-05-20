@@ -1,5 +1,8 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
@@ -13,8 +16,8 @@ import com.wolfyscript.utilities.common.gui.RenderContext;
 import com.wolfyscript.utilities.common.gui.Renderer;
 import com.wolfyscript.utilities.common.gui.Signal;
 import com.wolfyscript.utilities.common.gui.Stateful;
-import com.wolfyscript.utilities.common.gui.components.Window;
-import com.wolfyscript.utilities.common.gui.components.WindowState;
+import com.wolfyscript.utilities.common.gui.Window;
+import com.wolfyscript.utilities.common.gui.WindowState;
 import com.wolfyscript.utilities.common.items.ItemStackConfig;
 import com.wolfyscript.utilities.tuple.Pair;
 import java.util.Collection;
@@ -182,7 +185,6 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
 
     }
 
-
     public static class Builder implements com.wolfyscript.utilities.common.gui.WindowRenderer.Builder {
 
         final Multimap<String, Integer> componentPositions = ArrayListMultimap.create();
@@ -191,9 +193,15 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
         final Map<Integer, BukkitItemStackConfig> stackRenderList = new HashMap<>();
         private TitleFunction titleFunction;
 
-        public Builder(Multimap<String, Integer> componentPositions) {
-            if (componentPositions == null) return;
-            this.componentPositions.putAll(componentPositions);
+        public Builder() { }
+
+        @JsonSetter("placement")
+        private void setPlacement(ArrayNode arrayNode) {
+            for (JsonNode jsonNode : arrayNode) {
+                int slot = jsonNode.get("slot").asInt();
+                String id = jsonNode.get("component").asText();
+                position(slot, id);
+            }
         }
 
         @Override

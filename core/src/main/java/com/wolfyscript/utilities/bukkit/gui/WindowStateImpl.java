@@ -1,16 +1,12 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
 import com.google.inject.Inject;
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
-import com.wolfyscript.utilities.bukkit.nms.inventory.InventoryUpdate;
 import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentState;
-import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
-import com.wolfyscript.utilities.common.gui.RenderContext;
 import com.wolfyscript.utilities.common.gui.Signal;
-import com.wolfyscript.utilities.common.gui.components.Window;
-import com.wolfyscript.utilities.common.gui.components.WindowState;
+import com.wolfyscript.utilities.common.gui.Window;
+import com.wolfyscript.utilities.common.gui.WindowState;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.util.ArrayDeque;
 import java.util.Deque;

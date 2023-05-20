@@ -21,12 +21,12 @@ import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentBuilder;
 import com.wolfyscript.utilities.common.gui.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
-import com.wolfyscript.utilities.common.gui.components.Router;
+import com.wolfyscript.utilities.common.gui.Router;
 import com.wolfyscript.utilities.common.gui.Signal;
-import com.wolfyscript.utilities.common.gui.components.Window;
-import com.wolfyscript.utilities.common.gui.components.WindowBuilder;
-import com.wolfyscript.utilities.common.gui.components.WindowChildComponentBuilder;
-import com.wolfyscript.utilities.common.gui.components.WindowTitleUpdateCallback;
+import com.wolfyscript.utilities.common.gui.Window;
+import com.wolfyscript.utilities.common.gui.WindowBuilder;
+import com.wolfyscript.utilities.common.gui.WindowChildComponentBuilder;
+import com.wolfyscript.utilities.common.gui.WindowTitleUpdateCallback;
 import com.wolfyscript.utilities.common.gui.WindowType;
 import com.wolfyscript.utilities.common.registry.RegistryGUIComponentBuilders;
 import com.wolfyscript.utilities.json.annotations.KeyedBaseType;
@@ -47,7 +47,7 @@ public class WindowBuilderImpl  implements WindowBuilder {
     protected WindowTitleUpdateCallback titleUpdateCallback = (guiHolder, window, state) -> net.kyori.adventure.text.Component.empty();
     private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.def();
     private final Map<String, Signal.Builder<?>> signalBuilderMap = new HashMap<>();
-    private final WindowRenderer.Builder rendererBuilder;
+    private WindowRenderer.Builder rendererBuilder;
 
     @Inject
     @JsonCreator
@@ -55,7 +55,11 @@ public class WindowBuilderImpl  implements WindowBuilder {
                                 @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils) {
         this.id = windowID;
         this.wolfyUtils = wolfyUtils;
-        this.rendererBuilder = new WindowRenderer.Builder(null);
+    }
+
+    @JsonSetter("render")
+    private void setRenderSettings(WindowRenderer.Builder builder) {
+        this.rendererBuilder = builder;
     }
 
     @JsonSetter("children")
@@ -134,6 +138,9 @@ public class WindowBuilderImpl  implements WindowBuilder {
     @Override
     public WindowBuilder render(Consumer<com.wolfyscript.utilities.common.gui.WindowRenderer.Builder> render) {
         Preconditions.checkNotNull(render);
+        if (rendererBuilder == null) {
+            this.rendererBuilder = new WindowRenderer.Builder();
+        }
         render.accept(rendererBuilder);
         return this;
     }

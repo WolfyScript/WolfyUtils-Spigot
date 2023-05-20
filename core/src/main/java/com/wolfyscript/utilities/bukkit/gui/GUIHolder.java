@@ -1,14 +1,10 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
-import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.GuiHolderCommonImpl;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
-import com.wolfyscript.utilities.common.gui.components.Window;
-import java.util.ArrayDeque;
-import java.util.Deque;
+import com.wolfyscript.utilities.common.gui.Window;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -45,10 +41,9 @@ public class GUIHolder extends GuiHolderCommonImpl implements InventoryHolder {
             // TODO: Handle bottom inventory clicks
         }
         // TODO: update window & necessary components
-        Deque<String> pathStack = currentWindow.getPathToRoot().stream().map(Component::getID).skip(1).collect(Collectors.toCollection(ArrayDeque::new));
-
-        RenderContextImpl context = (RenderContextImpl) viewManager.getRoot().createContext(viewManager, pathStack, event.getWhoClicked().getUniqueId());
-        ((GuiViewManagerImpl) viewManager).renderFor(player, context);
+        viewManager.getRenderContext(event.getWhoClicked().getUniqueId()).ifPresent(context -> {
+            ((GuiViewManagerImpl) viewManager).renderFor(player, (RenderContextImpl) context);
+        });
     }
 
     void onDrag(InventoryDragEvent event) {
@@ -64,10 +59,9 @@ public class GUIHolder extends GuiHolderCommonImpl implements InventoryHolder {
                     event.setCancelled(true);
                 }
             }
-            Deque<String> pathStack = currentWindow.getPathToRoot().stream().map(Component::getID).skip(1).collect(Collectors.toCollection(ArrayDeque::new));
-
-            RenderContextImpl context = (RenderContextImpl) viewManager.getRoot().createContext(viewManager, pathStack, event.getWhoClicked().getUniqueId());
-            ((GuiViewManagerImpl) viewManager).renderFor(player, context);
+            viewManager.getRenderContext(event.getWhoClicked().getUniqueId()).ifPresent(context -> {
+                ((GuiViewManagerImpl) viewManager).renderFor(player, (RenderContextImpl) context);
+            });
         }
     }
 

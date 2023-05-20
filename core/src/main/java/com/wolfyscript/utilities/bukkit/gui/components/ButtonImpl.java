@@ -4,6 +4,8 @@ import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.gui.AbstractBukkitComponent;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.common.gui.GuiViewManager;
+import com.wolfyscript.utilities.common.gui.Renderer;
 import com.wolfyscript.utilities.common.gui.components.Button;
 import com.wolfyscript.utilities.common.gui.components.ButtonComponentState;
 import com.wolfyscript.utilities.common.gui.components.ButtonIcon;
@@ -36,13 +38,13 @@ public class ButtonImpl extends AbstractBukkitComponent implements Button {
     }
 
     @Override
-    public void init() {
-
+    public ButtonIcon icon() {
+        return icon;
     }
 
     @Override
-    public ButtonIcon icon() {
-        return icon;
+    public ButtonComponentState createState(ComponentState componentState, GuiViewManager guiViewManager) {
+        return new ButtonStateImpl(componentState, this);
     }
 
     @Override
@@ -61,8 +63,8 @@ public class ButtonImpl extends AbstractBukkitComponent implements Button {
     }
 
     @Override
-    public ButtonComponentState createState(ComponentState state, GuiHolder holder) {
-        return new ButtonStateImpl(state, this, holder);
+    public Renderer<? extends ComponentState> getRenderer() {
+        return null;
     }
 
     public static class StaticIcon implements ButtonIcon {

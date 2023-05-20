@@ -7,10 +7,9 @@ import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.wolfyscript.jackson.dataformat.hocon.HoconMapper;
 import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.common.gui.ComponentBuilder;
 import com.wolfyscript.utilities.common.gui.GuiAPIManagerCommonImpl;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
-import com.wolfyscript.utilities.common.gui.components.RouterBuilder;
+import com.wolfyscript.utilities.common.gui.RouterBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.util.Set;
@@ -44,13 +43,9 @@ public class GuiAPIManagerImpl extends GuiAPIManagerCommonImpl {
             injectableValues.addValue(WolfyUtils.class, wolfyUtils);
             injectableValues.addValue("wolfyUtils", wolfyUtils);
 
-            ComponentBuilder<?,?> builder = mapper.readerFor(new TypeReference<ComponentBuilder<?,?>>() {}).with(injectableValues).readValue(file);
-            if (builder instanceof RouterBuilder routerBuilder) {
-                consumer.accept(routerBuilder);
-                registerCluster(routerBuilder.create(null));
-            } else {
-                throw new IllegalArgumentException("Loaded builder is not a RouterBuilder! The root must be a Route!");
-            }
+            RouterBuilder builder = mapper.readerFor(new TypeReference<RouterBuilderImpl>() {}).with(injectableValues).readValue(file);
+            consumer.accept(builder);
+            registerCluster(builder.create(null));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

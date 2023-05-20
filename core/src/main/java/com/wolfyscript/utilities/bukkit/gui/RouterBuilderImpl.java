@@ -4,14 +4,17 @@ import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
-import com.wolfyscript.utilities.common.gui.components.Router;
-import com.wolfyscript.utilities.common.gui.components.RouterBuilder;
-import com.wolfyscript.utilities.common.gui.components.WindowBuilder;
+import com.wolfyscript.utilities.common.gui.Router;
+import com.wolfyscript.utilities.common.gui.RouterBuilder;
+import com.wolfyscript.utilities.common.gui.WindowBuilder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -31,6 +34,15 @@ public final class RouterBuilderImpl implements RouterBuilder {
                       @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils) {
         this.id = routerID;
         this.wolfyUtils = wolfyUtils;
+    }
+
+    private class RouteJsonContainer {
+
+    }
+
+    @JsonSetter("routes")
+    private void readRoutes(ArrayNode arrayNode) {
+
     }
 
     @Override

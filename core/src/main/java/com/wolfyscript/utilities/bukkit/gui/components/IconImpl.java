@@ -9,6 +9,7 @@ import com.wolfyscript.utilities.common.gui.ComponentState;
 import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.RenderContext;
+import com.wolfyscript.utilities.common.gui.Renderer;
 import com.wolfyscript.utilities.common.gui.Signal;
 import com.wolfyscript.utilities.common.gui.components.Icon;
 import java.util.Map;
@@ -24,8 +25,8 @@ public class IconImpl extends AbstractBukkitComponent implements Icon<ItemStack>
     }
 
     @Override
-    public void init() {
-
+    public Renderer<? extends ComponentState> getRenderer() {
+        return null;
     }
 
     @Override

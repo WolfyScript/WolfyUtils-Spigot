@@ -2,11 +2,11 @@ package com.wolfyscript.utilities.bukkit.gui;
 
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.ComponentState;
-import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.GuiViewManagerCommonImpl;
-import com.wolfyscript.utilities.common.gui.components.Router;
-import com.wolfyscript.utilities.common.gui.components.Window;
-import com.wolfyscript.utilities.common.gui.components.WindowState;
+import com.wolfyscript.utilities.common.gui.RenderContext;
+import com.wolfyscript.utilities.common.gui.Router;
+import com.wolfyscript.utilities.common.gui.Window;
+import com.wolfyscript.utilities.common.gui.WindowState;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -19,6 +19,7 @@ public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
 
     private WindowState currentRootState;
     private final Map<Integer, ComponentState> leaveNodes = new HashMap<>();
+    private final Map<UUID, RenderContextImpl> viewerContexts = new HashMap<>();
 
     protected GuiViewManagerImpl(WolfyUtils wolfyUtils, Router rootRouter, Set<UUID> viewers) {
         super(wolfyUtils, rootRouter, viewers);
@@ -43,6 +44,11 @@ public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
     }
 
     @Override
+    public Optional<RenderContext> getRenderContext(UUID viewer) {
+        return Optional.ofNullable(viewerContexts.get(viewer));
+    }
+
+    @Override
     public void openNew(String... path) {
         Window window = getRoot().open(this, path);
         setCurrentRoot(window);
@@ -59,8 +65,8 @@ public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
 
     void renderFor(Player player, RenderContextImpl context) {
         if (player.getOpenInventory().getTopInventory() != context.getInventory()) {
+            viewerContexts.put(player.getUniqueId(), context);
             player.openInventory(context.getInventory());
         }
-        
     }
 }
