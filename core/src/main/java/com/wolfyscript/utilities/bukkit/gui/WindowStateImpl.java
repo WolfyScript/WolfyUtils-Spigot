@@ -18,8 +18,8 @@ public class WindowStateImpl implements WindowState {
 
     final Map<Integer, ComponentStateImpl<? extends Component, ComponentState>> childComponentStates = new Int2ObjectOpenHashMap<>();
 
-    private final Map<String, Signal.Value<?>> signalValues = new HashMap<>();
-    private final Deque<Signal.Value<?>> signalUpdateQueue = new ArrayDeque<>();
+    private final Map<String, Signal<?>> signalValues = new HashMap<>();
+    private final Deque<Signal<?>> signalUpdateQueue = new ArrayDeque<>();
 
     private final Window owner;
     final GuiViewManager viewManager;
@@ -46,18 +46,18 @@ public class WindowStateImpl implements WindowState {
     }
 
     @Override
-    public Map<String, Signal.Value<?>> getSignalValues() {
+    public Map<String, Signal<?>> getSignalValues() {
         return signalValues;
     }
 
     @Override
-    public Deque<Signal.Value<?>> updatedSignals() {
+    public Deque<Signal<?>> updatedSignals() {
         return signalUpdateQueue;
     }
 
     @Override
-    public void receiveUpdate(Signal.Value<?> signal) {
-        signalValues.putIfAbsent(signal.signal().key(), signal);
+    public void receiveUpdate(Signal<?> signal) {
+        signalValues.putIfAbsent(signal.key(), signal);
         signalUpdateQueue.push(signal);
     }
 }

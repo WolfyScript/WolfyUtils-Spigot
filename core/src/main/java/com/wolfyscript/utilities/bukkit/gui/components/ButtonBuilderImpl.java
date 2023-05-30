@@ -32,14 +32,23 @@ public class ButtonBuilderImpl extends AbstractBukkitComponentBuilder<Button, Co
 
     private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.cancel(true);
     private final IconBuilderImpl iconBuilder;
-    private final Map<String, Signal<?>> signals;
+
+    /**
+     * Constructor used for non-config setups using Guice injection.
+     *
+     * @param id The id of the button.
+     * @param wolfyUtils The wolfyutils that this button belongs to.
+     */
+    @Inject
+    private ButtonBuilderImpl(String id, WolfyUtils wolfyUtils) {
+        super(id, wolfyUtils);
+        this.iconBuilder = new IconBuilderImpl();
+    }
 
     @JsonCreator
-    @Inject
     public ButtonBuilderImpl(@JsonProperty("id") String id, @JsonProperty("icon") IconBuilderImpl iconBuilder, @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils) {
         super(id, wolfyUtils);
         this.iconBuilder = iconBuilder;
-        this.signals = new HashMap<>();
     }
 
     @Override
@@ -56,16 +65,8 @@ public class ButtonBuilderImpl extends AbstractBukkitComponentBuilder<Button, Co
     }
 
     @Override
-    public <T> ButtonBuilder useSignal(String key, Class<T> type, Consumer<Signal.Builder<T>> signalBuilder) {
-        SignalImpl.Builder<T> builder = new SignalImpl.Builder<>(key, type);
-        signalBuilder.accept(builder);
-        this.signals.put(key, builder.create());
-        return this;
-    }
-
-    @Override
     public Button create(Component parent) {
-        return new ButtonImpl(getWolfyUtils(), getID(), parent, iconBuilder.create(), interactionCallback, signals);
+        return new ButtonImpl(getWolfyUtils(), getID(), parent, iconBuilder.create(), interactionCallback);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -75,6 +76,21 @@ public class ButtonBuilderImpl extends AbstractBukkitComponentBuilder<Button, Co
         private BukkitItemStackConfig stackConfig;
         @JsonProperty("dynamic")
         private boolean dynamic = false;
+
+        @Inject
+        private IconBuilderImpl() {
+            // Used for non-config setups
+        }
+
+        /**
+         * Constructor for reading the icon builder from config.
+         *
+         * @param stackConfig The necessary stack config.
+         */
+        @JsonCreator
+        public IconBuilderImpl(@JsonProperty("stack") BukkitItemStackConfig stackConfig) {
+            this.stackConfig = stackConfig;
+        }
 
         @JsonSetter("stack")
         private void setStack(BukkitItemStackConfig config) {

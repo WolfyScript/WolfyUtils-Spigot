@@ -7,7 +7,6 @@ import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.Interactable;
 import com.wolfyscript.utilities.common.gui.InteractionDetails;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
-import com.wolfyscript.utilities.common.gui.RenderContext;
 import com.wolfyscript.utilities.common.gui.Signal;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +16,7 @@ public abstract class ComponentStateImpl<OWNER extends Component, PARENT extends
 
     private final PARENT parent;
     private final OWNER owner;
-    protected final Map<String, Signal.Value<?>> messageValues = new HashMap<>();
+    protected final Map<String, Signal<?>> messageValues = new HashMap<>();
     boolean dirty = false;
 
     public ComponentStateImpl(PARENT parent, OWNER owner) {
@@ -26,37 +25,42 @@ public abstract class ComponentStateImpl<OWNER extends Component, PARENT extends
         markDirty();
     }
 
-    void updateMessage(Signal.Value<?> message) {
-        messageValues.put(message.signal().key(), message);
+    void updateMessage(Signal<?> message) {
+        messageValues.put(message.key(), message);
         markDirty();
     }
 
     @Override
-    public <T> Signal.Value<T> captureSignal(String signalKey, Class<T> msgType) {
-        Signal.Value<?> message = messageValues.get(signalKey);
+    public <T> Signal<T> captureSignal(String signalKey, Class<T> msgType) {
+        Signal<?> message = messageValues.get(signalKey);
         if (message == null)
             return getParent() != null ? getParent().captureSignal(signalKey, msgType) : null;
-        Preconditions.checkState(Objects.equals(message.signal().key(), signalKey) && message.signal().valueType() == msgType, "Failed to capture Signal! Invalid key or type! Expected %s, but got %s", message.signal().valueType(), msgType);
-        return (Signal.Value<T>) message;
+        Preconditions.checkState(Objects.equals(message.key(), signalKey) && message.valueType() == msgType, "Failed to capture Signal! Invalid key or type! Expected %s, but got %s", message.valueType(), msgType);
+        return (Signal<T>) message;
     }
 
-    public Signal.Value<?> captureSignal(String signalKey) {
-        Signal.Value<?> value = messageValues.get(signalKey);
+    public Signal<?> captureSignal(String signalKey) {
+        Signal<?> value = messageValues.get(signalKey);
         if (value == null) {
             return getParent() != null ? getParent().captureSignal(signalKey) : null;
         }
         return value;
     }
 
-    public abstract void render(GuiHolder holder, RenderContext context);
-
     public InteractionResult interact(GuiHolder holder, InteractionDetails interactionDetails) {
         if (parent != null) {
             InteractionResult result = parent.interact(holder, interactionDetails);
             if (result.isCancelled()) return result;
+            parent.getOwner().getRenderer().getSignals().values().forEach(signal -> signal.enter(parent));
         }
         if (owner instanceof Interactable interactable) {
-            return interactable.interactCallback().interact(holder, this, interactionDetails);
+            owner.getRenderer().getSignals().values().forEach(signal -> signal.enter(this));
+            InteractionResult result = interactable.interactCallback().interact(holder, this, interactionDetails);
+            owner.getRenderer().getSignals().values().forEach(Signal::exit);
+            if (parent != null) {
+                parent.getOwner().getRenderer().getSignals().values().forEach(Signal::exit);
+            }
+            return result;
         }
         return InteractionResult.def();
     }

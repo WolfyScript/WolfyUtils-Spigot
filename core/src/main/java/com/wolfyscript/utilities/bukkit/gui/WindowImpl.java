@@ -14,10 +14,8 @@ import com.wolfyscript.utilities.common.gui.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.InteractionDetails;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.RenderContext;
-import com.wolfyscript.utilities.common.gui.Renderer;
 import com.wolfyscript.utilities.common.gui.Router;
 import com.wolfyscript.utilities.common.gui.Window;
-import com.wolfyscript.utilities.common.gui.WindowChildComponentBuilder;
 import com.wolfyscript.utilities.common.gui.WindowState;
 import com.wolfyscript.utilities.common.gui.WindowTitleUpdateCallback;
 import com.wolfyscript.utilities.common.gui.WindowType;
@@ -50,7 +48,6 @@ public final class WindowImpl implements Window {
                WindowType type,
                WindowTitleUpdateCallback titleUpdateCallback,
                InteractionCallback interactionCallback,
-               WindowChildComponentBuilder childComponentBuilder,
                WindowRenderer.Builder rendererBuilder) {
         Preconditions.checkNotNull(id);
         Preconditions.checkNotNull(interactionCallback);
@@ -64,7 +61,6 @@ public final class WindowImpl implements Window {
         this.titleUpdateCallback = titleUpdateCallback;
         this.interactionCallback = interactionCallback;
         this.children = HashBiMap.create();
-        childComponentBuilder.applyTo(this);
     }
 
     void addNewChildComponent(String id, Component component) {

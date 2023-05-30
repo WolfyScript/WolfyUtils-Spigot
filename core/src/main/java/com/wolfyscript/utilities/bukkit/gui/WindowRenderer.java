@@ -1,14 +1,22 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Stage;
+import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.nms.inventory.InventoryUpdate;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.Component;
+import com.wolfyscript.utilities.common.gui.ComponentBuilder;
 import com.wolfyscript.utilities.common.gui.ComponentState;
 import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.NativeRendererModule;
@@ -17,28 +25,39 @@ import com.wolfyscript.utilities.common.gui.Renderer;
 import com.wolfyscript.utilities.common.gui.Signal;
 import com.wolfyscript.utilities.common.gui.Stateful;
 import com.wolfyscript.utilities.common.gui.Window;
+import com.wolfyscript.utilities.common.gui.WindowBuilder;
 import com.wolfyscript.utilities.common.gui.WindowState;
+import com.wolfyscript.utilities.common.gui.util.SerializableSupplier;
 import com.wolfyscript.utilities.common.items.ItemStackConfig;
+import com.wolfyscript.utilities.common.registry.RegistryGUIComponentBuilders;
 import com.wolfyscript.utilities.tuple.Pair;
+import java.io.Serializable;
+import java.lang.invoke.SerializedLambda;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class WindowRenderer implements com.wolfyscript.utilities.common.gui.WindowRenderer {
 
     private final WindowImpl window;
-    final Multimap<String, Integer> componentPositions = ArrayListMultimap.create();
-    final Multimap<Signal<?>, ReactiveFunction<?>> reactiveParts;
+    final Multimap<Component, Integer> componentPositions = ArrayListMultimap.create();
+    final Set<ReactiveFunction> reactiveFunctions;
     private final TitleFunction titleFunction;
+    private final Map<String, Signal<?>> signals = new HashMap<>();
 
-    public WindowRenderer(WindowImpl window, TitleFunction titleFunction, Multimap<String, Integer> componentPositions, Multimap<Signal<?>, ReactiveFunction<?>> reactiveBuilders) {
+    public WindowRenderer(WindowImpl window, TitleFunction titleFunction, Multimap<Component, Integer> componentPositions, Set<ReactiveFunction> reactiveFunctions) {
         this.window = window;
         this.componentPositions.putAll(componentPositions);
-        this.reactiveParts = ArrayListMultimap.create();
-        this.reactiveParts.putAll(reactiveBuilders);
+        this.reactiveFunctions = reactiveFunctions;
         this.titleFunction = titleFunction;
     }
 
@@ -48,9 +67,9 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
         if (titleFunction instanceof StaticTitleFunction staticTitleFunction) {
             InventoryUpdate.updateInventory(((WolfyCoreImpl) window.getWolfyUtils().getCore()).getWolfyUtils().getPlugin(),
                     ((GUIHolder) guiHolder).getPlayer(), staticTitleFunction.update(null));
-        } else if (titleFunction instanceof ReactiveTitleFunction<?> reactiveTitleFunction){
-            for (Signal.Value<?> updatedSignal : windowState.updatedSignals()) {
-                if (updatedSignal.signal().equals(reactiveTitleFunction.signal)) {
+        } else if (titleFunction instanceof ReactiveTitleFunction<?> reactiveTitleFunction) {
+            for (Signal<?> updatedSignal : windowState.updatedSignals()) {
+                if (updatedSignal.equals(reactiveTitleFunction.signal)) {
                     InventoryUpdate.updateInventory(((WolfyCoreImpl) window.getWolfyUtils().getCore()).getWolfyUtils().getPlugin(),
                             ((GUIHolder) guiHolder).getPlayer(), reactiveTitleFunction.update(updatedSignal));
                     break;
@@ -58,18 +77,21 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
             }
         }
 
-        for (Map.Entry<String, Integer> entry : componentPositions.entries()) {
+        for (Map.Entry<Component, Integer> entry : componentPositions.entries()) {
             if (windowState.get(entry.getValue()).isEmpty()) {
-                renderComponent(windowState, entry.getValue(), windowState.getOwner().getChild(entry.getKey()).orElseThrow(() -> new IllegalArgumentException("Cannot find child '" + entry.getKey() + "' for component!")));
+                renderComponent(windowState, entry.getValue(), entry.getKey());
             }
         }
 
-        for (Signal.Value<?> updatedSignal : windowState.updatedSignals()) {
-            for (ReactiveFunction<?> renderFunction : reactiveParts.get(updatedSignal.signal())) {
-                Pair<Integer, String> componentPosition = renderFunction.run(this, updatedSignal);
-                if (componentPosition != null) {
-                    if (componentPosition.getKey() >= 0) {
-                        renderComponent(windowState, componentPosition.getKey(), windowState.getOwner().getChild(componentPosition.getValue()).orElseThrow(() -> new IllegalArgumentException("Cannot find child '" + componentPosition.getValue() + "' for component!")));
+        for (ReactiveFunction reactiveFunction : reactiveFunctions) {
+            if (reactiveFunction.signals().stream().anyMatch(signal -> windowState.updatedSignals().contains(signal))) {
+                Pair<Integer, Collection<ComponentBuilder<?,?>>> result = reactiveFunction.run(this);
+                // TODO re-render
+                if (result != null) {
+                    if (result.getKey() >= 0) {
+                        for (ComponentBuilder<?, ?> componentBuilder : result.getValue()) {
+                            renderComponent(windowState, result.getKey(), componentBuilder.create(null));
+                        }
                     }
                 }
             }
@@ -114,6 +136,11 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
     }
 
     @Override
+    public Map<String, Signal<?>> getSignals() {
+        return signals;
+    }
+
+    @Override
     public NativeRendererModule getNativeModule() {
         return null;
     }
@@ -122,45 +149,62 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
         return activeState != null && activeState.getOwner().getID().equals(componentID);
     }
 
-    public static class ReactiveFunction<T> implements Renderer.ReactiveFunction<T, WindowRenderer> {
+    public static class ReactiveFunction implements Renderer.ReactiveFunction<WindowRenderer> {
 
-        private final Signal<T> signal;
-        private final Function<Signal.Value<T>, Integer> slot;
-        private final Function<Signal.Value<T>, String> selector;
+        private static int NEXT_ID = 0;
 
-        public ReactiveFunction(Signal<T> signal, Function<Signal.Value<T>, Integer> slot, Function<Signal.Value<T>, String> selector) {
-            this.signal = signal;
-            this.slot = slot;
-            this.selector = selector;
+        private final int id;
+        private final List<Signal<?>> signals;
+        private final Supplier<Collection<ComponentBuilder<?,?>>> function;
+
+        public ReactiveFunction(List<Signal<?>> signals, Supplier<Collection<ComponentBuilder<?,?>>> function) {
+            this.id = NEXT_ID++;
+            this.signals = signals;
+            this.function = function;
         }
 
         @Override
-        public Pair<Integer, String> run(WindowRenderer renderer, Signal.Value<?> value) {
-            if (!signal.equals(value.signal())) return null;
-            @SuppressWarnings("unchecked")
-            Signal.Value<T> typedValue = (Signal.Value<T>) value;
-            return new Pair<>(slot.apply(typedValue), selector.apply(typedValue));
+        public int id() {
+            return id;
         }
 
         @Override
-        public Signal<T> getSignal() {
-            return signal;
+        public Pair<Integer, Collection<ComponentBuilder<?,?>>> run(WindowRenderer renderer) {
+            return new Pair<>(0, function.get());
+        }
+
+        @Override
+        public List<Signal<?>> signals() {
+            return signals;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ReactiveFunction that = (ReactiveFunction) o;
+            return id == that.id;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id);
         }
     }
 
     public static class ReactiveTitleFunction<T_SIGNAL_VALUE> implements TitleFunction {
 
         private final Signal<T_SIGNAL_VALUE> signal;
-        private final Function<Signal.Value<T_SIGNAL_VALUE>, net.kyori.adventure.text.Component> updateFunction;
+        private final Function<Signal<T_SIGNAL_VALUE>, net.kyori.adventure.text.Component> updateFunction;
 
-        public ReactiveTitleFunction(Signal<T_SIGNAL_VALUE> signal, Function<Signal.Value<T_SIGNAL_VALUE>, net.kyori.adventure.text.Component> updateFunction) {
+        public ReactiveTitleFunction(Signal<T_SIGNAL_VALUE> signal, Function<Signal<T_SIGNAL_VALUE>, net.kyori.adventure.text.Component> updateFunction) {
             this.signal = signal;
             this.updateFunction = updateFunction;
         }
 
-        public net.kyori.adventure.text.Component update(Signal.Value<?> value) {
-            if (!signal.equals(value.signal())) return net.kyori.adventure.text.Component.empty();
-            return updateFunction.apply((Signal.Value<T_SIGNAL_VALUE>) value);
+        public net.kyori.adventure.text.Component update(Signal<?> value) {
+            if (!signal.equals(value)) return net.kyori.adventure.text.Component.empty();
+            return updateFunction.apply((Signal<T_SIGNAL_VALUE>) value);
         }
 
     }
@@ -174,45 +218,55 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
         }
 
         @Override
-        public net.kyori.adventure.text.Component update(Signal.Value<?> value) {
+        public net.kyori.adventure.text.Component update(Signal<?> value) {
             return textComponent;
         }
     }
 
     public interface TitleFunction {
 
-        net.kyori.adventure.text.Component update(Signal.Value<?> value);
+        net.kyori.adventure.text.Component update(Signal<?> value);
 
     }
 
     public static class Builder implements com.wolfyscript.utilities.common.gui.WindowRenderer.Builder {
 
-        final Multimap<String, Integer> componentPositions = ArrayListMultimap.create();
-        final Set<String> staticParts = new HashSet<>();
-        final Multimap<Signal<?>, ReactiveFunction<?>> reactiveParts = ArrayListMultimap.create();
+        final WolfyUtils wolfyUtils;
+        final Multimap<ComponentBuilder<?, ?>, Integer> componentBuilderPositions = ArrayListMultimap.create();
+        final Set<ComponentBuilder<?, ?>> componentRenderSet = new HashSet<>();
+        final Set<ReactiveFunction> reactiveFunctions = new HashSet<>();
         final Map<Integer, BukkitItemStackConfig> stackRenderList = new HashMap<>();
+        final Map<String, Signal<?>> usedSignals = new HashMap<>();
         private TitleFunction titleFunction;
+        private WindowBuilder parentBuilder;
 
-        public Builder() { }
+        @JsonCreator
+        public Builder(@JacksonInject WolfyUtils wolfyUtils) {
+            this.wolfyUtils = wolfyUtils;
+        }
+
+        @JsonIgnore
+        protected void setParentBuilder(WindowBuilder parentBuilder) {
+            this.parentBuilder = parentBuilder;
+        }
 
         @JsonSetter("placement")
-        private void setPlacement(ArrayNode arrayNode) {
-            for (JsonNode jsonNode : arrayNode) {
-                int slot = jsonNode.get("slot").asInt();
-                String id = jsonNode.get("component").asText();
-                position(slot, id);
+        private void setPlacement(Map<Integer, ComponentBuilder<?,?>> integerComponentBuilderMap) {
+            integerComponentBuilderMap.forEach((slot, componentBuilder) -> {
+                componentBuilderPositions.put(componentBuilder, slot);
+            });
+        }
+
+        @Override
+        public <T> Signal<T> useSignal(String s, Class<T> aClass, Supplier<T> defaultValueFunction) {
+            if (usedSignals.containsKey(s)) {
+                Signal<?> usedSignal = usedSignals.get(s);
+                Preconditions.checkState(usedSignal.valueType().equals(aClass), String.format("Failed to use state '%s'! Incompatible types: expected '%s' but got '%s'", s, usedSignal.valueType(), aClass));
+                return (Signal<T>) usedSignal;
             }
-        }
-
-        @Override
-        public <T> Signal<T> useSignal(String s, Class<T> aClass, Function<ComponentState, T> defaultValueFunction) {
-            return new SignalImpl<>(s, aClass, defaultValueFunction);
-        }
-
-        @Override
-        public Builder position(int i, String s) {
-            this.componentPositions.put(s, i);
-            return this;
+            Signal<T> signal = new SignalImpl<>(s, aClass, defaultValueFunction);
+            usedSignals.put(s, signal);
+            return signal;
         }
 
         @Override
@@ -224,45 +278,134 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
         }
 
         @Override
-        public <S> Builder position(Signal<S> signal, Function<Signal.Value<S>, Integer> slot, Function<Signal.Value<S>, String> selector) {
-            this.reactiveParts.put(signal, new ReactiveFunction<>(signal, slot, selector));
+        public Builder reactive(SerializableSupplier<Collection<ComponentBuilder<?,?>>> consumer) {
+            try {
+                // Using serialized lambda we have access to runtime information, such as which outer variables are captured and used inside the lambda.
+                // See: https://stackoverflow.com/a/35223119
+                SerializedLambda s = getSerializedLambda(consumer);
+                ArrayList<Signal<?>> signals = new ArrayList<>(s.getCapturedArgCount());
+                for (int i = 0; i < s.getCapturedArgCount(); i++) {
+                    if (s.getCapturedArg(i) instanceof Signal<?> signal) {
+                        signals.add(signal);
+                    }
+                }
+                ReactiveFunction reactiveFunction = new ReactiveFunction(signals, consumer);
+                reactiveFunctions.add(reactiveFunction);
+            } catch (Exception e) {
+                wolfyUtils.getLogger().severe("Failed to initiate reactive function!");
+                e.printStackTrace();
+            }
+            return this;
+        }
+
+        SerializedLambda getSerializedLambda(Serializable lambda) throws Exception {
+            final Method method = lambda.getClass().getDeclaredMethod("writeReplace");
+            method.setAccessible(true);
+            return (SerializedLambda) method.invoke(lambda);
+        }
+
+        @Override
+        public <B extends ComponentBuilder<? extends Component, Component>> B create(int slot, String id, Class<B> builderType) {
+            Pair<NamespacedKey, Class<B>> builderTypeInfo = getBuilderType(id, builderType);
+            return componentBuilderPositions.keySet().stream()
+                    .filter(entry -> entry.getID().equals(id) && entry.getType().equals(builderTypeInfo.getKey()))
+                    .findFirst()
+                    .map(builderTypeInfo.getValue()::cast)
+                    .orElseGet(() -> {
+                        Injector injector = Guice.createInjector(Stage.PRODUCTION, binder -> {
+                            binder.bind(WolfyUtils.class).toInstance(wolfyUtils);
+                            binder.bind(WindowBuilder.class).toInstance(parentBuilder);
+                            binder.bind(String.class).toInstance(id);
+                        });
+                        return injector.getInstance(builderTypeInfo.getValue());
+                    });
+        }
+
+        @Override
+        public <B extends ComponentBuilder<? extends Component, Component>> B extend(String id, Class<B> builderType) {
+            Pair<NamespacedKey, Class<B>> builderTypeInfo = getBuilderType(id, builderType);
+            return builderTypeInfo.getValue().cast(
+                    componentBuilderPositions.keySet().stream()
+                            .filter(entry -> entry.getID().equals(id) && entry.getType().equals(builderTypeInfo.getKey()))
+                            .findFirst()
+                            .orElseThrow(() -> new IllegalStateException(String.format("Failed to link to component '%s'! Cannot find existing placement", id)))
+            );
+        }
+
+        @Override
+        public <B extends ComponentBuilder<? extends Component, Component>> Builder position(int slot, String id, Class<B> builderType, Consumer<B> builderConsumer) {
+            Pair<NamespacedKey, Class<B>> builderTypeInfo = getBuilderType(id, builderType);
+
+            componentBuilderPositions.keySet().stream()
+                    .filter(entry -> entry.getID().equals(id) && entry.getType().equals(builderTypeInfo.getKey()))
+                    .findFirst()
+                    .ifPresentOrElse(entry -> builderConsumer.accept(builderTypeInfo.getValue().cast(entry)), () -> {
+                        Injector injector = Guice.createInjector(Stage.PRODUCTION, binder -> {
+                            binder.bind(WolfyUtils.class).toInstance(wolfyUtils);
+                            binder.bind(WindowBuilder.class).toInstance(parentBuilder);
+                            binder.bind(String.class).toInstance(id);
+                        });
+                        B builder = injector.getInstance(builderTypeInfo.getValue());
+                        builderConsumer.accept(builder);
+                        componentBuilderPositions.put(builder, slot);
+                    });
             return this;
         }
 
         @Override
-        public <S> Builder render(Signal<S> signal, Function<Signal.Value<S>, String> selector) {
-            this.reactiveParts.put(signal, new ReactiveFunction<>(signal, sValue -> -1, selector));
+        public <B extends ComponentBuilder<? extends Component, Component>> Builder render(String id, Class<B> builderType, Consumer<B> builderConsumer) {
+            Pair<NamespacedKey, Class<B>> builderTypeInfo = getBuilderType(id, builderType);
+
+            B builder = builderTypeInfo.getValue().cast(
+                    componentBuilderPositions.keySet().stream()
+                            .filter(entry -> entry.getID().equals(id) && entry.getType().equals(builderTypeInfo.getKey()))
+                            .findFirst()
+                            .orElseThrow(() -> new IllegalStateException(String.format("Failed to link to component '%s'! Cannot find existing placement", id)))
+            );
+            builderConsumer.accept(builder);
+            componentRenderSet.add(builder);
             return this;
         }
 
-        @Override
-        public <S> Builder renderAt(Signal<S> signal, Function<Signal.Value<S>, Integer> slot, Function<Signal.Value<S>, String> selector) {
-            this.reactiveParts.put(signal, new ReactiveFunction<>(signal, slot, selector));
-            return this;
+        private <B extends ComponentBuilder<? extends Component, Component>> Pair<NamespacedKey, Class<B>> getBuilderType(String id, Class<B> builderType) {
+            RegistryGUIComponentBuilders registry = wolfyUtils.getRegistries().getGuiComponentBuilders();
+            NamespacedKey key = registry.getKey(builderType);
+            Preconditions.checkArgument(key != null, "Failed to create component '%s'! Cannot find builder '%s' in registry!", id, builderType.getName());
+            @SuppressWarnings("unchecked")
+            Class<B> builderImplType = (Class<B>) registry.get(key); // We can be sure that the cast is valid, because the key is only non-null if and only if the type matches!
+            Preconditions.checkNotNull(builderImplType, "Failed to create component '%s'! Cannot find implementation type of builder '%s' in registry!", id, builderType.getName());
+            return new Pair<>(key, builderImplType);
         }
 
         @Override
-        public Builder renderAt(int i, String s) {
-            this.componentPositions.put(s, i);
-            this.staticParts.add(s);
-            return this;
-        }
-
-        @Override
-        public Builder render(String componentId) {
-            staticParts.add(componentId);
+        public <B extends ComponentBuilder<? extends Component, Component>> Builder renderAt(int slot, String id, Class<B> builderType, Consumer<B> builderConsumer) {
+            Pair<NamespacedKey, Class<B>> builderTypeInfo = getBuilderType(id, builderType);
+            componentBuilderPositions.keySet().stream()
+                    .filter(entry -> entry.getID().equals(id) && entry.getType().equals(builderTypeInfo.getKey()))
+                    .findFirst()
+                    .ifPresentOrElse(entry -> builderConsumer.accept(builderTypeInfo.getValue().cast(entry)), () -> {
+                        Injector injector = Guice.createInjector(Stage.PRODUCTION, binder -> {
+                            binder.bind(WolfyUtils.class).toInstance(wolfyUtils);
+                            binder.bind(WindowBuilder.class).toInstance(parentBuilder);
+                            binder.bind(String.class).toInstance(id);
+                        });
+                        B builder = injector.getInstance(builderTypeInfo.getValue());
+                        builderConsumer.accept(builder);
+                        componentBuilderPositions.put(builder, slot);
+                        componentRenderSet.add(builder);
+                    });
             return this;
         }
 
         public WindowRenderer create(Window window) {
-            Multimap<String, Integer> finalPostions = ArrayListMultimap.create();
-            for (String staticPart : staticParts) {
-                Collection<Integer> slots = this.componentPositions.get(staticPart);
+            Multimap<Component, Integer> finalPostions = ArrayListMultimap.create();
+            for (ComponentBuilder<?, ?> componentBuilder : componentRenderSet) {
+                Collection<Integer> slots = this.componentBuilderPositions.get(componentBuilder);
                 for (Integer slot : slots) {
-                    finalPostions.put(staticPart, slot);
+                    finalPostions.put(componentBuilder.create(null), slot);
                 }
             }
-            return new WindowRenderer((WindowImpl) window, titleFunction, finalPostions, reactiveParts);
+            return new WindowRenderer((WindowImpl) window, titleFunction, finalPostions, reactiveFunctions);
         }
 
         @Override
@@ -272,7 +415,7 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
         }
 
         @Override
-        public <S> Builder title(Signal<S> signal, Function<Signal.Value<S>, net.kyori.adventure.text.Component> function) {
+        public <S> Builder title(Signal<S> signal, Function<Signal<S>, net.kyori.adventure.text.Component> function) {
             this.titleFunction = new ReactiveTitleFunction<>(signal, function);
             return this;
         }

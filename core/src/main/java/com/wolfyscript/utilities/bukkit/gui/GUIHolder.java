@@ -40,7 +40,6 @@ public class GUIHolder extends GuiHolderCommonImpl implements InventoryHolder {
             event.setCancelled(false);
             // TODO: Handle bottom inventory clicks
         }
-        // TODO: update window & necessary components
         viewManager.getRenderContext(event.getWhoClicked().getUniqueId()).ifPresent(context -> {
             ((GuiViewManagerImpl) viewManager).renderFor(player, (RenderContextImpl) context);
         });

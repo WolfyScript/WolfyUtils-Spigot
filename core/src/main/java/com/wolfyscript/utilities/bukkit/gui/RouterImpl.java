@@ -50,15 +50,13 @@ public final class RouterImpl implements Router {
     private final BiMap<String, Router> subRoutes = HashBiMap.create();
     private final InteractionCallback interactionCallback;
 
-    @Inject
-    @JsonCreator
     RouterImpl(String id, WolfyUtils wolfyUtils, WindowBuilder windowBuilder, Router parent, InteractionCallback interactionCallback) {
         Preconditions.checkNotNull(interactionCallback);
         this.id = id;
-        this.window = windowBuilder.create(this);
         this.parent = parent;
         this.wolfyUtils = wolfyUtils;
         this.interactionCallback = interactionCallback;
+        this.window = windowBuilder.create(this);
     }
 
     @Override

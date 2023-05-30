@@ -2,6 +2,7 @@ package com.wolfyscript.utilities.bukkit.gui.components;
 
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.gui.AbstractBukkitComponent;
+import com.wolfyscript.utilities.bukkit.gui.ComponentStateImpl;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
@@ -26,15 +27,13 @@ import org.bukkit.inventory.ItemStack;
 @KeyedStaticId(key = "button")
 public class ButtonImpl extends AbstractBukkitComponent implements Button {
 
-    private final Map<String, Signal<?>> signals;
     private final InteractionCallback interactionCallback;
     private final ButtonIcon icon;
 
-    public ButtonImpl(WolfyUtils wolfyUtils, String id, Component parent, ButtonIcon icon, InteractionCallback interactionCallback, Map<String, Signal<?>> signals) {
+    public ButtonImpl(WolfyUtils wolfyUtils, String id, Component parent, ButtonIcon icon, InteractionCallback interactionCallback) {
         super(id, wolfyUtils, parent);
         this.icon = icon;
         this.interactionCallback = interactionCallback;
-        this.signals = Map.copyOf(signals);
     }
 
     @Override
@@ -43,13 +42,8 @@ public class ButtonImpl extends AbstractBukkitComponent implements Button {
     }
 
     @Override
-    public ButtonComponentState createState(ComponentState componentState, GuiViewManager guiViewManager) {
-        return new ButtonStateImpl(componentState, this);
-    }
-
-    @Override
-    public Map<String, Signal<?>> signals() {
-        return signals;
+    public ComponentState createState(ComponentState componentState, GuiViewManager guiViewManager) {
+        return new ComponentStateImpl<>(componentState, this) {};
     }
 
     @Override
@@ -64,7 +58,7 @@ public class ButtonImpl extends AbstractBukkitComponent implements Button {
 
     @Override
     public Renderer<? extends ComponentState> getRenderer() {
-        return null;
+        return new ButtonRenderer(this);
     }
 
     public static class StaticIcon implements ButtonIcon {

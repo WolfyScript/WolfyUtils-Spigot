@@ -2,6 +2,7 @@ package com.wolfyscript.utilities.bukkit.gui;
 
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.ComponentState;
+import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.GuiViewManagerCommonImpl;
 import com.wolfyscript.utilities.common.gui.RenderContext;
 import com.wolfyscript.utilities.common.gui.Router;
@@ -68,5 +69,6 @@ public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
             viewerContexts.put(player.getUniqueId(), context);
             player.openInventory(context.getInventory());
         }
+        currentRootState.getOwner().getRenderer().render(currentRootState, (GuiHolder) context.getInventory().getHolder(), context);
     }
 }

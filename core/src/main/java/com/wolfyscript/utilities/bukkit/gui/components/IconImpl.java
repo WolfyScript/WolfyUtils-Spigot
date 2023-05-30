@@ -48,15 +48,10 @@ public class IconImpl extends AbstractBukkitComponent implements Icon<ItemStack>
     public ComponentState createState(ComponentState componentState, GuiViewManager guiViewManager) {
         return new ComponentStateImpl<Icon<ItemStack>, ComponentState>(componentState, this) {
 
-            @Override
             public void render(GuiHolder holder, RenderContext context) {
                 context.setStack(context.getCurrentOffset(), getOwner().getItemStackConfig());
             }
         };
     }
 
-    @Override
-    public Map<String, Signal<?>> signals() {
-        return null;
-    }
 }

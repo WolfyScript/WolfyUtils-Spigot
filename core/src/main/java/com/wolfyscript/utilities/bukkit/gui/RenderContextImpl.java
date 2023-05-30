@@ -61,7 +61,6 @@ public class RenderContextImpl implements RenderContext {
         if (!(itemStackConfig instanceof BukkitItemStackConfig bukkitItemStackConfig))
             throw new IllegalArgumentException(String.format("Cannot render stack config! Invalid stack config type! Expected '%s' but received '%s'.", ItemStack.class.getName(), itemStackConfig.getClass().getName()));
 
-        // i > 0 && i < width * height
         inventory.setItem(i, bukkitItemStackConfig.constructItemStack());
     }
 

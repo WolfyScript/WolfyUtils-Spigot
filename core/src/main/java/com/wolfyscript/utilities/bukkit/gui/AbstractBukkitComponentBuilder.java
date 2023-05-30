@@ -7,7 +7,6 @@ import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentBuilder;
 import com.wolfyscript.utilities.json.annotations.KeyedBaseType;
 
-
 @KeyedBaseType(baseType = ComponentBuilder.class)
 public abstract class AbstractBukkitComponentBuilder<OWNER extends Component, PARENT> implements ComponentBuilder<OWNER, PARENT> {
 

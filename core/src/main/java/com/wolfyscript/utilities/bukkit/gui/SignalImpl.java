@@ -1,25 +1,34 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.common.gui.ComponentState;
 import com.wolfyscript.utilities.common.gui.Signal;
 import com.wolfyscript.utilities.common.gui.Signalable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class SignalImpl<MT> implements Signal<MT> {
 
     private final String key;
     private final Class<MT> messageValueType;
-    private final Function<ComponentState, MT> defaultValueFunction;
+    private MT value;
+    private final Map<ComponentState, MT> values = new HashMap<>();
+    private ComponentState currentState = null;
 
-    public SignalImpl(String key, Class<MT> messageValueType, Function<ComponentState, MT> defaultValueFunction) {
+    public SignalImpl(String key, Class<MT> messageValueType, Supplier<MT> defaultValueFunction) {
         this.key = key;
         this.messageValueType = messageValueType;
-        this.defaultValueFunction = defaultValueFunction;
+        this.value = defaultValueFunction.get();
+    }
+
+    public void enter(ComponentState currentState) {
+        this.currentState = currentState;
+    }
+
+    public void exit() {
+        this.currentState = null;
     }
 
     @Override
@@ -33,9 +42,24 @@ public class SignalImpl<MT> implements Signal<MT> {
     }
 
     @Override
-    public Value<MT> createValue(ComponentState componentState) {
-        MT value = defaultValueFunction.apply(componentState);
-        return new ValueImpl<>((ComponentStateImpl<?, ?>) componentState, this, value);
+    public void set(MT newValue) {
+        this.value = newValue;
+        if (currentState != null) {
+            if (currentState instanceof Signalable signalable) {
+                signalable.receiveUpdate(this);
+            }
+            values.put(currentState, newValue);
+        }
+    }
+
+    @Override
+    public void update(Function<MT, MT> function) {
+        set(function.apply(value));
+    }
+
+    @Override
+    public MT get() {
+        return values.computeIfAbsent(currentState, state -> value);
     }
 
     @Override
@@ -49,84 +73,6 @@ public class SignalImpl<MT> implements Signal<MT> {
     @Override
     public int hashCode() {
         return Objects.hash(key, messageValueType);
-    }
-
-    public static class ValueImpl<T> implements Value<T> {
-
-        private final ComponentStateImpl<?, ?> state;
-        private final Signal<T> signal;
-        private T value;
-
-        public ValueImpl(ComponentStateImpl<?, ?> state, Signal<T> signal, T value) {
-            this.state = state;
-            this.signal = signal;
-            this.value = value;
-        }
-
-        @Override
-        public Signal<T> signal() {
-            return signal;
-        }
-
-        @Override
-        public ComponentState state() {
-            return state;
-        }
-
-        @Override
-        public void set(T newValue) {
-            this.value = newValue;
-            if (state instanceof Signalable signalable) {
-                signalable.receiveUpdate(this);
-            }
-        }
-
-        @Override
-        public void update(Function<T, T> function) {
-            set(function.apply(value));
-        }
-
-        @Override
-        public T get() {
-            return value;
-        }
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class Builder<T> implements Signal.Builder<T> {
-
-        private final String key;
-        private final Class<T> messageValueType;
-        private Function<ComponentState, T> defaultValueFunction = state -> null;
-
-        @JsonCreator
-        public Builder(@JsonProperty("key") String key, @JsonProperty("type") Class<T> messageValueType) {
-            this.key = key;
-            this.messageValueType = messageValueType;
-        }
-
-        @Override
-        public String getKey() {
-            return key;
-        }
-
-        @Override
-        public Class<T> getValueType() {
-            return messageValueType;
-        }
-
-        @Override
-        public Builder<T> defaultValue(Function<ComponentState, T> defaultValueFunction) {
-            Preconditions.checkNotNull(defaultValueFunction, "Default value function cannot be set to null!");
-            this.defaultValueFunction = defaultValueFunction;
-            return this;
-        }
-
-        @Override
-        public Signal<T> create() {
-            return new SignalImpl<>(key, messageValueType, defaultValueFunction);
-        }
-
     }
 
 }

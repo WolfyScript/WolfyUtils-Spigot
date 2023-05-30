@@ -23,19 +23,19 @@ public class GuiAPIManagerImpl extends GuiAPIManagerCommonImpl {
     }
 
     @Override
-    public void registerRouter(String id, Consumer<RouterBuilder> consumer) {
+    public void registerGui(String id, Consumer<RouterBuilder> consumer) {
         RouterBuilder builder = new RouterBuilderImpl(id, wolfyUtils);
         consumer.accept(builder);
-        registerCluster(builder.create(null));
+        registerGui(id, builder.create(null));
     }
 
     @Override
     public  GuiViewManager createView(String clusterID, UUID... uuids) {
-        return getRouter(clusterID).map(cluster -> new GuiViewManagerImpl(wolfyUtils, cluster, Set.of(uuids))).orElse(null);
+        return getGui(clusterID).map(cluster -> new GuiViewManagerImpl(wolfyUtils, cluster, Set.of(uuids))).orElse(null);
     }
 
     @Override
-    public void registerRouterFromFile(File file, Consumer<RouterBuilder> consumer) {
+    public void registerGuiFromFile(String id, File file, Consumer<RouterBuilder> consumer) {
         HoconMapper mapper = wolfyUtils.getJacksonMapperUtil().getGlobalMapper(HoconMapper.class);
         try {
             CustomInjectableValues injectableValues = new CustomInjectableValues();
@@ -45,7 +45,7 @@ public class GuiAPIManagerImpl extends GuiAPIManagerCommonImpl {
 
             RouterBuilder builder = mapper.readerFor(new TypeReference<RouterBuilderImpl>() {}).with(injectableValues).readValue(file);
             consumer.accept(builder);
-            registerCluster(builder.create(null));
+            registerGui(id, builder.create(null));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
