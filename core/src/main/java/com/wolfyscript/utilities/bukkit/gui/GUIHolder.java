@@ -32,9 +32,18 @@ public class GUIHolder extends GuiHolderCommonImpl implements InventoryHolder {
         if (currentWindow == null || event.getClickedInventory() == null) return;
         if (Objects.equals(event.getClickedInventory().getHolder(), this)) {
             GuiViewManagerImpl guiViewManager = (GuiViewManagerImpl) viewManager;
+            viewManager.getCurrentWindowState().ifPresent(state -> state.getOwner().getRenderer().getSignals().values().forEach(signal -> signal.enter(viewManager)));
+
             InteractionResult result = guiViewManager.getLeaveNode(event.getSlot())
                     .map(state -> state.interact(this, new ClickInteractionDetailsImpl(event)))
                     .orElse(InteractionResult.cancel(true));
+
+            viewManager.getCurrentWindowState().ifPresent(state -> state.getOwner().getRenderer().getSignals().values().forEach(signal -> {
+                if (signal.exit()) {
+                    state.receiveUpdate(signal);
+                }
+            }));
+
             event.setCancelled(result.isCancelled());
         } else if (!event.getAction().equals(InventoryAction.COLLECT_TO_CURSOR)) {
             event.setCancelled(false);

@@ -9,7 +9,6 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.gui.AbstractBukkitComponentBuilder;
-import com.wolfyscript.utilities.bukkit.gui.SignalImpl;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.Component;
@@ -21,10 +20,13 @@ import com.wolfyscript.utilities.common.gui.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.Signal;
 import com.wolfyscript.utilities.common.items.ItemStackConfig;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 @KeyedStaticId(key = "button")
 @ComponentBuilderSettings(base = ButtonBuilder.class, component = Button.class)
@@ -74,8 +76,7 @@ public class ButtonBuilderImpl extends AbstractBukkitComponentBuilder<Button, Co
 
         @JsonProperty("stack")
         private BukkitItemStackConfig stackConfig;
-        @JsonProperty("dynamic")
-        private boolean dynamic = false;
+        private final List<TagResolver> tagResolvers = new ArrayList<>();
 
         @Inject
         private IconBuilderImpl() {
@@ -97,11 +98,6 @@ public class ButtonBuilderImpl extends AbstractBukkitComponentBuilder<Button, Co
             this.stackConfig = config;
         }
 
-        @JsonSetter("dynamic")
-        private void setDynamic(boolean dynamic) {
-            this.dynamic = dynamic;
-        }
-
         @Override
         public IconBuilder stack(ItemStackConfig<?> itemStackConfig) {
             if (itemStackConfig instanceof BukkitItemStackConfig bukkitItemStackConfig) {
@@ -119,22 +115,21 @@ public class ButtonBuilderImpl extends AbstractBukkitComponentBuilder<Button, Co
         }
 
         @Override
-        public IconBuilder dynamic() {
-            return dynamic(true);
+        public IconBuilder updateOnSignals(Signal<?>... signals) {
+            this.tagResolvers.addAll(Arrays.stream(signals)
+                    .map(signal -> TagResolver.resolver(signal.key(), (argumentQueue, context) -> Tag.inserting(net.kyori.adventure.text.Component.text(String.valueOf(signal.get())))))
+                    .toList());
+            return this;
         }
 
-        @Override
-        public IconBuilder dynamic(boolean isDynamic) {
-            this.dynamic = isDynamic;
+        public IconBuilder addTagResolver(TagResolver... tagResolvers) {
+            this.tagResolvers.add(TagResolver.resolver(tagResolvers));
             return this;
         }
 
         @Override
         public ButtonIcon create() {
-            if (dynamic) {
-                return new ButtonImpl.DynamicIcon(stackConfig);
-            }
-            return new ButtonImpl.StaticIcon(stackConfig);
+            return new ButtonImpl.DynamicIcon(stackConfig, TagResolver.resolver(tagResolvers));
         }
     }
 

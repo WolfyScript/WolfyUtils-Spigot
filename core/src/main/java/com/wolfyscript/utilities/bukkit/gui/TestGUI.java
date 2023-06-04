@@ -8,8 +8,6 @@ import com.wolfyscript.utilities.common.gui.Signal;
 import com.wolfyscript.utilities.common.gui.components.ButtonBuilder;
 import com.wolfyscript.utilities.eval.value_provider.ValueProviderStringConst;
 import java.io.File;
-import java.util.Collections;
-import java.util.List;
 import net.kyori.adventure.text.Component;
 
 public class TestGUI {
@@ -31,7 +29,7 @@ public class TestGUI {
                             Signal<Integer> count = rendering.useSignal(COUNT, Integer.class, () -> 0);
 
                             rendering
-                                    .title(Component.text("Main Menu"))
+                                    .title(() -> Component.text("Main Menu"))
                                     // The state of a component is only reconstructed if the slot it is positioned at changes.
 
                                     // Here the slot will always have the same type of component, so the state is created only once.
@@ -43,7 +41,7 @@ public class TestGUI {
                                                         config.setName(new ValueProviderStringConst(core.getWolfyUtils(), "<green><b>Count Up"));
                                                         return config;
                                                     })
-                                                    .dynamic())
+                                            )
                                             .interact((guiHolder, componentState, interactionDetails) -> {
                                                 count.update(integer -> ++integer);
                                                 return InteractionResult.cancel(true);
@@ -52,29 +50,30 @@ public class TestGUI {
                                             .icon(icon -> icon
                                                     .stack(() -> {
                                                         BukkitItemStackConfig config = new BukkitItemStackConfig(core.getWolfyUtils(), "minecraft:redstone");
-                                                        config.setName(new ValueProviderStringConst(core.getWolfyUtils(), "<!italic>Clicked <b><signal:count:1></b> times!"));
+                                                        config.setName(new ValueProviderStringConst(core.getWolfyUtils(), "<!italic>Clicked <b><count></b> times!"));
                                                         return config;
                                                     })
-                                                    .dynamic()))
+                                                    .updateOnSignals(count)
+                                            )
+                                    )
                                     // Reactive parts are called everytime the signal is updated.
-                                    .reactive(() -> {
+                                    .reactive(reactiveBuilder -> {
                                         if (count.get() > 0) {
                                             // These components may be cleared when count == 0, so the state is recreated whenever the count changes from 0 to >0.
-                                            return List.of(
-                                                    rendering.create(22, "count_down", ButtonBuilder.class)
+                                            reactiveBuilder
+                                                    .renderAt(22, "count_down", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                                                             .icon(icon -> icon
                                                                     .stack(() -> {
                                                                         BukkitItemStackConfig config = new BukkitItemStackConfig(core.getWolfyUtils(), "minecraft:red_concrete");
                                                                         config.setName(new ValueProviderStringConst(core.getWolfyUtils(), "<red><b>Count Down"));
                                                                         return config;
                                                                     })
-                                                                    .dynamic()
                                                             )
                                                             .interact((guiHolder, componentState, interactionDetails) -> {
                                                                 count.update(integer -> --integer);
                                                                 return InteractionResult.cancel(true);
-                                                            }),
-                                                    rendering.create(10, "reset", ButtonBuilder.class)
+                                                            }))
+                                                    .renderAt(10, "reset", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                                                             .icon(icon -> icon.stack(() -> {
                                                                 BukkitItemStackConfig config = new BukkitItemStackConfig(core.getWolfyUtils(), "minecraft:tnt");
                                                                 config.setName(new ValueProviderStringConst(core.getWolfyUtils(), "<b><red>Reset Clicks!"));
@@ -83,10 +82,8 @@ public class TestGUI {
                                                             .interact((guiHolder, componentState, interactionDetails) -> {
                                                                 count.set(0); // The set method changes the value of the signal and prompts the listener of the signal to re-render.
                                                                 return InteractionResult.cancel(true);
-                                                            })
-                                            );
+                                                            }));
                                         }
-                                        return List.of();
                                     });
                         })
                 )
@@ -98,42 +95,41 @@ public class TestGUI {
         final String COUNT = "count";
         manager.registerGuiFromFile("counter", new File(core.getWolfyUtils().getDataFolder().getPath(), "com/wolfyscript/utilities/common/gui/example/counter/counter_router.conf"), builder -> builder
                 .window(mainMenu -> mainMenu
-                        // Creates the signal this component will track and children can listen to
+                        .size(9 * 3)
                         .render((renderer) -> {
                             // This is only called upon creation of the state. So this is not called when the signal is updated!
                             Signal<Integer> count = renderer.useSignal(COUNT, Integer.class, () -> 0);
 
                             renderer
+                                    .title(() -> Component.text("Counter"))
                                     // Sometimes we want to render components dependent on signals
-                                    .reactive(() -> {
+                                    .reactive(reactiveBuilder -> {
                                         // Reactive parts are called everytime the signal used inside this closure is updated.
                                         if (count.get() > 0) {
                                             // These components may be cleared when count == 0, so the state is recreated whenever the count changes from 0 to >0.
-                                            return List.of(
-                                                    renderer.extend("count_down", ButtonBuilder.class)
+                                            reactiveBuilder
+                                                    .render("count_down", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                                                             .interact((guiHolder, componentState, interactionDetails) -> {
-                                                                count.update(integer -> --integer);
+                                                                count.update(old -> --old);
                                                                 return InteractionResult.cancel(true);
-                                                            }),
-                                                    renderer.extend("reset", ButtonBuilder.class)
+                                                            })
+                                                    ).render("reset", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                                                             .interact((guiHolder, componentState, interactionDetails) -> {
                                                                 count.set(0); // The set method changes the value of the signal and prompts the listener of the signal to re-render.
                                                                 return InteractionResult.cancel(true);
                                                             })
-                                            );
+                                                    );
                                         }
-                                        return Collections.emptyList();
                                     })
                                     // The state of a component is only reconstructed if the slot it is positioned at changes.
                                     // Here the slot will always have the same type of component, so the state is created only once.
                                     .render("count_up", ButtonBuilder.class, countUpSettings -> countUpSettings
                                             .interact((guiHolder, componentState, interactionDetails) -> {
-                                                count.update(integer -> ++integer);
+                                                count.update(old -> ++old);
                                                 return InteractionResult.cancel(true);
                                             })
                                     )
-                                    .render("counter", ButtonBuilder.class, buttonBuilder -> {
-                                    });
+                                    .render("counter", ButtonBuilder.class, bb -> bb.icon(ib -> ib.updateOnSignals(count)));
                         })
                 )
         );

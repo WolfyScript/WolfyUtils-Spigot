@@ -1,6 +1,6 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
-import com.wolfyscript.utilities.common.gui.ComponentState;
+import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.Signal;
 import com.wolfyscript.utilities.common.gui.Signalable;
 import java.util.HashMap;
@@ -14,8 +14,9 @@ public class SignalImpl<MT> implements Signal<MT> {
     private final String key;
     private final Class<MT> messageValueType;
     private MT value;
-    private final Map<ComponentState, MT> values = new HashMap<>();
-    private ComponentState currentState = null;
+    private final Map<GuiViewManager, MT> values = new HashMap<>();
+    private GuiViewManager activeViewManager = null;
+    private boolean wasUpdated = false;
 
     public SignalImpl(String key, Class<MT> messageValueType, Supplier<MT> defaultValueFunction) {
         this.key = key;
@@ -23,12 +24,17 @@ public class SignalImpl<MT> implements Signal<MT> {
         this.value = defaultValueFunction.get();
     }
 
-    public void enter(ComponentState currentState) {
-        this.currentState = currentState;
+    public void enter(GuiViewManager viewManager) {
+        this.wasUpdated = false;
+        this.activeViewManager = viewManager;
     }
 
-    public void exit() {
-        this.currentState = null;
+    public boolean exit() {
+        this.activeViewManager = null;
+
+        boolean wasUpdated = this.wasUpdated;
+        this.wasUpdated = false;
+        return wasUpdated;
     }
 
     @Override
@@ -43,23 +49,25 @@ public class SignalImpl<MT> implements Signal<MT> {
 
     @Override
     public void set(MT newValue) {
-        this.value = newValue;
-        if (currentState != null) {
-            if (currentState instanceof Signalable signalable) {
-                signalable.receiveUpdate(this);
-            }
-            values.put(currentState, newValue);
+        if (activeViewManager == null) {
+            this.value = newValue;
+            return;
         }
+        values.put(activeViewManager, newValue);
+        this.wasUpdated = true;
     }
 
     @Override
     public void update(Function<MT, MT> function) {
-        set(function.apply(value));
+        set(function.apply(values.getOrDefault(activeViewManager, value)));
     }
 
     @Override
     public MT get() {
-        return values.computeIfAbsent(currentState, state -> value);
+        if (activeViewManager == null) {
+            return value;
+        }
+        return values.computeIfAbsent(activeViewManager, state -> value);
     }
 
     @Override

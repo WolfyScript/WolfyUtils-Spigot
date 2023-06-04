@@ -23,9 +23,9 @@ public class ComponentRenderer<C extends ComponentState> implements Renderer<C> 
     private final ComponentStateImpl<?, ?> state;
 
     final Multimap<Component, Integer> componentPositions = ArrayListMultimap.create();
-    final Set<ReactiveFunction<ComponentRenderer<C>>> reactiveFunctions;
+    final Set<ReactiveFunction<ComponentRenderer<C>, Pair<Integer, Collection<ComponentBuilder<?,?>>>>> reactiveFunctions;
 
-    public ComponentRenderer(ComponentStateImpl<?, ?> state, Multimap<Component, Integer> componentPositions, Set<ReactiveFunction<ComponentRenderer<C>>> reactiveFunctions) {
+    public ComponentRenderer(ComponentStateImpl<?, ?> state, Multimap<Component, Integer> componentPositions, Set<ReactiveFunction<ComponentRenderer<C>, Pair<Integer, Collection<ComponentBuilder<?,?>>>>> reactiveFunctions) {
         this.state = state;
         this.componentPositions.putAll(componentPositions);
         this.reactiveFunctions = reactiveFunctions;
@@ -51,7 +51,7 @@ public class ComponentRenderer<C extends ComponentState> implements Renderer<C> 
         }
 
         if (state instanceof Signalable signalable) {
-            for (ReactiveFunction<ComponentRenderer<C>> reactiveFunction : reactiveFunctions) {
+            for (ReactiveFunction<ComponentRenderer<C>, Pair<Integer, Collection<ComponentBuilder<?,?>>>> reactiveFunction : reactiveFunctions) {
                 if (reactiveFunction.signals().stream().anyMatch(signal -> signalable.updatedSignals().contains(signal))) {
                     Pair<Integer, Collection<ComponentBuilder<?, ?>>> result = reactiveFunction.run(this);
                     // TODO re-render

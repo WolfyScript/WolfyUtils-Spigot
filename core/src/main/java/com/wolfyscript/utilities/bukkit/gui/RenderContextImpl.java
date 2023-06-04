@@ -3,8 +3,11 @@ package com.wolfyscript.utilities.bukkit.gui;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentState;
+import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.RenderContext;
 import com.wolfyscript.utilities.common.gui.Router;
+import com.wolfyscript.utilities.common.gui.Signal;
+import com.wolfyscript.utilities.common.gui.Signalable;
 import com.wolfyscript.utilities.common.gui.Window;
 import com.wolfyscript.utilities.common.items.ItemStackConfig;
 import java.util.ArrayDeque;
@@ -38,8 +41,24 @@ public class RenderContextImpl implements RenderContext {
         return slotOffsetToParent;
     }
 
-    void setCurrentNode(ComponentState node) {
-        this.currentNode = node;
+    void enterNode(GuiViewManager viewManager, ComponentState state) {
+        this.currentNode = state;
+        if (currentNode instanceof Signalable signalable) {
+            for (Signal<?> signal : signalable.getSignalValues().values()) {
+                signal.enter(viewManager);
+            }
+        }
+    }
+
+    void exitNode() {
+        if (currentNode instanceof Signalable signalable) {
+            for (Signal<?> signal : signalable.getSignalValues().values()) {
+                if (signal.exit()) {
+                    ((Signalable) currentNode).receiveUpdate(signal);
+                }
+            }
+        }
+        this.currentNode = null;
     }
 
     Component nextChild() {

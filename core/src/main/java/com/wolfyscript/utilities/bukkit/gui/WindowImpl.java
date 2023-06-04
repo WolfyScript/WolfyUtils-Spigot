@@ -91,7 +91,7 @@ public final class WindowImpl implements Window {
         if (topInventory.getHolder() instanceof GUIHolder holder) {
             if (Objects.equals(holder.getCurrentWindow(), this)) {
                 // Still in the same window, we can just update it.
-                return new RenderContextImpl(topInventory, viewManager.getRoot(), this);
+                return new RenderContextImpl(topInventory, viewManager.getRouter(), this);
             }
         }
         // No active Window or it is another Window, need to recreate inventory
@@ -107,7 +107,7 @@ public final class WindowImpl implements Window {
                     .orElseGet(() -> Bukkit.createInventory(holder, getSize().orElseThrow(() -> new IllegalStateException("Invalid window type/size definition.")), BukkitComponentSerializer.legacy().serialize(title)));
         }
         holder.setActiveInventory(inventory);
-        return new RenderContextImpl(inventory, viewManager.getRoot(), this);
+        return new RenderContextImpl(inventory, viewManager.getRouter(), this);
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.wolfyscript.utilities.common.gui.Interactable;
 import com.wolfyscript.utilities.common.gui.InteractionDetails;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.Signal;
+import com.wolfyscript.utilities.common.gui.Signalable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -51,14 +52,18 @@ public abstract class ComponentStateImpl<OWNER extends Component, PARENT extends
         if (parent != null) {
             InteractionResult result = parent.interact(holder, interactionDetails);
             if (result.isCancelled()) return result;
-            parent.getOwner().getRenderer().getSignals().values().forEach(signal -> signal.enter(parent));
+            parent.getOwner().getRenderer().getSignals().values().forEach(signal -> signal.enter(holder.getViewManager()));
         }
         if (owner instanceof Interactable interactable) {
-            owner.getRenderer().getSignals().values().forEach(signal -> signal.enter(this));
+            owner.getRenderer().getSignals().values().forEach(signal -> signal.enter(holder.getViewManager()));
             InteractionResult result = interactable.interactCallback().interact(holder, this, interactionDetails);
             owner.getRenderer().getSignals().values().forEach(Signal::exit);
             if (parent != null) {
-                parent.getOwner().getRenderer().getSignals().values().forEach(Signal::exit);
+                parent.getOwner().getRenderer().getSignals().values().forEach(signal -> {
+                    if (signal.exit() && parent instanceof Signalable signalable) {
+                        signalable.receiveUpdate(signal);
+                    }
+                });
             }
             return result;
         }

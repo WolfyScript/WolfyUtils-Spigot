@@ -8,7 +8,6 @@ import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.Renderer;
 import com.wolfyscript.utilities.common.gui.components.Button;
-import com.wolfyscript.utilities.common.gui.components.ButtonComponentState;
 import com.wolfyscript.utilities.common.gui.components.ButtonIcon;
 import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentState;
@@ -16,10 +15,8 @@ import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.InteractionDetails;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
-import com.wolfyscript.utilities.common.gui.Signal;
 import com.wolfyscript.utilities.common.items.ItemStackConfig;
 import com.wolfyscript.utilities.eval.context.EvalContext;
-import java.util.Map;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.inventory.ItemStack;
@@ -61,41 +58,14 @@ public class ButtonImpl extends AbstractBukkitComponent implements Button {
         return new ButtonRenderer(this);
     }
 
-    public static class StaticIcon implements ButtonIcon {
-
-        private final BukkitItemStackConfig config;
-        private final ItemStack stack;
-
-        StaticIcon(BukkitItemStackConfig config) {
-            this.config = config;
-            this.stack = config.constructItemStack();
-        }
-
-        public ItemStack getStaticStack() {
-            return stack;
-        }
-
-        @Override
-        public ItemStackConfig<?> getStack() {
-            return config;
-        }
-
-        public ItemStack create(MiniMessage miniMessage, EvalContext evalContext, TagResolver... tagResolvers) {
-            return stack;
-        }
-
-        @Override
-        public boolean isDynamic() {
-            return false;
-        }
-    }
-
     public static class DynamicIcon implements ButtonIcon {
 
         private final BukkitItemStackConfig config;
+        private final TagResolver resolvers;
 
-        DynamicIcon(BukkitItemStackConfig config) {
+        DynamicIcon(BukkitItemStackConfig config, TagResolver resolvers) {
             this.config = config;
+            this.resolvers = resolvers;
         }
 
         @Override
@@ -107,10 +77,10 @@ public class ButtonImpl extends AbstractBukkitComponent implements Button {
             return config.constructItemStack(evalContext, miniMessage, tagResolvers);
         }
 
-        @Override
-        public boolean isDynamic() {
-            return true;
+        public TagResolver getResolvers() {
+            return resolvers;
         }
+
     }
 
 }

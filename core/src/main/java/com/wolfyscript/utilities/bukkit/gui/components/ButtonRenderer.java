@@ -37,16 +37,13 @@ public class ButtonRenderer implements Renderer<ComponentState> {
     @Override
     public void render(ComponentState state, GuiHolder guiHolder, RenderContext context) {
         if (!(context instanceof RenderContextImpl renderContext)) return;
-        if (button.icon() instanceof ButtonImpl.StaticIcon staticIcon) {
-            renderContext.setNativeStack(renderContext.getCurrentOffset(), staticIcon.getStaticStack());
-        } else {
-            renderContext.setNativeStack(renderContext.getCurrentOffset(),
-                    ((BukkitItemStackConfig) button.icon().getStack()).constructItemStack(
-                            new EvalContextPlayer(((GUIHolder) guiHolder).getPlayer()),
-                            WolfyCoreBukkit.getInstance().getWolfyUtils().getChat().getMiniMessage()
-                    )
-            );
-        }
+        renderContext.setNativeStack(renderContext.getCurrentOffset(),
+                ((BukkitItemStackConfig) button.icon().getStack()).constructItemStack(
+                        new EvalContextPlayer(((GUIHolder) guiHolder).getPlayer()),
+                        WolfyCoreBukkit.getInstance().getWolfyUtils().getChat().getMiniMessage(),
+                        button.icon().getResolvers()
+                )
+        );
     }
 
     @Override

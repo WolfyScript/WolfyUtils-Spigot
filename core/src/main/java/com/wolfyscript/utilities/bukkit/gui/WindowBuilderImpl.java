@@ -42,7 +42,6 @@ public class WindowBuilderImpl  implements WindowBuilder {
     @JsonSetter("render")
     private void setRenderSettings(WindowRenderer.Builder builder) {
         this.rendererBuilder = builder;
-        this.rendererBuilder.setParentBuilder(this);
     }
 
     @JsonSetter("size")
@@ -82,7 +81,6 @@ public class WindowBuilderImpl  implements WindowBuilder {
         Preconditions.checkNotNull(render);
         if (rendererBuilder == null) {
             this.rendererBuilder = new WindowRenderer.Builder(wolfyUtils);
-            this.rendererBuilder.setParentBuilder(this);
         }
         render.accept(rendererBuilder);
         return this;
