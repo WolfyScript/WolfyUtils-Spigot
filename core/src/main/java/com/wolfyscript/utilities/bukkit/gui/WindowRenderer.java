@@ -30,6 +30,7 @@ import com.wolfyscript.utilities.common.gui.functions.SerializableConsumer;
 import com.wolfyscript.utilities.common.gui.functions.SerializableSupplier;
 import com.wolfyscript.utilities.common.registry.RegistryGUIComponentBuilders;
 import com.wolfyscript.utilities.tuple.Pair;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
@@ -38,6 +39,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -49,12 +51,12 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
     private final Set<ReactiveConsumer<com.wolfyscript.utilities.common.gui.WindowRenderer.ReactiveRenderBuilder>> reactiveFunctions;
     private final ReactiveSupplier<net.kyori.adventure.text.Component> titleFunction;
     private final Map<String, Signal<?>> signals;
-    private final Multimap<ComponentBuilder<?,?>, Integer> nonRenderedComponents = ArrayListMultimap.create();
+    private final Multimap<ComponentBuilder<?, ?>, Integer> nonRenderedComponents = ArrayListMultimap.create();
 
     public WindowRenderer(WindowImpl window,
                           Map<String, Signal<?>> signals,
                           Multimap<Component, Integer> componentPositions,
-                          Multimap<ComponentBuilder<?,?>, Integer> nonRenderedComponents,
+                          Multimap<ComponentBuilder<?, ?>, Integer> nonRenderedComponents,
                           ReactiveSupplier<net.kyori.adventure.text.Component> titleFunction,
                           Set<ReactiveConsumer<ReactiveRenderBuilder>> reactiveFunctions) {
         this.window = window;
@@ -71,28 +73,67 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
         InventoryUpdate.updateInventory(((WolfyCoreImpl) window.getWolfyUtils().getCore()).getWolfyUtils().getPlugin(), ((GUIHolder) guiHolder).getPlayer(), titleFunction.get());
 
         for (Map.Entry<Component, Integer> entry : componentPositions.entries()) {
-            renderComponent(windowState, entry.getValue(), entry.getKey());
+            updateComponent(windowState, entry.getValue(), entry.getKey()).ifPresent(state1 -> windowState.updateComponent(entry.getValue(), state1));
         }
 
-        signals.forEach((s, signal) -> signal.enter(guiHolder.getViewManager()));
-        for (ReactiveConsumer<com.wolfyscript.utilities.common.gui.WindowRenderer.ReactiveRenderBuilder> reactiveFunction : reactiveFunctions) {
-            if (reactiveFunction.signals().stream().anyMatch(signal -> windowState.updatedSignals().contains(signal))) {
-                ReactiveRenderBuilderImpl reactiveBuilder = new ReactiveRenderBuilderImpl(window.getWolfyUtils(), nonRenderedComponents);
-                reactiveFunction.accept(reactiveBuilder);
+        if (!reactiveFunctions.isEmpty()) {
+            signals.forEach((s, signal) -> signal.enter(guiHolder.getViewManager()));
+            Map<Integer, ComponentStateImpl<?, ?>> reactiveUpdateQueue = new HashMap<>();
 
-                reactiveBuilder.getComponentBuildersToRender().forEach((componentBuilder, slot) -> {
-                    renderComponent(windowState, slot, componentBuilder.create(null));
-                });
+            for (ReactiveConsumer<com.wolfyscript.utilities.common.gui.WindowRenderer.ReactiveRenderBuilder> reactiveFunction : reactiveFunctions) {
+                int functionId = reactiveFunction.id();
+                reactiveUpdateQueue.clear();
+                var reactiveBoundStates = windowState.reactiveBoundStates.computeIfAbsent(functionId, integer -> new Int2ObjectOpenHashMap<>());
+
+                if (reactiveFunction.signals().stream().anyMatch(signal -> windowState.updatedSignals().contains(signal))) {
+                    var reactiveBuilder = new ReactiveRenderBuilderImpl(window.getWolfyUtils(), nonRenderedComponents);
+                    reactiveFunction.accept(reactiveBuilder);
+                    reactiveBuilder.getComponentBuildersToRender().forEach((componentBuilder, slot) -> {
+                        updateReactiveComponent(windowState, functionId, slot, componentBuilder.create(null)).ifPresent(componentState -> reactiveUpdateQueue.put(slot, componentState));
+                    });
+                    for (var entry : reactiveBoundStates.entrySet()) {
+                        ComponentStateImpl<?,?> existingState = entry.getValue();
+                        int slot = entry.getKey();
+                        if (reactiveUpdateQueue.containsKey(slot) && isSameComponent(reactiveUpdateQueue.get(slot), existingState.getOwner().getID())) continue;
+                        existingState.getOwner().executeForAllSlots(slot, slot2 -> {
+                            ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(null, slot2);
+                            ((RenderContextImpl) renderContext).getInventory().setItem(slot2, null);
+                        });
+                    }
+                    reactiveBoundStates.clear();
+                    for (var entry : reactiveUpdateQueue.entrySet()) {
+                        ComponentStateImpl<?,?> childState = entry.getValue();
+                        int slot = entry.getKey();
+                        childState.getOwner().executeForAllSlots(slot, slot2 -> ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(childState, slot2));
+                        ((RenderContextImpl) renderContext).setSlotOffsetToParent(slot);
+                        ((RenderContextImpl) renderContext).enterNode(guiHolder.getViewManager(), childState);
+                        windowState.updateReactiveComponent(functionId, slot, childState);
+                        renderState(childState, guiHolder, renderContext);
+                        ((RenderContextImpl) renderContext).exitNode();
+                    }
+                } else {
+                    for (var entry : reactiveBoundStates.entrySet()) {
+                        ComponentStateImpl<?,?> childState = entry.getValue();
+                        int slot = entry.getKey();
+                        childState.getOwner().executeForAllSlots(slot, slot2 -> ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(childState, slot2));
+                        ((RenderContextImpl) renderContext).setSlotOffsetToParent(slot);
+                        ((RenderContextImpl) renderContext).enterNode(guiHolder.getViewManager(), childState);
+                        renderState(childState, guiHolder, renderContext);
+                        ((RenderContextImpl) renderContext).exitNode();
+                    }
+                }
             }
+            signals.forEach((s, signal) -> signal.exit());
         }
-        signals.forEach((s, signal) -> signal.exit());
 
         // Free up unused space/slots
         windowState.updatedSignals().clear();
+
         windowState.childComponentStates.forEach((slot, childState) -> {
             childState.getOwner().executeForAllSlots(slot, slot2 -> ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(childState, slot2));
             ((RenderContextImpl) renderContext).setSlotOffsetToParent(slot);
             ((RenderContextImpl) renderContext).enterNode(guiHolder.getViewManager(), childState);
+            windowState.updateComponent(slot, childState);
             renderState(childState, guiHolder, renderContext);
             ((RenderContextImpl) renderContext).exitNode();
         });
@@ -111,6 +152,37 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
     @Override
     public int getHeight() {
         return window.height();
+    }
+
+    public Optional<ComponentStateImpl<?, ?>> updateComponent(WindowState state, int slot, Component component) {
+        if (!(state instanceof WindowStateImpl windowState)) return Optional.empty();
+        return Optional.ofNullable((ComponentStateImpl<?, ?>) state.get(slot)
+                .filter(existingState -> isSameComponent(existingState, component.getID()))
+                .orElseGet(() -> {
+                    if (checkBoundsAtPos(slot, component)) {
+                        if (component instanceof Stateful<?> stateful) {
+                            return stateful.createState(null, windowState.viewManager);
+                        }
+                    } else {
+                        throw new IllegalArgumentException("Component does not fit inside of the Window!");
+                    }
+                    return null;
+                }));
+    }
+
+    public Optional<ComponentStateImpl<?, ?>> updateReactiveComponent(WindowState state, int functionId, int slot, Component component) {
+        if (!(state instanceof WindowStateImpl windowState)) return Optional.empty();
+        ComponentStateImpl<?,?> existingState = ((WindowStateImpl) state).reactiveBoundStates.computeIfAbsent(functionId, integer -> new Int2ObjectOpenHashMap<>()).get(slot);
+        if (existingState == null || isSameComponent(existingState, component.getID())) {
+            if (checkBoundsAtPos(slot, component)) {
+                if (component instanceof Stateful<?> stateful) {
+                    return Optional.ofNullable((ComponentStateImpl<?, ?>) stateful.createState(null, windowState.viewManager));
+                }
+            } else {
+                throw new IllegalArgumentException("Component does not fit inside of the Window!");
+            }
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -253,7 +325,7 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
 
         public WindowRenderer create(Window window) {
             Multimap<Component, Integer> finalPostions = ArrayListMultimap.create();
-            Multimap<ComponentBuilder<?,?>, Integer> nonRenderedComponents = ArrayListMultimap.create();
+            Multimap<ComponentBuilder<?, ?>, Integer> nonRenderedComponents = ArrayListMultimap.create();
 
             for (ComponentBuilder<?, ?> componentBuilder : componentBuilderPositions.keySet()) {
                 Collection<Integer> slots = componentBuilderPositions.get(componentBuilder);
@@ -313,9 +385,9 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
 
         final WolfyUtils wolfyUtils;
         final Multimap<ComponentBuilder<?, ?>, Integer> componentBuilderPositions = ArrayListMultimap.create();
-        final Set<ComponentBuilder<?,?>> toRender = new HashSet<>();
+        final Set<ComponentBuilder<?, ?>> toRender = new HashSet<>();
 
-        public ReactiveRenderBuilderImpl(WolfyUtils wolfyUtils, Multimap<ComponentBuilder<?,?>, Integer> nonRenderedComponents) {
+        public ReactiveRenderBuilderImpl(WolfyUtils wolfyUtils, Multimap<ComponentBuilder<?, ?>, Integer> nonRenderedComponents) {
             this.wolfyUtils = wolfyUtils;
             this.componentBuilderPositions.putAll(nonRenderedComponents);
         }
@@ -352,8 +424,8 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
             return this;
         }
 
-        public Multimap<ComponentBuilder<?,?>, Integer> getComponentBuildersToRender() {
-            Multimap<ComponentBuilder<?,?>, Integer> renderComponents = ArrayListMultimap.create();
+        public Multimap<ComponentBuilder<?, ?>, Integer> getComponentBuildersToRender() {
+            Multimap<ComponentBuilder<?, ?>, Integer> renderComponents = ArrayListMultimap.create();
             for (ComponentBuilder<?, ?> componentBuilder : toRender) {
                 renderComponents.putAll(componentBuilder, componentBuilderPositions.get(componentBuilder));
             }

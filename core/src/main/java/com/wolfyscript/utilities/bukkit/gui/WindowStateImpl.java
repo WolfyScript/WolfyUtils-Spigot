@@ -17,6 +17,7 @@ import java.util.Optional;
 public class WindowStateImpl implements WindowState {
 
     final Map<Integer, ComponentStateImpl<? extends Component, ComponentState>> childComponentStates = new Int2ObjectOpenHashMap<>();
+    final Map<Integer, Map<Integer, ComponentStateImpl<?,?>>> reactiveBoundStates = new Int2ObjectOpenHashMap<>();
 
     private final Map<String, Signal<?>> signalValues = new HashMap<>();
     private final Deque<Signal<?>> signalUpdateQueue = new ArrayDeque<>();
@@ -33,6 +34,16 @@ public class WindowStateImpl implements WindowState {
     @Override
     public Optional<ComponentState> get(int i) {
         return Optional.ofNullable(childComponentStates.get(i));
+    }
+
+    public void updateReactiveComponent(int functionId, int slot, ComponentState componentState) {
+        reactiveBoundStates.compute(functionId, (integer, componentStates) -> {
+            if (componentStates == null) {
+                componentStates = new Int2ObjectOpenHashMap<>();
+            }
+            componentStates.put(slot, (ComponentStateImpl<? extends Component, ComponentState>) componentState);
+            return componentStates;
+        });
     }
 
     @Override
