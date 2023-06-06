@@ -70,6 +70,8 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
     @Override
     public void render(WindowState state, GuiHolder guiHolder, RenderContext renderContext) {
         if (!(state instanceof WindowStateImpl windowState)) return;
+        signals.forEach((s, signal) -> signal.enter(guiHolder.getViewManager()));
+
         InventoryUpdate.updateInventory(((WolfyCoreImpl) window.getWolfyUtils().getCore()).getWolfyUtils().getPlugin(), ((GUIHolder) guiHolder).getPlayer(), titleFunction.get());
 
         for (Map.Entry<Component, Integer> entry : componentPositions.entries()) {
@@ -77,7 +79,6 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
         }
 
         if (!reactiveFunctions.isEmpty()) {
-            signals.forEach((s, signal) -> signal.enter(guiHolder.getViewManager()));
             Map<Integer, ComponentStateImpl<?, ?>> reactiveUpdateQueue = new HashMap<>();
 
             for (ReactiveConsumer<com.wolfyscript.utilities.common.gui.WindowRenderer.ReactiveRenderBuilder> reactiveFunction : reactiveFunctions) {
@@ -123,7 +124,6 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
                     }
                 }
             }
-            signals.forEach((s, signal) -> signal.exit());
         }
 
         // Free up unused space/slots
@@ -137,6 +137,8 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
             renderState(childState, guiHolder, renderContext);
             ((RenderContextImpl) renderContext).exitNode();
         });
+
+        signals.forEach((s, signal) -> signal.exit());
     }
 
     private <T extends ComponentStateImpl<B, ?>, B extends Component> void renderState(T state, GuiHolder guiHolder, RenderContext renderContext) {

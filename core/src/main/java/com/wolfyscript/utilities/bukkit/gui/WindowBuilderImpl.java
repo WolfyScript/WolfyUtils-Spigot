@@ -2,6 +2,7 @@ package com.wolfyscript.utilities.bukkit.gui;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.common.base.Preconditions;
@@ -21,6 +22,7 @@ import java.util.function.Consumer;
 
 @KeyedStaticId(key = "window")
 @KeyedBaseType(baseType = ComponentBuilder.class)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class WindowBuilderImpl  implements WindowBuilder {
 
     private final String id;
