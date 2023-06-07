@@ -101,7 +101,7 @@ public class TestGUI {
                             Signal<Integer> count = renderer.useSignal(COUNT, Integer.class, () -> 0);
 
                             renderer
-                                    .title(() -> Component.text("Counter"))
+                                    .titleSignals(count)
                                     // Sometimes we want to render components dependent on signals
                                     .reactive(reactiveBuilder -> {
                                         // Reactive parts are called everytime the signal used inside this closure is updated.

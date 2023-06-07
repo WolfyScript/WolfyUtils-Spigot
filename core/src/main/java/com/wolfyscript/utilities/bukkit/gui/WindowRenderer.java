@@ -35,14 +35,18 @@ import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 public class WindowRenderer implements com.wolfyscript.utilities.common.gui.WindowRenderer {
 
@@ -221,7 +225,10 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
         final Set<ComponentBuilder<?, ?>> componentRenderSet = new HashSet<>();
         final Map<String, Signal<?>> usedSignals = new HashMap<>();
         final Set<ReactiveConsumer<com.wolfyscript.utilities.common.gui.WindowRenderer.ReactiveRenderBuilder>> reactiveFunctions = new HashSet<>();
-        private ReactiveSupplier<net.kyori.adventure.text.Component> titleFunction;
+
+        private final List<TagResolver> titleTagResolvers = new ArrayList<>();
+        private String staticTitle;
+        private ReactiveSupplier<net.kyori.adventure.text.Component> titleFunction = null;
 
         @JsonCreator
         public Builder(@JacksonInject WolfyUtils wolfyUtils) {
@@ -231,6 +238,11 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
         @JsonSetter("placement")
         private void setPlacement(Map<Integer, ComponentBuilder<?, ?>> integerComponentBuilderMap) {
             integerComponentBuilderMap.forEach((slot, componentBuilder) -> componentBuilderPositions.put(componentBuilder, slot));
+        }
+
+        @JsonSetter("title")
+        private void setTitle(String title) {
+            this.staticTitle = title;
         }
 
         @Override
@@ -325,29 +337,23 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
             return this;
         }
 
-        public WindowRenderer create(Window window) {
-            Multimap<Component, Integer> finalPostions = ArrayListMultimap.create();
-            Multimap<ComponentBuilder<?, ?>, Integer> nonRenderedComponents = ArrayListMultimap.create();
-
-            for (ComponentBuilder<?, ?> componentBuilder : componentBuilderPositions.keySet()) {
-                Collection<Integer> slots = componentBuilderPositions.get(componentBuilder);
-                if (componentRenderSet.contains(componentBuilder)) {
-                    finalPostions.putAll(componentBuilder.create(null), slots);
-                    continue;
-                }
-                nonRenderedComponents.putAll(componentBuilder, slots);
-            }
-
-            return new WindowRenderer((WindowImpl) window, usedSignals, finalPostions, nonRenderedComponents, titleFunction, reactiveFunctions);
-        }
-
+        @Override
         public Builder title(net.kyori.adventure.text.Component textComponent) {
-
+            title(() -> textComponent);
             return this;
         }
 
-        public Builder titleSignals(Signal<?>... signals) {
+        @Override
+        public Builder title(String staticTitle) {
+            this.staticTitle = staticTitle;
+            return this;
+        }
 
+        @Override
+        public Builder titleSignals(Signal<?>... signals) {
+            titleTagResolvers.addAll(Arrays.stream(signals)
+                    .map(signal -> TagResolver.resolver(signal.key(), (argumentQueue, context) -> Tag.inserting(net.kyori.adventure.text.Component.text(String.valueOf(signal.get())))))
+                    .toList());
             return this;
         }
 
@@ -379,6 +385,32 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
             Class<B> builderImplType = (Class<B>) registry.get(key); // We can be sure that the cast is valid, because the key is only non-null if and only if the type matches!
             Preconditions.checkNotNull(builderImplType, "Failed to create component '%s'! Cannot find implementation type of builder '%s' in registry!", id, builderType.getName());
             return new Pair<>(key, builderImplType);
+        }
+
+        public WindowRenderer create(Window window) {
+            Multimap<Component, Integer> finalPostions = ArrayListMultimap.create();
+            Multimap<ComponentBuilder<?, ?>, Integer> nonRenderedComponents = ArrayListMultimap.create();
+
+            for (ComponentBuilder<?, ?> componentBuilder : componentBuilderPositions.keySet()) {
+                Collection<Integer> slots = componentBuilderPositions.get(componentBuilder);
+                if (componentRenderSet.contains(componentBuilder)) {
+                    finalPostions.putAll(componentBuilder.create(null), slots);
+                    continue;
+                }
+                nonRenderedComponents.putAll(componentBuilder, slots);
+            }
+
+            if (titleFunction == null) {
+                if (staticTitle != null) {
+                    final TagResolver tagResolvers = TagResolver.resolver(titleTagResolvers);
+                    final String finalTitle = staticTitle;
+                    title(() -> wolfyUtils.getChat().getMiniMessage().deserialize(finalTitle, tagResolvers));
+                } else {
+                    title(net.kyori.adventure.text.Component::empty);
+                }
+            }
+
+            return new WindowRenderer((WindowImpl) window, usedSignals, finalPostions, nonRenderedComponents, titleFunction, reactiveFunctions);
         }
 
     }
