@@ -25,6 +25,7 @@ import me.wolfyscript.utilities.api.inventory.gui.button.buttons.ItemInputButton
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -35,6 +36,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -216,7 +219,29 @@ public class InventoryAPI<C extends CustomCache> implements Listener {
                 buttons.put(event.getSlot(), clickedBtn);
                 event.setCancelled(executeButton(clickedBtn, guiHandler, (Player) event.getWhoClicked(), inventory, event.getSlot(), event));
                 if (Objects.equals(clickedBtn.getType(), ButtonType.ITEM_SLOT)) { //If the button is marked as an Item slot it may affect other buttons too!
-                    if (event.getAction().equals(InventoryAction.COLLECT_TO_CURSOR) || event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
+                    if (event.getAction().equals(InventoryAction.COLLECT_TO_CURSOR)) {
+                        // # issue: Only execute the buttons that are affected by the action.
+                        var clickedBtnClass = clickedBtn.getClass();
+                        ItemStack cursor = event.getCursor();
+                        if (cursor == null) return;
+                        int maxStack = cursor.getMaxStackSize();
+                        int count = cursor.getAmount();
+                        Inventory topInv = event.getView().getTopInventory();
+                        Map<Integer, String> cachedButtons = guiHandler.getCustomCache().getButtons(guiWindow);
+
+                        for (int i = 0; i < topInv.getSize(); i++) {
+                            ItemStack stack = topInv.getItem(i);
+                            if (!ItemUtils.isAirOrNull(stack) && stack.isSimilar(cursor)) {
+                                count += stack.getAmount();
+                                Button<C> button = guiWindow.getButton(cachedButtons.get(i));
+                                if (i != event.getSlot() && clickedBtnClass.isInstance(button)) { //Make sure to only execute the buttons that are of the same type as the clicked one.
+                                    buttons.put(i, button);
+                                    event.setCancelled(executeButton(button, guiHandler, (Player) event.getWhoClicked(), inventory, i, event));
+                                }
+                                if (count >= maxStack) break;
+                            }
+                        }
+                    } else if (event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
                         var clickedBtnClass = clickedBtn.getClass();
                         for (Map.Entry<Integer, String> buttonEntry : guiHandler.getCustomCache().getButtons(guiWindow).entrySet()) {
                             if (event.getSlot() != buttonEntry.getKey()) {
