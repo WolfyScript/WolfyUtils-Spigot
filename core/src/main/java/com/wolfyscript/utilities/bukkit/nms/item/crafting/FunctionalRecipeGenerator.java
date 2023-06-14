@@ -245,6 +245,7 @@ public class FunctionalRecipeGenerator {
      * <b>Only the first invocation generates the classes! Any invocation afterwards does nothing.</b>
      */
     public void generateRecipeClasses() {
+        if (ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 20, 0))) return;
         if (!GENERATED_RECIPES.isEmpty()) return;
         try {
             Logger logger = WolfyUtilCore.getInstance().getLogger();

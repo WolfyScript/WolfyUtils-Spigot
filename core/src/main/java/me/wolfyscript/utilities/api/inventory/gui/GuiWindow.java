@@ -36,6 +36,8 @@ import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.Pair;
 import me.wolfyscript.utilities.util.chat.ChatColor;
 import me.wolfyscript.utilities.util.reflection.InventoryUpdate;
+import me.wolfyscript.utilities.util.version.MinecraftVersion;
+import me.wolfyscript.utilities.util.version.ServerVersion;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -291,7 +293,11 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
                     guiHandler.setWindowUpdateTask(Bukkit.getScheduler().runTaskTimer(wolfyUtilities.getPlugin(), () -> {
                         var player = guiHandler.getPlayer();
                         if (player != null) {
-                            InventoryUpdate.updateInventory(wolfyUtilities.getCore(), player, updateTitle(player, inv, guiHandler));
+                            if (ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 20, 0))) {
+                                player.getOpenInventory().setTitle(BukkitComponentSerializer.legacy().serialize(updateTitle(player, inv, guiHandler)));
+                            } else {
+                                InventoryUpdate.updateInventory(wolfyUtilities.getCore(), player, updateTitle(player, inv, guiHandler));
+                            }
                         }
                     }, titleUpdateDelay, titleUpdatePeriod));
                 }

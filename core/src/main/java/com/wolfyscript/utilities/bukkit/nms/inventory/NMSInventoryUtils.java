@@ -49,7 +49,7 @@ public class NMSInventoryUtils {
             try {
                 Object container = CRAFT_INV_GET_CONTAINER.invoke(CRAFT_INVENTORY_CLASS.cast(inventory));
                 if (CONTAINER_CLASS.isInstance(container)) {
-                    Object recipeMCKey = RESOURCE_KEY_CLASS.getConstructor(String.class, String.class).newInstance(recipeId.getNamespace(), recipeId.getKey());
+                    Object recipeMCKey = recipeId == null ? null : RESOURCE_KEY_CLASS.getConstructor(String.class, String.class).newInstance(recipeId.getNamespace(), recipeId.getKey());
                     Object minecraftServer = MINECRAFT_SERVER_STATIC_GETTER_METHOD.invoke(null);
                     Object recipeManager = MINECRAFT_SERVER_GET_RECIPE_MANAGER_METHOD.invoke(minecraftServer);
                     Object recipeOptional = RECIPE_MANAGER_GET_RECIPE_METHOD.invoke(recipeManager, recipeMCKey);
