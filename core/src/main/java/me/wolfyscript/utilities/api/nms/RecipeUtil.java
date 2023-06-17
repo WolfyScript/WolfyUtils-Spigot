@@ -18,7 +18,11 @@
 
 package me.wolfyscript.utilities.api.nms;
 
+import com.wolfyscript.utilities.bukkit.nms.inventory.NMSInventoryUtils;
 import me.wolfyscript.utilities.api.nms.inventory.RecipeType;
+import me.wolfyscript.utilities.util.NamespacedKey;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,22 +44,11 @@ public abstract class RecipeUtil extends UtilComponent {
      */
     public abstract @NotNull Iterator<Recipe> recipeIterator(RecipeType recipeType);
 
-//    /**
-//     * Creates a functional Campfire Recipe.<br>
-//     * The recipeMatch function is used to check if the recipe is valid (Careful! This is called each tick!)<br>
-//     * Other functions like assembler and remaining items, can be set later on.<br>
-//     *
-//     *
-//     * @param key The id of the recipe.
-//     * @param group The group of the recipe.
-//     * @param result The result of the recipe. When using a custom assembler it is used as the display item.
-//     * @param source Used to display the source item/s.
-//     * @param experience The experience of the recipe.
-//     * @param cookingTime The cooking time of the recipe.
-//     * @param recipeMatch The function that checks if the recipe is valid.
-//     * @return A new instance of the functional campfire recipe.
-//     */
-//    public abstract FunctionalCampfireRecipe campfireRecipe(NamespacedKey key, String group, ItemStack result, RecipeChoice source, float experience, int cookingTime, BiFunction<Inventory, World, Boolean> recipeMatch);
-//
+    public void setCurrentRecipe(Inventory inventory, NamespacedKey recipeId) {
+        NMSInventoryUtils.setCurrentRecipe(inventory, recipeId);
+    }
 
+    public void setCurrentRecipe(InventoryView view, NamespacedKey recipeId) {
+        NMSInventoryUtils.setCurrentRecipe(view.getTopInventory(), recipeId);
+    }
 }
