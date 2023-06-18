@@ -28,6 +28,7 @@ import me.wolfyscript.utilities.api.nms.v1_20_R1.inventory.RecipeIterator;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.SmithingMenu;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.SmithingRecipe;
@@ -37,7 +38,9 @@ import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryCrafting;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryFurnace;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventorySmithing;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftInventoryView;
+import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftResultInventory;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftNamespacedKey;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.Recipe;
@@ -80,7 +83,7 @@ public class RecipeUtilImpl extends me.wolfyscript.utilities.api.nms.RecipeUtil 
         Inventory inventory = view.getTopInventory();
         if (inventory instanceof CraftInventoryCrafting crafting) {
             crafting.getInventory().setCurrentRecipe(recipe);
-        } else if (inventory instanceof CraftInventorySmithing smithing) {
+        } else if (inventory.getType().equals(InventoryType.SMITHING) || inventory.getType().equals(InventoryType.SMITHING_NEW)) {
             if (view instanceof CraftInventoryView craftView) {
                 if (craftView.getHandle() instanceof SmithingMenu smithingMenu) {
                     try {
@@ -91,7 +94,9 @@ public class RecipeUtilImpl extends me.wolfyscript.utilities.api.nms.RecipeUtil 
                     }
                 }
             }
-            smithing.getResultInventory().setRecipeUsed(recipe);
+            if (inventory instanceof CraftResultInventory resultInventory) {
+                ((ResultContainer) resultInventory.getResultInventory()).setRecipeUsed(recipe);
+            }
         } else if (inventory instanceof CraftInventoryFurnace inventoryFurnace) {
             if (inventoryFurnace.getHolder() instanceof CraftFurnace<?> craftFurnace) {
                 try {
