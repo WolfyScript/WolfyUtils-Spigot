@@ -5,9 +5,9 @@
     <parent>
         <artifactId>nmsutil</artifactId>
         <groupId>com.wolfyscript.wolfyutils.spigot</groupId>
-        <version>4.16.12-SNAPSHOT</version>
+        <version>4.16.12-beta.1</version>
     </parent>
-    <version>4.16.12-SNAPSHOT</version>
+    <version>4.16.12-beta.1</version>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>nmsutil-v1_20_R1</artifactId>
