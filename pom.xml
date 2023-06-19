@@ -21,6 +21,7 @@
         <module>nmsutil</module>
         <module>plugin-compatibility</module>
         <module>wolfyutils-spigot</module>
+        <module>nmsutil/nmsutil-v1_20_R1</module>
     </modules>
 
     <properties>
