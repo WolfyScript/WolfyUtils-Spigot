@@ -19,15 +19,19 @@
 package com.wolfyscript.utilities.bukkit.compatibility;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.nms.ServerProperties;
+import com.wolfyscript.utilities.versioning.MinecraftVersion;
+import com.wolfyscript.utilities.versioning.ServerVersion;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public final class CompatibilityManagerBukkit implements CompatibilityManager {
-
 
     private static final Map<String, Boolean> classes = new HashMap<>();
     private final WolfyCoreImpl core;
     private final PluginsBukkit pluginsBukkit;
+    private boolean has1_20Features = false;
     private final boolean isPaper;
 
     public CompatibilityManagerBukkit(WolfyCoreImpl core) {
@@ -38,6 +42,22 @@ public final class CompatibilityManagerBukkit implements CompatibilityManager {
 
     public void init() {
         pluginsBukkit.init();
+        Properties properties = ServerProperties.get();
+        has1_20Features = ServerVersion.getVersion().isAfterOrEq(MinecraftVersion.of(1, 20, 0));
+        // If the version is already 1.20 or later, then it has 1.20 features!
+        if (!has1_20Features && ServerVersion.getVersion().isAfterOrEq(MinecraftVersion.of(1, 19, 4))) {
+            String initialEnabledDataPacks = properties.getProperty("initial-enabled-packs", "vanilla");
+            for (String s : initialEnabledDataPacks.split(",")) {
+                if (s.equalsIgnoreCase("update_1_20")) {
+                    has1_20Features = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    public boolean has1_20Features() {
+        return has1_20Features;
     }
 
     public Plugins getPlugins() {
