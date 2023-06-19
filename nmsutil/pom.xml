@@ -31,8 +31,6 @@
     <artifactId>nmsutil</artifactId>
 
     <modules>
-        <module>nmsutil-v1_16_R1</module>
-        <module>nmsutil-v1_16_R2</module>
         <module>nmsutil-v1_16_R3</module>
         <module>nmsutil-v1_17_R1</module>
         <module>nmsutil-v1_17_R1_P1</module>
@@ -41,6 +39,7 @@
         <module>nmsutil-v1_18_R2</module>
         <module>nmsutil-v1_19_R1</module>
         <module>nmsutil-v1_19_R2</module>
+        <module>nmsutil-v1_20_R1</module>
         <module>nmsutil-artifact</module>
     </modules>
 

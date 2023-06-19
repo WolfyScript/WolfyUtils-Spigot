@@ -42,7 +42,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * A utility class to update the inventory of a player.
  * This is useful to change the title of an inventory.
+ *
+ * @deprecated Spigot introduced the InventoryView#setTitle(String) method in 1.20 rendering this redundant.
  */
+@Deprecated
 public final class InventoryUpdate {
 
     // Classes.
@@ -115,14 +118,26 @@ public final class InventoryUpdate {
     /**
      * Update the player inventory, so you can change the title.
      *
+     * @deprecated Spigot introduced the InventoryView#setTitle(String) method in 1.20 rendering this redundant.
      * @param player   whose inventory will be updated.
      * @param newTitle the new title for the inventory.
      */
+    @Deprecated
     public static void updateInventory(Plugin plugin, Player player, String newTitle) {
         Preconditions.checkNotNull(player, "Cannot update inventory to null player.");
         updateInventory(plugin, player, Component.text(newTitle == null ? "" : newTitle));
     }
 
+    /**
+     * Update the player inventory, so you can change the title.
+     *
+     * @deprecated Spigot introduced the InventoryView#setTitle(String) method in 1.20 rendering this redundant.
+     * @param plugin   The plugin that caused the update.
+     * @param player   whose inventory will be updated.
+     * @param newTitle the new title for the inventory.
+
+     */
+    @Deprecated
     public static void updateInventory(Plugin plugin, Player player, Component newTitle) {
         Preconditions.checkNotNull(player, "Cannot update inventory to null player.");
         try {
@@ -157,9 +172,9 @@ public final class InventoryUpdate {
                         plugin.getDescription().getName()));
                 return;
             }
-            Object containerTypeObject = container.getObject();
+            Object object = container.getObject();
             // Create packet.
-            Object packet = packetPlayOutOpenWindowConstructor.newInstance(windowId, containerTypeObject, title);
+            Object packet = packetPlayOutOpenWindowConstructor.newInstance(windowId, object, title);
 
             // Send packet sync.
             Reflection.sendPacket(player, packet);
