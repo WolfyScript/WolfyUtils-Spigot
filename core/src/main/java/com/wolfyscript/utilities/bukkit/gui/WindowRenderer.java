@@ -30,6 +30,8 @@ import com.wolfyscript.utilities.common.gui.functions.SerializableConsumer;
 import com.wolfyscript.utilities.common.gui.functions.SerializableSupplier;
 import com.wolfyscript.utilities.common.registry.RegistryGUIComponentBuilders;
 import com.wolfyscript.utilities.tuple.Pair;
+import com.wolfyscript.utilities.versioning.MinecraftVersion;
+import com.wolfyscript.utilities.versioning.ServerVersion;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
@@ -45,6 +47,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
@@ -76,7 +79,11 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
         if (!(state instanceof WindowStateImpl windowState)) return;
         signals.forEach((s, signal) -> signal.enter(guiHolder.getViewManager()));
 
-        InventoryUpdate.updateInventory(((WolfyCoreImpl) window.getWolfyUtils().getCore()).getWolfyUtils().getPlugin(), ((GUIHolder) guiHolder).getPlayer(), titleFunction.get());
+        if (ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 20, 0))) {
+            ((GUIHolder) guiHolder).getPlayer().getOpenInventory().setTitle(BukkitComponentSerializer.legacy().serialize(titleFunction.get()));
+        } else {
+            InventoryUpdate.updateInventory(((WolfyCoreImpl) window.getWolfyUtils().getCore()).getWolfyUtils().getPlugin(), ((GUIHolder) guiHolder).getPlayer(), titleFunction.get());
+        }
 
         for (Map.Entry<Component, Integer> entry : componentPositions.entries()) {
             updateComponent(windowState, entry.getValue(), entry.getKey()).ifPresent(state1 -> windowState.updateComponent(entry.getValue(), state1));
