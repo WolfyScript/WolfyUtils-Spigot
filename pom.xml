@@ -21,7 +21,6 @@
         <module>nmsutil</module>
         <module>plugin-compatibility</module>
         <module>wolfyutils-spigot</module>
-        <module>nmsutil/nmsutil-v1_20_R1</module>
     </modules>
 
     <properties>
@@ -35,7 +34,7 @@
         <plugin_version.specialsource>1.2.4</plugin_version.specialsource>
         <plugin_version.license>2.0.0</plugin_version.license>
         <!-- The dependency versions -->
-        <depend_version.spigotapi>1.19.3-R0.1-SNAPSHOT</depend_version.spigotapi>
+        <depend_version.spigotapi>1.20.1-R0.1-SNAPSHOT</depend_version.spigotapi>
         <depend_version.mojang-authlib>1.5.21</depend_version.mojang-authlib>
         <depend_version.jackson>2.14.0-rc1</depend_version.jackson>
         <depend_version.jetbrains-annotations>23.0.0</depend_version.jetbrains-annotations>
