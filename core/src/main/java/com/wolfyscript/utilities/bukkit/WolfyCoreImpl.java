@@ -182,6 +182,7 @@ import com.wolfyscript.utilities.nbt.NBTTagConfigLong;
 import com.wolfyscript.utilities.nbt.NBTTagConfigShort;
 import com.wolfyscript.utilities.nbt.NBTTagConfigString;
 import com.wolfyscript.utilities.versioning.ServerVersion;
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -572,8 +573,14 @@ public abstract class WolfyCoreImpl implements WolfyCore {
 
         TestGUI testGUI = new TestGUI(this);
 
-        plugin.saveResource("com/wolfyscript/utilities/common/gui/example/counter/counter_router.conf", true);
-        plugin.saveResource("com/wolfyscript/utilities/common/gui/example/counter/main_menu.conf", true);
+        File guiIncludesDir = new File(plugin.getDataFolder(), "gui/includes/example_counter");
+        if (!guiIncludesDir.exists()) {
+            guiIncludesDir.mkdirs();
+        }
+
+        api.exportResource("com/wolfyscript/utilities/common/gui/example_counter/counter_router.conf", guiIncludesDir, true);
+        api.exportResource("com/wolfyscript/utilities/common/gui/example_counter/main_menu.conf", guiIncludesDir, true);
+
         testGUI.initWithConfig();
 
         CreativeModeTab.init();

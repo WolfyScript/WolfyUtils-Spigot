@@ -15,7 +15,12 @@ import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.GuiAPIManager;
 import com.wolfyscript.utilities.common.language.LanguageAPI;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.plugin.Plugin;
 
@@ -168,4 +173,48 @@ public class WolfyUtilsBukkit extends WolfyUtils {
     public void setDataBasePrefix(String dataBasePrefix) {
         this.dataBasePrefix = dataBasePrefix;
     }
+
+    @Override
+    public void exportResource(String resourcePath, File destination, boolean replace) {
+        if (resourcePath == null || resourcePath.equals("")) {
+            throw new IllegalArgumentException("ResourcePath cannot be null or empty");
+        }
+
+        resourcePath = resourcePath.replace('\\', '/');
+        InputStream in = plugin.getResource(resourcePath);
+        if (in == null) {
+            throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found in " + plugin.getName());
+        }
+
+        final File outDir;
+        if (destination.isDirectory()) {
+            // Destination is a directory, so keep file name
+            outDir = destination;
+            destination = new File(destination, resourcePath.substring(resourcePath.lastIndexOf('/') + 1));
+        } else {
+            outDir = new File(destination.getPath().substring(0, Math.max(destination.getPath().lastIndexOf('/'), 0)));
+        }
+
+        if (!outDir.exists()) {
+            outDir.mkdirs();
+        }
+
+        try {
+            if (!destination.exists() || replace) {
+                OutputStream out = new FileOutputStream(destination);
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+                out.close();
+                in.close();
+            } else {
+                getLogger().log(Level.WARNING, "Could not save " + destination.getName() + " to " + destination + " because " + destination.getName() + " already exists.");
+            }
+        } catch (IOException ex) {
+            getLogger().log(Level.SEVERE, "Could not save " + destination.getName() + " to " + destination, ex);
+        }
+    }
+
 }
