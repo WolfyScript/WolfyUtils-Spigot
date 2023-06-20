@@ -42,9 +42,9 @@
         <depend_version.guice>5.1.0</depend_version.guice>
         <depend_version.reflections>0.10.2</depend_version.reflections>
         <depend_version.bstats>3.0.0</depend_version.bstats>
-        <depend_version.adventure-api>4.11.0</depend_version.adventure-api>
+        <depend_version.adventure-api>4.14.0</depend_version.adventure-api>
         <depend_version.adventure-platform>4.1.2</depend_version.adventure-platform>
-        <depend_version.adventure-minimessage>4.11.0</depend_version.adventure-minimessage>
+        <depend_version.adventure-minimessage>4.14.0</depend_version.adventure-minimessage>
         <depend_version.nbt-api>2.11.3</depend_version.nbt-api>
         <depend_version.javassist>3.29.2-GA</depend_version.javassist>
         <depend_version.test.jupiter>5.9.0</depend_version.test.jupiter>
