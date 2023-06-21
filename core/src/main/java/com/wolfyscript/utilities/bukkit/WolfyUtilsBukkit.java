@@ -19,9 +19,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Locale;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import org.bukkit.plugin.Plugin;
 
 public class WolfyUtilsBukkit extends WolfyUtils {
@@ -175,6 +179,45 @@ public class WolfyUtilsBukkit extends WolfyUtils {
     }
 
     @Override
+    public void exportResources(String resourceName, File dir, boolean replace, Pattern filePattern) {
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        resourceName = resourceName.replace('\\', '/');
+
+        Set<String> paths = getCore().getReflections().getResources(filePattern);
+        for (String path : paths) {
+            if (!path.startsWith(resourceName)) continue;
+            URL url = plugin.getClass().getClassLoader().getResource(path);
+            if (url == null) return;
+
+            try {
+                URLConnection connection = url.openConnection();
+                connection.setUseCaches(false);
+                InputStream in = connection.getInputStream();
+                if (in == null) throw new IllegalArgumentException("The embedded resource '" + url + "' cannot be found in " + plugin.getName());
+
+                File destination = new File(dir, path.replace(resourceName, ""));
+                try {
+                    if (destination.exists() && !replace) return;
+                    OutputStream out = new FileOutputStream(destination);
+                    byte[] buf = new byte[1024];
+                    int len;
+                    while ((len = in.read(buf)) > 0) {
+                        out.write(buf, 0, len);
+                    }
+                    out.close();
+                    in.close();
+                } catch (IOException ex) {
+                    getLogger().log(Level.SEVERE, "Could not save " + destination.getName() + " to " + destination, ex);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
     public void exportResource(String resourcePath, File destination, boolean replace) {
         if (resourcePath == null || resourcePath.equals("")) {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
@@ -209,8 +252,6 @@ public class WolfyUtilsBukkit extends WolfyUtils {
                 }
                 out.close();
                 in.close();
-            } else {
-                getLogger().log(Level.WARNING, "Could not save " + destination.getName() + " to " + destination + " because " + destination.getName() + " already exists.");
             }
         } catch (IOException ex) {
             getLogger().log(Level.SEVERE, "Could not save " + destination.getName() + " to " + destination, ex);
