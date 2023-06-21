@@ -573,14 +573,6 @@ public abstract class WolfyCoreImpl implements WolfyCore {
 
         TestGUI testGUI = new TestGUI(this);
 
-        File guiIncludesDir = new File(plugin.getDataFolder(), "gui/includes/example_counter");
-        if (!guiIncludesDir.exists()) {
-            guiIncludesDir.mkdirs();
-        }
-
-        api.exportResource("com/wolfyscript/utilities/common/gui/example_counter/counter_router.conf", guiIncludesDir, true);
-        api.exportResource("com/wolfyscript/utilities/common/gui/example_counter/main_menu.conf", guiIncludesDir, true);
-
         testGUI.initWithConfig();
 
         CreativeModeTab.init();

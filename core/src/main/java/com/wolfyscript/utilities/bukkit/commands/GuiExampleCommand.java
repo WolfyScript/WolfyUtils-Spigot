@@ -50,7 +50,7 @@ public class GuiExampleCommand extends Command implements PluginIdentifiableComm
             // ... tbd
             core.getWolfyUtils().getGUIManager().createViewAndOpen(args[0], player.getUniqueId());
         } else {
-            core.getWolfyUtils().getGUIManager().createViewAndOpen("counter", player.getUniqueId());
+            core.getWolfyUtils().getGUIManager().createViewAndOpen("example_counter", player.getUniqueId());
         }
         return true;
     }

@@ -93,11 +93,7 @@ public class TestGUI {
     public void initWithConfig() {
         GuiAPIManager manager = core.getWolfyUtils().getGUIManager();
         final String COUNT = "count";
-        File counterFile = new File(core.getWolfyUtils().getDataFolder(), "gui/counter_router.conf");
-        if (!counterFile.exists()) {
-            counterFile = new File(core.getWolfyUtils().getDataFolder().getPath(), "gui/includes/example_counter/counter_router.conf");
-        }
-        manager.registerGuiFromFile("counter", counterFile, builder -> builder
+        manager.registerGuiFromFiles("example_counter", builder -> builder
                 .window(mainMenu -> mainMenu
                         .size(9 * 3)
                         .render((renderer) -> {

@@ -6,7 +6,9 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
 import org.reflections.scanners.Scanners;
+import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 
 /**
@@ -33,7 +35,13 @@ public abstract class WolfyCoreBootstrap extends JavaPlugin {
     }
 
     private Reflections initReflections() {
-        return new Reflections(new ConfigurationBuilder().forPackages("me.wolfyscript", "com.wolfyscript").addClassLoaders(getClassLoader()).addScanners(Scanners.TypesAnnotated, Scanners.SubTypes, Scanners.Resources));
+        return new Reflections(new ConfigurationBuilder()
+                .forPackage("")
+                .addUrls(ClasspathHelper.forClassLoader())
+                .forPackage("me.wolfyscript", getClassLoader())
+                .forPackage("com.wolfyscript", getClassLoader())
+                .addClassLoaders(getClassLoader())
+                .addScanners(Scanners.values()));
     }
 
     @Override
@@ -46,7 +54,6 @@ public abstract class WolfyCoreBootstrap extends JavaPlugin {
     public void onEnable() {
         this.metrics = new Metrics(this, 5114);
         getCore().enable();
-
     }
 
     @Override

@@ -15,11 +15,19 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
 public class GuiAPIManagerImpl extends GuiAPIManagerCommonImpl {
 
+    private static final Pattern GUI_FILE_PATTERN = Pattern.compile(".*\\.(conf|json)");
+
+    private File guiDataSubFolder;
+    private String guiResourceDir;
+
     public GuiAPIManagerImpl(WolfyUtils wolfyUtils) {
         super(wolfyUtils);
+        this.guiDataSubFolder = new File(wolfyUtils.getDataFolder(), "gui");
+        this.guiResourceDir = "com/wolfyscript/utilities/common/gui";
     }
 
     @Override
@@ -35,9 +43,17 @@ public class GuiAPIManagerImpl extends GuiAPIManagerCommonImpl {
     }
 
     @Override
-    public void registerGuiFromFile(String id, File file, Consumer<RouterBuilder> consumer) {
+    public void registerGuiFromFiles(String id, Consumer<RouterBuilder> consumer) {
         HoconMapper mapper = wolfyUtils.getJacksonMapperUtil().getGlobalMapper(HoconMapper.class);
         try {
+            wolfyUtils.exportResources(guiResourceDir + "/" + id, new File(guiDataSubFolder, "/includes/" + id), true, GUI_FILE_PATTERN);
+
+            File file = new File(guiDataSubFolder, id + "/index.conf"); // Look for user-override
+            if (!file.exists()) {
+                file = new File(guiDataSubFolder, "includes/" + id + "/index.conf"); // Fall back to includes version
+                if (!file.exists() || !file.isFile()) throw new IllegalArgumentException("Cannot find file to gui: " + file.getPath());
+            }
+
             CustomInjectableValues injectableValues = new CustomInjectableValues();
             injectableValues.addValue("parent", null);
             injectableValues.addValue(WolfyUtils.class, wolfyUtils);
