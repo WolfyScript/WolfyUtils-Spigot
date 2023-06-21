@@ -30,6 +30,14 @@ public class GuiAPIManagerImpl extends GuiAPIManagerCommonImpl {
         this.guiResourceDir = "com/wolfyscript/utilities/common/gui";
     }
 
+    public void setGuiResourceDir(String path) {
+        this.guiResourceDir = path;
+    }
+
+    public void setGuiDataDir(File dir) {
+        this.guiDataSubFolder = dir;
+    }
+
     @Override
     public void registerGui(String id, Consumer<RouterBuilder> consumer) {
         RouterBuilder builder = new RouterBuilderImpl(id, wolfyUtils);
@@ -51,7 +59,7 @@ public class GuiAPIManagerImpl extends GuiAPIManagerCommonImpl {
             File file = new File(guiDataSubFolder, id + "/index.conf"); // Look for user-override
             if (!file.exists()) {
                 file = new File(guiDataSubFolder, "includes/" + id + "/index.conf"); // Fall back to includes version
-                if (!file.exists() || !file.isFile()) throw new IllegalArgumentException("Cannot find file to gui: " + file.getPath());
+                if (!file.exists() || !file.isFile()) throw new IllegalArgumentException("Cannot find gui index file! Expected: " + file.getPath());
             }
 
             CustomInjectableValues injectableValues = new CustomInjectableValues();
