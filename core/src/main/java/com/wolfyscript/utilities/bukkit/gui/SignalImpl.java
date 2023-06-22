@@ -2,7 +2,6 @@ package com.wolfyscript.utilities.bukkit.gui;
 
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.Signal;
-import com.wolfyscript.utilities.common.gui.Signalable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;

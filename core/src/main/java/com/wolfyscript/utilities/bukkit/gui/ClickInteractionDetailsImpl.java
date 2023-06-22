@@ -75,6 +75,10 @@ public class ClickInteractionDetailsImpl implements ClickInteractionDetails {
         return clickEvent.isCancelled();
     }
 
+    public InventoryClickEvent getClickEvent() {
+        return clickEvent;
+    }
+
     @Override
     public InteractionResult.ResultType getResultType() {
         return resultType;
