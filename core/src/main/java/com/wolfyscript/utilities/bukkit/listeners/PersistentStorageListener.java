@@ -128,6 +128,7 @@ public class PersistentStorageListener implements Listener {
             Bukkit.getPluginManager().callEvent(blockStorePlaceEvent);
             event.setCancelled(blockStorePlaceEvent.isCancelled());
 
+            block.removeMetadata(PREVIOUS_BROKEN_STORE, core); //Remove old metadata from block!
             if (!blockStorage.isEmpty() && !blockStorePlaceEvent.isCancelled()) {
                 worldStorage.setBlockStorageIfAbsent(blockStorage);
             }
@@ -147,6 +148,7 @@ public class PersistentStorageListener implements Listener {
 
         for (int i = 0; i < blockStorageMultiPlaceEvent.getBlockStorages().size(); i++) {
             BlockStorage blockStorage = blockStorageMultiPlaceEvent.getBlockStorages().get(i);
+            blockStorage.getPos().toLocation(event.getBlock().getWorld()).getBlock().removeMetadata(PREVIOUS_BROKEN_STORE, core); //Remove old metadata from block!
             if (!blockStorage.isEmpty()) {
                 worldStorage.setBlockStorageIfAbsent(blockStorage);
             }
@@ -165,6 +167,7 @@ public class PersistentStorageListener implements Listener {
         worldStore.getBlock(block.getLocation()).ifPresent(store -> {
             Location loc = event.getToBlock().getLocation();
             worldStore.removeBlock(block.getLocation());
+            block.removeMetadata(PREVIOUS_BROKEN_STORE, core); //Remove old metadata from block!
             store.copyToOtherBlockStorage(worldStore.getOrCreateAndSetBlockStorage(loc));
         });
     }
@@ -189,6 +192,7 @@ public class PersistentStorageListener implements Listener {
         var worldStorage = persistentStorage.getOrCreateWorldStorage(world);
         blocks.forEach(block -> worldStorage.getBlock(block.getLocation()).ifPresent(store -> {
             Location moveTo = block.getRelative(direction).getLocation();
+            block.removeMetadata(PREVIOUS_BROKEN_STORE, core); //Remove old metadata from block!
             worldStorage.removeBlock(block.getLocation());
             store.copyToOtherBlockStorage(worldStorage.getOrCreateAndSetBlockStorage(moveTo));
         }));
