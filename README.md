@@ -1,4 +1,4 @@
-<div align="center"><img src="https://user-images.githubusercontent.com/41468455/158254076-d856f0db-12a0-4cd8-a186-568a656dd96f.png" alt="WolfyUtilities Banner" /></div>
+<div align="center"><img src="https://github.com/WolfyScript/WolfyUtilities/assets/41468455/d863fd5a-89d0-492e-84bd-98c1a0fabddd" alt="WolfyUtilities Banner" /></div>
 
 ## WolfyUtils-Spigot
 ![bstats_server](https://img.shields.io/bstats/servers/5114?label=Servers)  
