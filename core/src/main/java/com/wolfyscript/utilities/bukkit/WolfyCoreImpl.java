@@ -535,6 +535,7 @@ public abstract class WolfyCoreImpl implements WolfyCore {
 
         var guiComponentBuilders = getRegistries().getGuiComponentBuilders();
         guiComponentBuilders.register(ButtonBuilderImpl.class);
+        guiComponentBuilders.register(StackInputSlotBuilderImpl.class);
 
         // Register the Registries to resolve type references in JSON
         KeyedTypeIdResolver.registerTypeRegistry(CustomItemData.class, registries.getCustomItemDataTypeRegistry());
@@ -688,7 +689,7 @@ public abstract class WolfyCoreImpl implements WolfyCore {
         }
     }
 
-    protected WolfyCoreBootstrap getPlugin() {
+    public WolfyCoreBootstrap getPlugin() {
         return plugin;
     }
 }
