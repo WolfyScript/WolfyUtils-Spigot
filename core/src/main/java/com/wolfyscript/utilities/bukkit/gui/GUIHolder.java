@@ -1,10 +1,13 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.common.gui.GuiHolderCommonImpl;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.Window;
 import java.util.Objects;
+
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -49,8 +52,10 @@ public class GUIHolder extends GuiHolderCommonImpl implements InventoryHolder {
             event.setCancelled(false);
             // TODO: Handle bottom inventory clicks
         }
-        viewManager.getRenderContext(event.getWhoClicked().getUniqueId()).ifPresent(context -> {
-            ((GuiViewManagerImpl) viewManager).renderFor(player, (RenderContextImpl) context);
+        Bukkit.getScheduler().runTask(((WolfyCoreBukkit)viewManager.getWolfyUtils().getCore()).getPlugin(), () -> {
+            viewManager.getRenderContext(event.getWhoClicked().getUniqueId()).ifPresent(context -> {
+                ((GuiViewManagerImpl) viewManager).renderFor(player, (RenderContextImpl) context);
+            });
         });
     }
 
@@ -67,8 +72,11 @@ public class GUIHolder extends GuiHolderCommonImpl implements InventoryHolder {
                     event.setCancelled(true);
                 }
             }
-            viewManager.getRenderContext(event.getWhoClicked().getUniqueId()).ifPresent(context -> {
-                ((GuiViewManagerImpl) viewManager).renderFor(player, (RenderContextImpl) context);
+
+            Bukkit.getScheduler().runTask(((WolfyCoreBukkit)viewManager.getWolfyUtils().getCore()).getPlugin(), () -> {
+                viewManager.getRenderContext(event.getWhoClicked().getUniqueId()).ifPresent(context -> {
+                    ((GuiViewManagerImpl) viewManager).renderFor(player, (RenderContextImpl) context);
+                });
             });
         }
     }
