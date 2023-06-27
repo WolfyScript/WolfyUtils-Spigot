@@ -2,12 +2,13 @@ package com.wolfyscript.utilities.bukkit.gui;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
+import com.wolfyscript.utilities.common.adapters.ItemStack;
 import com.wolfyscript.utilities.common.gui.GuiAPIManager;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.Signal;
 import com.wolfyscript.utilities.common.gui.components.ButtonBuilder;
+import com.wolfyscript.utilities.common.gui.components.StackInputSlotBuilder;
 import com.wolfyscript.utilities.eval.value_provider.ValueProviderStringConst;
-import java.io.File;
 import net.kyori.adventure.text.Component;
 
 public class TestGUI {
@@ -92,13 +93,17 @@ public class TestGUI {
 
     public void initWithConfig() {
         GuiAPIManager manager = core.getWolfyUtils().getGUIManager();
-        final String COUNT = "count";
+        registerCounterExample(manager);
+        registerStackEditorExample(manager);
+    }
+
+    private void registerCounterExample(GuiAPIManager manager) {
         manager.registerGuiFromFiles("example_counter", builder -> builder
                 .window(mainMenu -> mainMenu
                         .size(9 * 3)
                         .render((renderer) -> {
                             // This is only called upon creation of the state. So this is not called when the signal is updated!
-                            Signal<Integer> count = renderer.useSignal(COUNT, Integer.class, () -> 0);
+                            Signal<Integer> count = renderer.useSignal("count", Integer.class, () -> 0);
 
                             renderer
                                     .titleSignals(count)
@@ -130,6 +135,36 @@ public class TestGUI {
                                             })
                                     )
                                     .render("counter", ButtonBuilder.class, bb -> bb.icon(ib -> ib.updateOnSignals(count)));
+                        })
+                )
+        );
+    }
+
+    private void registerStackEditorExample(GuiAPIManager manager) {
+        manager.registerGuiFromFiles("stack_editor", builder -> builder
+                .window(mainMenu -> mainMenu
+                        .size(9 * 3)
+                        .render((renderer) -> {
+                            // This is only called upon creation of the state. So this is not called when the signal is updated!
+                            Signal<ItemStack> stackToEdit = renderer.useSignal("stack_to_edit", ItemStack.class, () -> null);
+
+                            renderer
+                                    .reactive(reactiveBuilder -> {
+                                        // Reactive parts are called everytime the signal used inside this closure is updated.
+                                        if (stackToEdit.get() == null) return;
+                                    })
+                                    // The state of a component is only reconstructed if the slot it is positioned at changes.
+                                    // Here the slot will always have the same type of component, so the state is created only once.
+                                    .render("stack_slot", StackInputSlotBuilder.class, countUpSettings -> countUpSettings
+                                            .interact((guiHolder, componentState, interactionDetails) -> {
+                                                System.out.println("Click ");
+                                                return InteractionResult.cancel(false);
+                                            })
+                                            .onValueChange(itemStack -> {
+                                                stackToEdit.set(itemStack);
+                                            })
+                                            .value(stackToEdit)
+                                    );
                         })
                 )
         );
