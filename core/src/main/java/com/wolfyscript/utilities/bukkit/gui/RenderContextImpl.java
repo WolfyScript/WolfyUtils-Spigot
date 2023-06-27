@@ -86,6 +86,10 @@ public class RenderContextImpl implements RenderContext {
     @Override
     public void setNativeStack(int i, Object object) {
         checkIfSlotInBounds(i);
+        if (object == null) {
+            inventory.setItem(i, null);
+            return;
+        }
         if (!(object instanceof ItemStack itemStack))
             throw new IllegalArgumentException(String.format("Cannot render native stack! Invalid native stack type! Expected '%s' but received '%s'.", ItemStack.class.getName(), object.getClass().getName()));
 
