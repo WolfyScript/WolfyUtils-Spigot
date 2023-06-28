@@ -143,28 +143,67 @@ public class TestGUI {
     private void registerStackEditorExample(GuiAPIManager manager) {
         manager.registerGuiFromFiles("stack_editor", builder -> builder
                 .window(mainMenu -> mainMenu
-                        .size(9 * 3)
+                        .size(9 * 6)
                         .render((renderer) -> {
                             // This is only called upon creation of the state. So this is not called when the signal is updated!
                             Signal<ItemStack> stackToEdit = renderer.useSignal("stack_to_edit", ItemStack.class, () -> null);
+                            Signal<String> selectedTab = renderer.useSignal("selected_tab", String.class, () -> "");
 
                             renderer
                                     .reactive(reactiveBuilder -> {
                                         // Reactive parts are called everytime the signal used inside this closure is updated.
-                                        if (stackToEdit.get() == null) return;
+                                        ItemStack stack = stackToEdit.get();
+                                        if (stack == null || stack.getItem() == null || stack.getItem().getKey().equals("air")) return;
+
+                                        switch (selectedTab.get()) {
+                                            case "display_name" -> {
+                                                reactiveBuilder.render("set_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                                                        .interact((holder, state, details) -> {
+
+                                                            return InteractionResult.cancel(true);
+                                                        }));
+                                                reactiveBuilder.render("reset_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                                                        .interact((holder, state, details) -> {
+
+                                                            return InteractionResult.cancel(true);
+                                                        }));
+                                            }
+                                            case "lore" -> {
+                                                reactiveBuilder.render("edit_lore", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                                                        .interact((holder, state, details) -> {
+
+                                                            return InteractionResult.cancel(true);
+                                                        }));
+                                                reactiveBuilder.render("clear_lore", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                                                        .interact((holder, state, details) -> {
+
+                                                            return InteractionResult.cancel(true);
+                                                        }));
+                                            }
+                                            default -> {
+                                            }
+                                            // No tab selected!
+                                        }
                                     })
                                     // The state of a component is only reconstructed if the slot it is positioned at changes.
                                     // Here the slot will always have the same type of component, so the state is created only once.
-                                    .render("stack_slot", StackInputSlotBuilder.class, countUpSettings -> countUpSettings
+                                    .render("stack_slot", StackInputSlotBuilder.class, inputSlotBuilder -> inputSlotBuilder
                                             .interact((guiHolder, componentState, interactionDetails) -> {
-                                                System.out.println("Click ");
                                                 return InteractionResult.cancel(false);
                                             })
-                                            .onValueChange(itemStack -> {
-                                                stackToEdit.set(itemStack);
-                                            })
+                                            .onValueChange(stackToEdit::set)
                                             .value(stackToEdit)
-                                    );
+                                    )
+                                    .render("display_name_tab", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                                            .interact((holder, state, details) -> {
+                                                selectedTab.set("display_name");
+                                                return InteractionResult.cancel(true);
+                                            }))
+                                    .render("lore_tab", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                                            .interact((holder, state, details) -> {
+                                                selectedTab.set("lore");
+                                                return InteractionResult.cancel(true);
+                                            }));
                         })
                 )
         );
