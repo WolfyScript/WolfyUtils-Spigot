@@ -39,7 +39,7 @@ public class ButtonRenderer implements Renderer<ComponentState> {
         if (!(context instanceof RenderContextImpl renderContext)) return;
         renderContext.setNativeStack(renderContext.getCurrentOffset(),
                 ((BukkitItemStackConfig) button.icon().getStack()).constructItemStack(
-                        new EvalContextPlayer(((GUIHolder) guiHolder).getPlayer()),
+                        new EvalContextPlayer(((GUIHolder) guiHolder).getBukkitPlayer()),
                         WolfyCoreBukkit.getInstance().getWolfyUtils().getChat().getMiniMessage(),
                         button.icon().getResolvers()
                 )

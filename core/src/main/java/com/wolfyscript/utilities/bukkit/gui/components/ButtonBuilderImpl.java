@@ -42,14 +42,14 @@ public class ButtonBuilderImpl extends AbstractBukkitComponentBuilder<Button, Co
      * @param wolfyUtils The wolfyutils that this button belongs to.
      */
     @Inject
-    private ButtonBuilderImpl(String id, WolfyUtils wolfyUtils) {
-        super(id, wolfyUtils);
+    private ButtonBuilderImpl(String id, WolfyUtils wolfyUtils, List<Integer> slots) {
+        super(id, wolfyUtils, slots);
         this.iconBuilder = new IconBuilderImpl();
     }
 
     @JsonCreator
-    public ButtonBuilderImpl(@JsonProperty("id") String id, @JsonProperty("icon") IconBuilderImpl iconBuilder, @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils) {
-        super(id, wolfyUtils);
+    public ButtonBuilderImpl(@JsonProperty("id") String id, @JsonProperty("icon") IconBuilderImpl iconBuilder, @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils, @JsonProperty("slots") List<Integer> slots) {
+        super(id, wolfyUtils, slots);
         this.iconBuilder = iconBuilder;
     }
 

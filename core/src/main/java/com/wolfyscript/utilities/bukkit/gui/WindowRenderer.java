@@ -80,9 +80,9 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
         signals.forEach((s, signal) -> signal.enter(guiHolder.getViewManager()));
 
         if (ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 20, 0))) {
-            ((GUIHolder) guiHolder).getPlayer().getOpenInventory().setTitle(BukkitComponentSerializer.legacy().serialize(titleFunction.get()));
+            ((GUIHolder) guiHolder).getBukkitPlayer().getOpenInventory().setTitle(BukkitComponentSerializer.legacy().serialize(titleFunction.get()));
         } else {
-            InventoryUpdate.updateInventory(((WolfyCoreImpl) window.getWolfyUtils().getCore()).getWolfyUtils().getPlugin(), ((GUIHolder) guiHolder).getPlayer(), titleFunction.get());
+            InventoryUpdate.updateInventory(((WolfyCoreImpl) window.getWolfyUtils().getCore()).getWolfyUtils().getPlugin(), ((GUIHolder) guiHolder).getBukkitPlayer(), titleFunction.get());
         }
 
         for (Map.Entry<Component, Integer> entry : componentPositions.entries()) {
@@ -177,7 +177,7 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
                             return stateful.createState(null, windowState.viewManager);
                         }
                     } else {
-                        throw new IllegalArgumentException("Component does not fit inside of the Window!");
+                        throw new IllegalArgumentException("Component " + component.getID() + " does not fit inside of the Window!");
                     }
                     return null;
                 }));
@@ -243,8 +243,10 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
         }
 
         @JsonSetter("placement")
-        private void setPlacement(Map<Integer, ComponentBuilder<?, ?>> integerComponentBuilderMap) {
-            integerComponentBuilderMap.forEach((slot, componentBuilder) -> componentBuilderPositions.put(componentBuilder, slot));
+        private void setPlacement(List<ComponentBuilder<?,?>> componentBuilders) {
+            for (ComponentBuilder<?, ?> componentBuilder : componentBuilders) {
+                componentBuilderPositions.putAll(componentBuilder, componentBuilder.getSlots());
+            }
         }
 
         @JsonSetter("title")

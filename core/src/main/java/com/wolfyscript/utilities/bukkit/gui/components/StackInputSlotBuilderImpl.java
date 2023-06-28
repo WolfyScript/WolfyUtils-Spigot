@@ -12,6 +12,7 @@ import com.wolfyscript.utilities.common.gui.*;
 import com.wolfyscript.utilities.common.gui.components.StackInputSlot;
 import com.wolfyscript.utilities.common.gui.components.StackInputSlotBuilder;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 @KeyedStaticId(key = "stack_input_slot")
@@ -23,8 +24,8 @@ public class StackInputSlotBuilderImpl extends AbstractBukkitComponentBuilder<St
     private Signal<ItemStack> valueSignal;
 
     @JsonCreator
-    protected StackInputSlotBuilderImpl(@JsonProperty("id") String id, @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils) {
-        super(id, wolfyUtils);
+    protected StackInputSlotBuilderImpl(@JsonProperty("id") String id, @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils, @JsonProperty("slots") List<Integer> slots) {
+        super(id, wolfyUtils, slots);
     }
 
     @Override

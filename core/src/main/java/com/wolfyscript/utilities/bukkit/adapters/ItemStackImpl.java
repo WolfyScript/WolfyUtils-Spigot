@@ -19,7 +19,7 @@ public class ItemStackImpl extends BukkitRefAdapter<org.bukkit.inventory.ItemSta
 
     @Override
     public NamespacedKey getItem() {
-        return BukkitNamespacedKey.fromBukkit(getBukkitRef().getType().getKey());
+        return getBukkitRef() == null ? null : BukkitNamespacedKey.fromBukkit(getBukkitRef().getType().getKey());
     }
 
     @Override

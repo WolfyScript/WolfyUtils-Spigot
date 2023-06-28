@@ -1,6 +1,7 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.adapters.PlayerImpl;
 import com.wolfyscript.utilities.common.gui.GuiHolderCommonImpl;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
@@ -27,8 +28,13 @@ public class GUIHolder extends GuiHolderCommonImpl implements InventoryHolder {
         this.player = player;
     }
 
-    public Player getPlayer() {
+    public Player getBukkitPlayer() {
         return player;
+    }
+
+    @Override
+    public com.wolfyscript.utilities.common.adapters.Player getPlayer() {
+        return new PlayerImpl(player);
     }
 
     void onClick(InventoryClickEvent event) {
