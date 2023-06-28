@@ -7,6 +7,7 @@ import com.wolfyscript.utilities.common.gui.GuiAPIManager;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.Signal;
 import com.wolfyscript.utilities.common.gui.components.ButtonBuilder;
+import com.wolfyscript.utilities.common.gui.components.ComponentClusterBuilder;
 import com.wolfyscript.utilities.common.gui.components.StackInputSlotBuilder;
 import com.wolfyscript.utilities.eval.value_provider.ValueProviderStringConst;
 import net.kyori.adventure.text.Component;
@@ -149,24 +150,28 @@ public class TestGUI {
                             Signal<ItemStack> stackToEdit = renderer.useSignal("stack_to_edit", ItemStack.class, () -> null);
                             Signal<String> selectedTab = renderer.useSignal("selected_tab", String.class, () -> "");
 
+
                             renderer
                                     .reactive(reactiveBuilder -> {
                                         // Reactive parts are called everytime the signal used inside this closure is updated.
                                         ItemStack stack = stackToEdit.get();
-                                        if (stack == null || stack.getItem() == null || stack.getItem().getKey().equals("air")) return;
+                                        if (stack == null || stack.getItem() == null || stack.getItem().getKey().equals("air"))
+                                            return;
 
                                         switch (selectedTab.get()) {
                                             case "display_name" -> {
-                                                reactiveBuilder.render("set_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
-                                                        .interact((holder, state, details) -> {
+                                                reactiveBuilder.render("display_name", ComponentClusterBuilder.class, componentClusterBuilder -> componentClusterBuilder
+                                                        .render("set_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                                                                .interact((holder, state, details) -> {
 
-                                                            return InteractionResult.cancel(true);
-                                                        }));
-                                                reactiveBuilder.render("reset_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
-                                                        .interact((holder, state, details) -> {
+                                                                    return InteractionResult.cancel(true);
+                                                                }))
+                                                        .render("reset_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                                                                .interact((holder, state, details) -> {
 
-                                                            return InteractionResult.cancel(true);
-                                                        }));
+                                                                    return InteractionResult.cancel(true);
+                                                                }))
+                                                );
                                             }
                                             case "lore" -> {
                                                 reactiveBuilder.render("edit_lore", ButtonBuilder.class, buttonBuilder -> buttonBuilder
@@ -181,16 +186,14 @@ public class TestGUI {
                                                         }));
                                             }
                                             default -> {
+                                                // No tab selected!
                                             }
-                                            // No tab selected!
                                         }
                                     })
                                     // The state of a component is only reconstructed if the slot it is positioned at changes.
                                     // Here the slot will always have the same type of component, so the state is created only once.
                                     .render("stack_slot", StackInputSlotBuilder.class, inputSlotBuilder -> inputSlotBuilder
-                                            .interact((guiHolder, componentState, interactionDetails) -> {
-                                                return InteractionResult.cancel(false);
-                                            })
+                                            .interact((guiHolder, componentState, interactionDetails) -> InteractionResult.cancel(false))
                                             .onValueChange(stackToEdit::set)
                                             .value(stackToEdit)
                                     )
