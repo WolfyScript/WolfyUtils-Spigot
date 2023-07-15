@@ -2,12 +2,7 @@ package com.wolfyscript.utilities.bukkit.gui;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.adapters.PlayerImpl;
-import com.wolfyscript.utilities.common.gui.GuiHolderCommonImpl;
-import com.wolfyscript.utilities.common.gui.GuiViewManager;
-import com.wolfyscript.utilities.common.gui.InteractionResult;
-import com.wolfyscript.utilities.common.gui.Window;
-import java.util.Objects;
-
+import com.wolfyscript.utilities.common.gui.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryAction;
@@ -17,6 +12,8 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class GUIHolder extends GuiHolderCommonImpl implements InventoryHolder {
 
@@ -41,24 +38,22 @@ public class GUIHolder extends GuiHolderCommonImpl implements InventoryHolder {
         if (currentWindow == null || event.getClickedInventory() == null) return;
         if (Objects.equals(event.getClickedInventory().getHolder(), this)) {
             GuiViewManagerImpl guiViewManager = (GuiViewManagerImpl) viewManager;
-            viewManager.getCurrentWindowState().ifPresent(state -> state.getOwner().getRenderer().getSignals().values().forEach(signal -> signal.enter(viewManager)));
-
-            InteractionResult result = guiViewManager.getLeaveNode(event.getSlot())
-                    .map(state -> state.interact(this, new ClickInteractionDetailsImpl(event)))
-                    .orElse(InteractionResult.cancel(true));
-
-            viewManager.getCurrentWindowState().ifPresent(state -> state.getOwner().getRenderer().getSignals().values().forEach(signal -> {
-                if (signal.exit()) {
-                    state.receiveUpdate(signal);
-                }
-            }));
-
-            event.setCancelled(result.isCancelled());
+            viewManager.getCurrentMenu().ifPresent(window -> {
+                InteractionResult result = guiViewManager.getLeaveNode(event.getSlot())
+                        .map(component -> {
+                            if (component instanceof Interactable interactable) {
+                                return interactable.interact(this, null, new ClickInteractionDetailsImpl(event));
+                            }
+                            return InteractionResult.cancel(true);
+                        })
+                        .orElse(InteractionResult.cancel(true));
+                event.setCancelled(result.isCancelled());
+            });
         } else if (!event.getAction().equals(InventoryAction.COLLECT_TO_CURSOR)) {
             event.setCancelled(false);
             // TODO: Handle bottom inventory clicks
         }
-        Bukkit.getScheduler().runTask(((WolfyCoreBukkit)viewManager.getWolfyUtils().getCore()).getPlugin(), () -> {
+        Bukkit.getScheduler().runTask(((WolfyCoreBukkit) viewManager.getWolfyUtils().getCore()).getPlugin(), () -> {
             viewManager.getRenderContext(event.getWhoClicked().getUniqueId()).ifPresent(context -> {
                 ((GuiViewManagerImpl) viewManager).renderFor(player, (RenderContextImpl) context);
             });
@@ -74,12 +69,17 @@ public class GUIHolder extends GuiHolderCommonImpl implements InventoryHolder {
         if (Objects.equals(event.getInventory().getHolder(), this)) {
             var interactionDetails = new DragInteractionDetailsImpl(event);
             for (int slot : event.getInventorySlots()) {
-                if (((GuiViewManagerImpl) viewManager).getLeaveNode(slot).map(node -> node.interact(this, interactionDetails)).orElse(InteractionResult.cancel(true)).isCancelled()) {
+                if (((GuiViewManagerImpl) viewManager).getLeaveNode(slot).map(component -> {
+                            if (component instanceof Interactable interactable) {
+                                return interactable.interact(this, null, interactionDetails);
+                            }
+                            return InteractionResult.cancel(true);
+                        }).orElse(InteractionResult.cancel(true)).isCancelled()) {
                     event.setCancelled(true);
                 }
             }
 
-            Bukkit.getScheduler().runTask(((WolfyCoreBukkit)viewManager.getWolfyUtils().getCore()).getPlugin(), () -> {
+            Bukkit.getScheduler().runTask(((WolfyCoreBukkit) viewManager.getWolfyUtils().getCore()).getPlugin(), () -> {
                 viewManager.getRenderContext(event.getWhoClicked().getUniqueId()).ifPresent(context -> {
                     ((GuiViewManagerImpl) viewManager).renderFor(player, (RenderContextImpl) context);
                 });

@@ -5,6 +5,8 @@ import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.Component;
+import com.wolfyscript.utilities.common.gui.SignalledObject;
+import it.unimi.dsi.fastutil.ints.IntList;
 
 /**
  * <p>
@@ -17,14 +19,15 @@ import com.wolfyscript.utilities.common.gui.Component;
  * Duplicate code may occur, but it can be put into static methods.
  * </p>
  */
-public abstract class AbstractBukkitComponent implements Component {
+public abstract class AbstractBukkitComponent implements Component, SignalledObject {
 
     private final NamespacedKey type;
     private final String internalID;
     private final WolfyUtils wolfyUtils;
     private final Component parent;
+    private final IntList slots;
 
-    public AbstractBukkitComponent(String internalID, WolfyUtils wolfyUtils, Component parent) {
+    public AbstractBukkitComponent(String internalID, WolfyUtils wolfyUtils, Component parent, IntList slots) {
         Preconditions.checkNotNull(internalID);
         Preconditions.checkNotNull(wolfyUtils);
         this.type = wolfyUtils.getIdentifiers().getNamespaced(getClass());
@@ -32,6 +35,7 @@ public abstract class AbstractBukkitComponent implements Component {
         this.internalID = internalID;
         this.wolfyUtils = wolfyUtils;
         this.parent = parent;
+        this.slots = slots;
     }
 
     @Override
@@ -54,4 +58,7 @@ public abstract class AbstractBukkitComponent implements Component {
         return parent;
     }
 
+    public IntList getSlots() {
+        return slots;
+    }
 }

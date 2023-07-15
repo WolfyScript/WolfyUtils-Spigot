@@ -2,9 +2,9 @@ package com.wolfyscript.utilities.bukkit.gui;
 
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.Signal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import com.wolfyscript.utilities.common.gui.SignalledObject;
+
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -13,27 +13,18 @@ public class SignalImpl<MT> implements Signal<MT> {
     private final String key;
     private final Class<MT> messageValueType;
     private MT value;
-    private final Map<GuiViewManager, MT> values = new HashMap<>();
-    private GuiViewManager activeViewManager = null;
-    private boolean wasUpdated = false;
+    private final GuiViewManager viewManager;
+    private final Set<SignalledObject> linkedItems = new HashSet<>();
 
-    public SignalImpl(String key, Class<MT> messageValueType, Supplier<MT> defaultValueFunction) {
+    public SignalImpl(String key, GuiViewManager viewManager, Class<MT> messageValueType, Supplier<MT> defaultValueFunction) {
         this.key = key;
         this.messageValueType = messageValueType;
         this.value = defaultValueFunction.get();
+        this.viewManager = viewManager;
     }
 
-    public void enter(GuiViewManager viewManager) {
-        this.wasUpdated = false;
-        this.activeViewManager = viewManager;
-    }
-
-    public boolean exit() {
-        this.activeViewManager = null;
-
-        boolean wasUpdated = this.wasUpdated;
-        this.wasUpdated = false;
-        return wasUpdated;
+    public void linkTo(SignalledObject item) {
+        linkedItems.add(item);
     }
 
     @Override
@@ -48,25 +39,18 @@ public class SignalImpl<MT> implements Signal<MT> {
 
     @Override
     public void set(MT newValue) {
-        if (activeViewManager == null) {
-            this.value = newValue;
-            return;
-        }
-        values.put(activeViewManager, newValue);
-        this.wasUpdated = true;
+        this.value = newValue;
+        ((GuiViewManagerImpl) viewManager).updateObjects(linkedItems);
     }
 
     @Override
     public void update(Function<MT, MT> function) {
-        set(function.apply(values.getOrDefault(activeViewManager, value)));
+        set(function.apply(value));
     }
 
     @Override
     public MT get() {
-        if (activeViewManager == null) {
-            return value;
-        }
-        return values.computeIfAbsent(activeViewManager, state -> value);
+        return value;
     }
 
     @Override

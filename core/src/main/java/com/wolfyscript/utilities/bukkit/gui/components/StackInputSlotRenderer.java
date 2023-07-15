@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StackInputSlotRenderer implements Renderer<ComponentState> {
+public class StackInputSlotRenderer implements Renderer {
 
     private final StackInputSlot stackInputSlot;
 
@@ -30,14 +30,11 @@ public class StackInputSlotRenderer implements Renderer<ComponentState> {
     }
 
     @Override
-    public void render(ComponentState state, GuiHolder guiHolder, RenderContext context) {
+    public void render(GuiHolder guiHolder, RenderContext context) {
         if (!(context instanceof RenderContextImpl renderContext)) return;
         ItemStackImpl value = (ItemStackImpl) stackInputSlot.signal().get();
         renderContext.setNativeStack(renderContext.getCurrentOffset(), value != null ? value.getBukkitRef() : new ItemStack(Material.AIR));
     }
-
-    @Override
-    public void renderComponent(ComponentState state, int i, Component component) { }
 
     @Override
     public Map<String, Signal<?>> getSignals() {

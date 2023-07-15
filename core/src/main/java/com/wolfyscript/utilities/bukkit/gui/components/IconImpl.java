@@ -1,7 +1,6 @@
 package com.wolfyscript.utilities.bukkit.gui.components;
 
 import com.wolfyscript.utilities.bukkit.gui.AbstractBukkitComponent;
-import com.wolfyscript.utilities.bukkit.gui.ComponentStateImpl;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.Component;
@@ -13,19 +12,26 @@ import com.wolfyscript.utilities.common.gui.Renderer;
 import com.wolfyscript.utilities.common.gui.Signal;
 import com.wolfyscript.utilities.common.gui.components.Icon;
 import java.util.Map;
+
+import it.unimi.dsi.fastutil.ints.IntList;
 import org.bukkit.inventory.ItemStack;
 
 public class IconImpl extends AbstractBukkitComponent implements Icon<ItemStack> {
 
     private final BukkitItemStackConfig itemStackConfig;
 
-    public IconImpl(WolfyUtils wolfyUtils, String id, Component parent, BukkitItemStackConfig itemStackConfig) {
-        super(id, wolfyUtils, parent);
+    public IconImpl(WolfyUtils wolfyUtils, String id, Component parent, BukkitItemStackConfig itemStackConfig, int[] slots) {
+        super(id, wolfyUtils, parent, IntList.of(slots));
         this.itemStackConfig = itemStackConfig;
     }
 
     @Override
-    public Renderer<? extends ComponentState> getRenderer() {
+    public Renderer getRenderer() {
+        return null;
+    }
+
+    @Override
+    public Renderer construct(GuiViewManager guiViewManager) {
         return null;
     }
 
@@ -45,13 +51,7 @@ public class IconImpl extends AbstractBukkitComponent implements Icon<ItemStack>
     }
 
     @Override
-    public ComponentState createState(ComponentState componentState, GuiViewManager guiViewManager) {
-        return new ComponentStateImpl<Icon<ItemStack>, ComponentState>(componentState, this) {
+    public void update(GuiViewManager viewManager, GuiHolder guiHolder, RenderContext renderContext) {
 
-            public void render(GuiHolder holder, RenderContext context) {
-                context.setStack(context.getCurrentOffset(), getOwner().getItemStackConfig());
-            }
-        };
     }
-
 }

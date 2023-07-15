@@ -16,7 +16,7 @@ import com.wolfyscript.utilities.common.gui.components.Button;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ButtonRenderer implements Renderer<ComponentState> {
+public class ButtonRenderer implements Renderer {
 
     private final Button button;
 
@@ -35,7 +35,7 @@ public class ButtonRenderer implements Renderer<ComponentState> {
     }
 
     @Override
-    public void render(ComponentState state, GuiHolder guiHolder, RenderContext context) {
+    public void render(GuiHolder guiHolder, RenderContext context) {
         if (!(context instanceof RenderContextImpl renderContext)) return;
         renderContext.setNativeStack(renderContext.getCurrentOffset(),
                 ((BukkitItemStackConfig) button.icon().getStack()).constructItemStack(
@@ -44,11 +44,6 @@ public class ButtonRenderer implements Renderer<ComponentState> {
                         button.icon().getResolvers()
                 )
         );
-    }
-
-    @Override
-    public void renderComponent(ComponentState state, int i, Component component) {
-
     }
 
     @Override

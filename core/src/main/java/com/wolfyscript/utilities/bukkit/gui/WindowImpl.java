@@ -1,28 +1,21 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Multimap;
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.common.gui.Component;
-import com.wolfyscript.utilities.common.gui.ComponentState;
-import com.wolfyscript.utilities.common.gui.GuiHolder;
-import com.wolfyscript.utilities.common.gui.GuiViewManager;
-import com.wolfyscript.utilities.common.gui.InteractionCallback;
-import com.wolfyscript.utilities.common.gui.InteractionDetails;
-import com.wolfyscript.utilities.common.gui.InteractionResult;
-import com.wolfyscript.utilities.common.gui.RenderContext;
-import com.wolfyscript.utilities.common.gui.Router;
-import com.wolfyscript.utilities.common.gui.Window;
-import com.wolfyscript.utilities.common.gui.WindowState;
-import com.wolfyscript.utilities.common.gui.WindowTitleUpdateCallback;
-import com.wolfyscript.utilities.common.gui.WindowType;
+import com.wolfyscript.utilities.common.gui.*;
+
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
+
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -36,35 +29,44 @@ public final class WindowImpl implements Window {
     private final Router router;
     private final WolfyUtils wolfyUtils;
     private final BiMap<String, Component> children;
+    private final Consumer<com.wolfyscript.utilities.common.gui.WindowRenderer.Builder> rendererConstructor;
     private final Integer size;
     private final WindowType type;
-    private final WindowTitleUpdateCallback titleUpdateCallback;
+    private String staticTitle = null;
     private final InteractionCallback interactionCallback;
-    private final WindowRenderer windowRenderer;
+    final Multimap<Component, Integer> staticComponents;
+    final Multimap<ComponentBuilder<?, ?>, Integer> nonRenderedComponents;
 
     WindowImpl(String id,
                Router router,
                Integer size,
                WindowType type,
-               WindowTitleUpdateCallback titleUpdateCallback,
+               String staticTitle,
                InteractionCallback interactionCallback,
-               WindowRenderer.Builder rendererBuilder) {
+               Multimap<Component, Integer> staticComponents,
+               Multimap<ComponentBuilder<?, ?>, Integer> nonRenderedComponents,
+               Consumer<com.wolfyscript.utilities.common.gui.WindowRenderer.Builder> rendererConstructor) {
         Preconditions.checkNotNull(id);
         Preconditions.checkNotNull(interactionCallback);
         Preconditions.checkArgument(size != null || type != null, "Either type or size must be specified!");
         this.id = id;
         this.router = router;
         this.wolfyUtils = router.getWolfyUtils();
-        this.windowRenderer = rendererBuilder.create(this);
+        this.rendererConstructor = rendererConstructor;
         this.size = size;
         this.type = type;
-        this.titleUpdateCallback = titleUpdateCallback;
+        this.staticTitle = staticTitle;
         this.interactionCallback = interactionCallback;
+        this.staticComponents = staticComponents;
+        this.nonRenderedComponents = nonRenderedComponents;
         this.children = HashBiMap.create();
     }
 
-    void addNewChildComponent(String id, Component component) {
-        this.children.put(id, component);
+    @Override
+    public WindowRenderer construct(GuiViewManager viewManager) {
+        var rendererBuilder = new WindowRenderer.Builder(wolfyUtils, viewManager, this);
+        rendererConstructor.accept(rendererBuilder);
+        return rendererBuilder.create(this);
     }
 
     @Override
@@ -97,7 +99,7 @@ public final class WindowImpl implements Window {
         // No active Window or it is another Window, need to recreate inventory
         final Inventory inventory;
         final GUIHolder holder = new GUIHolder(bukkitPlayer, viewManager, this);
-        final net.kyori.adventure.text.Component title = createTitle(holder, null);
+        final net.kyori.adventure.text.Component title = createTitle(holder);
         if (((WolfyUtilsBukkit) getWolfyUtils()).getCore().getCompatibilityManager().isPaper()) {
             // Paper has direct Adventure support, so use it for better titles!
             inventory = getInventoryType().map(inventoryType -> Bukkit.createInventory(holder, inventoryType, title))
@@ -108,11 +110,6 @@ public final class WindowImpl implements Window {
         }
         holder.setActiveInventory(inventory);
         return new RenderContextImpl(inventory, viewManager.getRouter(), this);
-    }
-
-    @Override
-    public WindowState createState(GuiViewManager guiViewManager) {
-        return new WindowStateImpl(this, guiViewManager);
     }
 
     private Optional<InventoryType> getInventoryType() {
@@ -155,8 +152,12 @@ public final class WindowImpl implements Window {
     }
 
     @Override
-    public net.kyori.adventure.text.Component createTitle(GuiHolder holder, WindowState state) {
-        return titleUpdateCallback.run(holder, this, state);
+    public net.kyori.adventure.text.Component createTitle(GuiHolder holder) {
+        return wolfyUtils.getChat().getMiniMessage().deserialize(staticTitle);
+    }
+
+    public String getStaticTitle() {
+        return staticTitle;
     }
 
     @Override
@@ -171,7 +172,7 @@ public final class WindowImpl implements Window {
 
     @Override
     public WindowRenderer getRenderer() {
-        return windowRenderer;
+        return null;
     }
 
     @Override

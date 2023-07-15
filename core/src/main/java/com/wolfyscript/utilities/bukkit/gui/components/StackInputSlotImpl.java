@@ -5,12 +5,12 @@ import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl;
 import com.wolfyscript.utilities.bukkit.gui.AbstractBukkitComponent;
 import com.wolfyscript.utilities.bukkit.gui.ClickInteractionDetailsImpl;
-import com.wolfyscript.utilities.bukkit.gui.ComponentStateImpl;
 import com.wolfyscript.utilities.bukkit.gui.InteractionUtils;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.adapters.ItemStack;
 import com.wolfyscript.utilities.common.gui.*;
 import com.wolfyscript.utilities.common.gui.components.StackInputSlot;
+import it.unimi.dsi.fastutil.ints.IntList;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 import java.util.Set;
@@ -23,8 +23,8 @@ public class StackInputSlotImpl extends AbstractBukkitComponent implements Inter
     private final InteractionCallback interactionCallback;
     private final Signal<ItemStack> value;
 
-    public StackInputSlotImpl(String internalID, WolfyUtils wolfyUtils, Component parent, Consumer<ItemStack> onValueChange, InteractionCallback interactionCallback, Signal<ItemStack> value) {
-        super(internalID, wolfyUtils, parent);
+    public StackInputSlotImpl(String internalID, WolfyUtils wolfyUtils, Component parent, Consumer<ItemStack> onValueChange, InteractionCallback interactionCallback, Signal<ItemStack> value, IntList slots) {
+        super(internalID, wolfyUtils, parent, slots);
         this.onValueChange = onValueChange;
         this.interactionCallback = (holder, state, details) -> {
             if (details instanceof ClickInteractionDetailsImpl clickInteractionDetails) {
@@ -39,7 +39,12 @@ public class StackInputSlotImpl extends AbstractBukkitComponent implements Inter
     }
 
     @Override
-    public Renderer<? extends ComponentState> getRenderer() {
+    public Renderer getRenderer() {
+        return new StackInputSlotRenderer(this);
+    }
+
+    @Override
+    public Renderer construct(GuiViewManager guiViewManager) {
         return new StackInputSlotRenderer(this);
     }
 
@@ -68,16 +73,12 @@ public class StackInputSlotImpl extends AbstractBukkitComponent implements Inter
     }
 
     @Override
-    public ComponentState createState(ComponentState componentState, GuiViewManager guiViewManager) {
-        return new ComponentStateImpl<>(componentState, this) {
-
-
-
-        };
+    public Signal<ItemStack> signal() {
+        return value;
     }
 
     @Override
-    public Signal<ItemStack> signal() {
-        return value;
+    public void update(GuiViewManager viewManager, GuiHolder guiHolder, RenderContext renderContext) {
+
     }
 }

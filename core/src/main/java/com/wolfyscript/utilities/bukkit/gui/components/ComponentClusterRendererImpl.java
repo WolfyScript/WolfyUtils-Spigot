@@ -4,9 +4,7 @@ import com.wolfyscript.utilities.common.gui.*;
 
 import java.util.Map;
 
-public class ComponentClusterRendererImpl implements Renderer<ComponentState> {
-
-
+public class ComponentClusterRendererImpl implements Renderer {
 
     @Override
     public int getWidth() {
@@ -19,12 +17,7 @@ public class ComponentClusterRendererImpl implements Renderer<ComponentState> {
     }
 
     @Override
-    public void render(ComponentState state, GuiHolder holder, RenderContext context) {
-
-    }
-
-    @Override
-    public void renderComponent(ComponentState state, int slot, Component component) {
+    public void render(GuiHolder holder, RenderContext context) {
 
     }
 

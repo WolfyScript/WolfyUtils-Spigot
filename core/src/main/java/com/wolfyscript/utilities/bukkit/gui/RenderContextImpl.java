@@ -20,9 +20,8 @@ public class RenderContextImpl implements RenderContext {
     private final Inventory inventory;
     private final Window window;
     private final Router router;
-    private ComponentState currentNode;
+    private Component currentNode;
     private int slotOffsetToParent;
-    private final Deque<Component> componentPath = new ArrayDeque<>();
 
     public RenderContextImpl(Inventory inventory, Router router, Window window) {
         this.inventory = inventory;
@@ -41,28 +40,12 @@ public class RenderContextImpl implements RenderContext {
         return slotOffsetToParent;
     }
 
-    void enterNode(GuiViewManager viewManager, ComponentState state) {
-        this.currentNode = state;
-        if (currentNode instanceof Signalable signalable) {
-            for (Signal<?> signal : signalable.getSignalValues().values()) {
-                signal.enter(viewManager);
-            }
-        }
+    void enterNode(Component component) {
+        this.currentNode = component;
     }
 
     void exitNode() {
-        if (currentNode instanceof Signalable signalable) {
-            for (Signal<?> signal : signalable.getSignalValues().values()) {
-                if (signal.exit()) {
-                    ((Signalable) currentNode).receiveUpdate(signal);
-                }
-            }
-        }
         this.currentNode = null;
-    }
-
-    Component nextChild() {
-        return componentPath.pop();
     }
 
     Inventory getInventory() {
@@ -70,13 +53,13 @@ public class RenderContextImpl implements RenderContext {
     }
 
     @Override
-    public ComponentState getCurrentState() {
+    public Component getCurrentComponent() {
         return currentNode;
     }
 
     @Override
     public void setStack(int i, ItemStackConfig<?> itemStackConfig) {
-        checkIfSlotInBounds(i);
+        //checkIfSlotInBounds(i);
         if (!(itemStackConfig instanceof BukkitItemStackConfig bukkitItemStackConfig))
             throw new IllegalArgumentException(String.format("Cannot render stack config! Invalid stack config type! Expected '%s' but received '%s'.", ItemStack.class.getName(), itemStackConfig.getClass().getName()));
 
@@ -85,7 +68,7 @@ public class RenderContextImpl implements RenderContext {
 
     @Override
     public void setNativeStack(int i, Object object) {
-        checkIfSlotInBounds(i);
+        //checkIfSlotInBounds(i);
         if (object == null) {
             inventory.setItem(i, null);
             return;

@@ -1,22 +1,19 @@
 package com.wolfyscript.utilities.bukkit.gui.components;
 
 import com.wolfyscript.utilities.KeyedStaticId;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.eval.context.EvalContextPlayer;
 import com.wolfyscript.utilities.bukkit.gui.AbstractBukkitComponent;
-import com.wolfyscript.utilities.bukkit.gui.ComponentStateImpl;
+import com.wolfyscript.utilities.bukkit.gui.GUIHolder;
+import com.wolfyscript.utilities.bukkit.gui.RenderContextImpl;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.common.gui.GuiViewManager;
-import com.wolfyscript.utilities.common.gui.Renderer;
+import com.wolfyscript.utilities.common.gui.*;
 import com.wolfyscript.utilities.common.gui.components.Button;
 import com.wolfyscript.utilities.common.gui.components.ButtonIcon;
-import com.wolfyscript.utilities.common.gui.Component;
-import com.wolfyscript.utilities.common.gui.ComponentState;
-import com.wolfyscript.utilities.common.gui.GuiHolder;
-import com.wolfyscript.utilities.common.gui.InteractionCallback;
-import com.wolfyscript.utilities.common.gui.InteractionDetails;
-import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.items.ItemStackConfig;
 import com.wolfyscript.utilities.eval.context.EvalContext;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.inventory.ItemStack;
@@ -27,8 +24,8 @@ public class ButtonImpl extends AbstractBukkitComponent implements Button {
     private final InteractionCallback interactionCallback;
     private final ButtonIcon icon;
 
-    public ButtonImpl(WolfyUtils wolfyUtils, String id, Component parent, ButtonIcon icon, InteractionCallback interactionCallback) {
-        super(id, wolfyUtils, parent);
+    public ButtonImpl(WolfyUtils wolfyUtils, String id, Component parent, ButtonIcon icon, InteractionCallback interactionCallback, IntList slots) {
+        super(id, wolfyUtils, parent, slots);
         this.icon = icon;
         this.interactionCallback = interactionCallback;
     }
@@ -39,12 +36,11 @@ public class ButtonImpl extends AbstractBukkitComponent implements Button {
     }
 
     @Override
-    public ComponentState createState(ComponentState componentState, GuiViewManager guiViewManager) {
-        return new ComponentStateImpl<>(componentState, this) {};
-    }
-
-    @Override
     public InteractionResult interact(GuiHolder guiHolder, ComponentState componentState, InteractionDetails interactionDetails) {
+        if (parent() instanceof Interactable interactableParent) {
+            InteractionResult result = interactableParent.interact(guiHolder, componentState, interactionDetails);
+            if (result.isCancelled()) return result;
+        }
         return interactionCallback.interact(guiHolder, componentState, interactionDetails);
     }
 
@@ -54,8 +50,25 @@ public class ButtonImpl extends AbstractBukkitComponent implements Button {
     }
 
     @Override
-    public Renderer<? extends ComponentState> getRenderer() {
+    public Renderer getRenderer() {
         return new ButtonRenderer(this);
+    }
+
+    @Override
+    public Renderer construct(GuiViewManager guiViewManager) {
+        return new ButtonRenderer(this);
+    }
+
+    @Override
+    public void update(GuiViewManager viewManager, GuiHolder guiHolder, RenderContext context) {
+        if (!(context instanceof RenderContextImpl renderContext)) return;
+        renderContext.setNativeStack(renderContext.getCurrentOffset(),
+                ((BukkitItemStackConfig) icon().getStack()).constructItemStack(
+                        new EvalContextPlayer(((GUIHolder) guiHolder).getBukkitPlayer()),
+                        WolfyCoreBukkit.getInstance().getWolfyUtils().getChat().getMiniMessage(),
+                        icon().getResolvers()
+                )
+        );
     }
 
     public static class DynamicIcon implements ButtonIcon {

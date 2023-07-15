@@ -11,6 +11,7 @@ import com.wolfyscript.utilities.common.adapters.ItemStack;
 import com.wolfyscript.utilities.common.gui.*;
 import com.wolfyscript.utilities.common.gui.components.StackInputSlot;
 import com.wolfyscript.utilities.common.gui.components.StackInputSlotBuilder;
+import it.unimi.dsi.fastutil.ints.IntList;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -24,8 +25,8 @@ public class StackInputSlotBuilderImpl extends AbstractBukkitComponentBuilder<St
     private Signal<ItemStack> valueSignal;
 
     @JsonCreator
-    protected StackInputSlotBuilderImpl(@JsonProperty("id") String id, @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils, @JsonProperty("slots") List<Integer> slots) {
-        super(id, wolfyUtils, slots);
+    protected StackInputSlotBuilderImpl(@JsonProperty("id") String id, @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils, @JsonProperty("slots") int[] slots) {
+        super(id, wolfyUtils, IntList.of(slots));
     }
 
     @Override
@@ -47,6 +48,6 @@ public class StackInputSlotBuilderImpl extends AbstractBukkitComponentBuilder<St
 
     @Override
     public StackInputSlot create(Component component) {
-        return new StackInputSlotImpl(getID(), getWolfyUtils(), component, onValueChange, interactionCallback, valueSignal);
+        return new StackInputSlotImpl(getID(), getWolfyUtils(), component, onValueChange, interactionCallback, valueSignal, getSlots());
     }
 }

@@ -9,22 +9,22 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.gui.AbstractBukkitComponentBuilder;
+import com.wolfyscript.utilities.bukkit.gui.SignalImpl;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.common.gui.Component;
+import com.wolfyscript.utilities.common.gui.*;
 import com.wolfyscript.utilities.common.gui.components.Button;
 import com.wolfyscript.utilities.common.gui.components.ButtonBuilder;
 import com.wolfyscript.utilities.common.gui.components.ButtonIcon;
-import com.wolfyscript.utilities.common.gui.ComponentBuilderSettings;
-import com.wolfyscript.utilities.common.gui.InteractionCallback;
-import com.wolfyscript.utilities.common.gui.InteractionResult;
-import com.wolfyscript.utilities.common.gui.Signal;
+import com.wolfyscript.utilities.common.gui.functions.SerializableConsumer;
+import com.wolfyscript.utilities.common.gui.functions.SerializableSupplier;
 import com.wolfyscript.utilities.common.items.ItemStackConfig;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
@@ -42,14 +42,14 @@ public class ButtonBuilderImpl extends AbstractBukkitComponentBuilder<Button, Co
      * @param wolfyUtils The wolfyutils that this button belongs to.
      */
     @Inject
-    private ButtonBuilderImpl(String id, WolfyUtils wolfyUtils, List<Integer> slots) {
+    private ButtonBuilderImpl(String id, WolfyUtils wolfyUtils, IntList slots) {
         super(id, wolfyUtils, slots);
         this.iconBuilder = new IconBuilderImpl();
     }
 
     @JsonCreator
-    public ButtonBuilderImpl(@JsonProperty("id") String id, @JsonProperty("icon") IconBuilderImpl iconBuilder, @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils, @JsonProperty("slots") List<Integer> slots) {
-        super(id, wolfyUtils, slots);
+    public ButtonBuilderImpl(@JsonProperty("id") String id, @JsonProperty("icon") IconBuilderImpl iconBuilder, @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils, @JsonProperty("slots") int[] slots) {
+        super(id, wolfyUtils, IntList.of(slots));
         this.iconBuilder = iconBuilder;
     }
 
@@ -68,7 +68,11 @@ public class ButtonBuilderImpl extends AbstractBukkitComponentBuilder<Button, Co
 
     @Override
     public Button create(Component parent) {
-        return new ButtonImpl(getWolfyUtils(), getID(), parent, iconBuilder.create(), interactionCallback);
+        ButtonImpl button = new ButtonImpl(getWolfyUtils(), getID(), parent, iconBuilder.create(), interactionCallback, getSlots());
+        for (Signal<?> signal : iconBuilder.signals) {
+            ((SignalImpl<?>) signal).linkTo(button);
+        }
+        return button;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -77,6 +81,7 @@ public class ButtonBuilderImpl extends AbstractBukkitComponentBuilder<Button, Co
         @JsonProperty("stack")
         private BukkitItemStackConfig stackConfig;
         private final List<TagResolver> tagResolvers = new ArrayList<>();
+        final Set<Signal<?>> signals = new HashSet<>();
 
         @Inject
         private IconBuilderImpl() {
@@ -107,7 +112,7 @@ public class ButtonBuilderImpl extends AbstractBukkitComponentBuilder<Button, Co
         }
 
         @Override
-        public IconBuilder stack(Supplier<ItemStackConfig<?>> supplier) {
+        public IconBuilder stack(SerializableSupplier<ItemStackConfig<?>> supplier) {
             if (supplier.get() instanceof BukkitItemStackConfig bukkitItemStackConfig) {
                 this.stackConfig = bukkitItemStackConfig;
             }
@@ -119,6 +124,8 @@ public class ButtonBuilderImpl extends AbstractBukkitComponentBuilder<Button, Co
             this.tagResolvers.addAll(Arrays.stream(signals)
                     .map(signal -> TagResolver.resolver(signal.key(), (argumentQueue, context) -> Tag.inserting(net.kyori.adventure.text.Component.text(String.valueOf(signal.get())))))
                     .toList());
+            this.signals.clear();
+            this.signals.addAll(List.of(signals));
             return this;
         }
 
