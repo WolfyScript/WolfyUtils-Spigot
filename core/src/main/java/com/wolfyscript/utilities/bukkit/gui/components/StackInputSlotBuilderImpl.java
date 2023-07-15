@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 @ComponentBuilderSettings(base = StackInputSlotBuilder.class, component = StackInputSlot.class)
 public class StackInputSlotBuilderImpl extends AbstractBukkitComponentBuilder<StackInputSlot, Component> implements StackInputSlotBuilder {
 
-    private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.cancel(false);
+    private InteractionCallback interactionCallback = (guiHolder, interactionDetails) -> InteractionResult.cancel(false);
     private Consumer<ItemStack> onValueChange;
     private Signal<ItemStack> valueSignal;
 

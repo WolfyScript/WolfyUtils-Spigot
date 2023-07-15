@@ -30,7 +30,7 @@ public class WindowBuilderImpl  implements WindowBuilder {
     protected int size;
     protected WindowType type;
     private String staticTitle = null;
-    private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.def();
+    private InteractionCallback interactionCallback = (guiHolder, interactionDetails) -> InteractionResult.def();
     private Consumer<com.wolfyscript.utilities.common.gui.WindowRenderer.Builder> rendererConstructor = builder -> {};
     private final Multimap<ComponentBuilder<?, ?>, Integer> componentBuilderPositions = ArrayListMultimap.create();
     private final Set<ComponentBuilder<?, ?>> componentRenderSet = new HashSet<>();

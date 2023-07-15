@@ -26,14 +26,14 @@ public class StackInputSlotImpl extends AbstractBukkitComponent implements Inter
     public StackInputSlotImpl(String internalID, WolfyUtils wolfyUtils, Component parent, Consumer<ItemStack> onValueChange, InteractionCallback interactionCallback, Signal<ItemStack> value, IntList slots) {
         super(internalID, wolfyUtils, parent, slots);
         this.onValueChange = onValueChange;
-        this.interactionCallback = (holder, state, details) -> {
+        this.interactionCallback = (holder, details) -> {
             if (details instanceof ClickInteractionDetailsImpl clickInteractionDetails) {
                 InventoryClickEvent event = clickInteractionDetails.getClickEvent();
                 InteractionUtils.applyItemFromInteractionEvent(event.getSlot(), event, Set.of(), itemStack -> {
                     onValueChange.accept(new ItemStackImpl((WolfyUtilsBukkit) holder.getViewManager().getWolfyUtils(), itemStack));
                 });
             }
-            return interactionCallback.interact(holder, state, details);
+            return interactionCallback.interact(holder, details);
         };
         this.value = value;
     }
@@ -63,8 +63,8 @@ public class StackInputSlotImpl extends AbstractBukkitComponent implements Inter
     }
 
     @Override
-    public InteractionResult interact(GuiHolder guiHolder, ComponentState componentState, InteractionDetails interactionDetails) {
-        return interactionCallback.interact(guiHolder, componentState, interactionDetails);
+    public InteractionResult interact(GuiHolder guiHolder, InteractionDetails interactionDetails) {
+        return interactionCallback.interact(guiHolder, interactionDetails);
     }
 
     @Override

@@ -41,7 +41,7 @@ public class TestGUI {
                                                                         return config;
                                                                     })
                                                             )
-                                                            .interact((guiHolder, componentState, interactionDetails) -> {
+                                                            .interact((guiHolder, interactionDetails) -> {
                                                                 count.update(integer -> ++integer);
                                                                 return InteractionResult.cancel(true);
                                                             }))
@@ -110,12 +110,12 @@ public class TestGUI {
                                         if (count.get() > 0) {
                                             reactiveBuilder
                                                     .render("count_down", ButtonBuilder.class, buttonBuilder -> buttonBuilder
-                                                            .interact((guiHolder, componentState, interactionDetails) -> {
+                                                            .interact((guiHolder, interactionDetails) -> {
                                                                 count.update(old -> --old);
                                                                 return InteractionResult.cancel(true);
                                                             }))
                                                     .render("reset", ButtonBuilder.class, buttonBuilder -> buttonBuilder
-                                                            .interact((guiHolder, componentState, interactionDetails) -> {
+                                                            .interact((guiHolder, interactionDetails) -> {
                                                                 count.set(0); // The set method changes the value of the signal and prompts the listener of the signal to re-render.
                                                                 return InteractionResult.cancel(true);
                                                             }));
@@ -124,7 +124,7 @@ public class TestGUI {
                                     // The state of a component is only reconstructed if the slot it is positioned at changes.
                                     // Here the slot will always have the same type of component, so the state is created only once.
                                     .render("count_up", ButtonBuilder.class, countUpSettings -> countUpSettings
-                                            .interact((guiHolder, componentState, interactionDetails) -> {
+                                            .interact((guiHolder, interactionDetails) -> {
                                                 count.update(old -> ++old);
                                                 return InteractionResult.cancel(true);
                                             })
@@ -155,24 +155,24 @@ public class TestGUI {
                                             case "display_name" -> {
                                                 reactiveBuilder
                                                         .render("set_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
-                                                                .interact((holder, state, details) -> {
+                                                                .interact((holder, details) -> {
 
                                                                     return InteractionResult.cancel(true);
                                                                 }))
                                                         .render("reset_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
-                                                                .interact((holder, state, details) -> {
+                                                                .interact((holder, details) -> {
 
                                                                     return InteractionResult.cancel(true);
                                                                 }));
                                             }
                                             case "lore" -> {
                                                 reactiveBuilder.render("edit_lore", ButtonBuilder.class, buttonBuilder -> buttonBuilder
-                                                        .interact((holder, state, details) -> {
+                                                        .interact((holder, details) -> {
 
                                                             return InteractionResult.cancel(true);
                                                         }));
                                                 reactiveBuilder.render("clear_lore", ButtonBuilder.class, buttonBuilder -> buttonBuilder
-                                                        .interact((holder, state, details) -> {
+                                                        .interact((holder, details) -> {
 
                                                             return InteractionResult.cancel(true);
                                                         }));
@@ -185,17 +185,17 @@ public class TestGUI {
                                     // The state of a component is only reconstructed if the slot it is positioned at changes.
                                     // Here the slot will always have the same type of component, so the state is created only once.
                                     .render("stack_slot", StackInputSlotBuilder.class, inputSlotBuilder -> inputSlotBuilder
-                                            .interact((guiHolder, componentState, interactionDetails) -> InteractionResult.cancel(false))
+                                            .interact((guiHolder, interactionDetails) -> InteractionResult.cancel(false))
                                             .onValueChange(stackToEdit::set)
                                             .value(stackToEdit)
                                     )
                                     .render("display_name_tab", ButtonBuilder.class, buttonBuilder -> buttonBuilder
-                                            .interact((holder, state, details) -> {
+                                            .interact((holder, details) -> {
                                                 selectedTab.set("display_name");
                                                 return InteractionResult.cancel(true);
                                             }))
                                     .render("lore_tab", ButtonBuilder.class, buttonBuilder -> buttonBuilder
-                                            .interact((holder, state, details) -> {
+                                            .interact((holder, details) -> {
                                                 selectedTab.set("lore");
                                                 return InteractionResult.cancel(true);
                                             }));

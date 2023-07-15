@@ -42,7 +42,7 @@ public class GUIHolder extends GuiHolderCommonImpl implements InventoryHolder {
                 InteractionResult result = guiViewManager.getLeaveNode(event.getSlot())
                         .map(component -> {
                             if (component instanceof Interactable interactable) {
-                                return interactable.interact(this, null, new ClickInteractionDetailsImpl(event));
+                                return interactable.interact(this, new ClickInteractionDetailsImpl(event));
                             }
                             return InteractionResult.cancel(true);
                         })
@@ -71,7 +71,7 @@ public class GUIHolder extends GuiHolderCommonImpl implements InventoryHolder {
             for (int slot : event.getInventorySlots()) {
                 if (((GuiViewManagerImpl) viewManager).getLeaveNode(slot).map(component -> {
                             if (component instanceof Interactable interactable) {
-                                return interactable.interact(this, null, interactionDetails);
+                                return interactable.interact(this, interactionDetails);
                             }
                             return InteractionResult.cancel(true);
                         }).orElse(InteractionResult.cancel(true)).isCancelled()) {

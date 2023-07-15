@@ -24,7 +24,7 @@ public final class RouterBuilderImpl implements RouterBuilder {
     private final WolfyUtils wolfyUtils;
     private final Map<String, RouterBuilder> subRouteBuilders = new HashMap<>();
     private WindowBuilder windowBuilder = null;
-    private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.def();
+    private InteractionCallback interactionCallback = (guiHolder, interactionDetails) -> InteractionResult.def();
 
     @JsonCreator
     RouterBuilderImpl(@JsonProperty("route") String route,

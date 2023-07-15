@@ -32,7 +32,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 @ComponentBuilderSettings(base = ButtonBuilder.class, component = Button.class)
 public class ButtonBuilderImpl extends AbstractBukkitComponentBuilder<Button, Component> implements ButtonBuilder {
 
-    private InteractionCallback interactionCallback = (guiHolder, componentState, interactionDetails) -> InteractionResult.cancel(true);
+    private InteractionCallback interactionCallback = (guiHolder, interactionDetails) -> InteractionResult.cancel(true);
     private final IconBuilderImpl iconBuilder;
 
     /**

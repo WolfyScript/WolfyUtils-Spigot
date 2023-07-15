@@ -36,12 +36,12 @@ public class ButtonImpl extends AbstractBukkitComponent implements Button {
     }
 
     @Override
-    public InteractionResult interact(GuiHolder guiHolder, ComponentState componentState, InteractionDetails interactionDetails) {
+    public InteractionResult interact(GuiHolder guiHolder, InteractionDetails interactionDetails) {
         if (parent() instanceof Interactable interactableParent) {
-            InteractionResult result = interactableParent.interact(guiHolder, componentState, interactionDetails);
+            InteractionResult result = interactableParent.interact(guiHolder, interactionDetails);
             if (result.isCancelled()) return result;
         }
-        return interactionCallback.interact(guiHolder, componentState, interactionDetails);
+        return interactionCallback.interact(guiHolder, interactionDetails);
     }
 
     @Override

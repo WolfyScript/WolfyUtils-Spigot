@@ -23,7 +23,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.common.gui.ComponentState;
 import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.InteractionCallback;
@@ -105,7 +104,7 @@ public final class RouterImpl implements Router {
     }
 
     @Override
-    public InteractionResult interact(GuiHolder guiHolder, ComponentState componentState, InteractionDetails interactionDetails) {
+    public InteractionResult interact(GuiHolder guiHolder, InteractionDetails interactionDetails) {
         return InteractionResult.cancel(false);
     }
 
