@@ -30,6 +30,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class WindowRenderer implements com.wolfyscript.utilities.common.gui.WindowRenderer {
 
@@ -163,12 +164,7 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
                     ReactiveRenderBuilderImpl builder = new ReactiveRenderBuilderImpl(wolfyUtils, componentBuilderPositions);
                     consumer.accept(builder);
 
-                    Set<Component> freshComponents = new HashSet<>();
-                    builder.getComponentBuildersToRender().forEach((componentBuilder, integer) -> {
-                        Component component = componentBuilder.create(null);
-                        freshComponents.add(component);
-                        component.construct(guiViewManager).render(guiHolder, renderContext);
-                    });
+                    final Set<Component> freshComponents = builder.getComponentBuildersToRender().keySet().stream().map(componentBuilder -> componentBuilder.create(null)).collect(Collectors.toSet());
 
                     for (Component component : Sets.difference(previousComponents, freshComponents)) {
                         for (int slot : component.getSlots()) {
@@ -188,6 +184,7 @@ public class WindowRenderer implements com.wolfyscript.utilities.common.gui.Wind
                         }
                         renderContext.exitNode();
                     }
+
                     previousComponents = freshComponents;
                 }
             };

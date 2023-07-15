@@ -8,6 +8,8 @@ import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.SignalledObject;
 import it.unimi.dsi.fastutil.ints.IntList;
 
+import java.util.Objects;
+
 /**
  * <p>
  * Contains the common properties of all Components.
@@ -60,5 +62,18 @@ public abstract class AbstractBukkitComponent implements Component, SignalledObj
 
     public IntList getSlots() {
         return slots;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractBukkitComponent that = (AbstractBukkitComponent) o;
+        return Objects.equals(type, that.type) && Objects.equals(internalID, that.internalID);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, internalID);
     }
 }
