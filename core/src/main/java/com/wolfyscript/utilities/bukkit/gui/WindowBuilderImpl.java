@@ -101,7 +101,6 @@ public class WindowBuilderImpl  implements WindowBuilder {
     @Override
     public <B extends ComponentBuilder<? extends Component, Component>> WindowBuilder init(int slot, String id, Class<B> builderType, SerializableConsumer<B> builderConsumer) {
         Pair<NamespacedKey, Class<B>> builderTypeInfo = getBuilderType(wolfyUtils, id, builderType);
-
         findExistingComponentBuilder(id, builderTypeInfo.getValue(), builderTypeInfo.getKey()).ifPresentOrElse(builderConsumer, () -> {
             Injector injector = Guice.createInjector(Stage.PRODUCTION, binder -> {
                 binder.bind(WolfyUtils.class).toInstance(wolfyUtils);

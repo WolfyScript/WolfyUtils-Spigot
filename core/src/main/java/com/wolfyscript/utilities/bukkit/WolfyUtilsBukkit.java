@@ -200,6 +200,8 @@ public class WolfyUtilsBukkit extends WolfyUtils {
                 File destination = new File(dir, path.replace(resourceName, ""));
                 try {
                     if (destination.exists() && !replace) return;
+                    destination.getParentFile().mkdirs();
+                    destination.createNewFile();
                     OutputStream out = new FileOutputStream(destination);
                     byte[] buf = new byte[1024];
                     int len;

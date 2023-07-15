@@ -1,7 +1,6 @@
 package com.wolfyscript.utilities.bukkit.gui.components;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Multimap;
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.gui.AbstractBukkitComponent;
 import com.wolfyscript.utilities.common.WolfyUtils;
@@ -15,31 +14,31 @@ import java.util.Set;
 @KeyedStaticId(key = "cluster")
 public class ComponentClusterImpl extends AbstractBukkitComponent implements ComponentCluster {
 
-    private final BiMap<String, Component> children;
+    private final Multimap<Component, Integer> children;
 
-    public ComponentClusterImpl(String internalID, WolfyUtils wolfyUtils, Component parent, IntList slots) {
+    public ComponentClusterImpl(String internalID, WolfyUtils wolfyUtils, Component parent, IntList slots, Multimap<Component, Integer> children) {
         super(internalID, wolfyUtils, parent, slots);
-        this.children = HashBiMap.create();
+        this.children = children;
     }
 
     @Override
     public Set<? extends Component> childComponents() {
-        return children.values();
+        return children.keySet();
     }
 
     @Override
     public Optional<? extends Component> getChild(String id) {
-        return Optional.ofNullable(children.get(id));
+        return Optional.empty();
     }
 
     @Override
     public Renderer getRenderer() {
-        return new ComponentClusterRendererImpl();
+        return new ComponentClusterRendererImpl(this, null, children);
     }
 
     @Override
     public Renderer construct(GuiViewManager guiViewManager) {
-        return new ComponentClusterRendererImpl();
+        return new ComponentClusterRendererImpl(this, guiViewManager, children);
     }
 
     @Override

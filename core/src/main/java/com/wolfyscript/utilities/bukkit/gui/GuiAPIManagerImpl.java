@@ -56,9 +56,9 @@ public class GuiAPIManagerImpl extends GuiAPIManagerCommonImpl {
         try {
             wolfyUtils.exportResources(guiResourceDir + "/" + id, new File(guiDataSubFolder, "/includes/" + id), true, GUI_FILE_PATTERN);
 
-            File file = new File(guiDataSubFolder, id + "/index.conf"); // Look for user-override
+            File file = new File(guiDataSubFolder, id + "/entry.conf"); // Look for user-override
             if (!file.exists()) {
-                file = new File(guiDataSubFolder, "includes/" + id + "/index.conf"); // Fall back to includes version
+                file = new File(guiDataSubFolder, "includes/" + id + "/entry.conf"); // Fall back to includes version
                 if (!file.exists() || !file.isFile()) throw new IllegalArgumentException("Cannot find gui index file! Expected: " + file.getPath());
             }
 

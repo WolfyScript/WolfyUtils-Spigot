@@ -21,11 +21,9 @@ import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManager;
 import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManagerBukkit;
 import com.wolfyscript.utilities.bukkit.config.WUConfig;
 import com.wolfyscript.utilities.bukkit.console.Console;
-import com.wolfyscript.utilities.bukkit.gui.components.ButtonBuilderImpl;
-import com.wolfyscript.utilities.bukkit.gui.components.ButtonImpl;
+import com.wolfyscript.utilities.bukkit.gui.components.*;
 import com.wolfyscript.utilities.bukkit.gui.GUIInventoryListener;
 import com.wolfyscript.utilities.bukkit.gui.TestGUI;
-import com.wolfyscript.utilities.bukkit.gui.components.StackInputSlotBuilderImpl;
 import com.wolfyscript.utilities.bukkit.json.serialization.APIReferenceSerialization;
 import com.wolfyscript.utilities.bukkit.json.serialization.ColorSerialization;
 import com.wolfyscript.utilities.bukkit.json.serialization.DustOptionsSerialization;
@@ -529,10 +527,13 @@ public abstract class WolfyCoreImpl implements WolfyCore {
         // Register GUI things
         var guiComponents = getRegistries().getGuiComponents();
         guiComponents.register(ButtonImpl.class);
+        guiComponents.register(StackInputSlotImpl.class);
+        guiComponents.register(ComponentClusterImpl.class);
 
         var guiComponentBuilders = getRegistries().getGuiComponentBuilders();
         guiComponentBuilders.register(ButtonBuilderImpl.class);
         guiComponentBuilders.register(StackInputSlotBuilderImpl.class);
+        guiComponentBuilders.register(ComponentClusterBuilderImpl.class);
 
         // Register the Registries to resolve type references in JSON
         KeyedTypeIdResolver.registerTypeRegistry(CustomItemData.class, registries.getCustomItemDataTypeRegistry());

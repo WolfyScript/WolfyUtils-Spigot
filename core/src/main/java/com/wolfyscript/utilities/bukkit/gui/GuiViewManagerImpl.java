@@ -30,7 +30,7 @@ public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
         updatedSignalsSinceLastUpdate.addAll(objects);
     }
 
-    void updateLeaveNodes(Component state, int... slots) {
+    public void updateLeaveNodes(Component state, int... slots) {
         for (int slot : slots) {
             updateLeaveNodes(state, slot);
         }
