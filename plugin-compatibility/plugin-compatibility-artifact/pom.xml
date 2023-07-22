@@ -54,6 +54,12 @@
             <version>4.0.1</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.ssomar.executableblocks</groupId>
+            <artifactId>ExecutableBlocks</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- Denizen -->
         <dependency>
             <groupId>com.denizenscript</groupId>
