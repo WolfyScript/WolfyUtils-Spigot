@@ -2,7 +2,6 @@ package com.wolfyscript.utilities.bukkit.registry;
 
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.gui.AbstractBukkitComponentBuilder;
 import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentBuilder;
 import com.wolfyscript.utilities.common.gui.ComponentBuilderSettings;
@@ -11,8 +10,6 @@ import com.wolfyscript.utilities.common.registry.RegistryGUIComponentBuilders;
 import com.wolfyscript.utilities.common.registry.UniqueTypeRegistrySimple;
 import java.util.HashMap;
 import java.util.Map;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class RegistryGUIComponentBuilder extends UniqueTypeRegistrySimple<ComponentBuilder<?,?>> implements RegistryGUIComponentBuilders {
 

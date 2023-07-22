@@ -2,17 +2,17 @@ package com.wolfyscript.utilities.bukkit.gui.components;
 
 import com.google.common.collect.Multimap;
 import com.wolfyscript.utilities.KeyedStaticId;
-import com.wolfyscript.utilities.bukkit.gui.AbstractBukkitComponent;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.*;
 import com.wolfyscript.utilities.common.gui.components.ComponentCluster;
+import com.wolfyscript.utilities.common.gui.impl.AbstractComponentImpl;
 import it.unimi.dsi.fastutil.ints.IntList;
 
 import java.util.Optional;
 import java.util.Set;
 
 @KeyedStaticId(key = "cluster")
-public class ComponentClusterImpl extends AbstractBukkitComponent implements ComponentCluster {
+public class ComponentClusterImpl extends AbstractComponentImpl implements ComponentCluster {
 
     private final Multimap<Component, Integer> children;
 

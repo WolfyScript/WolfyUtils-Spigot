@@ -23,7 +23,7 @@ import com.wolfyscript.utilities.bukkit.config.WUConfig;
 import com.wolfyscript.utilities.bukkit.console.Console;
 import com.wolfyscript.utilities.bukkit.gui.components.*;
 import com.wolfyscript.utilities.bukkit.gui.GUIInventoryListener;
-import com.wolfyscript.utilities.bukkit.gui.TestGUI;
+import com.wolfyscript.utilities.bukkit.gui.example.TestGUI;
 import com.wolfyscript.utilities.bukkit.json.serialization.APIReferenceSerialization;
 import com.wolfyscript.utilities.bukkit.json.serialization.ColorSerialization;
 import com.wolfyscript.utilities.bukkit.json.serialization.DustOptionsSerialization;
@@ -177,7 +177,7 @@ import com.wolfyscript.utilities.nbt.NBTTagConfigLong;
 import com.wolfyscript.utilities.nbt.NBTTagConfigShort;
 import com.wolfyscript.utilities.nbt.NBTTagConfigString;
 import com.wolfyscript.utilities.versioning.ServerVersion;
-import java.io.File;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;

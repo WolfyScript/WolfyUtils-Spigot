@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.wolfyscript.utilities.KeyedStaticId;
-import com.wolfyscript.utilities.bukkit.gui.AbstractBukkitComponentBuilder;
 import com.wolfyscript.utilities.bukkit.gui.SignalImpl;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.WolfyUtils;
@@ -16,8 +15,8 @@ import com.wolfyscript.utilities.common.gui.*;
 import com.wolfyscript.utilities.common.gui.components.Button;
 import com.wolfyscript.utilities.common.gui.components.ButtonBuilder;
 import com.wolfyscript.utilities.common.gui.components.ButtonIcon;
-import com.wolfyscript.utilities.common.gui.functions.SerializableConsumer;
 import com.wolfyscript.utilities.common.gui.functions.SerializableSupplier;
+import com.wolfyscript.utilities.common.gui.impl.AbstractComponentBuilderImpl;
 import com.wolfyscript.utilities.common.items.ItemStackConfig;
 
 import java.util.*;
@@ -30,7 +29,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 @KeyedStaticId(key = "button")
 @ComponentBuilderSettings(base = ButtonBuilder.class, component = Button.class)
-public class ButtonBuilderImpl extends AbstractBukkitComponentBuilder<Button, Component> implements ButtonBuilder {
+public class ButtonBuilderImpl extends AbstractComponentBuilderImpl<Button, Component> implements ButtonBuilder {
 
     private InteractionCallback interactionCallback = (guiHolder, interactionDetails) -> InteractionResult.cancel(true);
     private final IconBuilderImpl iconBuilder;

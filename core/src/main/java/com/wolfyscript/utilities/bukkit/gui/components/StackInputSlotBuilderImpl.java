@@ -5,20 +5,19 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.KeyedStaticId;
-import com.wolfyscript.utilities.bukkit.gui.AbstractBukkitComponentBuilder;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.adapters.ItemStack;
 import com.wolfyscript.utilities.common.gui.*;
 import com.wolfyscript.utilities.common.gui.components.StackInputSlot;
 import com.wolfyscript.utilities.common.gui.components.StackInputSlotBuilder;
+import com.wolfyscript.utilities.common.gui.impl.AbstractComponentBuilderImpl;
 import it.unimi.dsi.fastutil.ints.IntList;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 @KeyedStaticId(key = "stack_input_slot")
 @ComponentBuilderSettings(base = StackInputSlotBuilder.class, component = StackInputSlot.class)
-public class StackInputSlotBuilderImpl extends AbstractBukkitComponentBuilder<StackInputSlot, Component> implements StackInputSlotBuilder {
+public class StackInputSlotBuilderImpl extends AbstractComponentBuilderImpl<StackInputSlot, Component> implements StackInputSlotBuilder {
 
     private InteractionCallback interactionCallback = (guiHolder, interactionDetails) -> InteractionResult.cancel(false);
     private Consumer<ItemStack> onValueChange;

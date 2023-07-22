@@ -1,6 +1,5 @@
 package com.wolfyscript.utilities.bukkit.gui.components;
 
-import com.wolfyscript.utilities.bukkit.gui.AbstractBukkitComponent;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.Component;
@@ -10,10 +9,11 @@ import com.wolfyscript.utilities.common.gui.RenderContext;
 import com.wolfyscript.utilities.common.gui.Renderer;
 import com.wolfyscript.utilities.common.gui.components.Icon;
 
+import com.wolfyscript.utilities.common.gui.impl.AbstractComponentImpl;
 import it.unimi.dsi.fastutil.ints.IntList;
 import org.bukkit.inventory.ItemStack;
 
-public class IconImpl extends AbstractBukkitComponent implements Icon<ItemStack> {
+public class IconImpl extends AbstractComponentImpl implements Icon<ItemStack> {
 
     private final BukkitItemStackConfig itemStackConfig;
 

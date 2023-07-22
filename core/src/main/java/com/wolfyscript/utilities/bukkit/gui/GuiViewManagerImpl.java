@@ -5,6 +5,7 @@ import com.wolfyscript.utilities.common.gui.*;
 
 import java.util.*;
 
+import com.wolfyscript.utilities.common.gui.impl.AbstractComponentImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -70,7 +71,7 @@ public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
         }
 
         for (SignalledObject signalledObject : updatedSignalsSinceLastUpdate) {
-            if (signalledObject instanceof AbstractBukkitComponent component) {
+            if (signalledObject instanceof AbstractComponentImpl component) {
                 context.enterNode(component);
                 for (int slot : component.getSlots()) {
                     context.setSlotOffsetToParent(slot);

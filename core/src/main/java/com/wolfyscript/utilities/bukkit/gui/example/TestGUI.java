@@ -1,4 +1,4 @@
-package com.wolfyscript.utilities.bukkit.gui;
+package com.wolfyscript.utilities.bukkit.gui.example;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;

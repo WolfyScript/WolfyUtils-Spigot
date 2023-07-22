@@ -12,13 +12,13 @@ import com.google.inject.Injector;
 import com.google.inject.Stage;
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.gui.AbstractBukkitComponentBuilder;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentBuilder;
 import com.wolfyscript.utilities.common.gui.ComponentBuilderSettings;
 import com.wolfyscript.utilities.common.gui.components.ComponentCluster;
 import com.wolfyscript.utilities.common.gui.components.ComponentClusterBuilder;
+import com.wolfyscript.utilities.common.gui.impl.AbstractComponentBuilderImpl;
 import com.wolfyscript.utilities.common.registry.RegistryGUIComponentBuilders;
 import com.wolfyscript.utilities.tuple.Pair;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 
 @KeyedStaticId(key = "cluster")
 @ComponentBuilderSettings(base = ComponentClusterBuilder.class, component = ComponentCluster.class)
-public class ComponentClusterBuilderImpl extends AbstractBukkitComponentBuilder<ComponentCluster, Component> implements ComponentClusterBuilder {
+public class ComponentClusterBuilderImpl extends AbstractComponentBuilderImpl<ComponentCluster, Component> implements ComponentClusterBuilder {
 
     private final Multimap<ComponentBuilder<?, ?>, Integer> componentBuilderPositions = ArrayListMultimap.create();
     private final Set<ComponentBuilder<?, ?>> componentRenderSet = new HashSet<>();

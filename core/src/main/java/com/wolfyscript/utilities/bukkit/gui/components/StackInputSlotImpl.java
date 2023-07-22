@@ -3,13 +3,13 @@ package com.wolfyscript.utilities.bukkit.gui.components;
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl;
-import com.wolfyscript.utilities.bukkit.gui.AbstractBukkitComponent;
 import com.wolfyscript.utilities.bukkit.gui.ClickInteractionDetailsImpl;
 import com.wolfyscript.utilities.bukkit.gui.InteractionUtils;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.adapters.ItemStack;
 import com.wolfyscript.utilities.common.gui.*;
 import com.wolfyscript.utilities.common.gui.components.StackInputSlot;
+import com.wolfyscript.utilities.common.gui.impl.AbstractComponentImpl;
 import it.unimi.dsi.fastutil.ints.IntList;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 @KeyedStaticId(key = "stack_input_slot")
-public class StackInputSlotImpl extends AbstractBukkitComponent implements Interactable, StackInputSlot {
+public class StackInputSlotImpl extends AbstractComponentImpl implements Interactable, StackInputSlot {
 
     private final Consumer<ItemStack> onValueChange;
     private final InteractionCallback interactionCallback;

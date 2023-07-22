@@ -3,7 +3,6 @@ package com.wolfyscript.utilities.bukkit.gui.components;
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.eval.context.EvalContextPlayer;
-import com.wolfyscript.utilities.bukkit.gui.AbstractBukkitComponent;
 import com.wolfyscript.utilities.bukkit.gui.GUIHolder;
 import com.wolfyscript.utilities.bukkit.gui.RenderContextImpl;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
@@ -11,6 +10,7 @@ import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.*;
 import com.wolfyscript.utilities.common.gui.components.Button;
 import com.wolfyscript.utilities.common.gui.components.ButtonIcon;
+import com.wolfyscript.utilities.common.gui.impl.AbstractComponentImpl;
 import com.wolfyscript.utilities.common.items.ItemStackConfig;
 import com.wolfyscript.utilities.eval.context.EvalContext;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -19,7 +19,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.inventory.ItemStack;
 
 @KeyedStaticId(key = "button")
-public class ButtonImpl extends AbstractBukkitComponent implements Button {
+public class ButtonImpl extends AbstractComponentImpl implements Button {
 
     private final InteractionCallback interactionCallback;
     private final ButtonIcon icon;
