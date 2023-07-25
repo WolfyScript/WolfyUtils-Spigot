@@ -8,7 +8,7 @@
     <parent>
         <artifactId>wolfyutils-parent</artifactId>
         <groupId>com.wolfyscript.wolfyutils.spigot</groupId>
-        <version>4.16.12.0</version>
+        <version>4.16.12.1</version>
     </parent>
 
     <build>
