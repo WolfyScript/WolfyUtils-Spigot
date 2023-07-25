@@ -3,7 +3,7 @@ package me.wolfyscript.utilities.compatibility.plugins.executableblocks;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.ssomar.score.api.executableblocks.config.ExecutableBlocksManagerInterface;
+import com.ssomar.executableblocks.executableblocks.ExecutableBlocksManager;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Optional;
@@ -16,10 +16,10 @@ import org.jetbrains.annotations.Nullable;
 public class ExecutableBlocksRef extends APIReference {
 
     private final ExecutableBlocksIntegration integration;
-    private final ExecutableBlocksManagerInterface manager;
+    private final ExecutableBlocksManager manager;
     private final String id;
 
-    public ExecutableBlocksRef(ExecutableBlocksIntegration integration, ExecutableBlocksManagerInterface manager, String id) {
+    public ExecutableBlocksRef(ExecutableBlocksIntegration integration, ExecutableBlocksManager manager, String id) {
         this.id = id;
         this.manager = manager;
         this.integration = integration;
@@ -54,9 +54,9 @@ public class ExecutableBlocksRef extends APIReference {
     public static class Parser extends PluginParser<ExecutableBlocksRef> {
 
         private final ExecutableBlocksIntegration integration;
-        private final ExecutableBlocksManagerInterface manager;
+        private final ExecutableBlocksManager manager;
 
-        public Parser(ExecutableBlocksIntegration integration, ExecutableBlocksManagerInterface manager) {
+        public Parser(ExecutableBlocksIntegration integration, ExecutableBlocksManager manager) {
             super(ExecutableBlocksIntegration.PLUGIN_NAME, ExecutableBlocksIntegration.PLUGIN_NAME.toLowerCase(Locale.ROOT), 1000);
             this.integration = integration;
             this.manager = manager;

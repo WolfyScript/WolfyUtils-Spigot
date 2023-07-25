@@ -1,7 +1,6 @@
 package me.wolfyscript.utilities.compatibility.plugins.executableblocks;
 
-import com.ssomar.score.api.executableblocks.ExecutableBlocksAPI;
-import com.ssomar.score.api.executableblocks.config.ExecutableBlocksManagerInterface;
+import com.ssomar.executableblocks.executableblocks.ExecutableBlocksManager;
 import java.util.List;
 import java.util.Optional;
 import me.wolfyscript.utilities.annotations.WUPluginIntegration;
@@ -15,7 +14,7 @@ import org.bukkit.plugin.Plugin;
 @WUPluginIntegration(pluginName = ExecutableBlocksIntegration.PLUGIN_NAME)
 public class ExecutableBlocksImpl extends PluginIntegrationAbstract implements ExecutableBlocksIntegration {
 
-    private ExecutableBlocksManagerInterface manager;
+    private ExecutableBlocksManager manager;
 
     /**
      * The main constructor that is called whenever the integration is created.<br>
@@ -27,7 +26,7 @@ public class ExecutableBlocksImpl extends PluginIntegrationAbstract implements E
 
     @Override
     public void init(Plugin plugin) {
-        this.manager = ExecutableBlocksAPI.getExecutableBlocksManager();
+        this.manager = ExecutableBlocksManager.getInstance();
         core.registerAPIReference(new ExecutableBlocksRef.Parser(this, manager));
     }
 

@@ -45,11 +45,19 @@
     </repositories>
 
     <dependencies>
-        <!-- ExecutableItems -->
+        <!-- ExecutableItems & ExecutableBlocks (SCore) -->
+        <!-- May require local build! Clone & Build https://github.com/Ssomar-Developement/SCore -->
+        <!-- Currently using uploaded jar in maven repo -->
         <dependency>
-            <groupId>com.github.Ssomar-Developement</groupId>
+            <groupId>com.ssomar</groupId>
             <artifactId>SCore</artifactId>
-            <version>3.9.25</version>
+            <version>4.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.ssomar.executableblocks</groupId>
+            <artifactId>ExecutableBlocks</artifactId>
+            <version>4.0.1</version>
             <scope>provided</scope>
         </dependency>
         <!-- Denizen -->
