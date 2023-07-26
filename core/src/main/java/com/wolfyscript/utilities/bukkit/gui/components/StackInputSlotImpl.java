@@ -4,6 +4,7 @@ import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl;
 import com.wolfyscript.utilities.bukkit.gui.ClickInteractionDetailsImpl;
+import com.wolfyscript.utilities.bukkit.gui.GuiViewManagerImpl;
 import com.wolfyscript.utilities.bukkit.gui.InteractionUtils;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.adapters.ItemStack;
@@ -39,13 +40,16 @@ public class StackInputSlotImpl extends AbstractComponentImpl implements Interac
     }
 
     @Override
-    public Renderer getRenderer() {
-        return new StackInputSlotRenderer(this);
+    public StackInputSlot construct(GuiViewManager guiViewManager) {
+        return this;
     }
 
     @Override
-    public Renderer construct(GuiViewManager guiViewManager) {
-        return new StackInputSlotRenderer(this);
+    public void remove(GuiHolder guiHolder, GuiViewManager guiViewManager, RenderContext renderContext) {
+        for (int slot : getSlots()) {
+            renderContext.setNativeStack(slot, null);
+            ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(null, slot);
+        }
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.google.common.collect.Multimap;
 import com.wolfyscript.utilities.bukkit.gui.GuiViewManagerImpl;
 import com.wolfyscript.utilities.bukkit.gui.RenderContextImpl;
 import com.wolfyscript.utilities.common.gui.*;
+import com.wolfyscript.utilities.common.gui.components.ComponentCluster;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
 
 import java.util.Map;
@@ -40,7 +41,9 @@ public class ComponentClusterRendererImpl implements Renderer {
             entry.getKey().executeForAllSlots(slot, slot2 -> ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(component, slot2));
             renderContext.setSlotOffsetToParent(slot);
             renderContext.enterNode(component);
-            component.construct(viewManager).render(guiHolder, renderContext);
+            if (component.construct(viewManager) instanceof SignalledObject signalledObject) {
+                signalledObject.update(viewManager, guiHolder, renderContext);
+            }
             renderContext.exitNode();
         }
     }

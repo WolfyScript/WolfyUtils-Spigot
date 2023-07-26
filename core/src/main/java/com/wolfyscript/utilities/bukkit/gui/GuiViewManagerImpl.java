@@ -66,7 +66,9 @@ public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
         if (player.getOpenInventory().getTopInventory() != context.getInventory()) {
             viewerContexts.put(player.getUniqueId(), context);
             player.openInventory(context.getInventory());
-            getCurrentMenu().get().construct(this).render((GuiHolder) context.getInventory().getHolder(), context);
+            getCurrentMenu().ifPresent(window -> {
+                window.construct(this).render((GuiHolder) context.getInventory().getHolder(), this, context);
+            });
             return;
         }
 
@@ -82,7 +84,6 @@ public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
             }
         }
         updatedSignalsSinceLastUpdate.clear();
-
     }
 
     @Override

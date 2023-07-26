@@ -1,5 +1,6 @@
 package com.wolfyscript.utilities.bukkit.gui.components;
 
+import com.wolfyscript.utilities.bukkit.gui.GuiViewManagerImpl;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.Component;
@@ -23,13 +24,16 @@ public class IconImpl extends AbstractComponentImpl implements Icon<ItemStack> {
     }
 
     @Override
-    public Renderer getRenderer() {
-        return null;
+    public Icon<ItemStack> construct(GuiViewManager guiViewManager) {
+        return this;
     }
 
     @Override
-    public Renderer construct(GuiViewManager guiViewManager) {
-        return null;
+    public void remove(GuiHolder guiHolder, GuiViewManager guiViewManager, RenderContext renderContext) {
+        for (int slot : getSlots()) {
+            renderContext.setNativeStack(slot, null);
+            ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(null, slot);
+        }
     }
 
     @Override

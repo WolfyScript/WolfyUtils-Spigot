@@ -1,21 +1,20 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.*;
 import com.wolfyscript.utilities.KeyedStaticId;
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.bukkit.nms.inventory.InventoryUpdate;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.*;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
+import com.wolfyscript.utilities.common.gui.functions.SerializableSupplier;
+import com.wolfyscript.utilities.versioning.MinecraftVersion;
+import com.wolfyscript.utilities.versioning.ServerVersion;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -28,11 +27,11 @@ public final class WindowImpl implements Window {
     private final String id;
     private final Router router;
     private final WolfyUtils wolfyUtils;
-    private final BiMap<String, Component> children;
     private final Consumer<com.wolfyscript.utilities.common.gui.WindowRenderer.Builder> rendererConstructor;
     private final Integer size;
     private final WindowType type;
     private String staticTitle = null;
+    private SerializableSupplier<net.kyori.adventure.text.Component> dynamicTitle;
     private final InteractionCallback interactionCallback;
     final Multimap<Component, Integer> staticComponents;
     final Multimap<ComponentBuilder<?, ?>, Integer> nonRenderedComponents;
@@ -59,14 +58,66 @@ public final class WindowImpl implements Window {
         this.interactionCallback = interactionCallback;
         this.staticComponents = staticComponents;
         this.nonRenderedComponents = nonRenderedComponents;
-        this.children = HashBiMap.create();
+        this.dynamicTitle = null;
+    }
+
+    public WindowImpl(WindowImpl staticWindow) {
+        this.id = staticWindow.id;
+        this.router = staticWindow.router;
+        this.wolfyUtils = staticWindow.router.getWolfyUtils();
+        this.rendererConstructor = staticWindow.rendererConstructor;
+        this.size = staticWindow.size;
+        this.type = staticWindow.type;
+        this.staticTitle = staticWindow.staticTitle;
+        this.dynamicTitle = staticWindow.dynamicTitle;
+        this.interactionCallback = staticWindow.interactionCallback;
+        this.staticComponents = MultimapBuilder.hashKeys().arrayListValues().build(staticWindow.staticComponents);
+        this.nonRenderedComponents = MultimapBuilder.hashKeys().arrayListValues().build(staticWindow.nonRenderedComponents);
+    }
+
+    public WindowImpl dynamicCopy(Multimap<Component, Integer> dynamicComponents, Multimap<ComponentBuilder<?, ?>, Integer> nonRenderedComponents, SerializableSupplier<net.kyori.adventure.text.Component> dynamicTitle) {
+        WindowImpl copy = new WindowImpl(this);
+        copy.staticComponents.putAll(dynamicComponents);
+        copy.nonRenderedComponents.putAll(nonRenderedComponents);
+        copy.dynamicTitle = dynamicTitle;
+        return copy;
     }
 
     @Override
-    public WindowRenderer construct(GuiViewManager viewManager) {
-        var rendererBuilder = new WindowRenderer.Builder(wolfyUtils, viewManager, this);
+    public Window construct(GuiViewManager viewManager) {
+        var rendererBuilder = new WindowDynamicConstructor(wolfyUtils, viewManager, this);
         rendererConstructor.accept(rendererBuilder);
         return rendererBuilder.create(this);
+    }
+
+    @Override
+    public void open(GuiViewManager guiViewManager) {
+
+    }
+
+    @Override
+    public void render(GuiHolder guiHolder, GuiViewManager viewManager, RenderContext context) {
+        if (!(context instanceof RenderContextImpl renderContext)) return;
+
+        if (dynamicTitle != null) {
+            if (ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 20, 0))) {
+                ((GUIHolder) guiHolder).getBukkitPlayer().getOpenInventory().setTitle(BukkitComponentSerializer.legacy().serialize(dynamicTitle.get()));
+            } else {
+                InventoryUpdate.updateInventory(((WolfyCoreImpl) wolfyUtils.getCore()).getWolfyUtils().getPlugin(), ((GUIHolder) guiHolder).getBukkitPlayer(), dynamicTitle.get());
+            }
+        }
+
+        for (Map.Entry<Component, Integer> entry : staticComponents.entries()) {
+            int slot = entry.getValue();
+            Component component = entry.getKey();
+            renderContext.setSlotOffsetToParent(slot);
+            ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(component, slot);
+            renderContext.enterNode(component);
+            if (component.construct(viewManager) instanceof SignalledObject signalledObject) {
+                signalledObject.update(viewManager, guiHolder, renderContext);
+            }
+            renderContext.exitNode();
+        }
     }
 
     @Override
@@ -133,12 +184,12 @@ public final class WindowImpl implements Window {
 
     @Override
     public Set<? extends Component> childComponents() {
-        return children.values();
+        return Set.of();
     }
 
     @Override
     public Optional<com.wolfyscript.utilities.common.gui.Component> getChild(String id) {
-        return Optional.ofNullable(children.get(id));
+        return Optional.empty();
     }
 
     @Override
@@ -170,13 +221,4 @@ public final class WindowImpl implements Window {
         return size / 9;
     }
 
-    @Override
-    public WindowRenderer getRenderer() {
-        return null;
-    }
-
-    @Override
-    public void open(GuiViewManager guiViewManager) {
-
-    }
 }

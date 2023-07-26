@@ -4,6 +4,7 @@ import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.eval.context.EvalContextPlayer;
 import com.wolfyscript.utilities.bukkit.gui.GUIHolder;
+import com.wolfyscript.utilities.bukkit.gui.GuiViewManagerImpl;
 import com.wolfyscript.utilities.bukkit.gui.RenderContextImpl;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.WolfyUtils;
@@ -30,6 +31,12 @@ public class ButtonImpl extends AbstractComponentImpl implements Button {
         this.interactionCallback = interactionCallback;
     }
 
+    public ButtonImpl(ButtonImpl button) {
+        super(button.getID(), button.getWolfyUtils(), button.parent(), button.getSlots());
+        this.interactionCallback = button.interactionCallback;
+        this.icon = button.icon;
+    }
+
     @Override
     public ButtonIcon icon() {
         return icon;
@@ -50,13 +57,16 @@ public class ButtonImpl extends AbstractComponentImpl implements Button {
     }
 
     @Override
-    public Renderer getRenderer() {
-        return new ButtonRenderer(this);
+    public Button construct(GuiViewManager guiViewManager) {
+        return this;
     }
 
     @Override
-    public Renderer construct(GuiViewManager guiViewManager) {
-        return new ButtonRenderer(this);
+    public void remove(GuiHolder guiHolder, GuiViewManager guiViewManager, RenderContext renderContext) {
+        for (int slot : getSlots()) {
+            renderContext.setNativeStack(slot, null);
+            ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(null, slot);
+        }
     }
 
     @Override
