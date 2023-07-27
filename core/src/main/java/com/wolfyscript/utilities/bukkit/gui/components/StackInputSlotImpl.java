@@ -11,6 +11,7 @@ import com.wolfyscript.utilities.common.adapters.ItemStack;
 import com.wolfyscript.utilities.common.gui.*;
 import com.wolfyscript.utilities.common.gui.components.StackInputSlot;
 import com.wolfyscript.utilities.common.gui.impl.AbstractComponentImpl;
+import com.wolfyscript.utilities.common.gui.signal.Signal;
 import it.unimi.dsi.fastutil.ints.IntList;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
@@ -37,11 +38,21 @@ public class StackInputSlotImpl extends AbstractComponentImpl implements Interac
             return interactionCallback.interact(holder, details);
         };
         this.value = value;
+        value.linkTo(this);
     }
 
     @Override
-    public StackInputSlot construct(GuiViewManager guiViewManager) {
+    public StackInputSlot construct(GuiHolder holder, GuiViewManager guiViewManager) {
         return this;
+    }
+
+    @Override
+    public void update(GuiViewManager viewManager, GuiHolder guiHolder, RenderContext renderContext) {
+        if (!(value.get() instanceof ItemStackImpl stackImpl)) return;
+        for (int slot : getSlots()) {
+            renderContext.setNativeStack(slot, stackImpl.getBukkitRef());
+            ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(this, slot);
+        }
     }
 
     @Override
@@ -79,10 +90,5 @@ public class StackInputSlotImpl extends AbstractComponentImpl implements Interac
     @Override
     public Signal<ItemStack> signal() {
         return value;
-    }
-
-    @Override
-    public void update(GuiViewManager viewManager, GuiHolder guiHolder, RenderContext renderContext) {
-
     }
 }
