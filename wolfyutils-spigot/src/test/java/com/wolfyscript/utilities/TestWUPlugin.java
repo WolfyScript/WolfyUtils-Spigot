@@ -31,12 +31,10 @@ public class TestWUPlugin {
 
     @BeforeAll
     public static void load() {
-        server = MockBukkit.mock();
     }
 
     @AfterAll
     public static void unload() {
-        MockBukkit.unmock();
     }
 
     @Test
