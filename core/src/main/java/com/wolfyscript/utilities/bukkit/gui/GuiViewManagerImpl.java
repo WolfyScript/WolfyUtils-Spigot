@@ -67,9 +67,9 @@ public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
             viewerContexts.put(player.getUniqueId(), context);
             player.openInventory(context.getInventory());
             getCurrentMenu().ifPresent(window -> {
-                window.construct(this).render((GuiHolder) context.getInventory().getHolder(), this, context);
+                GuiHolder holder = (GuiHolder) context.getInventory().getHolder();
+                window.construct(holder, this).render(holder, this, context);
             });
-            return;
         }
 
         for (SignalledObject signalledObject : updatedSignalsSinceLastUpdate) {

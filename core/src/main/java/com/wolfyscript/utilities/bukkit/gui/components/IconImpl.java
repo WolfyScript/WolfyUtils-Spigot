@@ -7,7 +7,6 @@ import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.RenderContext;
-import com.wolfyscript.utilities.common.gui.Renderer;
 import com.wolfyscript.utilities.common.gui.components.Icon;
 
 import com.wolfyscript.utilities.common.gui.impl.AbstractComponentImpl;
@@ -24,7 +23,7 @@ public class IconImpl extends AbstractComponentImpl implements Icon<ItemStack> {
     }
 
     @Override
-    public Icon<ItemStack> construct(GuiViewManager guiViewManager) {
+    public Icon<ItemStack> construct(GuiHolder holder, GuiViewManager guiViewManager) {
         return this;
     }
 

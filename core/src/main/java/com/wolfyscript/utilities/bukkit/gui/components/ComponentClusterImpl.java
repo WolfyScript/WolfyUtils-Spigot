@@ -55,7 +55,7 @@ public class ComponentClusterImpl extends AbstractComponentImpl implements Compo
     }
 
     @Override
-    public ComponentCluster construct(GuiViewManager guiViewManager) {
+    public ComponentCluster construct(GuiHolder holder, GuiViewManager guiViewManager) {
         return this;
     }
 
@@ -75,7 +75,7 @@ public class ComponentClusterImpl extends AbstractComponentImpl implements Compo
                 renderContext.setSlotOffsetToParent(slot);
                 ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(component, slot);
                 renderContext.enterNode(component);
-                if (component.construct(viewManager) instanceof SignalledObject signalledObject) {
+                if (component.construct(guiHolder, viewManager) instanceof SignalledObject signalledObject) {
                     signalledObject.update(viewManager, guiHolder, renderContext);
                 }
                 renderContext.exitNode();

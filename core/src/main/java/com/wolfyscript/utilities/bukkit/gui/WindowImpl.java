@@ -27,7 +27,7 @@ public final class WindowImpl implements Window {
     private final String id;
     private final Router router;
     private final WolfyUtils wolfyUtils;
-    private final Consumer<com.wolfyscript.utilities.common.gui.WindowRenderer.Builder> rendererConstructor;
+    private final Consumer<WindowDynamicConstructor> rendererConstructor;
     private final Integer size;
     private final WindowType type;
     private String staticTitle = null;
@@ -44,7 +44,7 @@ public final class WindowImpl implements Window {
                InteractionCallback interactionCallback,
                Multimap<Component, Integer> staticComponents,
                Multimap<ComponentBuilder<?, ?>, Integer> nonRenderedComponents,
-               Consumer<com.wolfyscript.utilities.common.gui.WindowRenderer.Builder> rendererConstructor) {
+               Consumer<WindowDynamicConstructor> rendererConstructor) {
         Preconditions.checkNotNull(id);
         Preconditions.checkNotNull(interactionCallback);
         Preconditions.checkArgument(size != null || type != null, "Either type or size must be specified!");
@@ -84,9 +84,10 @@ public final class WindowImpl implements Window {
     }
 
     @Override
-    public Window construct(GuiViewManager viewManager) {
-        var rendererBuilder = new WindowDynamicConstructor(wolfyUtils, viewManager, this);
+    public Window construct(GuiHolder holder, GuiViewManager viewManager) {
+        var rendererBuilder = new WindowDynamicConstructorImpl(wolfyUtils, holder, this);
         rendererConstructor.accept(rendererBuilder);
+        rendererBuilder.usedSignals.forEach((s, signal) -> signal.update(o -> o));
         return rendererBuilder.create(this);
     }
 
@@ -113,7 +114,7 @@ public final class WindowImpl implements Window {
             renderContext.setSlotOffsetToParent(slot);
             ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(component, slot);
             renderContext.enterNode(component);
-            if (component.construct(viewManager) instanceof SignalledObject signalledObject) {
+            if (component.construct(guiHolder, viewManager) instanceof SignalledObject signalledObject) {
                 signalledObject.update(viewManager, guiHolder, renderContext);
             }
             renderContext.exitNode();

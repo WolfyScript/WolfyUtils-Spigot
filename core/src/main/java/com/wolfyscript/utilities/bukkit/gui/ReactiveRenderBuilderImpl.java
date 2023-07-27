@@ -29,7 +29,7 @@ public class ReactiveRenderBuilderImpl implements com.wolfyscript.utilities.comm
 
     @Override
     public <B extends ComponentBuilder<? extends Component, Component>> ReactiveRenderBuilder.ReactiveResult renderAt(int slot, String id, Class<B> builderType, Consumer<B> builderConsumer) {
-        Pair<NamespacedKey, Class<B>> builderTypeInfo = WindowDynamicConstructor.getBuilderType(wolfyUtils, id, builderType);
+        Pair<NamespacedKey, Class<B>> builderTypeInfo = WindowDynamicConstructorImpl.getBuilderType(wolfyUtils, id, builderType);
         B builder = componentBuilderPositions.keySet().stream()
                 .filter(entry -> entry.getID().equals(id) && entry.getType().equals(builderTypeInfo.getKey()))
                 .findFirst()
@@ -49,7 +49,7 @@ public class ReactiveRenderBuilderImpl implements com.wolfyscript.utilities.comm
 
     @Override
     public <B extends ComponentBuilder<? extends Component, Component>> ReactiveRenderBuilder.ReactiveResult render(String id, Class<B> builderType, Consumer<B> builderConsumer) {
-        Pair<NamespacedKey, Class<B>> builderTypeInfo = WindowDynamicConstructor.getBuilderType(wolfyUtils, id, builderType);
+        Pair<NamespacedKey, Class<B>> builderTypeInfo = WindowDynamicConstructorImpl.getBuilderType(wolfyUtils, id, builderType);
         B builder = builderTypeInfo.getValue().cast(componentBuilderPositions.keys().stream()
                 .filter(entry -> entry.getID().equals(id) && entry.getType().equals(builderTypeInfo.getKey()))
                 .findFirst()

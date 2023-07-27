@@ -31,7 +31,7 @@ public class WindowBuilderImpl  implements WindowBuilder {
     protected WindowType type;
     private String staticTitle = null;
     private InteractionCallback interactionCallback = (guiHolder, interactionDetails) -> InteractionResult.def();
-    private Consumer<com.wolfyscript.utilities.common.gui.WindowRenderer.Builder> rendererConstructor = builder -> {};
+    private Consumer<WindowDynamicConstructor> rendererConstructor = builder -> {};
     private final Multimap<ComponentBuilder<?, ?>, Integer> componentBuilderPositions = ArrayListMultimap.create();
     private final Set<ComponentBuilder<?, ?>> componentRenderSet = new HashSet<>();
 
@@ -92,7 +92,7 @@ public class WindowBuilderImpl  implements WindowBuilder {
     }
 
     @Override
-    public WindowBuilder construct(Consumer<com.wolfyscript.utilities.common.gui.WindowRenderer.Builder> render) {
+    public WindowBuilder construct(Consumer<WindowDynamicConstructor> render) {
         Preconditions.checkNotNull(render);
         this.rendererConstructor = render;
         return this;

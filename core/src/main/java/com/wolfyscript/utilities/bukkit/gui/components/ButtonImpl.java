@@ -57,7 +57,7 @@ public class ButtonImpl extends AbstractComponentImpl implements Button {
     }
 
     @Override
-    public Button construct(GuiViewManager guiViewManager) {
+    public Button construct(GuiHolder holder, GuiViewManager guiViewManager) {
         return this;
     }
 

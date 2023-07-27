@@ -11,6 +11,7 @@ import com.wolfyscript.utilities.common.gui.*;
 import com.wolfyscript.utilities.common.gui.components.StackInputSlot;
 import com.wolfyscript.utilities.common.gui.components.StackInputSlotBuilder;
 import com.wolfyscript.utilities.common.gui.impl.AbstractComponentBuilderImpl;
+import com.wolfyscript.utilities.common.gui.signal.Signal;
 import it.unimi.dsi.fastutil.ints.IntList;
 
 import java.util.function.Consumer;

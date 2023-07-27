@@ -7,10 +7,17 @@ import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
+
 public class EntityImpl<T extends Entity> extends BukkitRefAdapter<T> implements com.wolfyscript.utilities.common.adapters.Entity {
 
     public EntityImpl(T entity) {
         super(entity);
+    }
+
+    @Override
+    public UUID uuid() {
+        return getBukkitRef().getUniqueId();
     }
 
     @Override

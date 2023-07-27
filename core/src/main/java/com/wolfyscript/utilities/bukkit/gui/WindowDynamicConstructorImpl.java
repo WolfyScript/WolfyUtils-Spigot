@@ -31,10 +31,11 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class WindowDynamicConstructor implements com.wolfyscript.utilities.common.gui.WindowRenderer.Builder {
+public class WindowDynamicConstructorImpl implements WindowDynamicConstructor {
 
     final WolfyUtils wolfyUtils;
     final GuiViewManager viewManager;
+    final GuiHolder holder;
     final WindowImpl window;
     final Multimap<ComponentBuilder<?, ?>, Integer> componentBuilderPositions = ArrayListMultimap.create();
     final Set<ComponentBuilder<?, ?>> componentRenderSet = new HashSet<>();
@@ -43,23 +44,23 @@ public class WindowDynamicConstructor implements com.wolfyscript.utilities.commo
     private SerializableSupplier<net.kyori.adventure.text.Component> titleFunction;
     private final Set<Signal<?>> titleSignals = new HashSet<>();
 
-    @JsonCreator
-    public WindowDynamicConstructor(@JacksonInject WolfyUtils wolfyUtils, GuiViewManager viewManager, WindowImpl window) {
+    public WindowDynamicConstructorImpl(@JacksonInject WolfyUtils wolfyUtils, GuiHolder holder, WindowImpl window) {
         this.wolfyUtils = wolfyUtils;
         this.window = window;
-        this.viewManager = viewManager;
+        this.holder = holder;
+        this.viewManager = holder.getViewManager();
 
         this.componentBuilderPositions.putAll(window.nonRenderedComponents);
     }
 
     @Override
-    public WindowDynamicConstructor title(SerializableSupplier<net.kyori.adventure.text.Component> titleSupplier) {
+    public WindowDynamicConstructorImpl title(SerializableSupplier<net.kyori.adventure.text.Component> titleSupplier) {
         this.titleFunction = titleSupplier;
         return this;
     }
 
     @Override
-    public WindowDynamicConstructor titleSignals(Signal<?>... signals) {
+    public WindowDynamicConstructorImpl titleSignals(Signal<?>... signals) {
         titleTagResolvers.addAll(Arrays.stream(signals)
                 .map(signal -> TagResolver.resolver(signal.key(), (argumentQueue, context) -> Tag.inserting(net.kyori.adventure.text.Component.text(String.valueOf(signal.get())))))
                 .toList());
@@ -72,6 +73,16 @@ public class WindowDynamicConstructor implements com.wolfyscript.utilities.commo
         for (ComponentBuilder<?, ?> componentBuilder : componentBuilders) {
             componentBuilderPositions.putAll(componentBuilder, componentBuilder.getSlots());
         }
+    }
+
+    @Override
+    public GuiViewManager viewManager() {
+        return null;
+    }
+
+    @Override
+    public GuiHolder holder() {
+        return null;
     }
 
     @Override
@@ -100,7 +111,7 @@ public class WindowDynamicConstructor implements com.wolfyscript.utilities.commo
     }
 
     @Override
-    public WindowDynamicConstructor reactive(SerializableFunction<com.wolfyscript.utilities.common.gui.ReactiveRenderBuilder, ReactiveRenderBuilder.ReactiveResult> consumer) {
+    public WindowDynamicConstructorImpl reactive(SerializableFunction<com.wolfyscript.utilities.common.gui.ReactiveRenderBuilder, ReactiveRenderBuilder.ReactiveResult> consumer) {
         SignalledObject signalledObject = new SignalledObject() {
 
             private Component previousComponent = null;
@@ -110,7 +121,7 @@ public class WindowDynamicConstructor implements com.wolfyscript.utilities.commo
                 if (!(context instanceof RenderContextImpl renderContext)) return;
                 ReactiveRenderBuilderImpl builder = new ReactiveRenderBuilderImpl(wolfyUtils, componentBuilderPositions);
                 ReactiveRenderBuilder.ReactiveResult result = consumer.apply(builder);
-                Component component = result == null ? null : result.construct().construct(viewManager);
+                Component component = result == null ? null : result.construct().construct(guiHolder, viewManager);
                 if (Objects.equals(previousComponent, component)) return;
 
                 if (previousComponent != null) {
@@ -135,13 +146,13 @@ public class WindowDynamicConstructor implements com.wolfyscript.utilities.commo
             }
         };
         for (Signal<?> signal : consumer.getSignalsUsed()) {
-            ((SignalImpl<?>) signal).linkTo(signalledObject);
+            signal.linkTo(signalledObject);
         }
         return this;
     }
 
     @Override
-    public <B extends ComponentBuilder<? extends Component, Component>> WindowDynamicConstructor ifThenRender(SerializableSupplier<Boolean> condition, String id, Class<B> builderType, SerializableConsumer<B> builderConsumer) {
+    public <B extends ComponentBuilder<? extends Component, Component>> WindowDynamicConstructorImpl ifThenRender(SerializableSupplier<Boolean> condition, String id, Class<B> builderType, SerializableConsumer<B> builderConsumer) {
         Pair<NamespacedKey, Class<B>> builderTypeInfo = getBuilderType(wolfyUtils, id, builderType);
         B builder = findExistingComponentBuilder(id, builderTypeInfo.getValue(), builderTypeInfo.getKey())
                 .orElseThrow(() -> new IllegalStateException(String.format("Failed to link to component '%s'! Cannot find existing placement", id)));
@@ -163,7 +174,7 @@ public class WindowDynamicConstructor implements com.wolfyscript.utilities.commo
                         renderContext.enterNode(component);
                         for (int slot : component.getSlots()) {
                             renderContext.setSlotOffsetToParent(slot);
-                            if (component.construct(viewManager) instanceof SignalledObject signalledObject) {
+                            if (component.construct(guiHolder, viewManager) instanceof SignalledObject signalledObject) {
                                 signalledObject.update(viewManager, guiHolder, renderContext);
                             }
                             component.executeForAllSlots(slot, slot2 -> ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(component, slot2));
@@ -182,18 +193,18 @@ public class WindowDynamicConstructor implements com.wolfyscript.utilities.commo
         };
 
         for (Signal<?> signal : condition.getSignalsUsed()) {
-            ((SignalImpl<?>) signal).linkTo(signalledObject);
+            signal.linkTo(signalledObject);
         }
         return this;
     }
 
     @Override
-    public <BV extends ComponentBuilder<? extends Component, Component>, BI extends ComponentBuilder<? extends Component, Component>> WindowDynamicConstructor ifThenRenderOr(SerializableSupplier<Boolean> serializableSupplier, Class<BV> validBuilderType, Consumer<BV> validBuilder, Class<BI> invalidBuilderType, SerializableConsumer<BI> invalidBuilder) {
+    public <BV extends ComponentBuilder<? extends Component, Component>, BI extends ComponentBuilder<? extends Component, Component>> WindowDynamicConstructorImpl ifThenRenderOr(SerializableSupplier<Boolean> serializableSupplier, Class<BV> validBuilderType, Consumer<BV> validBuilder, Class<BI> invalidBuilderType, SerializableConsumer<BI> invalidBuilder) {
         return null;
     }
 
     @Override
-    public <B extends ComponentBuilder<? extends Component, Component>> WindowDynamicConstructor position(int slot, String id, Class<B> builderType, SerializableConsumer<B> builderConsumer) {
+    public <B extends ComponentBuilder<? extends Component, Component>> WindowDynamicConstructorImpl position(int slot, String id, Class<B> builderType, SerializableConsumer<B> builderConsumer) {
         Pair<NamespacedKey, Class<B>> builderTypeInfo = getBuilderType(wolfyUtils, id, builderType);
 
         findExistingComponentBuilder(id, builderTypeInfo.getValue(), builderTypeInfo.getKey()).ifPresentOrElse(builderConsumer, () -> {
@@ -216,7 +227,7 @@ public class WindowDynamicConstructor implements com.wolfyscript.utilities.commo
     }
 
     @Override
-    public <B extends ComponentBuilder<? extends Component, Component>> WindowDynamicConstructor render(String id, Class<B> builderType, SerializableConsumer<B> builderConsumer) {
+    public <B extends ComponentBuilder<? extends Component, Component>> WindowDynamicConstructorImpl render(String id, Class<B> builderType, SerializableConsumer<B> builderConsumer) {
         Pair<NamespacedKey, Class<B>> builderTypeInfo = getBuilderType(wolfyUtils, id, builderType);
         B builder = findExistingComponentBuilder(id, builderTypeInfo.getValue(), builderTypeInfo.getKey())
                 .orElseThrow(() -> new IllegalStateException(String.format("Failed to link to component '%s'! Cannot find existing placement", id)));
@@ -226,7 +237,7 @@ public class WindowDynamicConstructor implements com.wolfyscript.utilities.commo
     }
 
     @Override
-    public <B extends ComponentBuilder<? extends Component, Component>> WindowDynamicConstructor renderAt(int slot, String id, Class<B> builderType, SerializableConsumer<B> builderConsumer) {
+    public <B extends ComponentBuilder<? extends Component, Component>> WindowDynamicConstructorImpl renderAt(int slot, String id, Class<B> builderType, SerializableConsumer<B> builderConsumer) {
         Pair<NamespacedKey, Class<B>> builderTypeInfo = getBuilderType(wolfyUtils, id, builderType);
         findExistingComponentBuilder(id, builderTypeInfo.getValue(), builderTypeInfo.getKey()).ifPresentOrElse(builderConsumer, () -> {
             Injector injector = Guice.createInjector(Stage.PRODUCTION, binder -> {
@@ -278,10 +289,10 @@ public class WindowDynamicConstructor implements com.wolfyscript.utilities.commo
                 }
             };
             for (Signal<?> signal : titleFunction.getSignalsUsed()) {
-                ((SignalImpl<?>) signal).linkTo(signalledObject);
+                signal.linkTo(signalledObject);
             }
             for (Signal<?> signal : titleSignals) {
-                ((SignalImpl<?>) signal).linkTo(signalledObject);
+                signal.linkTo(signalledObject);
             }
         }
 
