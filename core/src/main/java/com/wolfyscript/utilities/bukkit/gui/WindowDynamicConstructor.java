@@ -17,6 +17,8 @@ import com.wolfyscript.utilities.common.gui.*;
 import com.wolfyscript.utilities.common.gui.functions.SerializableConsumer;
 import com.wolfyscript.utilities.common.gui.functions.SerializableFunction;
 import com.wolfyscript.utilities.common.gui.functions.SerializableSupplier;
+import com.wolfyscript.utilities.common.gui.signal.Signal;
+import com.wolfyscript.utilities.common.gui.signal.Store;
 import com.wolfyscript.utilities.common.registry.RegistryGUIComponentBuilders;
 import com.wolfyscript.utilities.tuple.Pair;
 import com.wolfyscript.utilities.versioning.MinecraftVersion;
@@ -73,7 +75,7 @@ public class WindowDynamicConstructor implements com.wolfyscript.utilities.commo
     }
 
     @Override
-    public <T> Signal<T> createSignal(String s, Class<T> aClass, Supplier<T> defaultValueFunction) {
+    public <T> Signal<T> signal(String s, Class<T> aClass, Supplier<T> defaultValueFunction) {
         if (usedSignals.containsKey(s)) {
             Signal<?> usedSignal = usedSignals.get(s);
             Preconditions.checkState(usedSignal.valueType().equals(aClass), String.format("Failed to use existing state '%s'! Incompatible types: expected '%s' but got '%s'", s, usedSignal.valueType(), aClass));
@@ -82,6 +84,19 @@ public class WindowDynamicConstructor implements com.wolfyscript.utilities.commo
         var signal = new SignalImpl<>(s, viewManager, aClass, defaultValueFunction);
         usedSignals.put(s, signal);
         return signal;
+    }
+
+    @Override
+    public <T> Store<T> syncStore(String s, Class<T> aClass, Supplier<T> supplier, Consumer<T> consumer) {
+        if (usedSignals.containsKey(s)) {
+            Signal<?> usedSignal = usedSignals.get(s);
+            Preconditions.checkState(usedSignal.valueType().equals(aClass), String.format("Failed to use existing store '%s'! Incompatible types: expected '%s' but got '%s'", s, usedSignal.valueType(), aClass));
+            Preconditions.checkState(usedSignal instanceof Store<?>, String.format("Failed to use existing signal '%s' as store!", s));
+            return (Store<T>) usedSignal;
+        }
+        var store = new StoreImpl<>(s, viewManager, aClass, supplier, consumer);
+        usedSignals.put(s, store);
+        return store;
     }
 
     @Override

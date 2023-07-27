@@ -1,26 +1,31 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
-import com.wolfyscript.utilities.common.gui.signal.Signal;
 import com.wolfyscript.utilities.common.gui.SignalledObject;
+import com.wolfyscript.utilities.common.gui.signal.Store;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class SignalImpl<MT> implements Signal<MT> {
+public class StoreImpl<V> implements Store<V> {
 
     private final String key;
-    private final Class<MT> messageValueType;
-    private MT value;
+    private final Class<V> messageValueType;
     private final GuiViewManager viewManager;
+    private final Supplier<V> getValue;
+    private final Consumer<V> setValue;
     private final Set<SignalledObject> linkedItems = new HashSet<>();
 
-    public SignalImpl(String key, GuiViewManager viewManager, Class<MT> messageValueType, Supplier<MT> defaultValueFunction) {
+    public StoreImpl(String key, GuiViewManager viewManager, Class<V> messageValueType, Supplier<V> getValue, Consumer<V> setValue) {
         this.key = key;
         this.messageValueType = messageValueType;
-        this.value = defaultValueFunction.get();
         this.viewManager = viewManager;
+        this.getValue = getValue;
+        this.setValue = setValue;
     }
 
     @Override
@@ -34,31 +39,31 @@ public class SignalImpl<MT> implements Signal<MT> {
     }
 
     @Override
-    public Class<MT> valueType() {
-        return messageValueType;
+    public Class<V> valueType() {
+        return this.messageValueType;
     }
 
     @Override
-    public void set(MT newValue) {
-        this.value = newValue;
+    public void set(V newValue) {
+        setValue.accept(newValue);
         ((GuiViewManagerImpl) viewManager).updateObjects(linkedItems);
     }
 
     @Override
-    public void update(Function<MT, MT> function) {
-        set(function.apply(value));
+    public void update(Function<V, V> function) {
+        set(function.apply(get()));
     }
 
     @Override
-    public MT get() {
-        return value;
+    public V get() {
+        return getValue.get();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SignalImpl<?> signal = (SignalImpl<?>) o;
+        StoreImpl<?> signal = (StoreImpl<?>) o;
         return Objects.equals(key, signal.key) && Objects.equals(messageValueType, signal.messageValueType);
     }
 
@@ -66,5 +71,4 @@ public class SignalImpl<MT> implements Signal<MT> {
     public int hashCode() {
         return Objects.hash(key, messageValueType);
     }
-
 }

@@ -5,7 +5,7 @@ import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.adapters.ItemStack;
 import com.wolfyscript.utilities.common.gui.GuiAPIManager;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
-import com.wolfyscript.utilities.common.gui.Signal;
+import com.wolfyscript.utilities.common.gui.signal.Signal;
 import com.wolfyscript.utilities.common.gui.components.ButtonBuilder;
 import com.wolfyscript.utilities.common.gui.components.ComponentClusterBuilder;
 import com.wolfyscript.utilities.common.gui.components.StackInputSlotBuilder;
@@ -26,7 +26,7 @@ public class TestGUI {
                         .size(27)
                         // Creates the signal this component will track and children can listen to
                         .construct(rendering -> {
-                            Signal<Integer> count = rendering.createSignal("count", Integer.class, () -> 0);
+                            Signal<Integer> count = rendering.signal("count", Integer.class, () -> 0);
 
                             rendering
                                     // The state of a component is only reconstructed if the slot it is positioned at changes.
@@ -104,7 +104,7 @@ public class TestGUI {
                         .size(9 * 3)
                         .construct((renderer) -> {
                             // This is only called upon creation of the component. So this is not called when the signal is updated!
-                            Signal<Integer> count = renderer.createSignal("count", Integer.class, () -> 0);
+                            Signal<Integer> count = renderer.signal("count", Integer.class, () -> 0);
 
                             renderer
                                     .titleSignals(count)
@@ -140,8 +140,8 @@ public class TestGUI {
                         .size(9 * 6)
                         .construct((renderer) -> {
                             // This is only called upon creation of the state. So this is not called when the signal is updated!
-                            Signal<ItemStack> stackToEdit = renderer.createSignal("stack_to_edit", ItemStack.class, () -> null);
-                            Signal<String> selectedTab = renderer.createSignal("selected_tab", String.class, () -> "");
+                            Signal<ItemStack> stackToEdit = renderer.signal("stack_to_edit", ItemStack.class, () -> null);
+                            Signal<String> selectedTab = renderer.signal("selected_tab", String.class, () -> "");
 
                             renderer
                                     .reactive(reactiveBuilder -> {

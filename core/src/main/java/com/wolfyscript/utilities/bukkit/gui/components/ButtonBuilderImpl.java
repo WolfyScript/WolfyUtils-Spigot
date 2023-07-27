@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.wolfyscript.utilities.KeyedStaticId;
-import com.wolfyscript.utilities.bukkit.gui.SignalImpl;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.*;
@@ -17,11 +16,11 @@ import com.wolfyscript.utilities.common.gui.components.ButtonBuilder;
 import com.wolfyscript.utilities.common.gui.components.ButtonIcon;
 import com.wolfyscript.utilities.common.gui.functions.SerializableSupplier;
 import com.wolfyscript.utilities.common.gui.impl.AbstractComponentBuilderImpl;
+import com.wolfyscript.utilities.common.gui.signal.Signal;
 import com.wolfyscript.utilities.common.items.ItemStackConfig;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -69,7 +68,7 @@ public class ButtonBuilderImpl extends AbstractComponentBuilderImpl<Button, Comp
     public Button create(Component parent) {
         ButtonImpl button = new ButtonImpl(getWolfyUtils(), getID(), parent, iconBuilder.create(), interactionCallback, getSlots());
         for (Signal<?> signal : iconBuilder.signals) {
-            ((SignalImpl<?>) signal).linkTo(button);
+            signal.linkTo(button);
         }
         return button;
     }
