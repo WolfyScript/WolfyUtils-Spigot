@@ -2,6 +2,7 @@ package com.wolfyscript.utilities.bukkit.chat;
 
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.bukkit.adapters.BukkitWrapper;
 import com.wolfyscript.utilities.bukkit.adapters.PlayerImpl;
 import com.wolfyscript.utilities.common.chat.Chat;
 import com.wolfyscript.utilities.common.chat.ClickActionCallback;
@@ -15,8 +16,11 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
@@ -38,12 +42,10 @@ public class BukkitChat extends Chat implements IBukkitChat {
     private static final Map<UUID, PlayerAction> CLICK_DATA_MAP = new HashMap<>();
 
     private final Map<String, String> convertedLegacyPlaceholders = new HashMap<>();
-    private final LegacyComponentSerializer LEGACY_SERIALIZER;
     private final BungeeComponentSerializer BUNGEE_SERIALIZER;
 
     public BukkitChat(@NotNull WolfyUtilsBukkit wolfyUtils) {
         super(wolfyUtils);
-        this.LEGACY_SERIALIZER = BukkitComponentSerializer.legacy();
         this.BUNGEE_SERIALIZER = BungeeComponentSerializer.get();
     }
 
@@ -113,6 +115,7 @@ public class BukkitChat extends Chat implements IBukkitChat {
             if (prefix) {
                 component = getChatPrefix().append(Component.text(" ")).append(component);
             }
+            wolfyUtils.getCore();
             player.spigot().sendMessage(BUNGEE_SERIALIZER.serialize(component));
         }
     }
@@ -138,8 +141,14 @@ public class BukkitChat extends Chat implements IBukkitChat {
     }
 
     @Override
-    public net.kyori.adventure.text.event.ClickEvent executable(com.wolfyscript.utilities.common.adapters.Player player, boolean b, ClickActionCallback clickActionCallback) {
-        return null;
+    public net.kyori.adventure.text.event.ClickEvent executable(com.wolfyscript.utilities.common.adapters.Player player, boolean discard, ClickActionCallback actionCallback) {
+        Preconditions.checkArgument(actionCallback != null, "The click action cannot be null!");
+        UUID id;
+        do {
+            id = UUID.randomUUID();
+        } while (CLICK_DATA_MAP.containsKey(id));
+        CLICK_DATA_MAP.put(id, new PlayerAction((WolfyUtilsBukkit) wolfyUtils, player, actionCallback, discard));
+        return net.kyori.adventure.text.event.ClickEvent.clickEvent(net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND, "/wua " + id);
     }
 
     /**
@@ -153,14 +162,8 @@ public class BukkitChat extends Chat implements IBukkitChat {
      * @return The ClickEvent with the generated command.
      */
     @Override
-    public net.kyori.adventure.text.event.ClickEvent executable(Player player, boolean discard, ClickAction action) {
-        Preconditions.checkArgument(action != null, "The click action cannot be null!");
-        UUID id;
-        do {
-            id = UUID.randomUUID();
-        } while (CLICK_DATA_MAP.containsKey(id));
-        CLICK_DATA_MAP.put(id, new PlayerAction((WolfyUtilsBukkit) wolfyUtils, player, action, discard));
-        return net.kyori.adventure.text.event.ClickEvent.clickEvent(net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND, "/wua " + id);
+    public net.kyori.adventure.text.event.ClickEvent executable(Player player, boolean discard, ClickActionCallback action) {
+        return executable(BukkitWrapper.adapt(player), discard, action);
     }
 
     public static void removeClickData(UUID uuid) {

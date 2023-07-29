@@ -5,6 +5,8 @@ import com.wolfyscript.utilities.common.gui.*;
 
 import java.util.*;
 
+import com.wolfyscript.utilities.common.gui.callback.TextInputCallback;
+import com.wolfyscript.utilities.common.gui.callback.TextInputTabCompleteCallback;
 import com.wolfyscript.utilities.common.gui.impl.AbstractComponentImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -18,9 +20,16 @@ public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
     private final Map<UUID, RenderContextImpl> viewerContexts = new HashMap<>();
     private final Set<SignalledObject> updatedSignalsSinceLastUpdate = new HashSet<>();
 
+    private TextInputCallback textInputCallback;
+    private TextInputTabCompleteCallback textInputTabCompleteCallback;
+
     protected GuiViewManagerImpl(WolfyUtils wolfyUtils, Router rootRouter, Set<UUID> viewers) {
         super(wolfyUtils, rootRouter, viewers);
         id = NEXT_ID++;
+    }
+
+    public long getId() {
+        return id;
     }
 
     Optional<Component> getLeaveNode(int slot) {
@@ -48,6 +57,26 @@ public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
     @Override
     public Optional<RenderContext> getRenderContext(UUID viewer) {
         return Optional.ofNullable(viewerContexts.get(viewer));
+    }
+
+    @Override
+    public Optional<TextInputCallback> textInputCallback() {
+        return Optional.ofNullable(textInputCallback);
+    }
+
+    @Override
+    public void setTextInputCallback(TextInputCallback textInputCallback) {
+        this.textInputCallback = textInputCallback;
+    }
+
+    @Override
+    public Optional<TextInputTabCompleteCallback> textInputTabCompleteCallback() {
+        return Optional.ofNullable(textInputTabCompleteCallback);
+    }
+
+    @Override
+    public void setTextInputTabCompleteCallback(TextInputTabCompleteCallback textInputTabCompleteCallback) {
+        this.textInputTabCompleteCallback = textInputTabCompleteCallback;
     }
 
     @Override

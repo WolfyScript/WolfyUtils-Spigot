@@ -11,6 +11,7 @@ import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.*;
+import com.wolfyscript.utilities.common.gui.callback.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.components.Button;
 import com.wolfyscript.utilities.common.gui.components.ButtonBuilder;
 import com.wolfyscript.utilities.common.gui.components.ButtonIcon;

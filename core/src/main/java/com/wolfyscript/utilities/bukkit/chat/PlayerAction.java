@@ -20,47 +20,29 @@ package com.wolfyscript.utilities.bukkit.chat;
 
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import java.util.UUID;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.entity.Player;
+
+import com.wolfyscript.utilities.common.adapters.Player;
+import com.wolfyscript.utilities.common.chat.ClickActionCallback;
+import net.kyori.adventure.audience.Audience;
 
 /**
  * Caches all the data necessary to create and call callbacks, when the corresponding text component is clicked.
- *
- * @deprecated <b>Only for internal usages in WolfyUtilities! Going to be made package private in the future!</b>
  */
-@Deprecated(since = "3.16.1.0")
 public class PlayerAction {
 
     private UUID uuid;
     private WolfyUtilsBukkit api;
-
-    /**
-     * @deprecated No longer used, as the text is now managed by the parent {@link net.kyori.adventure.text.Component}
-     */
-    @Deprecated(since = "3.16.1.0")
-    private TextComponent message;
-
-    private ClickAction clickAction;
+    private ClickActionCallback clickAction;
     private final boolean discard;
 
-    @Deprecated(since = "3.16.1.0")
-    public PlayerAction(WolfyUtilsBukkit api, Player player, ClickData clickData) {
-        this.uuid = player.getUniqueId();
+    PlayerAction(WolfyUtilsBukkit api, Player player, ClickActionCallback action, boolean discard) {
+        this.uuid = player.uuid();
         this.api = api;
-        this.message = new TextComponent(ChatColor.convert(api.getLanguageAPI().replaceKeys(clickData.getMessage())));
-        this.clickAction = clickData.getClickAction();
-        this.discard = clickData.isDiscard();
-    }
-
-    public PlayerAction(WolfyUtilsBukkit api, Player player, ClickAction action, boolean discard) {
-        this.uuid = player.getUniqueId();
-        this.api = api;
-        this.message = null;
         this.clickAction = action;
         this.discard = discard;
     }
 
-    public void run(Player player) {
+    public void run(com.wolfyscript.utilities.common.adapters.Player player) {
         if (clickAction != null) {
             clickAction.run(api, player);
         }
@@ -82,27 +64,11 @@ public class PlayerAction {
         this.api = api;
     }
 
-    /**
-     * @deprecated No longer used, as the text is now managed by the parent {@link net.kyori.adventure.text.Component}
-     */
-    @Deprecated
-    public TextComponent getMessage() {
-        return message;
-    }
-
-    /**
-     * @deprecated No longer used, as the text is now managed by the parent {@link net.kyori.adventure.text.Component}
-     */
-    @Deprecated
-    public void setMessage(TextComponent message) {
-        this.message = message;
-    }
-
-    public ClickAction getClickAction() {
+    public ClickActionCallback getClickAction() {
         return clickAction;
     }
 
-    public void setClickAction(ClickAction clickAction) {
+    public void setClickAction(ClickActionCallback clickAction) {
         this.clickAction = clickAction;
     }
 

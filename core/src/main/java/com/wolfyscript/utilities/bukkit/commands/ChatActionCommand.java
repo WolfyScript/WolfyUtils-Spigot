@@ -19,6 +19,7 @@
 package com.wolfyscript.utilities.bukkit.commands;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.adapters.BukkitWrapper;
 import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
 import java.util.UUID;
 import com.wolfyscript.utilities.bukkit.chat.PlayerAction;
@@ -57,7 +58,7 @@ public class ChatActionCommand extends Command implements PluginIdentifiableComm
             }
             PlayerAction action = BukkitChat.getClickData(uuid);
             if (action != null && player.getUniqueId().equals(action.getUuid())) {
-                action.run(player);
+                action.run(BukkitWrapper.adapt(player));
                 if (action.isDiscard()) {
                     BukkitChat.removeClickData(uuid);
                 }

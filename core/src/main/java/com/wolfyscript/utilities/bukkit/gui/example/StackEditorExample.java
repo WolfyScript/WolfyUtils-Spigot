@@ -10,13 +10,16 @@ import com.wolfyscript.utilities.common.chat.Chat;
 import com.wolfyscript.utilities.common.gui.GuiAPIManager;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
+import com.wolfyscript.utilities.common.gui.ReactiveRenderBuilder;
 import com.wolfyscript.utilities.common.gui.components.ButtonBuilder;
 import com.wolfyscript.utilities.common.gui.components.ComponentClusterBuilder;
 import com.wolfyscript.utilities.common.gui.components.StackInputSlotBuilder;
 import com.wolfyscript.utilities.common.gui.signal.Signal;
 import com.wolfyscript.utilities.common.gui.signal.Store;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Map;
@@ -44,9 +47,7 @@ public class StackEditorExample {
         NONE,
         DISPLAY_NAME,
         LORE,
-
     }
-
 
     static void register(GuiAPIManager manager) {
         manager.registerGuiFromFiles("stack_editor", builder -> builder
@@ -70,44 +71,7 @@ public class StackEditorExample {
                                             return null;
 
                                         return switch (selectedTab.get()) {
-                                            case DISPLAY_NAME ->
-                                                    reactiveBuilder.render("display_name_tab", ComponentClusterBuilder.class, displayNameClusterBuilder -> displayNameClusterBuilder
-                                                            .render("set_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
-                                                                    .interact((holder, details) -> {
-                                                                        BukkitChat chat = (BukkitChat) holder.getViewManager().getWolfyUtils().getChat();
-
-                                                                        ClickEvent clickEvent = chat.executable(((GUIHolder) holder).getBukkitPlayer(), true, (wolfyUtils, player) -> {
-                                                                            wolfyUtils.getGUIManager().createViewAndOpen("stack_editor", player.getUniqueId());
-
-                                                                        });
-
-                                                                        stackToEdit.update(stack -> {
-                                                                            if (stack instanceof ItemStackImpl stackImpl) {
-                                                                                var bukkitStack = stackImpl.getBukkitRef();
-                                                                                ItemMeta meta = bukkitStack.getItemMeta();
-                                                                                meta.setDisplayName("Test");
-                                                                                bukkitStack.setItemMeta(meta);
-                                                                                stackToEdit.set(stack);
-                                                                            }
-                                                                            return stack;
-                                                                        });
-
-                                                                        return InteractionResult.cancel(true);
-                                                                    }))
-                                                            .render("reset_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
-                                                                    .interact((holder, details) -> {
-                                                                        stackToEdit.update(stack -> {
-                                                                            if (stack instanceof ItemStackImpl stackImpl) {
-                                                                                var bukkitStack = stackImpl.getBukkitRef();
-                                                                                ItemMeta meta = bukkitStack.getItemMeta();
-                                                                                meta.setDisplayName(null);
-                                                                                bukkitStack.setItemMeta(meta);
-                                                                            }
-                                                                            return stack;
-                                                                        });
-                                                                        return InteractionResult.cancel(true);
-                                                                    }))
-                                                    );
+                                            case DISPLAY_NAME -> displayNameTab(reactiveBuilder, stackToEdit);
                                             case LORE ->
                                                     reactiveBuilder.render("lore_tab", ComponentClusterBuilder.class, displayNameClusterBuilder -> displayNameClusterBuilder
                                                             .render("edit_lore", ButtonBuilder.class, buttonBuilder -> buttonBuilder
@@ -142,6 +106,44 @@ public class StackEditorExample {
                                             }));
                         })
                 )
+        );
+    }
+
+    static ReactiveRenderBuilder.ReactiveResult displayNameTab(ReactiveRenderBuilder reactiveBuilder, Signal<ItemStack> stackToEdit) {
+        return reactiveBuilder.render("display_name_tab", ComponentClusterBuilder.class, displayNameClusterBuilder -> displayNameClusterBuilder
+                .render("set_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                        .interact((holder, details) -> {
+                            BukkitChat chat = (BukkitChat) holder.getViewManager().getWolfyUtils().getChat();
+                            Player player = ((GUIHolder) holder).getBukkitPlayer();
+                            chat.sendMessage(player, Component.text("Click me"));
+                            holder.getViewManager().setTextInputCallback((p, guiViewManager, s, strings) -> {
+                                stackToEdit.update(stack -> {
+                                    if (stack instanceof ItemStackImpl stackImpl) {
+                                        var bukkitStack = stackImpl.getBukkitRef();
+                                        ItemMeta meta = bukkitStack.getItemMeta();
+                                        meta.setDisplayName(s);
+                                        bukkitStack.setItemMeta(meta);
+                                        stackToEdit.set(stack);
+                                    }
+                                    return stack;
+                                });
+                                return true;
+                            });
+                            return InteractionResult.cancel(true);
+                        }))
+                .render("reset_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                        .interact((holder, details) -> {
+                            stackToEdit.update(stack -> {
+                                if (stack instanceof ItemStackImpl stackImpl) {
+                                    var bukkitStack = stackImpl.getBukkitRef();
+                                    ItemMeta meta = bukkitStack.getItemMeta();
+                                    meta.setDisplayName(null);
+                                    bukkitStack.setItemMeta(meta);
+                                }
+                                return stack;
+                            });
+                            return InteractionResult.cancel(true);
+                        }))
         );
     }
 

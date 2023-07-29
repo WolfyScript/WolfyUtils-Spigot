@@ -20,10 +20,8 @@ package com.wolfyscript.utilities.bukkit.world.items;
 
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
-import com.wolfyscript.utilities.bukkit.chat.ClickData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

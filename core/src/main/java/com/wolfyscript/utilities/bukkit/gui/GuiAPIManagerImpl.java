@@ -5,17 +5,29 @@ import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.Sets;
 import com.wolfyscript.jackson.dataformat.hocon.HoconMapper;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.GuiAPIManagerCommonImpl;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.RouterBuilder;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+
 import java.io.File;
 import java.io.IOException;
-import java.util.Set;
-import java.util.UUID;
+import java.sql.ClientInfoStatus;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class GuiAPIManagerImpl extends GuiAPIManagerCommonImpl {
 
@@ -23,6 +35,10 @@ public class GuiAPIManagerImpl extends GuiAPIManagerCommonImpl {
 
     private File guiDataSubFolder;
     private String guiResourceDir;
+
+    private final Long2ObjectMap<GuiViewManager> VIEW_MANAGERS = new Long2ObjectOpenHashMap<>();
+    private final Multimap<String, Long> CACHED_VIEW_MANAGERS = MultimapBuilder.hashKeys().hashSetValues().build();
+    private final Multimap<UUID, Long> VIEW_MANAGERS_PER_PLAYER = MultimapBuilder.hashKeys().hashSetValues().build();
 
     public GuiAPIManagerImpl(WolfyUtils wolfyUtils) {
         super(wolfyUtils);
@@ -39,6 +55,19 @@ public class GuiAPIManagerImpl extends GuiAPIManagerCommonImpl {
     }
 
     @Override
+    public Stream<GuiViewManager> getViewManagersFor(UUID uuid) {
+        return VIEW_MANAGERS_PER_PLAYER.get(uuid).stream().map(id -> VIEW_MANAGERS.get(id));
+    }
+
+    @Override
+    public Stream<GuiViewManager> getViewManagersFor(UUID uuid, String guiID) {
+        Collection<Long> ids = CACHED_VIEW_MANAGERS.get(guiID);
+        return VIEW_MANAGERS_PER_PLAYER.get(uuid).stream()
+                .filter(ids::contains)
+                .map(id -> VIEW_MANAGERS.get(id));
+    }
+
+    @Override
     public void registerGui(String id, Consumer<RouterBuilder> consumer) {
         RouterBuilder builder = new RouterBuilderImpl(id, wolfyUtils);
         consumer.accept(builder);
@@ -46,8 +75,24 @@ public class GuiAPIManagerImpl extends GuiAPIManagerCommonImpl {
     }
 
     @Override
-    public  GuiViewManager createView(String clusterID, UUID... uuids) {
-        return getGui(clusterID).map(cluster -> new GuiViewManagerImpl(wolfyUtils, cluster, Set.of(uuids))).orElse(null);
+    public GuiViewManager createView(String clusterID, UUID... uuids) {
+        return getGui(clusterID).map(cluster -> {
+            Set<UUID> viewers = Set.of(uuids);
+            Collection<Long> viewManagers = CACHED_VIEW_MANAGERS.get(clusterID);
+            return viewManagers.stream()
+                    .map(id -> VIEW_MANAGERS.get(id))
+                    .filter(viewManager -> viewManager.getViewers().equals(viewers))
+                    .findFirst()
+                    .orElseGet(() -> {
+                        GuiViewManagerImpl viewManager = new GuiViewManagerImpl(wolfyUtils, cluster, viewers);
+                        viewManagers.add(viewManager.getId());
+                        VIEW_MANAGERS.put(viewManager.getId(), viewManager);
+                        for (UUID viewer : viewers) {
+                            VIEW_MANAGERS_PER_PLAYER.put(viewer, viewManager.getId());
+                        }
+                        return viewManager;
+                    });
+        }).orElse(null);
     }
 
     @Override

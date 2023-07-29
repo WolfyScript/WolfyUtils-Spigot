@@ -12,6 +12,7 @@ import com.wolfyscript.utilities.common.gui.*;
 import java.util.*;
 import java.util.function.Consumer;
 
+import com.wolfyscript.utilities.common.gui.callback.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.functions.SerializableSupplier;
 import com.wolfyscript.utilities.versioning.MinecraftVersion;
 import com.wolfyscript.utilities.versioning.ServerVersion;

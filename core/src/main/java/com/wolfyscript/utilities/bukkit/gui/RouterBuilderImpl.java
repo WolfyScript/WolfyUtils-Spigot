@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.common.gui.InteractionCallback;
+import com.wolfyscript.utilities.common.gui.callback.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.Router;
 import com.wolfyscript.utilities.common.gui.RouterBuilder;

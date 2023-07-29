@@ -12,6 +12,7 @@ import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.*;
+import com.wolfyscript.utilities.common.gui.callback.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.functions.SerializableConsumer;
 import com.wolfyscript.utilities.common.registry.RegistryGUIComponentBuilders;
 import com.wolfyscript.utilities.json.annotations.KeyedBaseType;

@@ -4,6 +4,8 @@ import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManager;
 import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManagerBukkit;
 import com.wolfyscript.utilities.common.WolfyCore;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.event.ClickCallback;
+import net.kyori.adventure.util.Services;
 import org.jetbrains.annotations.NotNull;
 
 /**

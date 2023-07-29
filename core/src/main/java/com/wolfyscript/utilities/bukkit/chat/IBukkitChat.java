@@ -18,6 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.chat;
 
+import com.wolfyscript.utilities.common.chat.ClickActionCallback;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.entity.Player;
@@ -68,6 +69,6 @@ public interface IBukkitChat {
      */
     void sendMessages(Player player, boolean prefix, Component... components);
 
-    ClickEvent executable(Player player, boolean discard, ClickAction action);
+    ClickEvent executable(Player player, boolean discard, ClickActionCallback action);
 
 }

@@ -25,7 +25,7 @@ import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.GuiHolder;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
-import com.wolfyscript.utilities.common.gui.InteractionCallback;
+import com.wolfyscript.utilities.common.gui.callback.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.InteractionDetails;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.RenderContext;

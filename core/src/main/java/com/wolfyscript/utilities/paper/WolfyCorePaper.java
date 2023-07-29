@@ -3,6 +3,14 @@ package com.wolfyscript.utilities.paper;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManager;
 import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManagerBukkit;
+import io.papermc.lib.PaperLib;
+import net.kyori.adventure.Adventure;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.audience.Audiences;
+import net.kyori.adventure.internal.properties.AdventureProperties;
+import net.kyori.adventure.platform.AudienceProvider;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 
 public final class WolfyCorePaper extends WolfyCoreImpl {
 

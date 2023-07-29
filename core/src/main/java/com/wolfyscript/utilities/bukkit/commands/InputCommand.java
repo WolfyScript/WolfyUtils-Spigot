@@ -19,13 +19,21 @@
 package com.wolfyscript.utilities.bukkit.commands;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
-import java.util.List;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.bukkit.adapters.BukkitWrapper;
+import com.wolfyscript.utilities.common.gui.GuiViewManager;
+import com.wolfyscript.utilities.common.gui.callback.TextInputCallback;
+import com.wolfyscript.utilities.common.gui.callback.TextInputTabCompleteCallback;
+import com.wolfyscript.utilities.tuple.Pair;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public final class InputCommand extends Command implements PluginIdentifiableCommand {
 
@@ -47,21 +55,23 @@ public final class InputCommand extends Command implements PluginIdentifiableCom
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
         if (!(sender instanceof Player player)) return true;
-        /*
         core.getAPIList().parallelStream()
-                .filter(WolfyUtilsBukkit::hasInventoryAPI)
-                .map(wolfyUtilities -> wolfyUtilities.getInventoryAPI().getGuiHandler(player))
-                .filter(GuiHandler::isChatEventActive)
-                .forEach(guiHandler -> Bukkit.getScheduler().runTask(WolfyCoreImpl.getInstance(), () -> {
-                    //Handles ChatInput
-                    if (!guiHandler.onChat(player, String.join(" ", args).trim(), args)) {
-                        guiHandler.setChatInputAction(null);
-                        guiHandler.openCluster();
-                    }
-                    if (guiHandler.isChatEventActive()) {
-                        guiHandler.cancelChatInput();
-                    }
-                }));*/
+                .map(WolfyUtilsBukkit::getGUIManager)
+                .flatMap(guiAPIManager -> guiAPIManager.getViewManagersFor(player.getUniqueId()))
+                .map(viewManager -> new Pair<>(viewManager, viewManager.textInputCallback()))
+                .filter(pair -> pair.getValue().isPresent())
+                .forEach(pair -> {
+                    GuiViewManager viewManager = pair.getKey();
+                    TextInputCallback textInputCallback = pair.getValue().get();
+                    String text = String.join(" ", args).trim();
+
+                    Bukkit.getScheduler().runTask(core.getPlugin(), () -> {
+                        textInputCallback.run(BukkitWrapper.adapt(player), viewManager, text, args);
+                        viewManager.setTextInputCallback(null);
+                        viewManager.setTextInputTabCompleteCallback(null);
+                        viewManager.open();
+                    });
+                });
         return true;
     }
 
@@ -69,14 +79,17 @@ public final class InputCommand extends Command implements PluginIdentifiableCom
     @Override
     public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) throws IllegalArgumentException {
         if (sender instanceof Player player) {
-            /*
-            TODO: Create & implement new input actions
-            return plugin.getAPIList().stream()
-                    .filter(WolfyUtilsBukkit::hasInventoryAPI)
-                    .map(wolfyUtilities -> wolfyUtilities.getInventoryAPI().getGuiHandler(player))
-                    .filter(guiHandler -> guiHandler.isChatEventActive() && guiHandler.hasChatTabComplete())
-                    .map(guiHandler -> guiHandler.getChatTabComplete().onTabComplete(guiHandler, player, args)).filter(Objects::nonNull).findFirst().orElse(null);
-            */
+            return core.getAPIList().parallelStream()
+                    .map(WolfyUtilsBukkit::getGUIManager)
+                    .flatMap(guiAPIManager -> guiAPIManager.getViewManagersFor(player.getUniqueId()))
+                    .map(viewManager -> new Pair<>(viewManager, viewManager.textInputTabCompleteCallback()))
+                    .filter(pair -> pair.getValue().isPresent())
+                    .findFirst()
+                    .map(pair -> {
+                        GuiViewManager viewManager = pair.getKey();
+                        TextInputTabCompleteCallback textInputCallback = pair.getValue().get();
+                        return textInputCallback.apply(BukkitWrapper.adapt(player), viewManager, String.join(" ", args).trim(), args);
+                    }).orElse(List.of());
         }
         return super.tabComplete(sender, alias, args);
     }

@@ -9,6 +9,7 @@ import com.wolfyscript.utilities.bukkit.gui.InteractionUtils;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.adapters.ItemStack;
 import com.wolfyscript.utilities.common.gui.*;
+import com.wolfyscript.utilities.common.gui.callback.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.components.StackInputSlot;
 import com.wolfyscript.utilities.common.gui.impl.AbstractComponentImpl;
 import com.wolfyscript.utilities.common.gui.signal.Signal;
