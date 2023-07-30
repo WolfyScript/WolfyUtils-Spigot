@@ -14,8 +14,8 @@ description = "wolfyutils-spigot"
 dependencies {
     api(apis.wolfyutils)
     implementation(project(":core"))
-    implementation(project(":plugin-compatibility-artifact"))
-    implementation(project(":nmsutil-artifact"))
+    implementation(project(":plugin-compatibility"))
+    implementation(project(":nmsutil"))
     api(libs.guice)
     api(libs.reflections)
     api(libs.javassist)
@@ -31,10 +31,20 @@ dependencies {
 
 tasks.named<ShadowJar>("shadowJar") {
 
+    dependsOn.add(project(":nmsutil").tasks.named("shadowJar"))
+
+    archiveClassifier.set("")
+
+
     dependencies {
-        include(dependency("com.wolfyscript.wolfyutils:wolfyutilities:5.0-SNAPSHOT"))
+        include(dependency(apis.wolfyutils.get().toString()))
         include(project(":core"))
-        include(project(":plugin-compatibility-artifact"))
-        include(project(":nmsutil-artifact"))
+        include(project(":plugin-compatibility"))
+        include(project(":nmsutil"))
     }
+}
+
+tasks.named("test") {
+    dependsOn.add(tasks.named("shadowJar"))
+
 }

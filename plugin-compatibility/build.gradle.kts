@@ -23,4 +23,4 @@ dependencies {
     compileOnly(project(":core"))
 }
 
-description = "plugin-compatibility-artifact"
+description = "plugin-compatibility"

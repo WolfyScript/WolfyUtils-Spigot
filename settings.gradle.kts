@@ -14,8 +14,6 @@ pluginManagement {
 
 include(":core")
 include(":plugin-compatibility")
-include(":plugin-compatibility-artifact")
-include(":nmsutil")
 include(":nmsutil-v1_16_R3")
 include(":nmsutil-v1_17_R1")
 include(":nmsutil-v1_17_R1_P1")
@@ -26,9 +24,10 @@ include(":nmsutil-v1_19_R3")
 include(":nmsutil-v1_19_R1")
 include(":nmsutil-v1_19_R2")
 include(":nmsutil-v1_20_R1")
-include(":nmsutil-artifact")
+include(":nmsutil")
 include(":wolfyutils-spigot")
 
+project(":nmsutil").projectDir = file("nmsutil")
 project(":nmsutil-v1_16_R3").projectDir = file("nmsutil/nmsutil-v1_16_R3")
 project(":nmsutil-v1_17_R1").projectDir = file("nmsutil/nmsutil-v1_17_R1")
 project(":nmsutil-v1_17_R1_P1").projectDir = file("nmsutil/nmsutil-v1_17_R1_P1")
@@ -39,8 +38,7 @@ project(":nmsutil-v1_19_R1").projectDir = file("nmsutil/nmsutil-v1_19_R1")
 project(":nmsutil-v1_19_R2").projectDir = file("nmsutil/nmsutil-v1_19_R2")
 project(":nmsutil-v1_19_R3").projectDir = file("nmsutil/nmsutil-v1_19_R3")
 project(":nmsutil-v1_20_R1").projectDir = file("nmsutil/nmsutil-v1_20_R1")
-project(":nmsutil-artifact").projectDir = file("nmsutil/nmsutil-artifact")
-project(":plugin-compatibility-artifact").projectDir = file("plugin-compatibility/plugin-compatibility-artifact")
+project(":plugin-compatibility").projectDir = file("plugin-compatibility")
 
 dependencyResolutionManagement {
     versionCatalogs {
