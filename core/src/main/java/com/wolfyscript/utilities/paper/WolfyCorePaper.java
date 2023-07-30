@@ -3,7 +3,6 @@ package com.wolfyscript.utilities.paper;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManager;
 import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManagerBukkit;
-import io.papermc.lib.PaperLib;
 import net.kyori.adventure.Adventure;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.Audiences;
