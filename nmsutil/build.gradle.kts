@@ -8,7 +8,6 @@ plugins {
 description = "nmsutil"
 
 dependencies {
-    api(project(":nmsutil-v1_16_R3"))
     api(project(":nmsutil-v1_17_R1"))
     api(project(":nmsutil-v1_17_R1_P1"))
     api(project(":nmsutil-v1_18_R1"))
@@ -32,7 +31,6 @@ tasks.named<ShadowJar>("shadowJar") {
     archiveClassifier.set("")
 
     dependencies {
-        include(project(":nmsutil-v1_16_R3"))
         include(project(":nmsutil-v1_17_R1"))
         include(project(":nmsutil-v1_17_R1_P1"))
         include(project(":nmsutil-v1_18_R1"))
