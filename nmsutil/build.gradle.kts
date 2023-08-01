@@ -8,15 +8,10 @@ plugins {
 description = "nmsutil"
 
 dependencies {
-    api(project(":nmsutil:v1_17_R1"))
-    api(project(":nmsutil:v1_17_R1_P1"))
-    api(project(":nmsutil:v1_18_R1"))
-    api(project(":nmsutil:v1_18_R1_P1"))
-    api(project(":nmsutil:v1_18_R2"))
-    api(project(":nmsutil:v1_19_R1"))
-    api(project(":nmsutil:v1_19_R2"))
-    api(project(":nmsutil:v1_19_R3"))
-    api(project(":nmsutil:v1_20_R1"))
+    subprojects.forEach {
+        api(it)
+    }
+
     compileOnly("com.google.inject:guice:5.1.0")
     compileOnly("org.reflections:reflections:0.10.2")
     compileOnly("org.javassist:javassist:3.29.2-GA")
@@ -25,30 +20,16 @@ dependencies {
     compileOnly("net.kyori:adventure-text-minimessage:4.14.0")
 }
 
-
 tasks.named<ShadowJar>("shadowJar") {
-    dependsOn(project(":nmsutil:v1_17_R1").tasks.named("remap"))
-    dependsOn(project(":nmsutil:v1_17_R1_P1").tasks.named("remap"))
-    dependsOn(project(":nmsutil:v1_18_R1").tasks.named("remap"))
-    dependsOn(project(":nmsutil:v1_18_R1_P1").tasks.named("remap"))
-    dependsOn(project(":nmsutil:v1_18_R2").tasks.named("remap"))
-    dependsOn(project(":nmsutil:v1_19_R1").tasks.named("remap"))
-    dependsOn(project(":nmsutil:v1_19_R2").tasks.named("remap"))
-    dependsOn(project(":nmsutil:v1_19_R3").tasks.named("remap"))
-    dependsOn(project(":nmsutil:v1_20_R1").tasks.named("remap"))
-    dependsOn(project(":nmsutil:v1_20_R1").tasks.named("remap"))
+    subprojects.forEach {
+        dependsOn(it.tasks.named("remap"))
+    }
 
     archiveClassifier.set("")
 
     dependencies {
-        include(project(":nmsutil:v1_17_R1"))
-        include(project(":nmsutil:v1_17_R1_P1"))
-        include(project(":nmsutil:v1_18_R1"))
-        include(project(":nmsutil:v1_18_R1_P1"))
-        include(project(":nmsutil:v1_18_R2"))
-        include(project(":nmsutil:v1_19_R1"))
-        include(project(":nmsutil:v1_19_R2"))
-        include(project(":nmsutil:v1_19_R3"))
-        include(project(":nmsutil:v1_20_R1"))
+        subprojects.forEach {
+            include(project(it.path))
+        }
     }
 }
