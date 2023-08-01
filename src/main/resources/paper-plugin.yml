@@ -6,8 +6,8 @@ authors: [ WolfyScript ]
 load: STARTUP
 
 libraries:
-  - "com.google.inject:guice:5.1.0"
   - "org.apache.commons:commons-lang3:3.12.0"
+  - "${libs.guice.get()}"
 
 dependencies:
   - name: Magic

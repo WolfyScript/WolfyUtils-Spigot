@@ -1,19 +1,21 @@
 name: WolfyUtilities
-version: '${project.version}'
+version: '${version}'
 main: com.wolfyscript.utilities.bukkit.WolfyCoreBukkitBootstrap
 api-version: 1.16
 authors: [ WolfyScript ]
 load: STARTUP
 
 libraries:
-  - "com.google.inject:guice:${depend_version.guice}"
   - "org.apache.commons:commons-lang3:3.12.0"
-  - "org.javassist:javassist:${depend_version.javassist}"
-  - "org.reflections:reflections:${depend_version.reflections}"
-  - "com.fasterxml.jackson.core:jackson-databind:${depend_version.jackson}"
-  - "net.kyori:adventure-api:${depend_version.adventure-api}"
-  - "net.kyori:adventure-text-minimessage:${depend_version.adventure-api}"
-  - "net.kyori:adventure-platform-bukkit:${depend_version.adventure-platform}"
+  - "${libs.guice.get()}"
+  - "${libs.reflections.get()}"
+  - "${libs.fastutil.get()}"
+  - "${libs.typesafe.config.get()}"
+  - "${libs.jackson.get()}"
+  - "${libs.javassist.get()}"
+  - "${libs.adventure.api.get()}"
+  - "${libs.adventure.minimessage.get()}"
+  - "${libs.adventure.platform.bukkit.get()}"
 
 loadbefore:
   - ChatColor

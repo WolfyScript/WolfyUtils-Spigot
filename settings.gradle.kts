@@ -51,6 +51,12 @@ dependencyResolutionManagement {
             library("adventure-api", "net.kyori", "adventure-api").versionRef("adventure")
             library("adventure-minimessage", "net.kyori", "adventure-text-minimessage").versionRef("adventure")
             library("adventure-platform-bukkit", "net.kyori", "adventure-platform-bukkit").version("4.1.2")
+            library("jackson", "com.fasterxml.jackson.core", "jackson-databind").version("2.14.0-rc1")
+            library("fastutil", "it.unimi.dsi", "fastutil").version("8.5.6")
+            library("typesafe.config", "com.typesafe", "config").version("1.3.1")
+            library("bstats", "org.bstats", "bstats-bukkit").version("3.0.0")
+            library("nbtapi-api", "de.tr7zw", "item-nbt-api").version("2.11.3")
+            library("nbtapi-data", "de.tr7zw", "nbt-data-api").version("2.11.3")
         }
         // Libraries only used for testing
         create("testLibs") {
@@ -61,6 +67,7 @@ dependencyResolutionManagement {
         // internal apis
         create("apis") {
             library("wolfyutils", "com.wolfyscript.wolfyutils", "wolfyutilities").version("5.0-SNAPSHOT")
+            library("dataformat-hocon", "com.wolfyscript", "jackson-dataformat-hocon").version("2.1-SNAPSHOT")
         }
 
     }

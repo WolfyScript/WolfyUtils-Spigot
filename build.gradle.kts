@@ -20,12 +20,15 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":plugin-compatibility"))
     implementation(project(":nmsutil"))
+    api(libs.bstats)
     api(libs.guice)
     api(libs.reflections)
     api(libs.javassist)
     api(libs.adventure.api)
     api(libs.adventure.minimessage)
     api(libs.adventure.platform.bukkit)
+    api(libs.nbtapi.api)
+    api(libs.nbtapi.data)
 
     testImplementation(project(":core"))
     testImplementation(testLibs.junit.jupiter)
@@ -109,21 +112,26 @@ for (entry in servers.entries) {
 }
 
 tasks.named<ShadowJar>("shadowJar") {
-
-    dependsOn.add(project(":nmsutil").tasks.named("shadowJar"))
+    dependsOn(project(":nmsutil").tasks.named("shadowJar"))
 
     archiveClassifier.set("")
 
-
     dependencies {
         include(dependency(apis.wolfyutils.get().toString()))
+        include(dependency(apis.dataformat.hocon.get().toString()))
+        include(dependency("${libs.bstats.get().group}:.*"))
+        include(dependency("${libs.nbtapi.api.get().group}:.*"))
         include(project(":core"))
         include(project(":plugin-compatibility"))
         include(project(":nmsutil"))
     }
+
+    relocate("org.bstats", "com.wolfyscript.utilities.bukkit.metrics")
+
+    relocate("de.tr7zw.changeme.nbtapi", "com.wolfyscript.lib.de.tr7zw.nbtapi")
+    relocate("de.tr7zw", "com.wolfyscript.lib.de.tr7zw")
 }
 
 tasks.named("test") {
     dependsOn.add(tasks.named("shadowJar"))
-
 }
