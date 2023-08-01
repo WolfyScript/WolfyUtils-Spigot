@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 description = "nmsutil-v1_18_R1"
 
 plugins {
@@ -12,6 +14,12 @@ dependencies {
 
 tasks {
     remap {
-        version.set("1.18.0")
+        version.set("1.18")
+        dependsOn("jar")
+    }
+    jar {
+        finalizedBy("remap")
     }
 }
+
+

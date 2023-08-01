@@ -27,6 +27,16 @@ dependencies {
 
 
 tasks.named<ShadowJar>("shadowJar") {
+    dependsOn(project(":nmsutil-v1_17_R1").tasks.named("remap"))
+    dependsOn(project(":nmsutil-v1_17_R1_P1").tasks.named("remap"))
+    dependsOn(project(":nmsutil-v1_18_R1").tasks.named("remap"))
+    dependsOn(project(":nmsutil-v1_18_R1_P1").tasks.named("remap"))
+    dependsOn(project(":nmsutil-v1_18_R2").tasks.named("remap"))
+    dependsOn(project(":nmsutil-v1_19_R1").tasks.named("remap"))
+    dependsOn(project(":nmsutil-v1_19_R2").tasks.named("remap"))
+    dependsOn(project(":nmsutil-v1_19_R3").tasks.named("remap"))
+    dependsOn(project(":nmsutil-v1_20_R1").tasks.named("remap"))
+    dependsOn(project(":nmsutil-v1_20_R1").tasks.named("remap"))
 
     archiveClassifier.set("")
 

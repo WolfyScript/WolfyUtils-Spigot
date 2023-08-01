@@ -13,5 +13,9 @@ dependencies {
 tasks {
     remap {
         version.set("1.18.2")
+        dependsOn("jar")
+    }
+    jar {
+        finalizedBy("remap")
     }
 }
