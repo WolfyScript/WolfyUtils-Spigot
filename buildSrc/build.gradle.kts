@@ -10,4 +10,14 @@ plugins {
 repositories {
     // Use the plugin portal to apply community plugins in convention plugins.
     gradlePluginPortal()
+    mavenCentral()
+}
+
+gradlePlugin {
+    plugins {
+        register("docker-run") {
+            id = "docker-run"
+            implementationClass = "com.wolfyscript.docker.DockerRunPlugin"
+        }
+    }
 }
