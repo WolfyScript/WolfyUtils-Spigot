@@ -1,4 +1,4 @@
-description = "nmsutil-v1_19_R2"
+description = "v1_19_R2"
 
 plugins {
     id("com.wolfyscript.wolfyutils.spigot.java-conventions")

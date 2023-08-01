@@ -1,4 +1,4 @@
-description = "nmsutil-v1_18_R1_P1"
+description = "v1_19_R1"
 
 plugins {
     id("com.wolfyscript.wolfyutils.spigot.java-conventions")
@@ -6,13 +6,13 @@ plugins {
 }
 
 dependencies {
-    compileOnly(group = "org.spigotmc", name = "spigot", version = "1.18.1-R0.1-SNAPSHOT", classifier = "remapped-mojang")
+    compileOnly(group = "org.spigotmc", name = "spigot", version = "1.19-R0.1-SNAPSHOT", classifier = "remapped-mojang")
     compileOnly(project(":core"))
 }
 
 tasks {
     remap {
-        version.set("1.18.1")
+        version.set("1.19")
         dependsOn("jar")
     }
     jar {
