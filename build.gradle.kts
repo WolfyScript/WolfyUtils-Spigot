@@ -58,6 +58,7 @@ dockerRun {
     serverEnv["MEMORY"] = "2G"
     serverEnv["USE_AIKAR_FLAGS"] = "TRUE"
     env(serverEnv)
+    arguments.set(setOf("-it")) // Allow for console interactivity with 'docker attach'
 }
 
 val servers = buildMap {
