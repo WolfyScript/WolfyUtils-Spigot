@@ -5,6 +5,8 @@
 *.ipr
 *.iws
 
+test_servers/
+
 # IntelliJ
 out/
 
