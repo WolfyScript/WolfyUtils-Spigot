@@ -18,14 +18,7 @@
 
 package me.wolfyscript.utilities.api.inventory.custom_items;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -33,19 +26,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
 import com.wolfyscript.utilities.bukkit.items.CustomBlockSettings;
 import com.wolfyscript.utilities.bukkit.items.CustomItemData;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.meta.CustomItemTagMeta;
@@ -60,6 +40,7 @@ import me.wolfyscript.utilities.compatibility.plugins.itemsadder.ItemsAdderRef;
 import me.wolfyscript.utilities.registry.Registries;
 import me.wolfyscript.utilities.util.Keyed;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import me.wolfyscript.utilities.util.Reflection;
 import me.wolfyscript.utilities.util.inventory.InventoryUtils;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import me.wolfyscript.utilities.util.inventory.item_builder.AbstractItemBuilder;
@@ -79,6 +60,12 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * <p>
@@ -702,7 +689,10 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
         var itemStack = apiReference.getLinkedItem().clone();
         if (this.hasNamespacedKey()) {
             var itemMeta = itemStack.getItemMeta();
-            itemMeta.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(WolfyUtilities.getWUPlugin(), "custom_item"), PersistentDataType.STRING, namespacedKey.toString());
+            var container = itemMeta.getPersistentDataContainer();
+            synchronized (container.getClass()) { // The container has a thread-unsafe map usage, so we need to synchronise it
+                container.set(new org.bukkit.NamespacedKey(WolfyUtilities.getWUPlugin(), "custom_item"), PersistentDataType.STRING, namespacedKey.toString());
+            }
             itemStack.setItemMeta(itemMeta);
         }
         if (amount > 0) {
@@ -1102,7 +1092,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @param count            The amount of this custom item that should be removed from the input.
      * @param useRemains       If the Item should be replaced by the default craft remains.
      * @param stackReplacement Behaviour of how to apply the replacements of stackable items.
-     * @return  The manipulated stack, default remain, or custom remains.
+     * @return The manipulated stack, default remain, or custom remains.
      */
     public ItemStack shrink(@NotNull ItemStack stack, int count, boolean useRemains, @NotNull BiFunction<CustomItem, ItemStack, ItemStack> stackReplacement) {
         if (this.type.getMaxStackSize() == 1 && stack.getAmount() == 1) {
@@ -1158,7 +1148,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @param inventory  The optional inventory to add the replacements to. (Only for stackable items)
      * @param player     The player to give the items to. If the players' inventory has space the craft remains are added. (Only for stackable items)
      * @param location   The location where the replacements should be dropped. (Only for stackable items)
-     * @return  The manipulated stack, default remain, or custom remains.
+     * @return The manipulated stack, default remain, or custom remains.
      */
     public ItemStack shrink(ItemStack stack, int count, boolean useRemains, @Nullable final Inventory inventory, @Nullable final Player player, @Nullable final Location location) {
         return shrink(stack, count, useRemains, (customItem, resultStack) -> {
@@ -1203,8 +1193,8 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      *     In case the stack breaks due damage it is replaced by the result, specified earlier.
      * </p>
      *
-     * @param stack         The stack to shrink
-     * @param useRemains    If the Item should be replaced by the default craft remains.
+     * @param stack      The stack to shrink
+     * @param useRemains If the Item should be replaced by the default craft remains.
      * @return The manipulated (damaged) stack, default remain, or custom remains.
      */
     public ItemStack shrinkUnstackableItem(ItemStack stack, boolean useRemains) {
