@@ -121,7 +121,7 @@ final class PluginsBukkit implements Plugins, Listener {
             if (plugin != null && plugin.isEnabled() && !integration.isDoneLoading()) {
                 integration.init(plugin);
                 if (!integration.hasAsyncLoading()) {
-                    integration.setEnabled(true);
+                    integration.enable();
                 }
                 checkDependencies();
             }

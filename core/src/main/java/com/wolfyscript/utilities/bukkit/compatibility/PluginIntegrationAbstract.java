@@ -98,8 +98,15 @@ public abstract class PluginIntegrationAbstract implements PluginIntegration {
         return enabled;
     }
 
-    final void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    protected final void enable() {
+        this.enabled = true;
+        core.getConsole().getLogger().info("Enabled plugin integration for " + getAssociatedPlugin());
+        Bukkit.getPluginManager().callEvent(new PluginIntegrationEnableEvent(core, this));
+        ((PluginsBukkit) core.getCompatibilityManager().getPlugins()).checkDependencies();
+    }
+
+    final void disable() {
+        this.enabled = false;
     }
 
     @Override
@@ -113,12 +120,11 @@ public abstract class PluginIntegrationAbstract implements PluginIntegration {
      * This method can then be used inside that event to mark it as done.
      */
     protected final void markAsDoneLoading() {
-        setEnabled(true);
-        ((PluginsBukkit) core.getCompatibilityManager().getPlugins()).checkDependencies();
+        enable();
     }
 
     protected final void ignore() {
-        setEnabled(false);
+        disable();
         this.ignore = true;
     }
 
