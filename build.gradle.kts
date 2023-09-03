@@ -1,6 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import com.wolfyscript.docker.DockerRunTask
-import com.wolfyscript.docker.DockerStopTask
 import java.util.*
 
 /*
@@ -10,7 +8,8 @@ import java.util.*
 plugins {
     id("com.wolfyscript.wolfyutils.spigot.java-conventions")
     id("com.github.johnrengelman.shadow") version ("8.1.1")
-    id("docker-run")
+    id("com.wolfyscript.devtools.docker.run") version ("2.0-SNAPSHOT")
+    id("com.wolfyscript.devtools.docker.minecraft_servers") version ("2.0-SNAPSHOT")
 }
 
 description = "wolfyutils-spigot"
@@ -61,54 +60,41 @@ dockerRun {
     arguments.set(setOf("-it")) // Allow for console interactivity with 'docker attach'
 }
 
-val servers = buildMap {
-    this["SPIGOT"] = listOf("1.20.1", "1.19.4", "1.18.2", "1.17.1")
-    this["PAPER"] = listOf("1.20.1", "1.19.4")
-}
-
-var port = 25565
-for (entry in servers.entries) {
-    val server = entry.key
-    for (version in entry.value) {
-        val versionName = version.replace('.', '_')
-        val serverName = "${server}_${versionName}";
-        val serverPath = "./test_servers/${server.lowercase(Locale.ROOT)}_${versionName}"
-
-        val copyTask = task<Copy>("${serverName}_copy") {
-            dependsOn("shadowJar")
-
-            println("Copy Jar to server: $serverPath/plugins")
-            from(layout.buildDirectory.dir("libs/wolfyutils-spigot-${project.version}.jar"))
-            into("$serverPath/plugins")
+minecraftServers {
+    serversDir.set(file("./test_servers"))
+    libName.set("${project.name}-${version}.jar")
+    servers {
+        register("spigot_1_17") {
+            version.set("1.17.1")
+            type.set("SPIGOT")
+            ports.set(setOf("25565"))
         }
-
-        val stopTask = task<DockerStopTask>("${serverName}_stop") {
-            applyExtension(project.dockerRun)
-            name.set("${name.get()}_$serverName")
+        register("spigot_1_18") {
+            version.set("1.18.2")
+            type.set("SPIGOT")
+            ports.set(setOf("25566"))
         }
-
-        task<DockerRunTask>("${serverName}_run") {
-            dependsOn(copyTask)
-            dependsOn(stopTask)
-
-            applyExtension(project.dockerRun)
-            name.set("${name.get()}_$serverName")
-
-            println(serverPath)
-            mkdir(serverPath)
-
-            ports.set(listOf("${port}:25565"))
-
-            val customEnv = env.get().toMutableMap()
-            customEnv["VERSION"] = version
-            env.set(customEnv)
-
-            val customVolumes = volumes.get().toMutableMap()
-            customVolumes[serverPath] = "/data"
-            volumes.set(customVolumes)
+        register("spigot_1_19") {
+            version.set("1.19.4")
+            type.set("SPIGOT")
+            ports.set(setOf("25567"))
         }
-
-        port++
+        register("spigot_1_20") {
+            version.set("1.20.1")
+            type.set("SPIGOT")
+            ports.set(setOf("25568"))
+        }
+        // Paper test servers
+        register("paper_1_20") {
+            version.set("1.20.1")
+            type.set("PAPER")
+            ports.set(setOf("25569"))
+        }
+        register("paper_1_19") {
+            version.set("1.19.4")
+            type.set("PAPER")
+            ports.set(setOf("25570"))
+        }
     }
 }
 

@@ -14,10 +14,5 @@ repositories {
 }
 
 gradlePlugin {
-    plugins {
-        register("docker-run") {
-            id = "docker-run"
-            implementationClass = "com.wolfyscript.docker.DockerRunPlugin"
-        }
-    }
+
 }

@@ -42,11 +42,11 @@ java {
 
 group = "com.wolfyscript.wolfyutils.spigot"
 version = "5.0.0-SNAPSHOT"
-val api_version = "5.0-SNAPSHOT"
+val apiVersion = "5.0-SNAPSHOT"
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
-    compileOnly("com.wolfyscript.wolfyutils:wolfyutilities:${api_version}")
+    compileOnly("com.wolfyscript.wolfyutils:wolfyutilities:${apiVersion}")
     compileOnly("com.fasterxml.jackson.core:jackson-databind:2.14.0-rc1")
     compileOnly("org.jetbrains:annotations:23.0.0")
     compileOnly("com.mojang:authlib:1.5.21")
@@ -55,7 +55,7 @@ dependencies {
     compileOnly("de.tr7zw:item-nbt-api:2.11.3")
     compileOnly("de.tr7zw:nbt-data-api:2.11.3")
     // Common Test libs
-    testImplementation("com.wolfyscript.wolfyutils:wolfyutilities:${api_version}")
+    testImplementation("com.wolfyscript.wolfyutils:wolfyutilities:${apiVersion}")
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_17
