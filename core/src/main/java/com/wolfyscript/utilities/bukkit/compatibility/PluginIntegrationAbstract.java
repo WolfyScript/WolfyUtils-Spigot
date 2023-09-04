@@ -99,10 +99,12 @@ public abstract class PluginIntegrationAbstract implements PluginIntegration {
     }
 
     protected final void enable() {
-        this.enabled = true;
-        core.getConsole().getLogger().info("Enabled plugin integration for " + getAssociatedPlugin());
-        Bukkit.getPluginManager().callEvent(new PluginIntegrationEnableEvent(core, this));
-        ((PluginsBukkit) core.getCompatibilityManager().getPlugins()).checkDependencies();
+        if (!this.enabled) {
+            this.enabled = true;
+            core.getConsole().getLogger().info("Enabled plugin integration for " + getAssociatedPlugin());
+            Bukkit.getPluginManager().callEvent(new PluginIntegrationEnableEvent(core, this));
+            ((PluginsBukkit) core.getCompatibilityManager().getPlugins()).checkDependencies();
+        }
     }
 
     final void disable() {
@@ -118,7 +120,10 @@ public abstract class PluginIntegrationAbstract implements PluginIntegration {
      * Marks this integration as done. That tells the system that, the integrations' plugin is done with loading all its data.<br>
      * For example, usually plugins with async data loading will provide a listener that will be called once done. <br>
      * This method can then be used inside that event to mark it as done.
+     *
+     * @deprecated Use {@link #enable()} instead!
      */
+    @Deprecated
     protected final void markAsDoneLoading() {
         enable();
     }
