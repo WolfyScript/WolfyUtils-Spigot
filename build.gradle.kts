@@ -40,28 +40,8 @@ tasks.named<ProcessResources>("processResources") {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
-// Default values for test server docker containers
-dockerRun {
-    name.set("test_minecraft_server")
-    image.set("itzg/minecraft-server")
-    daemonize.set(true)
-    clean.set(true) // create a temporary server container
-
-    ports("25565:25565")
-
-    val serverEnv = mutableMapOf<String, String>()
-    serverEnv["TYPE"] = "SPIGOT"
-    serverEnv["VERSION"] = "1.20.1"
-    serverEnv["GUI"] = "FALSE"
-    serverEnv["EULA"] = "TRUE"
-    serverEnv["MEMORY"] = "2G"
-    serverEnv["USE_AIKAR_FLAGS"] = "TRUE"
-    env(serverEnv)
-    arguments.set(setOf("-it")) // Allow for console interactivity with 'docker attach'
-}
-
 minecraftServers {
-    serversDir.set(file("./test_servers"))
+    serversDir.set(file("${System.getProperty("user.home")}${File.separator}minecraft${File.separator}test_servers_v5"))
     libName.set("${project.name}-${version}.jar")
     servers {
         register("spigot_1_17") {
