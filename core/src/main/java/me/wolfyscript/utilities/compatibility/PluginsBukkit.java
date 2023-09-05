@@ -138,10 +138,7 @@ final class PluginsBukkit implements Plugins, Listener {
         long enabledIntegrations = pluginIntegrations.values().stream().filter(PluginIntegrationAbstract::isDoneLoading).count();
         if (availableIntegrations == enabledIntegrations) {
             doneLoading = true;
-            Bukkit.getScheduler().runTaskLater(core, () -> {
-                core.getLogger().info("Dependencies Loaded. Calling DependenciesLoadedEvent!");
-                Bukkit.getPluginManager().callEvent(new DependenciesLoadedEvent(core));
-            }, 2);
+            Bukkit.getScheduler().runTaskLater(core, () -> Bukkit.getPluginManager().callEvent(new DependenciesLoadedEvent(core)), 2);
         }
     }
 
