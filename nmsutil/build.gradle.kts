@@ -2,10 +2,14 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id("com.wolfyscript.wolfyutils.spigot.java-conventions")
-    id("com.github.johnrengelman.shadow") version("8.1.1")
+    id("com.github.johnrengelman.shadow") version ("8.1.1")
 }
 
 description = "nmsutil"
+
+// Specify directory in home directory as buildtools source
+ext.set("buildToolsDir", "${System.getProperty("user.home")}${File.separator}minecraft${File.separator}buildtools")
+ext.set("buildToolsJar", "${System.getProperty("user.home")}${File.separator}minecraft${File.separator}buildtools${File.separator}BuildTools.jar")
 
 dependencies {
     subprojects.forEach {
@@ -20,16 +24,20 @@ dependencies {
     compileOnly("net.kyori:adventure-text-minimessage:4.14.0")
 }
 
-tasks.named<ShadowJar>("shadowJar") {
-    subprojects.forEach {
-        dependsOn(it.tasks.named("remap"))
-    }
+tasks {
+    named<ShadowJar>("shadowJar") {
+        subprojects.forEach { project ->
+            project.tasks.findByName("remap")?.let {
+                dependsOn(it)
+            }
+        }
 
-    archiveClassifier.set("")
+        archiveClassifier.set("")
 
-    dependencies {
-        subprojects.forEach {
-            include(project(it.path))
+        dependencies {
+            subprojects.forEach {
+                include(project(it.path))
+            }
         }
     }
 }
