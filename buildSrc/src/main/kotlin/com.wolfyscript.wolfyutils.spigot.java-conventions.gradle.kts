@@ -45,7 +45,7 @@ version = "5.0.0-SNAPSHOT"
 val apiVersion = "5.0-SNAPSHOT"
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
     compileOnly("com.wolfyscript.wolfyutils:wolfyutilities:${apiVersion}")
     compileOnly("com.fasterxml.jackson.core:jackson-databind:2.14.0-rc1")
     compileOnly("org.jetbrains:annotations:23.0.0")
