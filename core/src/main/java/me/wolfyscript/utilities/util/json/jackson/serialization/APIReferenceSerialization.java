@@ -34,6 +34,7 @@ public class APIReferenceSerialization {
 
     private static final String CUSTOM_AMOUNT = "custom_amount";
     private static final String WEIGHT = "weight";
+    private static final String FALLBACK = "fallback";
 
     private APIReferenceSerialization() {
     }
@@ -45,6 +46,7 @@ public class APIReferenceSerialization {
             if (value.getWeight() > 0) {
                 gen.writeNumberField(WEIGHT, value.getWeight());
             }
+            gen.writeObjectField(FALLBACK, value.getFallback());
             value.serialize(gen, provider);
             gen.writeEndObject();
         }, (p, deserializationContext) -> {
@@ -59,6 +61,7 @@ public class APIReferenceSerialization {
                             if (reference != null) {
                                 reference.setAmount(node.path(CUSTOM_AMOUNT).asInt(0));
                                 reference.setWeight(node.path(WEIGHT).asDouble(0));
+                                reference.setFallback(JacksonUtil.getObjectMapper().convertValue(node.path(FALLBACK), ItemStack.class));
                                 return reference;
                             }
                         }
