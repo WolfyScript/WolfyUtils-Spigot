@@ -61,7 +61,9 @@ public class APIReferenceSerialization {
                             if (reference != null) {
                                 reference.setAmount(node.path(CUSTOM_AMOUNT).asInt(0));
                                 reference.setWeight(node.path(WEIGHT).asDouble(0));
-                                reference.setFallback(JacksonUtil.getObjectMapper().convertValue(node.path(FALLBACK), ItemStack.class));
+                                if (node.has(FALLBACK)) { // Older configs may not yet have this property!
+                                    reference.setFallback(JacksonUtil.getObjectMapper().convertValue(node.path(FALLBACK), ItemStack.class));
+                                }
                                 return reference;
                             }
                         }
