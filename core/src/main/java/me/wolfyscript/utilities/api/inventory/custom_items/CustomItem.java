@@ -335,8 +335,13 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      */
     public static CustomItem getReferenceByItemStack(ItemStack itemStack) {
         if (itemStack != null) {
-            APIReference apiReference = API_REFERENCE_PARSER.values().stream().sorted(Comparator.reverseOrder()).map(parser -> parser.construct(itemStack)).filter(Objects::nonNull).findFirst().orElse(null);
+            APIReference apiReference = API_REFERENCE_PARSER.values().stream()
+                    .sorted(Comparator.reverseOrder())
+                    .map(parser -> parser.construct(itemStack))
+                    .filter(Objects::nonNull)
+                    .findFirst().orElse(null);
             if (apiReference != null) {
+                apiReference.setFallback(itemStack);
                 apiReference.setAmount(itemStack.getAmount());
                 return new CustomItem(apiReference);
             }
