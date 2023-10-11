@@ -94,17 +94,33 @@ tasks.named<ShadowJar>("shadowJar") {
     dependencies {
         include(dependency(apis.wolfyutils.get().toString()))
         include(dependency(apis.dataformat.hocon.get().toString()))
+        include(dependency("${libs.jackson.get().group}:.*"))
         include(dependency("${libs.bstats.get().group}:.*"))
         include(dependency("${libs.nbtapi.api.get().group}:.*"))
+        include(dependency("${libs.reflections.get().group}:.*"))
+        include(dependency("${libs.javassist.get().group}:.*"))
+        include(dependency("${libs.adventure.api.get().group}:.*"))
+        include(dependency("${libs.adventure.platform.bukkit.get().group}:.*"))
+        include(dependency("${libs.adventure.minimessage.get().group}:.*"))
+        include(dependency("${libs.typesafe.config.get().group}:.*"))
         include(project(":core"))
         include(project(":plugin-compatibility"))
         include(project(":nmsutil"))
     }
 
+    // Always required to be shaded and relocated!
     relocate("org.bstats", "com.wolfyscript.utilities.bukkit.metrics")
 
+    // Dependencies (pre spigot plugin.yml dependency update) required to be shaded! To be removed in v5!
+    relocate("com.typesafe", "com.wolfyscript.lib.com.typesafe")
     relocate("de.tr7zw.changeme.nbtapi", "com.wolfyscript.lib.de.tr7zw.nbtapi")
     relocate("de.tr7zw", "com.wolfyscript.lib.de.tr7zw")
+
+    // Still using me.wolfyscript.lib package! To be changed/removed in v5!
+    relocate("org.reflections", "me.wolfyscript.lib.org.reflections")
+    relocate("javassist", "me.wolfyscript.lib.javassist")
+    relocate("com.fasterxml.jackson", "me.wolfyscript.lib.com.fasterxml.jackson")
+    relocate("net.kyori", "me.wolfyscript.lib.net.kyori")
 }
 
 tasks.named("test") {
