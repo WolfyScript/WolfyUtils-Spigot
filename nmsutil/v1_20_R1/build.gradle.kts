@@ -1,5 +1,3 @@
-import com.wolfyscript.devtools.buildtools.BuildToolsInstallTask
-
 description = "v1_20_R1"
 private val mcVersion = "1.20.1"
 
