@@ -37,6 +37,7 @@ import me.wolfyscript.utilities.api.nms.nbt.NBTCompound;
 import me.wolfyscript.utilities.api.nms.network.MCByteBuf;
 import me.wolfyscript.utilities.api.nms.v1_20_R2.nbt.NBTTagCompoundImpl;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftItemStack;
@@ -154,7 +155,7 @@ public class MCByteBufImpl implements MCByteBuf {
     @Nullable
     @Override
     public NBTCompound readAnySizeNBT() {
-        return NBTTagCompoundImpl.TYPE.get(this.byteBuf.readAnySizeNbt());
+        return NBTTagCompoundImpl.TYPE.get(this.byteBuf.readNbt(NbtAccounter.unlimitedHeap()));
     }
 
     @Override

@@ -72,11 +72,11 @@ public class RecipeUtilImpl extends me.wolfyscript.utilities.api.nms.RecipeUtil 
     @Override
     public void setCurrentRecipe(InventoryView view, NamespacedKey namespacedKey) {
         if (view == null) return;
-        net.minecraft.world.item.crafting.Recipe<?> recipe;
+        net.minecraft.world.item.crafting.RecipeHolder<?> recipe;
         if (namespacedKey == null) {
             recipe = null;
         } else {
-            Optional<? extends net.minecraft.world.item.crafting.Recipe<?>> recipeOptional = MinecraftServer.getServer().getRecipeManager().byKey((CraftNamespacedKey.toMinecraft(namespacedKey.bukkit())));
+            Optional<? extends net.minecraft.world.item.crafting.RecipeHolder<?>> recipeOptional = MinecraftServer.getServer().getRecipeManager().byKey((CraftNamespacedKey.toMinecraft(namespacedKey.bukkit())));
             if (recipeOptional.isEmpty()) return;
             recipe = recipeOptional.get();
         }
@@ -105,7 +105,7 @@ public class RecipeUtilImpl extends me.wolfyscript.utilities.api.nms.RecipeUtil 
                     RecipeManager.CachedCheck<?, ?> check = (RecipeManager.CachedCheck<?, ?>) CACHED_CHECK_FURNACE_FIELD.get(blockEntity);
                     if (check == null) return;
                     CACHED_CHECK_LAST_RECIPE_FIELD.setAccessible(true);
-                    CACHED_CHECK_LAST_RECIPE_FIELD.set(check, recipe == null ? null : recipe.getId());
+                    CACHED_CHECK_LAST_RECIPE_FIELD.set(check, recipe == null ? null : recipe.id());
                 } catch (IllegalAccessException e) {
                     return;
                 }
@@ -116,11 +116,11 @@ public class RecipeUtilImpl extends me.wolfyscript.utilities.api.nms.RecipeUtil 
     @Override
     public void setCurrentRecipe(Inventory inventory, NamespacedKey namespacedKey) {
         if (inventory == null) return;
-        net.minecraft.world.item.crafting.Recipe<?> recipe;
+        net.minecraft.world.item.crafting.RecipeHolder<?> recipe;
         if (namespacedKey == null) {
             recipe = null;
         } else {
-            Optional<? extends net.minecraft.world.item.crafting.Recipe<?>> recipeOptional = MinecraftServer.getServer().getRecipeManager().byKey((CraftNamespacedKey.toMinecraft(namespacedKey.bukkit())));
+            Optional<? extends net.minecraft.world.item.crafting.RecipeHolder<?>> recipeOptional = MinecraftServer.getServer().getRecipeManager().byKey((CraftNamespacedKey.toMinecraft(namespacedKey.bukkit())));
             if (recipeOptional.isEmpty()) return;
             recipe = recipeOptional.get();
         }
@@ -137,7 +137,7 @@ public class RecipeUtilImpl extends me.wolfyscript.utilities.api.nms.RecipeUtil 
                     RecipeManager.CachedCheck<?, ?> check = (RecipeManager.CachedCheck<?, ?>) CACHED_CHECK_FURNACE_FIELD.get(blockEntity);
                     if (check == null) return;
                     CACHED_CHECK_LAST_RECIPE_FIELD.setAccessible(true);
-                    CACHED_CHECK_LAST_RECIPE_FIELD.set(check, recipe == null ? null : recipe.getId());
+                    CACHED_CHECK_LAST_RECIPE_FIELD.set(check, recipe == null ? null : recipe.id());
                 } catch (IllegalAccessException e) {
                     return;
                 }
