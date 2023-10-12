@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
 import com.wolfyscript.utilities.bukkit.items.CustomBlockSettings;
 import com.wolfyscript.utilities.bukkit.items.CustomItemData;
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackReference;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.meta.CustomItemTagMeta;
@@ -40,7 +41,6 @@ import me.wolfyscript.utilities.compatibility.plugins.itemsadder.ItemsAdderRef;
 import me.wolfyscript.utilities.registry.Registries;
 import me.wolfyscript.utilities.util.Keyed;
 import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.Reflection;
 import me.wolfyscript.utilities.util.inventory.InventoryUtils;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import me.wolfyscript.utilities.util.inventory.item_builder.AbstractItemBuilder;
@@ -62,7 +62,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -126,8 +125,8 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     @JsonIgnore
     private final Material craftRemain;
 
-    @JsonAlias("api_reference")
-    private final APIReference apiReference;
+    @JsonAlias({"api_reference", "apiReference", "item"})
+    private final StackReference stackReference;
 
     @JsonAlias("custom_data")
     private final CustomData.DeprecatedCustomDataWrapper customDataMap = new CustomData.DeprecatedCustomDataWrapper(this);
@@ -144,7 +143,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     private double rarityPercentage;
     private String permission;
     private MetaSettings nbtChecks;
-    private APIReference replacement;
+    private StackReference replacement;
     @JsonAlias("fuel")
     private FuelSettings fuelSettings;
     @JsonAlias("durability_cost")
@@ -160,7 +159,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     @JsonCreator
     public CustomItem(@JsonProperty("apiReference") @JsonAlias({"item", "api_reference"}) APIReference apiReference) {
         super(CustomItem.class);
-        this.apiReference = apiReference;
+        this.stackReference = apiReference;
 
         this.namespacedKey = null;
         this.fuelSettings = new FuelSettings();
@@ -243,7 +242,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      */
     private CustomItem(CustomItem customItem) {
         super(CustomItem.class);
-        this.apiReference = customItem.apiReference.clone();
+        this.stackReference = customItem.stackReference.clone();
 
         this.namespacedKey = customItem.getNamespacedKey();
         this.fuelSettings = customItem.fuelSettings.clone();
@@ -399,7 +398,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @return True if this item has an replacement that is not AIR, else false.
      */
     public boolean hasReplacement() {
-        return replacement != null && !replacement.getLinkedItem().getType().equals(Material.AIR);
+        return replacement != null && !replacement.identifier().item().getType().equals(Material.AIR);
     }
 
     /**
@@ -649,7 +648,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
                 Objects.equals(fuelSettings, that.fuelSettings) &&
                 Objects.equals(permission, that.permission) &&
                 Objects.equals(equipmentSlots, that.equipmentSlots) &&
-                Objects.equals(apiReference, that.apiReference) &&
+                Objects.equals(stackReference, that.stackReference) &&
                 Objects.equals(particleContent, that.particleContent) &&
                 Objects.equals(nbtChecks, that.nbtChecks);
     }
@@ -667,7 +666,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      */
     @Override
     public ItemStack getItemStack() {
-        return apiReference.getLinkedItem();
+        return stackReference.getLinkedItem();
     }
 
     /**
@@ -691,7 +690,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @return the item from the external API that is linked to this object
      */
     public ItemStack create(int amount) {
-        var itemStack = apiReference.getLinkedItem().clone();
+        var itemStack = stackReference.getLinkedItem().clone();
         if (this.hasNamespacedKey()) {
             var itemMeta = itemStack.getItemMeta();
             var container = itemMeta.getPersistentDataContainer();
@@ -726,7 +725,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      */
     @Deprecated
     public ItemStack getIDItem(int amount) {
-        var itemStack = apiReference.getIdItem();
+        var itemStack = stackReference.getIdItem();
         if (amount > 0) {
             itemStack.setAmount(amount);
         }
@@ -734,7 +733,11 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     }
 
     public APIReference getApiReference() {
-        return apiReference;
+        return stackReference;
+    }
+
+    public StackReference stackReference() {
+        return stackReference;
     }
 
     /**
@@ -1515,7 +1518,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
                 ", blockVanillaEquip=" + blockVanillaEquip +
                 ", blockVanillaRecipes=" + blockVanillaRecipes +
                 ", equipmentSlots=" + equipmentSlots +
-                ", apiReference=" + apiReference +
+                ", apiReference=" + stackReference +
                 ", particleContent=" + particleContent +
                 ", metaSettings=" + nbtChecks +
                 "} " + super.toString();
