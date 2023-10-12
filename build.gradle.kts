@@ -100,7 +100,6 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("org.bstats", "com.wolfyscript.utilities.bukkit.metrics")
 
     relocate("de.tr7zw.changeme.nbtapi", "com.wolfyscript.lib.de.tr7zw.nbtapi")
-    relocate("de.tr7zw", "com.wolfyscript.lib.de.tr7zw")
 }
 
 tasks.named("test") {
