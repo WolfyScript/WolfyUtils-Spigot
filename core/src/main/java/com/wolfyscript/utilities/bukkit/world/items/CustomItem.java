@@ -137,9 +137,8 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     @JsonIgnore
     private final Material craftRemain;
 
-    // Converts old APIReferences to the new ItemReference, otherwise just deserializes the ItemReference.
-    @JsonDeserialize(using = ItemRefCompDeserializer.class)
-    private final ItemReference reference;
+    @JsonAlias({"api_reference", "apiReference", "item"})
+    private final StackReference reference;
 
     @JsonAlias("custom_data")
     private final CustomData.DeprecatedCustomDataWrapper customDataMap = new CustomData.DeprecatedCustomDataWrapper(this);
@@ -156,7 +155,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     private double rarityPercentage;
     private String permission;
     private MetaSettings nbtChecks;
-    private APIReference replacement;
+    private StackReference replacement;
     @JsonAlias("fuel")
     private FuelSettings fuelSettings;
     @JsonAlias("durability_cost")
@@ -170,7 +169,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     private boolean checkOldMetaSettings = true;
 
     @JsonCreator
-    public CustomItem(@JacksonInject WolfyUtils wolfyUtils, @JsonProperty("actionSettings") ActionSettings actionSettings,@JsonProperty("reference") @JsonAlias({"item", "api_reference", "apiReference"}) @JsonDeserialize(using = ItemRefCompDeserializer.class) ItemReference reference) {
+    public CustomItem(@JacksonInject WolfyUtils wolfyUtils, @JsonProperty("actionSettings") ActionSettings actionSettings,@JsonProperty("reference") @JsonAlias({"item", "api_reference", "apiReference"}) StackReference reference) {
         super(wolfyUtils, CustomItem.class);
         this.reference = reference;
 
@@ -416,7 +415,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @return True if this item has an replacement that is not AIR, else false.
      */
     public boolean hasReplacement() {
-        return replacement != null && !replacement.getLinkedItem().getType().equals(Material.AIR);
+        return replacement != null && !replacement.identifier().item().getType().equals(Material.AIR);
     }
 
     /**
@@ -708,10 +707,13 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @return the item from the external API that is linked to this object
      */
     public ItemStack create(int amount) {
-        var itemStack = reference.getItem().clone();
+        var itemStack = reference.getLinkedItem().clone();
         if (this.hasNamespacedKey()) {
             var itemMeta = itemStack.getItemMeta();
-            itemMeta.getPersistentDataContainer().set(PERSISTENT_KEY_TAG, PersistentDataType.STRING, namespacedKey.toString());
+            var container = itemMeta.getPersistentDataContainer();
+            synchronized (container.getClass()) { // The container has a thread-unsafe map usage, so we need to synchronise it
+                container.set(new org.bukkit.NamespacedKey(WolfyUtilities.getWUPlugin(), "custom_item"), PersistentDataType.STRING, namespacedKey.toString());
+            }
             itemStack.setItemMeta(itemMeta);
         }
         if (amount > 0) {
@@ -752,14 +754,11 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      */
     @Deprecated
     public APIReference getApiReference() {
-        if (reference instanceof BackwardsWrapperReference backwardsRef) {
-            return backwardsRef.getWrappedApiReference();
-        }
-        return new VanillaRef(getItemStack());
+        return stackReference;
     }
 
-    public ItemReference getReference() {
-        return reference;
+    public StackReference stackReference() {
+        return stackReference;
     }
 
     /**
