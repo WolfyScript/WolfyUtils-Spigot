@@ -43,7 +43,7 @@ minecraftDockerRun {
 }
 
 minecraftServers {
-    serversDir.set(file("${System.getProperty("user.home")}${File.separator}minecraft${File.separator}test_servers"))
+    serversDir.set(file("${System.getProperty("user.home")}${File.separator}minecraft${File.separator}test_servers_v4"))
     libName.set("${project.name}-${version}.jar")
     servers {
         register("spigot_1_16") {
@@ -67,13 +67,13 @@ minecraftServers {
             ports.set(setOf("25567:25565"))
         }
         register("spigot_1_20") {
-            version.set("1.20.1")
+            version.set("1.20.2")
             type.set("SPIGOT")
             ports.set(setOf("25568:25565"))
         }
         // Paper test servers
         register("paper_1_20") {
-            version.set("1.20.1")
+            version.set("1.20.2")
             type.set("PAPER")
             ports.set(setOf("25569:25565"))
         }
@@ -87,23 +87,39 @@ minecraftServers {
 
 tasks.named<ShadowJar>("shadowJar") {
     dependsOn(project(":nmsutil").tasks.named("shadowJar"))
+    mustRunAfter("jar")
 
     archiveClassifier.set("")
 
     dependencies {
         include(dependency(apis.wolfyutils.get().toString()))
         include(dependency(apis.dataformat.hocon.get().toString()))
+        include(dependency("${libs.jackson.get().group}:.*"))
         include(dependency("${libs.bstats.get().group}:.*"))
         include(dependency("${libs.nbtapi.api.get().group}:.*"))
+        include(dependency("${libs.reflections.get().group}:.*"))
+        include(dependency("${libs.javassist.get().group}:.*"))
+        include(dependency("${libs.adventure.api.get().group}:.*"))
+        include(dependency("${libs.adventure.platform.bukkit.get().group}:.*"))
+        include(dependency("${libs.adventure.minimessage.get().group}:.*"))
+        include(dependency("${libs.typesafe.config.get().group}:.*"))
         include(project(":core"))
         include(project(":plugin-compatibility"))
         include(project(":nmsutil"))
     }
 
+    // Always required to be shaded and relocated!
     relocate("org.bstats", "com.wolfyscript.utilities.bukkit.metrics")
 
-    relocate("de.tr7zw.changeme.nbtapi", "com.wolfyscript.lib.de.tr7zw.nbtapi")
-    relocate("de.tr7zw", "com.wolfyscript.lib.de.tr7zw")
+    // Dependencies (pre spigot plugin.yml dependency update) required to be shaded! To be removed in v5!
+    relocate("com.typesafe", "com.wolfyscript.lib.com.typesafe")
+    relocate("de.tr7zw.changeme.nbtapi", "com.wolfyscript.lib.nbt.nbtapi")
+
+    // Still using me.wolfyscript.lib package! To be changed/removed in v5!
+    relocate("org.reflections", "me.wolfyscript.lib.org.reflections")
+    relocate("javassist", "me.wolfyscript.lib.javassist")
+    relocate("com.fasterxml.jackson", "me.wolfyscript.lib.com.fasterxml.jackson")
+    relocate("net.kyori", "me.wolfyscript.lib.net.kyori")
 }
 
 tasks.named("test") {

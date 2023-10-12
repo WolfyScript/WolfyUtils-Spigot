@@ -1,5 +1,3 @@
-import com.wolfyscript.devtools.buildtools.BuildToolsInstallTask
-
 description = "v1_18_R1_P1"
 private val mcVersion = "1.18.1"
 

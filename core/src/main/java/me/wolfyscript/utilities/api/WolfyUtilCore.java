@@ -208,7 +208,7 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
         this.messageHandler = new MessageHandler(this);
         this.messageFactory = new MessageFactory(this);
         this.persistentStorage = new PersistentStorage(this);
-        this.functionalRecipeGenerator = new FunctionalRecipeGenerator(this);
+        this.functionalRecipeGenerator = FunctionalRecipeGenerator.create(this);
     }
 
     protected abstract CompatibilityManager createCompatibilityManager();
@@ -221,7 +221,6 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
     public void onLoad() {
         getLogger().setLevel(Level.ALL);
 
-        getLogger().info("Generate Functional Recipes");
         functionalRecipeGenerator.generateRecipeClasses();
 
         // Jackson Serializer

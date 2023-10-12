@@ -24,10 +24,11 @@ import java.util.List;
 import me.wolfyscript.utilities.api.nms.inventory.RecipeType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 public class RecipeIterator implements Iterator<org.bukkit.inventory.Recipe> {
 
-    private final Iterator<Recipe<?>> recipes;
+    private final Iterator<RecipeHolder<?>> recipes;
 
     public RecipeIterator(RecipeType recipeType) {
         net.minecraft.world.item.crafting.RecipeType<?> recipesReg = getRecipes(recipeType);
@@ -38,7 +39,7 @@ public class RecipeIterator implements Iterator<org.bukkit.inventory.Recipe> {
         }
     }
 
-    public RecipeIterator(List<Recipe<?>> recipeList) {
+    public RecipeIterator(List<RecipeHolder<?>> recipeList) {
         this.recipes = recipeList.iterator();
     }
 
