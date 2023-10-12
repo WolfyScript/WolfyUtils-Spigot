@@ -23,6 +23,8 @@ import com.wolfyscript.utilities.bukkit.items.CustomItemData;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
 import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
+import com.wolfyscript.utilities.bukkit.registry.RegistryStackIdentifierParsers;
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomData;
@@ -80,6 +82,7 @@ public class Registries {
     private final RegistryParticleAnimation particleAnimations;
     private final Registry<Action<?>> customItemActionValues;
     private final Registry<Event<?>> customItemEventValues;
+    private final RegistryStackIdentifierParsers stackIdentifierParsers;
     //Tags
     private final Tags<CustomItem> itemTags;
     //Class Registries
@@ -108,6 +111,7 @@ public class Registries {
         particleAnimations = new RegistryParticleAnimation(this);
         customItemActionValues = new RegistrySimple<>(ITEM_ACTION_VALUES, this, (Class<Action<?>>)(Object) Action.class);
         customItemEventValues = new RegistrySimple<>(ITEM_EVENT_VALUES, this, (Class<Event<?>>)(Object) Event.class);
+        stackIdentifierParsers = new RegistryStackIdentifierParsers(this);
 
         itemTags = new Tags<>(this);
 
@@ -278,5 +282,9 @@ public class Registries {
 
     public TypeRegistry<QueryNode<?>> getNbtQueryNodes() {
         return nbtQueryNodes;
+    }
+
+    public RegistryStackIdentifierParsers getStackIdentifierParsers() {
+        return stackIdentifierParsers;
     }
 }

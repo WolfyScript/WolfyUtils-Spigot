@@ -35,6 +35,7 @@ public class APIReferenceSerialization {
     private static final String CUSTOM_AMOUNT = "custom_amount";
     private static final String WEIGHT = "weight";
     private static final String FALLBACK = "fallback";
+    private static final String CUSTOM_PARSER = "parser";
 
     private APIReferenceSerialization() {
     }
