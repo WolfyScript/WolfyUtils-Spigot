@@ -13,9 +13,8 @@ import org.bukkit.inventory.Inventory;
 
 public class NMSInventoryUtils {
 
-    // TODO: Combine these and FunctionalRecipeGenerator constants!
     private static final Class<?> CONTAINER_CLASS = Reflection.getNMS("world", "IInventory");
-    private static final Class<?> RECIPE_CLASS = Reflection.getNMS("world.item.crafting", "IRecipe");
+    private static final Class<?> RECIPE_CLASS;
     private static final Class<?> RESOURCE_KEY_CLASS = Reflection.getNMS("resources", "MinecraftKey");
     private static final Class<?> MINECRAFT_SERVER_CLASS = Reflection.getNMS("server", "MinecraftServer");
     private static final Class<?> RECIPE_MANAGER_CLASS = Reflection.getNMS("world.item.crafting", "CraftingManager");
@@ -31,6 +30,11 @@ public class NMSInventoryUtils {
 
     static {
         try {
+            if (ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 20, 2))) {
+                RECIPE_CLASS = Reflection.getNMS("world.item.crafting", "RecipeHolder");
+            } else {
+                RECIPE_CLASS = Reflection.getNMS("world.item.crafting", "IRecipe");
+            }
             CONTAINER_SET_CURRENT_RECIPE = CONTAINER_CLASS.getMethod("setCurrentRecipe", RECIPE_CLASS);
             MINECRAFT_SERVER_STATIC_GETTER_METHOD = Reflection.getMethod(MINECRAFT_SERVER_CLASS, "getServer");
             MINECRAFT_SERVER_GET_RECIPE_MANAGER_METHOD = Arrays.stream(MINECRAFT_SERVER_CLASS.getMethods()).filter(method -> method.getReturnType().equals(RECIPE_MANAGER_CLASS)).findFirst().orElseGet(() -> Reflection.getMethod(MINECRAFT_SERVER_CLASS, "getCraftingManager"));
