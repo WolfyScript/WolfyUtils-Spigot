@@ -1,14 +1,18 @@
 package com.wolfyscript.utilities.bukkit.registry;
 
 import com.google.common.base.Preconditions;
+import com.wolfyscript.utilities.bukkit.world.items.reference.BukkitStackIdentifier;
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackReference;
 import me.wolfyscript.utilities.registry.Registries;
 import me.wolfyscript.utilities.registry.RegistrySimple;
 import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.particles.ParticleAnimation;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class RegistryStackIdentifierParsers extends RegistrySimple<StackIdentifierParser<?>> {
 
@@ -29,6 +33,14 @@ public class RegistryStackIdentifierParsers extends RegistrySimple<StackIdentifi
 
     public List<StackIdentifierParser<?>> sortedParsers() {
         return priorityIndexedParsers;
+    }
+
+    public StackIdentifier parseIdentifier(ItemStack stack) {
+        for (StackIdentifierParser<?> parser : sortedParsers()) {
+            Optional<? extends StackIdentifier> identifierOptional = parser.from(stack);
+            if (identifierOptional.isPresent()) return identifierOptional.get();
+        }
+        return new BukkitStackIdentifier(stack);
     }
 
     private void reIndexParsers() {

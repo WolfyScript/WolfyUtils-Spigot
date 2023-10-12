@@ -1,74 +1,113 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.deser.std.StdNodeBasedDeserializer;
 import com.wolfyscript.utilities.Copyable;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
+import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.util.NamespacedKey;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Optional;
+import java.io.IOException;
 
-public abstract class StackReference implements Copyable<StackReference> {
+@JsonDeserialize(using = StackReference.Deserializer.class)
+public class StackReference implements Copyable<StackReference> {
 
-    private int customAmount = 1;
-    private NamespacedKey parser;
+    private final WolfyUtilCore core;
+    private final int customAmount;
+    private final double weight;
+    private final StackIdentifierParser<?> parser;
     /**
      * Used to store the original stack
      */
-    private ItemStack stack;
+    private final ItemStack stack;
     /**
      * Used to store the previous parser result
      */
-    private StackIdentifier identifier;
-    private WolfyUtilCore core;
+    private final StackIdentifier identifier;
 
-    protected StackReference(WolfyUtilCore core, NamespacedKey parser, ItemStack item) {
+    public StackReference(WolfyUtilCore core, NamespacedKey parser, double weight, int customAmount, ItemStack item) {
+        this.customAmount = customAmount;
+        this.weight = weight;
         this.core = core;
-        this.parser = parser;
+        this.parser = core.getRegistries().getStackIdentifierParsers().get(parser);
         this.stack = item;
         this.identifier = parseIdentifier();
     }
 
+    private StackReference(StackReference stackReference) {
+        this.weight = stackReference.weight;
+        this.customAmount = stackReference.customAmount;
+        this.core = stackReference.core;
+        this.parser = stackReference.parser;
+        this.stack = stackReference.stack;
+        this.identifier = parseIdentifier();
+    }
+
     private StackIdentifier parseIdentifier() {
-        for (StackIdentifierParser<?> parser : core.getRegistries().getStackIdentifierParsers().sortedParsers()) {
-            Optional<? extends StackIdentifier> identifierOptional = parser.from(stack);
-            if (identifierOptional.isPresent()) return identifierOptional.get();
-        }
-        return new StackIdentifier() {
-            @Override
-            public ItemStack item() {
-                return stack;
-            }
-
-            @Override
-            public ItemStack item(Player player, World world) {
-                return stack;
-            }
-
-            @Override
-            public boolean matches(ItemStack other) {
-                return stack.isSimilar(other);
-            }
-
-            @Override
-            public StackIdentifierParser<?> parser() {
-                return null;
-            }
-
-            @Override
-            public NamespacedKey getNamespacedKey() {
-                return new NamespacedKey("wolfyutils", "bukkit");
-            }
-        };
+        return core.getRegistries().getStackIdentifierParsers().parseIdentifier(stack);
     }
 
     public StackIdentifier identifier() {
         return identifier;
     }
 
+    @JsonGetter("weight")
+    public double weight() {
+        return weight;
+    }
+
+    @JsonGetter("amount")
+    public int amount() {
+        return customAmount;
+    }
+
+    @JsonGetter("stack")
     public ItemStack stack() {
         return stack;
     }
 
+    public StackIdentifierParser<?> parser() {
+        return parser;
+    }
+
+    @JsonGetter("parser")
+    private NamespacedKey parserId() {
+        return parser.getNamespacedKey();
+    }
+
+    @Override
+    public StackReference copy() {
+        return new StackReference(this);
+    }
+
+    public static class Deserializer extends StdNodeBasedDeserializer<StackReference> {
+
+        private final WolfyUtilCore core;
+
+        protected Deserializer(WolfyUtilCore core) {
+            super(StackReference.class);
+            this.core = core;
+        }
+
+        @Override
+        public StackReference convert(JsonNode root, DeserializationContext ctxt) throws IOException {
+            if (root.has("type")) {
+                // New ItemReference used! No conversion required!
+                return new StackReference(core,
+                        ctxt.readTreeAsValue(root.get("parser"), NamespacedKey.class),
+                        root.get("weight").asDouble(1),
+                        root.get("amount").asInt(1),
+                        ctxt.readTreeAsValue(root.get("stack"), ItemStack.class)
+                );
+            }
+            // Need to convert APIReference
+            APIReference apiReference = ctxt.readTreeAsValue(root, APIReference.class);
+            StackIdentifier identifier = core.getRegistries().getStackIdentifierParsers().parseIdentifier(apiReference.getLinkedItem());
+            return new StackReference(core, identifier.parser().getNamespacedKey(), apiReference.getWeight(), apiReference.getAmount(), apiReference.getLinkedItem());
+        }
+    }
 }

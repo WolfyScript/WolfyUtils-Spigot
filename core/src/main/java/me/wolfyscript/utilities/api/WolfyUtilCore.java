@@ -38,6 +38,8 @@ import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
 import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectData;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
+import com.wolfyscript.utilities.bukkit.world.items.reference.BukkitStackIdentifier;
+import com.wolfyscript.utilities.bukkit.world.items.reference.WolfyUtilsStackIdentifier;
 import com.wolfyscript.utilities.common.WolfyCore;
 import com.wolfyscript.utilities.bukkit.commands.ChatActionCommand;
 import com.wolfyscript.utilities.bukkit.commands.InfoCommand;
@@ -258,6 +260,11 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
 
         // Create Global WUCore Mapper and apply modules
         api.getJacksonMapperUtil().setGlobalMapper(applyWolfyUtilsJsonMapperModules(new HoconMapper()));
+
+        getLogger().info("Register Default StackIdentifiers");
+        var stackIdentifierParsers = getRegistries().getStackIdentifierParsers();
+        stackIdentifierParsers.register(new BukkitStackIdentifier.Parser());
+        stackIdentifierParsers.register(new WolfyUtilsStackIdentifier.Parser());
 
         // Initialise all the Registers
         getLogger().info("Register JSON Operators");

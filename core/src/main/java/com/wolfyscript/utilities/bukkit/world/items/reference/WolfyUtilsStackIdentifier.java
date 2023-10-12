@@ -36,11 +36,6 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public ItemStack item(Player player, World world) {
-        return item();
-    }
-
-    @Override
     public boolean matches(ItemStack other) {
         if (other != null) {
             var itemMeta = other.getItemMeta();

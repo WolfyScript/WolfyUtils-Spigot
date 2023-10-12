@@ -12,7 +12,9 @@ public interface StackIdentifier extends Keyed {
 
     ItemStack item();
 
-    ItemStack item(Player player, World world);
+    default ItemStack item(Player player, World world) {
+        return item();
+    }
 
     boolean matches(ItemStack other);
 
