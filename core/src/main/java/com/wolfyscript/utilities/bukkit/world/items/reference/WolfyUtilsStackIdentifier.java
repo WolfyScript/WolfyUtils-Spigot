@@ -35,6 +35,15 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
         return null;
     }
 
+    /**
+     * Gets the {@link CustomItem} this identifier references.
+     *
+     * @return The referenced {@link CustomItem} of this identifier
+     */
+    public Optional<CustomItem> customItem() {
+        return Optional.ofNullable(WolfyUtilCore.getInstance().getRegistries().getCustomItems().get(namespacedKey));
+    }
+
     @Override
     public ItemStack item(Player player, World world) {
         return item();
