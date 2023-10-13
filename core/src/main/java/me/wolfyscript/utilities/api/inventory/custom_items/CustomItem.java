@@ -26,7 +26,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
 import com.wolfyscript.utilities.bukkit.items.CustomBlockSettings;
 import com.wolfyscript.utilities.bukkit.items.CustomItemData;
+import com.wolfyscript.utilities.bukkit.world.items.reference.BukkitStackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackReference;
+import com.wolfyscript.utilities.bukkit.world.items.reference.WolfyUtilsStackIdentifier;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.meta.CustomItemTagMeta;
@@ -126,7 +128,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     private final Material craftRemain;
 
     @JsonAlias({"api_reference", "apiReference", "item"})
-    private final StackReference stackReference;
+    private final StackReference reference;
 
     @JsonAlias("custom_data")
     private final CustomData.DeprecatedCustomDataWrapper customDataMap = new CustomData.DeprecatedCustomDataWrapper(this);
@@ -157,15 +159,15 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     private boolean checkOldMetaSettings = true;
 
     @JsonCreator
-    public CustomItem(@JsonProperty("apiReference") @JsonAlias({"item", "api_reference"}) APIReference apiReference) {
+    public CustomItem(@JsonProperty("stackReference") @JsonAlias({"item", "api_reference", "apiReference"}) StackReference reference) {
         super(CustomItem.class);
-        this.stackReference = apiReference;
+        this.reference = reference;
 
         this.namespacedKey = null;
         this.fuelSettings = new FuelSettings();
         setMetaSettings(new MetaSettings());
         this.permission = "";
-        this.rarityPercentage = apiReference.getWeight() > 0 ? apiReference.getWeight() : 1.0d;
+        this.rarityPercentage = reference.weight() > 0 ? reference.weight() : 1.0d;
         for (CustomData.Provider<?> customData : WolfyUtilCore.getInstance().getRegistries().getCustomItemData().values()) {
             addCustomData(customData.getNamespacedKey(), customData.createData());
         }
@@ -225,7 +227,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @param itemStack the itemstack this CustomItem will be linked to
      */
     public CustomItem(ItemStack itemStack) {
-        this(new VanillaRef(itemStack));
+        this(new StackReference(WolfyUtilCore.getInstance(), BukkitStackIdentifier.ID, 1, 1, itemStack));
     }
 
     /**
@@ -242,7 +244,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      */
     private CustomItem(CustomItem customItem) {
         super(CustomItem.class);
-        this.stackReference = customItem.stackReference.clone();
+        this.reference = customItem.reference.copy();
 
         this.namespacedKey = customItem.getNamespacedKey();
         this.fuelSettings = customItem.fuelSettings.clone();
@@ -283,6 +285,21 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
 
     /**
      * <p>
+     * This will create a <b>new</b> {@link CustomItem} that wraps the specified reference.
+     * </p>
+     * <p>
+     * </p>
+     *
+     * @param reference The reference to wrap
+     * @return A new CustomItem instance that wraps the specified reference
+     */
+    public static Optional<CustomItem> wrap(StackReference reference) {
+        if (reference == null) return Optional.empty();
+        return Optional.of(new CustomItem(reference));
+    }
+
+    /**
+     * <p>
      * This will create a <b>new</b> {@link CustomItem} instance with the specified APIReference.
      * </p>
      * <p>
@@ -295,10 +312,12 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      *
      * @param reference The reference to link the item to.
      * @return A new CustomItem instance with the specified APIReference.
+     * @deprecated APIReferences were replaced by {@link StackReference}s! Use {@link #wrap(StackReference)} instead!
      */
+    @Deprecated(forRemoval = true)
     public static CustomItem with(APIReference reference) {
         if (reference == null) return null;
-        return new CustomItem(reference);
+        return new CustomItem(reference.convertToStackReference());
     }
 
     /**
@@ -317,8 +336,10 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      *
      * @param reference The reference that points to an API Item.
      * @return The actual CustomItem of the APIReference.
+     * @deprecated APIReferences were replaced by {@link StackReference}s! Use {@link WolfyUtilsStackIdentifier#customItem()} or {@link #wrap(StackReference)} instead!
      */
     @Nullable
+    @Deprecated(forRemoval = true)
     public static CustomItem of(APIReference reference) {
         if (reference == null) return null;
         return reference instanceof WolfyUtilitiesRef ? WolfyUtilCore.getInstance().getRegistries().getCustomItems().get(((WolfyUtilitiesRef) reference).getNamespacedKey()) : with(reference);
@@ -334,17 +355,15 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      */
     public static CustomItem getReferenceByItemStack(ItemStack itemStack) {
         if (itemStack != null) {
-            APIReference apiReference = API_REFERENCE_PARSER.values().stream()
-                    .sorted(Comparator.reverseOrder())
-                    .map(parser -> parser.construct(itemStack))
-                    .filter(Objects::nonNull)
-                    .findFirst().orElse(null);
-            if (apiReference != null) {
-                apiReference.setFallback(itemStack);
-                apiReference.setAmount(itemStack.getAmount());
-                return new CustomItem(apiReference);
-            }
-            return new CustomItem(itemStack);
+            WolfyUtilCore core = WolfyUtilCore.getInstance();
+            StackReference reference = new StackReference(
+                    core,
+                    core.getRegistries().getStackIdentifierParsers().parseIdentifier(itemStack),
+                    1d,
+                    itemStack.getAmount(),
+                    itemStack
+            );
+            return new CustomItem(reference);
         }
         return null;
     }
@@ -395,29 +414,35 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     /**
      * The replacement can be any of {@link APIReference} and it will replace this item when it is removed from the inventory using {@link #remove(ItemStack, int, Inventory, Location, boolean)}.
      *
-     * @return True if this item has an replacement that is not AIR, else false.
+     * @return True if this item has a replacement that is not AIR, else false.
+     * @deprecated APIReferences were replaced by {@link StackReference}s! Use {@link #replacement()}, which returns an {@link Optional} instead!
      */
+    @Deprecated(forRemoval = true)
     public boolean hasReplacement() {
-        return replacement != null && !replacement.identifier().item().getType().equals(Material.AIR);
+        return replacement().isPresent();
     }
 
     /**
      * The replacement can be any of {@link APIReference} and it will replace this item when it is removed from the inventory using {@link #remove(ItemStack, int, Inventory, Location, boolean)}.
      *
      * @return The {@link APIReference} of the custom replacement.
+     * @deprecated APIReferences were replaced by {@link StackReference}s! Use {@link #replacement()} instead!
      */
     @Nullable
+    @Deprecated(forRemoval = true)
     public APIReference getReplacement() {
-        return hasReplacement() ? replacement : null;
+        return hasReplacement() ? replacement.convert() : null;
     }
 
     /**
      * The replacement can be any of {@link APIReference} and it will replace this item when it is removed from the inventory using {@link #remove(ItemStack, int, Inventory, Location, boolean)}.
      *
      * @param replacement The replacement for this item.
+     * @deprecated APIReferences were replaced by {@link StackReference}s! Use {@link #replacement(StackReference)} instead!
      */
+    @Deprecated(forRemoval = true)
     public void setReplacement(@Nullable APIReference replacement) {
-        this.replacement = replacement;
+        this.replacement = replacement.convertToStackReference();
     }
 
     /**
@@ -648,7 +673,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
                 Objects.equals(fuelSettings, that.fuelSettings) &&
                 Objects.equals(permission, that.permission) &&
                 Objects.equals(equipmentSlots, that.equipmentSlots) &&
-                Objects.equals(stackReference, that.stackReference) &&
+                Objects.equals(reference, that.reference) &&
                 Objects.equals(particleContent, that.particleContent) &&
                 Objects.equals(nbtChecks, that.nbtChecks);
     }
@@ -666,7 +691,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      */
     @Override
     public ItemStack getItemStack() {
-        return stackReference.getLinkedItem();
+        return reference.identifier().item();
     }
 
     /**
@@ -690,7 +715,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @return the item from the external API that is linked to this object
      */
     public ItemStack create(int amount) {
-        var itemStack = stackReference.getLinkedItem().clone();
+        var itemStack = reference.identifier().item().clone();
         if (this.hasNamespacedKey()) {
             var itemMeta = itemStack.getItemMeta();
             var container = itemMeta.getPersistentDataContainer();
@@ -711,7 +736,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @return ItemStack that visually represents the namespacekey
      * @see #getIDItem(int)
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public ItemStack getIDItem() {
         return getIDItem(getAmount());
     }
@@ -723,21 +748,22 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @param amount The stacksize of the item
      * @return ItemStack that visually represents the namespacekey
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public ItemStack getIDItem(int amount) {
-        var itemStack = stackReference.getIdItem();
+        var itemStack = reference.stack().clone();
         if (amount > 0) {
             itemStack.setAmount(amount);
         }
         return itemStack;
     }
 
+    @Deprecated(forRemoval = true)
     public APIReference getApiReference() {
-        return stackReference;
+        return reference.convert();
     }
 
     public StackReference stackReference() {
-        return stackReference;
+        return reference;
     }
 
     /**
@@ -747,7 +773,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @param location    The location where the replacements should be dropped. (Only for stackable items)
      * @deprecated Renamed to {@link #remove(ItemStack, int, Inventory, Location)} to better show it's functionality.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "4.16.14")
     public void consumeItem(ItemStack input, int totalAmount, Inventory inventory, Location location) {
         remove(input, totalAmount, inventory, location);
     }
@@ -758,7 +784,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @param inventory   The optional inventory to add the replacements to. (Only for stackable items)
      * @deprecated Renamed to {@link #remove(ItemStack, int, Inventory)} to better show it's functionality.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "4.16.14")
     public void consumeItem(ItemStack input, int totalAmount, Inventory inventory) {
         remove(input, totalAmount, inventory);
     }
@@ -769,7 +795,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @param location    The location where the replacements should be dropped. (Only for stackable items)
      * @deprecated Renamed to {@link #remove(ItemStack, int, Location)} to better show it's functionality.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "4.16.14")
     public ItemStack consumeItem(ItemStack input, int totalAmount, Location location) {
         return remove(input, totalAmount, location);
     }
@@ -778,7 +804,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @param input The input ItemStack, that is going to be edited.
      * @deprecated Replaced by {@link #removeUnStackableItem(ItemStack)}
      */
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "4.16.14")
     public void consumeUnstackableItem(ItemStack input) {
         removeUnStackableItem(input);
     }
@@ -982,11 +1008,9 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     }
 
     private void applyStackableReplacement(int totalAmount, boolean replaceWithRemains, @Nullable Player player, @Nullable Inventory inventory, @Nullable Location location) {
-        ItemStack replacement = isConsumed() && replaceWithRemains && craftRemain != null ? new ItemStack(craftRemain) : null;
-        if (this.hasReplacement()) {
-            assert getReplacement() != null;
-            replacement = new CustomItem(getReplacement()).create();
-        }
+        ItemStack replacement = replacement()
+                .map(StackReference::stack)
+                .orElseGet(() -> isConsumed() && replaceWithRemains && craftRemain != null ? new ItemStack(craftRemain) : null);
         if (replacement != null) {
             replacement.setAmount(replacement.getAmount() * totalAmount);
             if (player != null) {
@@ -1008,6 +1032,29 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
             if (location != null && location.getWorld() != null) {
                 location.getWorld().dropItemNaturally(location.add(0.5, 1.0, 0.5), replacement);
             }
+        }
+    }
+
+    /**
+     * Gets the replacement of this CustomItem.
+     *
+     * @return Optional containing the current replacement, or empty if unset
+     */
+    public Optional<StackReference> replacement() {
+        return Optional.ofNullable(replacement);
+    }
+
+    /**
+     * Sets the new replacement of this CustomItem.
+     * The reference may be null, in which case it unsets any existing replacement.
+     *
+     * @param replacement The new replacement, or null to unset it
+     */
+    public void replacement(StackReference replacement) {
+        if(replacement != null && replacement.identifier() != null && !ItemUtils.isAirOrNull(replacement.identifier().item())) {
+            this.replacement = replacement;
+        } else {
+            this.replacement = null;
         }
     }
 
@@ -1051,13 +1098,13 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
                 input.setAmount(0);
             }
         }
-        if (this.hasReplacement()) {
-            ItemStack replace = new CustomItem(this.getReplacement()).create();
+        replacement().ifPresentOrElse(stackReference1 -> {
+            ItemStack replace = new CustomItem(stackReference1).create();
             input.setType(replace.getType());
             input.setItemMeta(replace.getItemMeta());
             input.setData(replace.getData());
             input.setAmount(replace.getAmount());
-        } else if (this.getDurabilityCost() != 0) {
+        }, () -> {
             var itemBuilder = new ItemBuilder(input);
             if (itemBuilder.hasCustomDurability()) {
                 itemBuilder.setCustomDamage(itemBuilder.getCustomDamage() + this.getDurabilityCost());
@@ -1073,7 +1120,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
                 }
             }
             input.setItemMeta(itemMeta);
-        }
+        });
     }
 
     /**
@@ -1160,11 +1207,9 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      */
     public ItemStack shrink(ItemStack stack, int count, boolean useRemains, @Nullable final Inventory inventory, @Nullable final Player player, @Nullable final Location location) {
         return shrink(stack, count, useRemains, (customItem, resultStack) -> {
-            ItemStack replacement = isConsumed() && useRemains && craftRemain != null ? new ItemStack(craftRemain) : null;
-            if (this.hasReplacement()) {
-                assert getReplacement() != null;
-                replacement = new CustomItem(getReplacement()).create();
-            }
+            ItemStack replacement = replacement()
+                    .map(StackReference::stack)
+                    .orElseGet(() -> isConsumed() && useRemains && craftRemain != null ? new ItemStack(craftRemain) : null);
             if (!ItemUtils.isAirOrNull(replacement)) {
                 int replacementAmount = replacement.getAmount() * count;
                 if (ItemUtils.isAirOrNull(resultStack)) {
@@ -1206,12 +1251,14 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @return The manipulated (damaged) stack, default remain, or custom remains.
      */
     public ItemStack shrinkUnstackableItem(ItemStack stack, boolean useRemains) {
-        ItemStack result = new ItemStack(Material.AIR);
-        if (this.hasReplacement()) {
-            result = this.getReplacement() == null ? new ItemStack(Material.AIR) : new CustomItem(this.getReplacement()).create();
-        } else if (this.isConsumed() && craftRemain != null && useRemains) {
-            result = new ItemStack(craftRemain);
-        }
+        ItemStack result = replacement()
+                .map(StackReference::stack)
+                .orElseGet(() -> {
+                    if (this.isConsumed() && craftRemain != null && useRemains) {
+                        return new ItemStack(craftRemain);
+                    }
+                    return new ItemStack(Material.AIR);
+                });
         if (this.getDurabilityCost() != 0) {
             // handle custom durability
             var itemBuilder = new ItemBuilder(stack);
@@ -1376,7 +1423,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * Used to deserialize the old CustomData content.<br>
      * This is replaced by a better modular system {@link CustomItemData}
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     @JsonAlias("custom_data")
     @JsonSetter("customDataMap")
     private void setCustomDataMap(JsonNode dataNode) {
@@ -1402,18 +1449,18 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
         }
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     @JsonGetter("customDataMap")
     public Map<NamespacedKey, CustomData> getCustomDataMap() {
         return customDataMap;
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public CustomData getCustomData(NamespacedKey namespacedKey) {
         return customDataMap.get(namespacedKey);
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public void addCustomData(NamespacedKey namespacedKey, CustomData customData) {
         this.customDataMap.put(namespacedKey, customData);
     }
@@ -1518,7 +1565,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
                 ", blockVanillaEquip=" + blockVanillaEquip +
                 ", blockVanillaRecipes=" + blockVanillaRecipes +
                 ", equipmentSlots=" + equipmentSlots +
-                ", apiReference=" + stackReference +
+                ", apiReference=" + reference +
                 ", particleContent=" + particleContent +
                 ", metaSettings=" + nbtChecks +
                 "} " + super.toString();
