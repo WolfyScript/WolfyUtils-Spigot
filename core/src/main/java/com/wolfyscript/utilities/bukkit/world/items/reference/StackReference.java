@@ -10,8 +10,10 @@ import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @JsonDeserialize(using = StackReference.Deserializer.class)
 public class StackReference implements Copyable<StackReference> {
@@ -38,6 +40,24 @@ public class StackReference implements Copyable<StackReference> {
         this.identifier = parseIdentifier();
     }
 
+    public StackReference(WolfyUtilCore core, @NotNull StackIdentifierParser<?> parser, double weight, int customAmount, ItemStack item) {
+        this.customAmount = customAmount;
+        this.weight = weight;
+        this.core = core;
+        this.parser = parser;
+        this.stack = item;
+        this.identifier = parseIdentifier();
+    }
+
+    public StackReference(WolfyUtilCore core, @NotNull StackIdentifier identifier, double weight, int customAmount, ItemStack item) {
+        this.customAmount = customAmount;
+        this.weight = weight;
+        this.core = core;
+        this.parser = identifier.parser();
+        this.stack = item;
+        this.identifier = identifier;
+    }
+
     private StackReference(StackReference stackReference) {
         this.weight = stackReference.weight;
         this.customAmount = stackReference.customAmount;
@@ -48,7 +68,9 @@ public class StackReference implements Copyable<StackReference> {
     }
 
     private StackIdentifier parseIdentifier() {
-        return core.getRegistries().getStackIdentifierParsers().parseIdentifier(stack);
+        Optional<? extends StackIdentifier> identifierOptional = parser.from(stack);
+        if (identifierOptional.isPresent()) return identifierOptional.get();
+        return new BukkitStackIdentifier(stack);
     }
 
     public StackIdentifier identifier() {
