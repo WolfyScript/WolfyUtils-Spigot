@@ -26,6 +26,9 @@ import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import java.io.IOException;
 import java.util.Objects;
+
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
+import com.wolfyscript.utilities.bukkit.world.items.reference.WolfyUtilsStackIdentifier;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -88,6 +91,11 @@ public class WolfyUtilitiesRef extends APIReference {
         if (namespacedKey != null) {
             gen.writeStringField("wolfyutilities", namespacedKey.toString());
         }
+    }
+
+    @Override
+    protected StackIdentifier convert() {
+        return new WolfyUtilsStackIdentifier(namespacedKey);
     }
 
     @Override

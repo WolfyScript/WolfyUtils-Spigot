@@ -22,6 +22,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
+import com.wolfyscript.utilities.bukkit.world.items.reference.BukkitStackIdentifier;
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.json.jackson.JacksonUtil;
 import java.io.IOException;
 import java.util.Objects;
@@ -50,6 +52,7 @@ public class VanillaRef extends APIReference {
         return itemStack;
     }
 
+    @Deprecated
     @Override
     public ItemStack getIdItem() {
         return itemStack;
@@ -64,6 +67,11 @@ public class VanillaRef extends APIReference {
     public void serialize(JsonGenerator gen, SerializerProvider provider) throws IOException {
         gen.writeFieldName("item");
         JacksonUtil.getObjectMapper().writeValue(gen, itemStack);
+    }
+
+    @Override
+    protected StackIdentifier convert() {
+        return new BukkitStackIdentifier(itemStack);
     }
 
     @Override
@@ -87,7 +95,7 @@ public class VanillaRef extends APIReference {
     public static class Parser extends APIReference.Parser<APIReference> {
 
         public Parser() {
-            super("item", 1000);
+            super("item", Integer.MIN_VALUE);
         }
 
         @Override
