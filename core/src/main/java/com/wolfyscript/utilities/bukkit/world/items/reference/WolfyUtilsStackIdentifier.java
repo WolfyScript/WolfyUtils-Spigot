@@ -2,10 +2,8 @@ package com.wolfyscript.utilities.bukkit.world.items.reference;
 
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.api.inventory.custom_items.references.WolfyUtilitiesRef;
+import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.util.NamespacedKey;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -25,14 +23,18 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
         this.parser = parser;
     }
 
+    /**
+     * Gets the stack this identifier references.
+     * It uses the {@link CustomItem#create()} method to create the stack, or returns null if the referenced {@link CustomItem} is unavailable.
+     *
+     * @return The referenced ItemStack or null if referenced {@link CustomItem} is unavailable
+     */
     @Override
     public ItemStack item() {
-        var customItem = WolfyUtilCore.getInstance().getRegistries().getCustomItems().get(namespacedKey);
-        if (customItem != null) {
-            return customItem.create();
-        }
-        WolfyUtilities.getWUCore().getConsole().warn("Couldn't find CustomItem for " + namespacedKey.toString());
-        return null;
+        return customItem().map(CustomItem::create).orElseGet(() -> {
+            WolfyUtilities.getWUCore().getConsole().warn("Couldn't find CustomItem for " + namespacedKey.toString());
+            return null;
+        });
     }
 
     /**
