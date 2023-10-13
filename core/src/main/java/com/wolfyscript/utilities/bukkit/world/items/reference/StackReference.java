@@ -115,9 +115,9 @@ public class StackReference implements Copyable<StackReference> {
 
         private final WolfyUtilCore core;
 
-        protected Deserializer(WolfyUtilCore core) {
+        protected Deserializer() {
             super(StackReference.class);
-            this.core = core;
+            this.core = WolfyUtilCore.getInstance();
         }
 
         @Override
