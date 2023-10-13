@@ -84,6 +84,11 @@ public class StackReference implements Copyable<StackReference> {
         return new StackReference(this);
     }
 
+    @Deprecated
+    public APIReference convert() {
+        return identifier().convert(weight, customAmount);
+    }
+
     public static class Deserializer extends StdNodeBasedDeserializer<StackReference> {
 
         private final WolfyUtilCore core;
