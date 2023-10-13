@@ -25,7 +25,6 @@ import me.wolfyscript.utilities.compatibility.plugins.itemsadder.ItemsAdderRef;
 import me.wolfyscript.utilities.compatibility.plugins.mmoitems.MMOItemsRef;
 import me.wolfyscript.utilities.compatibility.plugins.mythicmobs.MythicMobsRef;
 import me.wolfyscript.utilities.compatibility.plugins.oraxen.OraxenRef;
-import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -57,26 +56,15 @@ public abstract class APIReference {
 
     protected int amount;
     private double weight;
-    private ItemStack fallback;
 
     protected APIReference() {
         this.amount = 0;
         this.weight = 0;
-        this.fallback = null;
     }
 
     protected APIReference(APIReference apiReference) {
         this.amount = apiReference.amount;
         this.weight = apiReference.weight;
-        this.fallback = apiReference.fallback.clone();
-    }
-
-    public void setFallback(ItemStack fallback) {
-        this.fallback = fallback;
-    }
-
-    public ItemStack getFallback() {
-        return fallback;
     }
 
     /**

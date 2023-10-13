@@ -39,7 +39,6 @@ public class VanillaRef extends APIReference {
     public VanillaRef(ItemStack itemStack) {
         super();
         this.itemStack = itemStack;
-        setFallback(itemStack);
     }
 
     public VanillaRef(VanillaRef vanillaRef) {
