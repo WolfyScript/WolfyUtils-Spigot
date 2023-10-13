@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.deser.std.StdNodeBasedDeserializer;
 import com.wolfyscript.utilities.Copyable;
 import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.common.WolfyCore;
 import org.bukkit.World;
@@ -42,7 +43,7 @@ public class StackReference implements Copyable<StackReference> {
         this.identifier = parseIdentifier();
     }
 
-    public StackReference(WolfyUtilCore core, @NotNull StackIdentifierParser<?> parser, double weight, int customAmount, ItemStack item) {
+    public StackReference(WolfyCore core, @NotNull StackIdentifierParser<?> parser, double weight, int customAmount, ItemStack item) {
         this.customAmount = customAmount;
         this.weight = weight;
         this.core = core;
@@ -51,7 +52,7 @@ public class StackReference implements Copyable<StackReference> {
         this.identifier = parseIdentifier();
     }
 
-    public StackReference(WolfyUtilCore core, @NotNull StackIdentifier identifier, double weight, int customAmount, ItemStack item) {
+    public StackReference(WolfyCore core, @NotNull StackIdentifier identifier, double weight, int customAmount, ItemStack item) {
         this.customAmount = customAmount;
         this.weight = weight;
         this.core = core;
@@ -117,9 +118,9 @@ public class StackReference implements Copyable<StackReference> {
 
         private final WolfyCore core;
 
-        protected Deserializer(WolfyCore core) {
+        protected Deserializer() {
             super(StackReference.class);
-            this.core = core;
+            this.core = WolfyCoreImpl.getInstance();
         }
 
         @Override
