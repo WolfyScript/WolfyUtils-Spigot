@@ -111,8 +111,7 @@ public class StackReference implements Copyable<StackReference> {
             }
             // Need to convert APIReference
             APIReference apiReference = ctxt.readTreeAsValue(root, APIReference.class);
-            StackIdentifier identifier = core.getRegistries().getStackIdentifierParsers().parseIdentifier(apiReference.getLinkedItem());
-            return new StackReference(core, identifier.parser().getNamespacedKey(), apiReference.getWeight(), apiReference.getAmount(), apiReference.getLinkedItem());
+            return apiReference.convertToStackReference();
         }
     }
 }
