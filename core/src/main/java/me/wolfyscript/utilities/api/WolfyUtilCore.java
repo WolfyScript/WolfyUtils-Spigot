@@ -211,6 +211,13 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
         this.messageFactory = new MessageFactory(this);
         this.persistentStorage = new PersistentStorage(this);
         this.functionalRecipeGenerator = FunctionalRecipeGenerator.create(this);
+
+        // Data that needs to be registered
+        getLogger().info("Register Default StackIdentifiers");
+        var stackIdentifierParsers = getRegistries().getStackIdentifierParsers();
+        stackIdentifierParsers.register(new BukkitStackIdentifier.Parser());
+        stackIdentifierParsers.register(new WolfyUtilsStackIdentifier.Parser());
+
     }
 
     protected abstract CompatibilityManager createCompatibilityManager();
@@ -260,11 +267,6 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
 
         // Create Global WUCore Mapper and apply modules
         api.getJacksonMapperUtil().setGlobalMapper(applyWolfyUtilsJsonMapperModules(new HoconMapper()));
-
-        getLogger().info("Register Default StackIdentifiers");
-        var stackIdentifierParsers = getRegistries().getStackIdentifierParsers();
-        stackIdentifierParsers.register(new BukkitStackIdentifier.Parser());
-        stackIdentifierParsers.register(new WolfyUtilsStackIdentifier.Parser());
 
         // Initialise all the Registers
         getLogger().info("Register JSON Operators");
