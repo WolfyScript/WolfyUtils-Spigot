@@ -21,6 +21,7 @@ package com.wolfyscript.utilities.bukkit.world.items.references;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.itemsadder.ItemsAdderRef;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.mmoitems.MMOItemsRef;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.mythicmobs.MythicMobsRef;
@@ -29,6 +30,10 @@ import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+
+import com.wolfyscript.utilities.bukkit.world.items.reference.BukkitStackIdentifier;
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackReference;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -143,6 +148,32 @@ public abstract class APIReference {
      */
     public abstract void serialize(JsonGenerator gen, SerializerProvider provider) throws IOException;
 
+    /**
+     * Converts this old APIReference to the new {@link StackReference} system.
+     * By default, the StackReference will be using the {@link BukkitStackIdentifier},
+     * but APIReference implementations may choose to return their related StackReference implementation.
+     * <p>
+     *     Note that the {@link StackReference} contains the weight and amount, while the other data is
+     *     stored in the {@link StackIdentifier} and is one level lower.
+     * </p>
+     *
+     * @return The implementation related StackReference, or {@link BukkitStackIdentifier} by default
+     */
+    public final StackReference convertToStackReference() {
+        StackIdentifier identifier = convert();
+        return new StackReference(WolfyCoreImpl.getInstance(), identifier, weight, amount, identifier.item());
+    }
+
+    /**
+     * Custom implementation may choose to implement this to return their new implementation
+     * of {@link StackIdentifier}, for better integration, other plugins may use to detect the origin of the stack.
+     *
+     * @return The implementation related StackIdentifier, or {@link BukkitStackIdentifier} by default
+     */
+    protected StackIdentifier convert() {
+        return new BukkitStackIdentifier(getLinkedItem());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -209,6 +240,11 @@ public abstract class APIReference {
 
         protected PluginParser(String pluginName, String id, String... aliases) {
             super(id, aliases);
+            this.pluginName = pluginName;
+        }
+
+        protected PluginParser(String pluginName, String id, int priority, String... aliases) {
+            super(id, priority, aliases);
             this.pluginName = pluginName;
         }
 
