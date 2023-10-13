@@ -52,6 +52,7 @@ import java.util.Objects;
  * <p>
  * You can register additional references inside your plugin (onEnable) using {@link me.wolfyscript.utilities.api.inventory.custom_items.CustomItem#registerAPIReferenceParser(Parser)}.
  */
+@Deprecated
 public abstract class APIReference {
 
     protected int amount;
