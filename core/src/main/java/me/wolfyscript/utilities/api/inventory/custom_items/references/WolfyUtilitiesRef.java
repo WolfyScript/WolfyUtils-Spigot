@@ -21,6 +21,8 @@ package me.wolfyscript.utilities.api.inventory.custom_items.references;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
+import com.wolfyscript.utilities.bukkit.world.items.reference.WolfyUtilsStackIdentifier;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.util.NamespacedKey;
@@ -89,6 +91,11 @@ public class WolfyUtilitiesRef extends APIReference {
         if (namespacedKey != null) {
             gen.writeStringField("wolfyutilities", namespacedKey.toString());
         }
+    }
+
+    @Override
+    protected StackIdentifier convert() {
+        return new WolfyUtilsStackIdentifier(namespacedKey);
     }
 
     @Override
