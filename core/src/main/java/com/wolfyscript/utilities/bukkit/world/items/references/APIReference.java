@@ -52,6 +52,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * You can register additional references inside your plugin (onEnable) using {@link CustomItem#registerAPIReferenceParser(Parser)}.
  */
+@Deprecated
 public abstract class APIReference {
 
     protected int amount;
