@@ -16,11 +16,9 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
     public static final NamespacedKey ID = NamespacedKey.wolfyutilties("wolfyutils");
 
     private final NamespacedKey namespacedKey;
-    private final Parser parser;
 
-    public WolfyUtilsStackIdentifier(Parser parser, NamespacedKey namespacedKey) {
+    public WolfyUtilsStackIdentifier(NamespacedKey namespacedKey) {
         this.namespacedKey = namespacedKey;
-        this.parser = parser;
     }
 
     /**
@@ -84,7 +82,7 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
             if (itemMeta != null) {
                 var container = itemMeta.getPersistentDataContainer();
                 if (container.has(CUSTOM_ITEM_KEY, PersistentDataType.STRING)) {
-                    return Optional.of(new WolfyUtilsStackIdentifier(this, NamespacedKey.of(container.get(CUSTOM_ITEM_KEY, PersistentDataType.STRING))));
+                    return Optional.of(new WolfyUtilsStackIdentifier(NamespacedKey.of(container.get(CUSTOM_ITEM_KEY, PersistentDataType.STRING))));
                 }
             }
             return Optional.empty();
