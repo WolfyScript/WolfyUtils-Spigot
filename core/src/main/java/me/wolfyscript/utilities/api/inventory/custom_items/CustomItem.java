@@ -1284,20 +1284,23 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
         return result;
     }
 
-    private Material getCraftRemain() {
-        var item = getItemStack();
-        if (!ItemUtils.isAirOrNull(item) && item.getType().isItem()) {
-            Material replaceType = item.getType().getCraftingRemainingItem();
-            if (replaceType != null) return replaceType;
-            return switch (item.getType().name()) {
+    public static Optional<Material> craftRemain(ItemStack stack) {
+        if (!ItemUtils.isAirOrNull(stack) && stack.getType().isItem()) {
+            Material replaceType = stack.getType().getCraftingRemainingItem();
+            if (replaceType != null) return Optional.of(replaceType);
+            return switch (stack.getType().name()) {
                 case "LAVA_BUCKET", "MILK_BUCKET", "WATER_BUCKET", "COD_BUCKET", "SALMON_BUCKET", "PUFFERFISH_BUCKET", "TROPICAL_FISH_BUCKET" ->
-                        Material.BUCKET;
-                case "POTION" -> Material.GLASS_BOTTLE;
-                case "BEETROOT_SOUP", "MUSHROOM_STEW", "RABBIT_STEW" -> Material.BOWL;
-                default -> null;
+                        Optional.of(Material.BUCKET);
+                case "POTION" -> Optional.of(Material.GLASS_BOTTLE);
+                case "BEETROOT_SOUP", "MUSHROOM_STEW", "RABBIT_STEW" -> Optional.of(Material.BOWL);
+                default -> Optional.empty();
             };
         }
-        return null;
+        return Optional.empty();
+    }
+
+    private Material getCraftRemain() {
+        return CustomItem.craftRemain(getItemStack()).orElse(null);
     }
 
     /**
