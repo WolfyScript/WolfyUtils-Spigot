@@ -1554,6 +1554,21 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
                 .evaluateIfAvailable("ItemsAdder", ItemsAdderIntegration.class, ia -> ia.getStackInstance(iaRef.getItemID()).map(CustomStack::isBlock).orElse(false)));
     }
 
+    /**
+     * Converts <b>Legacy</b> CustomItems, that can behave as a reference or saved item.
+     * If the CustomItem is an actual saved item, then it returns a StackReference using the WolfyUtilsStackIdentifier.
+     * Otherwise, it simply returns the reference of this CustomItem.
+     *
+     * @return The reference, or a reference to this item when it is a saved item.
+     */
+    @Deprecated
+    public StackReference convertToReference() {
+        if (hasNamespacedKey()) {
+            return new StackReference(WolfyUtilCore.getInstance(), new WolfyUtilsStackIdentifier(getNamespacedKey()), getWeight(), getAmount(), getItemStack());
+        }
+        return reference;
+    }
+
     @Override
     public String toString() {
         return "CustomItem{" +
