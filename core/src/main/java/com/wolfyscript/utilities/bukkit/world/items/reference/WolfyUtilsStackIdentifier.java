@@ -45,15 +45,13 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public boolean matches(ItemStack other) {
-        if (other != null) {
-            var itemMeta = other.getItemMeta();
-            if (itemMeta != null) {
-                var container = itemMeta.getPersistentDataContainer();
-                if (container.has(CUSTOM_ITEM_KEY, PersistentDataType.STRING)) {
-                    return Objects.equals(this.namespacedKey, NamespacedKey.of(container.get(CUSTOM_ITEM_KEY, PersistentDataType.STRING)));
-                }
-            }
+    public boolean matches(ItemStack other, int count, boolean exact, boolean ignoreAmount) {
+        if (other == null) return false;
+        var itemMeta = other.getItemMeta();
+        if (itemMeta == null) return false;
+        var container = itemMeta.getPersistentDataContainer();
+        if (container.has(CUSTOM_ITEM_KEY, PersistentDataType.STRING)) {
+            return Objects.equals(this.namespacedKey, NamespacedKey.of(container.get(CUSTOM_ITEM_KEY, PersistentDataType.STRING)));
         }
         return false;
     }
