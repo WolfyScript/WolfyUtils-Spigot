@@ -83,6 +83,18 @@ public class StackReference implements Copyable<StackReference> {
         return identifier;
     }
 
+    public boolean matches(ItemStack other) {
+        return matches(other, true, false);
+    }
+
+    public boolean matches(ItemStack other, boolean exact) {
+        return matches(other, exact, false);
+    }
+
+    public boolean matches(ItemStack other, boolean exact, boolean ignoreAmount) {
+        return identifier().matches(other, customAmount, exact, ignoreAmount);
+    }
+
     @JsonGetter("weight")
     public double weight() {
         return weight;
