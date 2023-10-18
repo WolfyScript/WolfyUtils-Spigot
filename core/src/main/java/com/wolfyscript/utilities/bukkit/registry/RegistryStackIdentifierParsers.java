@@ -17,9 +17,11 @@ import java.util.Optional;
 public class RegistryStackIdentifierParsers extends RegistrySimple<StackIdentifierParser<?>> {
 
     private List<StackIdentifierParser<?>> priorityIndexedParsers = List.of();
+    private final Registries registries;
 
     public RegistryStackIdentifierParsers(Registries registries) {
         super(new NamespacedKey(registries.getCore(), "stack_identifier/parsers"), registries, (Class<StackIdentifierParser<?>>)(Object) StackIdentifierParser.class);
+        this.registries = registries;
     }
 
     @Override
@@ -41,6 +43,16 @@ public class RegistryStackIdentifierParsers extends RegistrySimple<StackIdentifi
             if (identifierOptional.isPresent()) return identifierOptional.get();
         }
         return new BukkitStackIdentifier(stack);
+    }
+
+    /**
+     *
+     *
+     * @param stack
+     * @return
+     */
+    public StackReference parseFrom(ItemStack stack) {
+        return new StackReference(registries.getCore(), parseIdentifier(stack), 1, 1, stack);
     }
 
     private void reIndexParsers() {
