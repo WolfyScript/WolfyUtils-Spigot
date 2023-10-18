@@ -116,6 +116,13 @@ public class StackReference implements Copyable<StackReference> {
         return amount() * stack().getAmount();
     }
 
+    /**
+     * Gets the <b>ORIGINAL</b> stack, from which this reference was created from!<br>
+     * For the linked stack from for example an external plugin use {@link #identifier()}!
+     *
+     * @return The <b>ORIGINAL</b> stack this reference was created from
+     * @see #identifier() Get the externally linked stack of this reference!
+     */
     @JsonGetter("stack")
     public ItemStack stack() {
         return stack;
