@@ -1,6 +1,6 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -9,14 +9,12 @@ import java.util.Optional;
 
 public class BukkitStackIdentifier implements StackIdentifier {
 
-    public static final NamespacedKey ID = NamespacedKey.wolfyutilties("bukkit");
+    public static final NamespacedKey ID = BukkitStackIdentifier.wolfyutilties("bukkit");
 
     private final ItemStack stack;
-    private final Parser parser;
 
-    public BukkitStackIdentifier(Parser parser, ItemStack stack) {
+    public BukkitStackIdentifier(ItemStack stack) {
         this.stack = stack;
-        this.parser = parser;
     }
 
     @Override
@@ -30,13 +28,16 @@ public class BukkitStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public boolean matches(ItemStack other) {
+    public boolean matches(ItemStack other, int count, boolean exact, boolean ignoreAmount) {
+        if (other.getType() != stack.getType()) return false;
+        if (!ignoreAmount && other.getAmount() < stack.getAmount() * count) return false;
+        if (!stack.hasItemMeta() && !exact) return false;
         return stack.isSimilar(other);
     }
 
     @Override
     public StackIdentifierParser<?> parser() {
-        return parser;
+        return WolfyCoreImpl.getInstance().getRegistries().getStackIdentifierParsers().get(ID);
     }
 
     @Override
