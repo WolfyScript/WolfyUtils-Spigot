@@ -11,9 +11,6 @@ import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.inventory.InventoryUtils;
-import me.wolfyscript.utilities.util.inventory.ItemUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -41,6 +38,10 @@ public class StackReference implements Copyable<StackReference> {
      * Used to store the previous parser result
      */
     private final StackIdentifier identifier;
+
+    public static StackReference of(ItemStack itemStack) {
+        return new StackReference(WolfyUtilCore.getInstance(), new BukkitStackIdentifier(itemStack), 1, 1, itemStack);
+    }
 
     public StackReference(WolfyUtilCore core, NamespacedKey parser, double weight, int customAmount, ItemStack item) {
         this.customAmount = customAmount;
