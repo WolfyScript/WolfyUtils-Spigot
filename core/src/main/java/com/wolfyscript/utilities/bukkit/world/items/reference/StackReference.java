@@ -65,7 +65,7 @@ public class StackReference implements Copyable<StackReference> {
         this.customAmount = customAmount;
         this.weight = weight;
         this.core = core;
-        this.parser = identifier.parser();
+        this.parser = core.getRegistries().getStackIdentifierParsers().get(identifier.getNamespacedKey());
         this.stack = item;
         this.identifier = identifier;
     }
