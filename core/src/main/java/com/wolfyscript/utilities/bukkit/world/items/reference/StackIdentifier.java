@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.function.BiFunction;
 
 public interface StackIdentifier extends Keyed {
@@ -39,6 +40,9 @@ public interface StackIdentifier extends Keyed {
 
     boolean matches(ItemStack other, int count, boolean exact, boolean ignoreAmount);
 
+    default Optional<String> permission() {
+        return Optional.empty();
+    }
 
     /**
      * Shrinks the specified stack by the given amount and returns the manipulated or replaced item!
