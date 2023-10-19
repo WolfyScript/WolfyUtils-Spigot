@@ -27,7 +27,6 @@ public class StackReference implements Copyable<StackReference> {
     private final WolfyCore core;
     private final int customAmount;
     private final double weight;
-    private final StackIdentifierParser<?> parser;
     /**
      * Used to store the original stack
      */
@@ -36,6 +35,7 @@ public class StackReference implements Copyable<StackReference> {
      * Used to store the previous parser result
      */
     private final StackIdentifier identifier;
+    private StackIdentifierParser<?> parser;
 
     public StackReference(WolfyCore core, NamespacedKey parser, double weight, int customAmount, ItemStack item) {
         this.customAmount = customAmount;
@@ -124,6 +124,11 @@ public class StackReference implements Copyable<StackReference> {
 
     public StackIdentifierParser<?> parser() {
         return parser;
+    }
+
+    public void swapParser(StackIdentifierParser<?> parser) {
+        this.parser = parser;
+        parseIdentifier();
     }
 
     @JsonGetter("parser")
