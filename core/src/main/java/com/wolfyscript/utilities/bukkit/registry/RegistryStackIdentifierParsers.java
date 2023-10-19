@@ -50,6 +50,10 @@ public class RegistryStackIdentifierParsers extends RegistrySimple<StackIdentifi
         return new BukkitStackIdentifier(stack);
     }
 
+    public List<StackIdentifierParser<?>> matchingParsers(ItemStack stack) {
+        return sortedParsers().stream().sorted().filter(stackIdentifierParser -> stackIdentifierParser.from(stack).isPresent()).toList();
+    }
+
     /**
      *
      *
