@@ -72,6 +72,11 @@ public class MagicRefImpl extends APIReference implements MagicRef {
     }
 
     @Override
+    protected StackIdentifier convert() {
+        return new MagicStackIdentifier(Parser.magicAPI, itemKey);
+    }
+
+    @Override
     public MagicRefImpl clone() {
         return new MagicRefImpl(this);
     }
