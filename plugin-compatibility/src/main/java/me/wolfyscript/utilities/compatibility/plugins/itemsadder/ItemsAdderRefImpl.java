@@ -23,6 +23,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import java.util.Objects;
+
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import org.bukkit.inventory.ItemStack;
@@ -46,6 +48,10 @@ public class ItemsAdderRefImpl extends APIReference implements ItemsAdderRef {
     public ItemsAdderRefImpl(ItemsAdderRefImpl itemsAdderRefImpl) {
         super(itemsAdderRefImpl);
         this.itemID = itemsAdderRefImpl.itemID;
+    }
+
+    public String itemId() {
+        return itemID;
     }
 
     /**
@@ -97,6 +103,11 @@ public class ItemsAdderRefImpl extends APIReference implements ItemsAdderRef {
     @Override
     public ItemsAdderRefImpl clone() {
         return new ItemsAdderRefImpl(this);
+    }
+
+    @Override
+    protected StackIdentifier convert() {
+        return new ItemsAdderStackIdentifier(itemID);
     }
 
     public static class Parser extends PluginParser<ItemsAdderRefImpl> {
