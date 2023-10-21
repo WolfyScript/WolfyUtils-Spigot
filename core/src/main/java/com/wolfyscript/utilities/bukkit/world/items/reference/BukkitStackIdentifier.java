@@ -1,6 +1,7 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
 import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -18,7 +19,7 @@ public class BukkitStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public ItemStack item() {
+    public ItemStack item(ItemCreateContext context) {
         return stack;
     }
 
