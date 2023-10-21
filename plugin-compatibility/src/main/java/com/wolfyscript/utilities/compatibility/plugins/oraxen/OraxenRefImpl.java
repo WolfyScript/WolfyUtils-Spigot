@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.oraxen.OraxenRef;
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import io.th0rgal.oraxen.api.OraxenItems;
 import java.io.IOException;
 import java.util.Objects;
@@ -90,6 +91,11 @@ public class OraxenRefImpl extends APIReference implements OraxenRef {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), itemID);
+    }
+
+    @Override
+    protected OraxenStackIdentifier convert() {
+        return new OraxenStackIdentifier(itemID);
     }
 
     @Override
