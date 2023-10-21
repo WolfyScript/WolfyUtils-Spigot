@@ -61,6 +61,11 @@ public class EcoRefImpl extends APIReference implements EcoRef {
     }
 
     @Override
+    protected EcoStackIdentifier convert() {
+        return new EcoStackIdentifier(itemKey);
+    }
+
+    @Override
     public APIReference clone() {
         return new EcoRefImpl(this);
     }
