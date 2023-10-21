@@ -73,6 +73,11 @@ public class MMOItemsRefImpl extends APIReference implements MMOItemsRef {
     }
 
     @Override
+    protected MMOItemsStackIdentifier convert() {
+        return new MMOItemsStackIdentifier(itemType, itemName);
+    }
+
+    @Override
     public void serialize(JsonGenerator gen, SerializerProvider provider) throws IOException {
         gen.writeObjectFieldStart("mmoitems");
         gen.writeStringField("type", itemType.getId());
