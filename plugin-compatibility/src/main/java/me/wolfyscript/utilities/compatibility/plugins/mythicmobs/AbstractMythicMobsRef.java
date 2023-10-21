@@ -75,6 +75,11 @@ public abstract class AbstractMythicMobsRef extends APIReference implements Myth
     }
 
     @Override
+    protected MythicMobsStackIdentifier convert() {
+        return new MythicMobsStackIdentifier(itemName);
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), itemName);
     }
