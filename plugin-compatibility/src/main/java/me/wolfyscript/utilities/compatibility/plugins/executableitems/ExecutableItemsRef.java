@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.ssomar.score.api.executableitems.config.ExecutableItemsManagerInterface;
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.plugins.ExecutableItemsIntegration;
+import me.wolfyscript.utilities.compatibility.plugins.executableblocks.ExecutableBlocksStackIdentifier;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -41,6 +43,11 @@ public class ExecutableItemsRef extends APIReference {
     @Override
     public void serialize(JsonGenerator gen, SerializerProvider provider) throws IOException {
         gen.writeStringField("executableitems", id);
+    }
+
+    @Override
+    protected StackIdentifier convert() {
+        return new ExecutableItemsStackIdentifier(manager, id);
     }
 
     @Override
