@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.wolfyscript.utilities.compatibility.plugins.FancyBagsImpl;
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.NBTType;
 import java.io.IOException;
@@ -49,6 +50,11 @@ public class FancyBagsItemsRef extends APIReference {
     @Override
     public void serialize(JsonGenerator gen, SerializerProvider provider) throws IOException {
         gen.writeNumberField("fancybags", id);
+    }
+
+    @Override
+    protected StackIdentifier convert() {
+        return new FancyBagsStackIdentifier(id);
     }
 
     @Override
