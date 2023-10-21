@@ -1,6 +1,5 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
-import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 
@@ -17,7 +16,7 @@ public class BukkitStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public ItemStack item() {
+    public ItemStack item(ItemCreateContext context) {
         return stack;
     }
 
@@ -27,11 +26,6 @@ public class BukkitStackIdentifier implements StackIdentifier {
         if (!ignoreAmount && other.getAmount() < stack.getAmount() * count) return false;
         if (!stack.hasItemMeta() && !exact) return false;
         return stack.isSimilar(other);
-    }
-
-    @Override
-    public StackIdentifierParser<?> parser() {
-        return WolfyUtilCore.getInstance().getRegistries().getStackIdentifierParsers().get(ID);
     }
 
     @Override

@@ -28,7 +28,7 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
      * @return The referenced ItemStack or null if referenced {@link CustomItem} is unavailable
      */
     @Override
-    public ItemStack item() {
+    public ItemStack item(ItemCreateContext context) {
         return customItem().map(CustomItem::create).orElseGet(() -> {
             WolfyUtilities.getWUCore().getConsole().warn("Couldn't find CustomItem for " + namespacedKey.toString());
             return null;
@@ -54,11 +54,6 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
             return Objects.equals(this.namespacedKey, NamespacedKey.of(container.get(CUSTOM_ITEM_KEY, PersistentDataType.STRING)));
         }
         return false;
-    }
-
-    @Override
-    public StackIdentifierParser<?> parser() {
-        return null;
     }
 
     @Override
