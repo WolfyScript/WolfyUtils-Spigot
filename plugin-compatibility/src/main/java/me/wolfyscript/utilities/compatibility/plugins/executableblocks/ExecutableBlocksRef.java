@@ -7,6 +7,8 @@ import com.ssomar.executableblocks.executableblocks.ExecutableBlocksManager;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Optional;
+
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.plugins.ExecutableBlocksIntegration;
 import org.bukkit.Material;
@@ -44,6 +46,11 @@ public class ExecutableBlocksRef extends APIReference {
     @Override
     public void serialize(JsonGenerator gen, SerializerProvider provider) throws IOException {
         gen.writeStringField(ExecutableBlocksIntegration.PLUGIN_NAME.toLowerCase(Locale.ROOT), id);
+    }
+
+    @Override
+    protected StackIdentifier convert() {
+        return new ExecutableBlocksStackIdentifier(integration, manager, id);
     }
 
     @Override
