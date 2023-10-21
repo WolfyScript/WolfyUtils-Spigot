@@ -49,6 +49,10 @@ public class ItemsAdderRefImpl extends APIReference implements ItemsAdderRef {
         this.itemID = itemsAdderRefImpl.itemID;
     }
 
+    public String itemId() {
+        return itemID;
+    }
+
     /**
      * @return The latest ItemStack available in ItemsAdder under the specified itemID or AIR.
      */
@@ -98,6 +102,11 @@ public class ItemsAdderRefImpl extends APIReference implements ItemsAdderRef {
     @Override
     public ItemsAdderRefImpl clone() {
         return new ItemsAdderRefImpl(this);
+    }
+
+    @Override
+    protected StackIdentifier convert() {
+        return new ItemsAdderStackIdentifier(itemID);
     }
 
     public static class Parser extends PluginParser<ItemsAdderRefImpl> {
