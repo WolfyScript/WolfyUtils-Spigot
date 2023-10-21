@@ -1,5 +1,6 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.VanillaRef;
@@ -8,7 +9,6 @@ import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -20,11 +20,7 @@ import java.util.function.BiFunction;
 
 public interface StackIdentifier extends Keyed {
 
-    ItemStack item();
-
-    default ItemStack item(Player player, World world) {
-        return item();
-    }
+    ItemStack item(ItemCreateContext context);
 
     default boolean matches(ItemStack other) {
         return matches(other, true, false);
@@ -47,9 +43,9 @@ public interface StackIdentifier extends Keyed {
     /**
      * Shrinks the specified stack by the given amount and returns the manipulated or replaced item!
      * <br><br>
-     * <h3>Stackable  ({@link #item()}.{@link ItemStack#getMaxStackSize() getMaxStackSize()} > 1 or stack count > 1):</h3>
+     * <h3>Stackable  ({@link #item(ItemCreateContext)}.{@link ItemStack#getMaxStackSize() getMaxStackSize()} > 1 or stack count > 1):</h3>
      * <p>
-     * The stack is shrunk by the specified amount (<strong><code>{@link #item()}.{@link ItemStack#getAmount() getAmount()} * count</code></strong>).<br>
+     * The stack is shrunk by the specified amount (<strong><code>{@link #item(ItemCreateContext)}.{@link ItemStack#getAmount() getAmount()} * count</code></strong>).<br>
      * For applying stackable replacements it calls the stackReplacement function with the already shrunken stack and this reference.<br>
      * Default behaviour can be found here:
      * <ul>
@@ -57,7 +53,7 @@ public interface StackIdentifier extends Keyed {
      *     <li>{@link #shrinkUnstackableItem(ItemStack, boolean)}</li>
      * </ul>
      * </p>
-     * <h3>Un-stackable  ({@link #item()}.{@link ItemStack#getMaxStackSize() getMaxStackSize()} == 1 and stack count == 1):</h3>
+     * <h3>Un-stackable  ({@link #item(ItemCreateContext)}.{@link ItemStack#getMaxStackSize() getMaxStackSize()} == 1 and stack count == 1):</h3>
      * <p>
      * Redirects to {@link #shrinkUnstackableItem(ItemStack, boolean)}<br>
      * </p>
@@ -69,10 +65,10 @@ public interface StackIdentifier extends Keyed {
      * @return The manipulated stack, default remain, or custom remains.
      */
     default ItemStack shrink(@NotNull ItemStack stack, int count, boolean useRemains, @NotNull BiFunction<StackIdentifier, ItemStack, ItemStack> stackReplacement) {
-        if (item().getMaxStackSize() == 1 && stack.getAmount() == 1) {
+        if (item(ItemCreateContext.empty(count)).getMaxStackSize() == 1 && stack.getAmount() == 1) {
             return shrinkUnstackableItem(stack, useRemains);
         }
-        int amount = stack.getAmount() - (item().getAmount() * count);
+        int amount = stack.getAmount() - (item(ItemCreateContext.empty(count)).getAmount() * count);
         if (amount <= 0) {
             stack = new ItemStack(Material.AIR);
         } else {
@@ -84,8 +80,8 @@ public interface StackIdentifier extends Keyed {
     /**
      * Shrinks the specified stack by the given amount and returns the manipulated or replaced item!
      * <p>
-     * <h3>Stackable  ({@link #item()}.{@link ItemStack#getMaxStackSize() getMaxStackSize()} > 1 or stack count > 1):</h3>
-     * The stack is shrunk by the specified amount (<strong><code>{@link #item()}.{@link ItemStack#getAmount() getAmount()} * count</code></strong>)
+     * <h3>Stackable  ({@link #item(ItemCreateContext)}.{@link ItemStack#getMaxStackSize() getMaxStackSize()} > 1 or stack count > 1):</h3>
+     * The stack is shrunk by the specified amount (<strong><code>{@link #item(ItemCreateContext)}.{@link ItemStack#getAmount() getAmount()} * count</code></strong>)
      * <p>
      * If this stack has craft remains:<br>
      * <ul>
@@ -106,7 +102,7 @@ public interface StackIdentifier extends Keyed {
      * </p>
      * </p>
      * <p>
-     * <h3>Un-stackable  ({@link #item()}.{@link ItemStack#getMaxStackSize() getMaxStackSize()} == 1 and stack count == 1):</h3>
+     * <h3>Un-stackable  ({@link #item(ItemCreateContext)}.{@link ItemStack#getMaxStackSize() getMaxStackSize()} == 1 and stack count == 1):</h3>
      * Redirects to {@link #shrinkUnstackableItem(ItemStack, boolean)}<br>
      * </p>
      * </p>
@@ -121,7 +117,7 @@ public interface StackIdentifier extends Keyed {
      * @return The manipulated stack, default remain, or custom remains.
      */
     default ItemStack shrink(ItemStack stack, int count, boolean useRemains, @Nullable final Inventory inventory, @Nullable final Player player, @Nullable final Location location) {
-        return shrink(stack, count, useRemains, (customItem, resultStack) -> CustomItem.craftRemain(item())
+        return shrink(stack, count, useRemains, (customItem, resultStack) -> CustomItem.craftRemain(item(ItemCreateContext.empty(count)))
                 .map(material -> useRemains ? new ItemStack(material) : null)
                 .map(replacement -> {
                     var originalStack = resultStack;
@@ -164,17 +160,19 @@ public interface StackIdentifier extends Keyed {
      * @return The manipulated (damaged) stack, default remain, or custom remains.
      */
     default ItemStack shrinkUnstackableItem(ItemStack stack, boolean useRemains) {
-        return CustomItem.craftRemain(item()).map(material -> useRemains ? new ItemStack(material) : null).orElse(new ItemStack(Material.AIR));
+        return CustomItem.craftRemain(item(ItemCreateContext.empty(1))).map(material -> useRemains ? new ItemStack(material) : null).orElse(new ItemStack(Material.AIR));
     }
 
-    StackIdentifierParser<?> parser();
+    default StackIdentifierParser<?> parser() {
+        return WolfyUtilCore.getInstance().getRegistries().getStackIdentifierParsers().get(getNamespacedKey());
+    }
 
     @Override
     NamespacedKey getNamespacedKey();
 
     /**
      * Used for backwards compatibility with {@link APIReference}s.
-     * By default, this returns a {@link VanillaRef} build using the {@link #item()} method.
+     * By default, this returns a {@link VanillaRef} build using the {@link #item(ItemCreateContext)} method.
      * Other implementations may choose to return their old related APIReference implementation.
      * <p>
      * Note that the new Identifiers are one level lower than APIReferences, so they no longer share the weight, and amount properties.
@@ -187,7 +185,7 @@ public interface StackIdentifier extends Keyed {
      */
     @Deprecated
     default APIReference convert(double weight, int amount) {
-        var ref = new VanillaRef(item());
+        var ref = new VanillaRef(item(ItemCreateContext.empty(amount)));
         ref.setWeight(weight);
         ref.setAmount(amount);
         return ref;
