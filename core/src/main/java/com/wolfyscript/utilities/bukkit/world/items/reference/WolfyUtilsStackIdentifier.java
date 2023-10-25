@@ -89,6 +89,14 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
         public NamespacedKey getNamespacedKey() {
             return ID;
         }
+
+        @Override
+        public DisplayConfiguration displayConfig() {
+            return new DisplayConfiguration.SimpleDisplayConfig(
+                    Component.text("WolfyUtils").color(NamedTextColor.DARK_AQUA).decorate(TextDecoration.BOLD),
+                    new DisplayConfiguration.MaterialIconSettings(Material.CRAFTING_TABLE)
+            );
+        }
     }
 
 
