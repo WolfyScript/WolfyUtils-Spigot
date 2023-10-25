@@ -79,6 +79,14 @@ public class MMOItemsStackIdentifier implements StackIdentifier {
         public NamespacedKey getNamespacedKey() {
             return ID;
         }
+
+        @Override
+        public DisplayConfiguration displayConfig() {
+            return new DisplayConfiguration.SimpleDisplayConfig(
+                    Component.text("MMOItems").color(NamedTextColor.DARK_GRAY).decorate(TextDecoration.BOLD),
+                    new DisplayConfiguration.MaterialIconSettings(Material.IRON_SWORD)
+            );
+        }
     }
 
 }
