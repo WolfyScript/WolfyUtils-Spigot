@@ -79,6 +79,14 @@ public class OraxenStackIdentifier implements StackIdentifier {
         public NamespacedKey getNamespacedKey() {
             return ID;
         }
+
+        @Override
+        public DisplayConfiguration displayConfig() {
+            return new DisplayConfiguration.SimpleDisplayConfig(
+                    Component.text("Oraxen").color(NamedTextColor.DARK_AQUA).decorate(TextDecoration.BOLD),
+                    new DisplayConfiguration.MaterialIconSettings(Material.DIAMOND)
+            );
+        }
     }
 
 }
