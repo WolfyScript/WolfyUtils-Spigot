@@ -54,6 +54,14 @@ public class BukkitStackIdentifier implements StackIdentifier {
         public NamespacedKey getNamespacedKey() {
             return ID;
         }
+
+        @Override
+        public DisplayConfiguration displayConfig() {
+            return new DisplayConfiguration.SimpleDisplayConfig(
+                    Component.text("Bukkit").color(NamedTextColor.WHITE).decorate(TextDecoration.BOLD),
+                    new DisplayConfiguration.MaterialIconSettings(Material.LAVA_BUCKET)
+            );
+        }
     }
 
 }
