@@ -5,6 +5,10 @@ import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
@@ -21,7 +25,7 @@ public class EcoStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public ItemStack item(ItemCreateContext context) {
+    public ItemStack stack(ItemCreateContext context) {
         return Items.lookup(itemKey.toString()).getItem();
     }
 

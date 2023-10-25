@@ -6,6 +6,10 @@ import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierPar
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
@@ -25,7 +29,7 @@ public class MythicMobsStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public ItemStack item(ItemCreateContext context) {
+    public ItemStack stack(ItemCreateContext context) {
         return mythicBukkit.getItemManager().getItemStack(itemName);
     }
 

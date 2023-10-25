@@ -30,7 +30,7 @@ public class FancyBagsStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public ItemStack item(ItemCreateContext context) {
+    public ItemStack stack(ItemCreateContext context) {
         Backpack bag = CustomBackpacks.getBackpack(id);
         if (bag != null) {
             return Utils.createBackpackItemStack(bag.getName(), bag.getTexture(), bag.getSlotsAmount(), bag.getId());

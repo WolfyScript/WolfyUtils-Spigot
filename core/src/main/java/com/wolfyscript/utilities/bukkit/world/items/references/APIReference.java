@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.wolfyscript.utilities.bukkit.world.items.reference.BukkitStackIdentifier;
+import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackReference;
 import org.bukkit.inventory.ItemStack;

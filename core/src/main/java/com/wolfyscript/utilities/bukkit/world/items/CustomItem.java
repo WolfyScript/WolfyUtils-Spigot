@@ -702,7 +702,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      */
     @Override
     public ItemStack getItemStack() {
-        return reference.identifier().item();
+        return reference.identifier().stack(ItemCreateContext.empty(getAmount()));
     }
 
     /**
@@ -726,7 +726,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @return the item from the external API that is linked to this object
      */
     public ItemStack create(int amount) {
-        var itemStack = reference.identifier().item().clone();
+        var itemStack = reference.identifier().stack(ItemCreateContext.empty(amount)).clone();
         if (this.hasNamespacedKey()) {
             var itemMeta = itemStack.getItemMeta();
             var container = itemMeta.getPersistentDataContainer();
@@ -762,7 +762,11 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      */
     @Deprecated(forRemoval = true)
     public ItemStack getIDItem(int amount) {
-        return create(amount);
+        var itemStack = reference.originalStack().clone();
+        if (amount > 0) {
+            itemStack.setAmount(amount);
+        }
+        return itemStack;
     }
 
     @Deprecated(forRemoval = true)
@@ -1017,7 +1021,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
 
     private void applyStackableReplacement(int totalAmount, boolean replaceWithRemains, @Nullable Player player, @Nullable Inventory inventory, @Nullable Location location) {
         ItemStack replacement = replacement()
-                .map(StackReference::stack)
+                .map(StackReference::originalStack)
                 .orElseGet(() -> isConsumed() && replaceWithRemains && craftRemain != null ? new ItemStack(craftRemain) : null);
         if (replacement != null) {
             replacement.setAmount(replacement.getAmount() * totalAmount);
@@ -1059,7 +1063,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @param replacement The new replacement, or null to unset it
      */
     public void replacement(StackReference replacement) {
-        if(replacement != null && replacement.identifier() != null && !ItemUtils.isAirOrNull(replacement.identifier().item())) {
+        if(replacement != null && replacement.identifier() != null && !ItemUtils.isAirOrNull(replacement.identifier().stack(ItemCreateContext.empty(getAmount())))) {
             this.replacement = replacement;
         } else {
             this.replacement = null;
@@ -1216,7 +1220,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     public ItemStack shrink(ItemStack stack, int count, boolean useRemains, @Nullable final Inventory inventory, @Nullable final Player player, @Nullable final Location location) {
         return shrink(stack, count, useRemains, (customItem, resultStack) -> {
             ItemStack replacement = replacement()
-                    .map(StackReference::stack)
+                    .map(StackReference::originalStack)
                     .orElseGet(() -> isConsumed() && useRemains && craftRemain != null ? new ItemStack(craftRemain) : null);
             if (!ItemUtils.isAirOrNull(replacement)) {
                 int replacementAmount = replacement.getAmount() * count;
@@ -1260,7 +1264,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      */
     public ItemStack shrinkUnstackableItem(ItemStack stack, boolean useRemains) {
         ItemStack result = replacement()
-                .map(StackReference::stack)
+                .map(StackReference::originalStack)
                 .orElseGet(() -> {
                     if (this.isConsumed() && craftRemain != null && useRemains) {
                         return new ItemStack(craftRemain);

@@ -19,13 +19,10 @@ public class BukkitStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public ItemStack item(ItemCreateContext context) {
-        return stack;
-    }
-
-    @Override
-    public ItemStack item(Player player, World world) {
-        return stack;
+    public ItemStack stack(ItemCreateContext context) {
+        ItemStack cloned = stack.clone();
+        cloned.setAmount(context.amount());
+        return cloned;
     }
 
     @Override
@@ -34,11 +31,6 @@ public class BukkitStackIdentifier implements StackIdentifier {
         if (!ignoreAmount && other.getAmount() < stack.getAmount() * count) return false;
         if (!stack.hasItemMeta() && !exact) return false;
         return stack.isSimilar(other);
-    }
-
-    @Override
-    public StackIdentifierParser<?> parser() {
-        return WolfyCoreImpl.getInstance().getRegistries().getStackIdentifierParsers().get(ID);
     }
 
     @Override

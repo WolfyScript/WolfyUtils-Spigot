@@ -6,6 +6,10 @@ import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierPar
 import io.th0rgal.oraxen.api.OraxenItems;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
@@ -26,7 +30,7 @@ public class OraxenStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public ItemStack item(ItemCreateContext context) {
+    public ItemStack stack(ItemCreateContext context) {
         if (OraxenItems.exists(itemID)) {
             return OraxenItems.getItemById(itemID).build();
         }

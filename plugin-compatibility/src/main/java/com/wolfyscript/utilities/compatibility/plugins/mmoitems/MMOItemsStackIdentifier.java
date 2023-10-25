@@ -8,6 +8,10 @@ import me.wolfyscript.utilities.util.NamespacedKey;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.Type;
 import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
@@ -26,7 +30,7 @@ public class MMOItemsStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public ItemStack item(ItemCreateContext context) {
+    public ItemStack stack(ItemCreateContext context) {
         MMOItem item = MMOItems.plugin.getMMOItem(itemType, itemName);
         return item != null ? item.newBuilder().buildSilently() : null;
     }
