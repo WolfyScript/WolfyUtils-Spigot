@@ -48,6 +48,7 @@ public class MythicMobsImpl extends PluginIntegrationAbstract implements MythicM
         } else {
             core.registerAPIReference(new MythicMobsRefImpl.Parser());
         }
+        core.getRegistries().getStackIdentifierParsers().register(new me.wolfyscript.utilities.compatibility.plugins.mythicmobs.MythicMobsStackIdentifier.Parser());
     }
 
     @Override

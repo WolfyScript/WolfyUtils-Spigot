@@ -51,6 +51,7 @@ public class ItemsAdderImpl extends PluginIntegrationAbstract implements ItemsAd
     @Override
     public void init(Plugin plugin) {
         core.registerAPIReference(new ItemsAdderRefImpl.Parser());
+        core.getRegistries().getStackIdentifierParsers().register(new me.wolfyscript.utilities.compatibility.plugins.itemsadder.ItemsAdderStackIdentifier.Parser());
         Bukkit.getPluginManager().registerEvents(this, core.getWolfyUtils().getPlugin());
         Bukkit.getPluginManager().registerEvents(new CustomItemListener(this), core.getWolfyUtils().getPlugin());
     }

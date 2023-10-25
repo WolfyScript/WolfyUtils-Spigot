@@ -48,6 +48,7 @@ public class EcoIntegrationImpl extends PluginIntegrationAbstract implements Eco
     @Override
     public void init(Plugin plugin) {
         core.registerAPIReference(new EcoRefImpl.Parser());
+        core.getRegistries().getStackIdentifierParsers().register(new me.wolfyscript.utilities.compatibility.plugins.eco.EcoStackIdentifier.Parser());
     }
 
     @Override
