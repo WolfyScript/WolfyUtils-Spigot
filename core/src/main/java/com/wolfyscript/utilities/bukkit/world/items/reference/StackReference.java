@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 @JsonDeserialize(using = StackReference.Deserializer.class)
 public class StackReference implements Copyable<StackReference> {
@@ -101,6 +102,34 @@ public class StackReference implements Copyable<StackReference> {
         return identifier().matches(other, customAmount, exact, ignoreAmount);
     }
 
+    /**
+     * Convenience method to get the stack the identifier points to.<br>
+     * This is the same as <code>{@link #identifier() identifier()}.{@link StackIdentifier#stack(ItemCreateContext) stack}({@link ItemCreateContext#of(StackReference) ItemCreateContext.of}({@link StackReference this}).{@link ItemCreateContext.Builder#build() build()})</code>
+     *
+     * @return
+     */
+    public ItemStack referencedStack() {
+        return identifier().stack(ItemCreateContext.of(this).build());
+    }
+
+    public ItemStack referencedStack(Consumer<ItemCreateContext.Builder> contextBuild) {
+        ItemCreateContext.Builder builder = ItemCreateContext.of(this);
+        contextBuild.accept(builder);
+        return identifier().stack(builder.build());
+    }
+
+    /**
+     * Gets the <b>ORIGINAL</b> stack, from which this reference was created from!<br>
+     * For the linked stack from for example an external plugin use {@link #identifier()}!
+     *
+     * @return The <b>ORIGINAL</b> stack this reference was created from
+     * @see #identifier() Get the externally linked stack of this reference!
+     */
+    @JsonGetter("stack")
+    public ItemStack originalStack() {
+        return stack;
+    }
+
     @JsonGetter("weight")
     public double weight() {
         return weight;
@@ -113,19 +142,7 @@ public class StackReference implements Copyable<StackReference> {
 
     @JsonIgnore
     public int effectiveAmount() {
-        return amount() * stack().getAmount();
-    }
-
-    /**
-     * Gets the <b>ORIGINAL</b> stack, from which this reference was created from!<br>
-     * For the linked stack from for example an external plugin use {@link #identifier()}!
-     *
-     * @return The <b>ORIGINAL</b> stack this reference was created from
-     * @see #identifier() Get the externally linked stack of this reference!
-     */
-    @JsonGetter("stack")
-    public ItemStack stack() {
-        return stack;
+        return amount() * originalStack().getAmount();
     }
 
     public StackIdentifierParser<?> parser() {
@@ -150,7 +167,7 @@ public class StackReference implements Copyable<StackReference> {
     /**
      * Shrinks the specified stack by the given amount and returns the manipulated or replaced item!
      * <br><br>
-     * <h3>Stackable  ({@link #stack()}.{@link ItemStack#getMaxStackSize() getMaxStackSize()} > 1 or stack count > 1):</h3>
+     * <h3>Stackable  ({@link #originalStack()}.{@link ItemStack#getMaxStackSize() getMaxStackSize()} > 1 or stack count > 1):</h3>
      * <p>
      * The stack is shrunk by the specified amount (<strong><code>{@link #effectiveAmount()} * totalAmount</code></strong>).<br>
      * For applying stackable replacements it calls the stackReplacement function with the already shrunken stack and this reference.<br>
@@ -160,7 +177,7 @@ public class StackReference implements Copyable<StackReference> {
      *     <li>{@link #shrinkUnstackableItem(ItemStack, boolean)}</li>
      * </ul>
      * </p>
-     * <h3>Un-stackable  ({@link #stack()}.{@link ItemStack#getMaxStackSize() getMaxStackSize()} == 1 and stack count == 1):</h3>
+     * <h3>Un-stackable  ({@link #originalStack()}.{@link ItemStack#getMaxStackSize() getMaxStackSize()} == 1 and stack count == 1):</h3>
      * <p>
      * Redirects to {@link #shrinkUnstackableItem(ItemStack, boolean)}<br>
      * </p>
@@ -178,7 +195,7 @@ public class StackReference implements Copyable<StackReference> {
     /**
      * Shrinks the specified stack by the given amount and returns the manipulated or replaced item!
      * <p>
-     * <h3>Stackable  ({@link #stack()}.{@link ItemStack#getMaxStackSize() getMaxStackSize()} > 1 or stack count > 1):</h3>
+     * <h3>Stackable  ({@link #originalStack()}.{@link ItemStack#getMaxStackSize() getMaxStackSize()} > 1 or stack count > 1):</h3>
      * The stack is shrunk by the specified amount (<strong><code>{@link #effectiveAmount()} * count</code></strong>)
      * <p>
      * If this stack has craft remains:<br>
@@ -200,7 +217,7 @@ public class StackReference implements Copyable<StackReference> {
      * </p>
      * </p>
      * <p>
-     * <h3>Un-stackable  ({@link #stack()}.{@link ItemStack#getMaxStackSize() getMaxStackSize()} == 1 and stack count == 1):</h3>
+     * <h3>Un-stackable  ({@link #originalStack()}.{@link ItemStack#getMaxStackSize() getMaxStackSize()} == 1 and stack count == 1):</h3>
      * Redirects to {@link #shrinkUnstackableItem(ItemStack, boolean)}<br>
      * </p>
      * </p>

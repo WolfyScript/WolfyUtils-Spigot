@@ -4,6 +4,10 @@ import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -28,8 +32,8 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
      * @return The referenced ItemStack or null if referenced {@link CustomItem} is unavailable
      */
     @Override
-    public ItemStack item(ItemCreateContext context) {
-        return customItem().map(CustomItem::create).orElseGet(() -> {
+    public ItemStack stack(ItemCreateContext context) {
+        return customItem().map(customItem -> customItem.create(context.amount())).orElseGet(() -> {
             WolfyUtilities.getWUCore().getConsole().warn("Couldn't find CustomItem for " + namespacedKey.toString());
             return null;
         });

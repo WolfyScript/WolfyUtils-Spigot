@@ -31,7 +31,7 @@ public class MagicStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public ItemStack item(ItemCreateContext context) {
+    public ItemStack stack(ItemCreateContext context) {
         return Objects.requireNonNullElse(magicAPI.getController().createItem(itemKey), ItemUtils.AIR);
     }
 

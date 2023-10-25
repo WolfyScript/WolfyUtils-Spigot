@@ -28,13 +28,13 @@ public class ExecutableItemsStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public ItemStack item(ItemCreateContext context) {
-        return manager.getExecutableItem(id).map(item -> item.buildItem(context.amount(), Optional.empty())).orElseGet(()-> new ItemStack(Material.AIR));
+    public ItemStack stack(ItemCreateContext context) {
+        return manager.getExecutableItem(id).map(item -> item.buildItem(context.amount(), context.player())).orElseGet(()-> new ItemStack(Material.AIR));
     }
 
     @Override
     public boolean matches(ItemStack other, int count, boolean exact, boolean ignoreAmount) {
-        if (!ignoreAmount && other.getAmount() < item(ItemCreateContext.empty(count)).getAmount() * count) return false;
+        if (!ignoreAmount && other.getAmount() < stack(ItemCreateContext.empty(count)).getAmount() * count) return false;
         return manager.getExecutableItem(other).map(exeItem -> exeItem.getId().equals(id)).orElse(false);
     }
 

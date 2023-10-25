@@ -1,6 +1,10 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
 import me.wolfyscript.utilities.util.NamespacedKey;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
@@ -16,8 +20,10 @@ public class BukkitStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public ItemStack item(ItemCreateContext context) {
-        return stack;
+    public ItemStack stack(ItemCreateContext context) {
+        ItemStack cloned = stack.clone();
+        cloned.setAmount(context.amount());
+        return cloned;
     }
 
     @Override

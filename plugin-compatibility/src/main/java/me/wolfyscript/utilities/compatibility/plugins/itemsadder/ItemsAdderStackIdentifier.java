@@ -6,6 +6,10 @@ import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierPar
 import dev.lone.itemsadder.api.CustomStack;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
@@ -26,7 +30,7 @@ public class ItemsAdderStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public ItemStack item(ItemCreateContext context) {
+    public ItemStack stack(ItemCreateContext context) {
         var customStack = CustomStack.getInstance(itemId);
         if (customStack != null) {
             return customStack.getItemStack();
@@ -36,7 +40,7 @@ public class ItemsAdderStackIdentifier implements StackIdentifier {
 
     @Override
     public boolean matches(ItemStack other, int count, boolean exact, boolean ignoreAmount) {
-        if (!ignoreAmount && other.getAmount() < item(ItemCreateContext.empty(count)).getAmount() * count) return false;
+        if (!ignoreAmount && other.getAmount() < stack(ItemCreateContext.empty(count)).getAmount() * count) return false;
         var customStack = CustomStack.byItemStack(other);
         return customStack != null && Objects.equals(itemId, customStack.getNamespacedID());
     }

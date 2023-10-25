@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.wolfyscript.utilities.bukkit.world.items.reference.BukkitStackIdentifier;
+import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackReference;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
@@ -160,7 +161,7 @@ public abstract class APIReference {
      */
     public final StackReference convertToStackReference() {
         StackIdentifier identifier = convert();
-        return new StackReference(WolfyUtilCore.getInstance(), identifier, weight, amount, identifier.item());
+        return new StackReference(WolfyUtilCore.getInstance(), identifier, weight, amount, identifier.stack(ItemCreateContext.empty(amount)));
     }
 
     /**
