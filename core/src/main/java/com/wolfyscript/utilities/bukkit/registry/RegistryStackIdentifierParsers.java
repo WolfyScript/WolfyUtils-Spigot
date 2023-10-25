@@ -10,6 +10,7 @@ import me.wolfyscript.utilities.registry.RegistrySimple;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -60,6 +61,6 @@ public class RegistryStackIdentifierParsers extends RegistrySimple<StackIdentifi
     }
 
     private void reIndexParsers() {
-        priorityIndexedParsers = map.values().stream().filter(Objects::nonNull).sorted().toList();
+        priorityIndexedParsers = map.values().stream().sorted(Comparator.naturalOrder()).filter(Objects::nonNull).toList();
     }
 }
