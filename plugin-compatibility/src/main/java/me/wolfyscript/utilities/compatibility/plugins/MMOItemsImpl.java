@@ -23,6 +23,7 @@ import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.mmoitems.MMOItemsRefImpl;
+import me.wolfyscript.utilities.compatibility.plugins.mmoitems.MMOItemsStackIdentifier;
 import org.bukkit.plugin.Plugin;
 
 @WUPluginIntegration(pluginName = MMOItemsImpl.PLUGIN_NAME)
@@ -37,6 +38,7 @@ public class MMOItemsImpl extends PluginIntegrationAbstract {
     @Override
     public void init(Plugin plugin) {
         core.registerAPIReference(new MMOItemsRefImpl.Parser());
+        core.getRegistries().getStackIdentifierParsers().register(new MMOItemsStackIdentifier.Parser());
     }
 
     @Override

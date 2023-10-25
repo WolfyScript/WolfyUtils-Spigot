@@ -28,6 +28,7 @@ import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReferen
 import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.mythicmobs.MythicMobs5RefImpl;
 import me.wolfyscript.utilities.compatibility.plugins.mythicmobs.MythicMobsRefImpl;
+import me.wolfyscript.utilities.compatibility.plugins.mythicmobs.MythicMobsStackIdentifier;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 
@@ -45,6 +46,7 @@ public class MythicMobsImpl extends PluginIntegrationAbstract implements MythicM
         } else {
             core.registerAPIReference(new MythicMobsRefImpl.Parser());
         }
+        core.getRegistries().getStackIdentifierParsers().register(new MythicMobsStackIdentifier.Parser());
     }
 
     @Override
