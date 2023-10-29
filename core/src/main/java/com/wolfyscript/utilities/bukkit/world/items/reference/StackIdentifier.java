@@ -19,8 +19,21 @@ import java.util.function.BiFunction;
 
 public interface StackIdentifier extends Keyed {
 
+    /**
+     * Creates an item stack, this identifier points to, using the provided {@link ItemCreateContext}.<br>
+     * The context can be used to create player specific stacks, specify the stack amount, and more.
+     *
+     * @param context The context for the item stack creation
+     * @return The item stack, that this identifier points to, created using the provided context
+     */
     ItemStack stack(ItemCreateContext context);
 
+    /**
+     * Checks if the specified item stack matches the reference stack from this identifier.
+     *
+     * @param other The other stack to check for a match
+     * @return true if the other stack matches this identifier
+     */
     default boolean matches(ItemStack other) {
         return matches(other, true, false);
     }
@@ -35,6 +48,11 @@ public interface StackIdentifier extends Keyed {
 
     boolean matches(ItemStack other, int count, boolean exact, boolean ignoreAmount);
 
+    /**
+     * Gets the optional permission string this identifier requires
+     *
+     * @return Optional containing the permission string, or empty if not available
+     */
     default Optional<String> permission() {
         return Optional.empty();
     }
