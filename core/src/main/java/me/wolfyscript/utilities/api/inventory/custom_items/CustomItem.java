@@ -160,7 +160,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     private boolean checkOldMetaSettings = true;
 
     @JsonCreator
-    public CustomItem(@JsonProperty("stackReference") @JsonAlias({"item", "api_reference", "apiReference"}) StackReference reference) {
+    public CustomItem(@JsonProperty("reference") @JsonAlias({"item", "api_reference", "apiReference"}) StackReference reference) {
         super(CustomItem.class);
         this.reference = reference;
 
@@ -763,6 +763,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
         return reference.convert();
     }
 
+    @JsonGetter("reference")
     public StackReference stackReference() {
         return reference;
     }
