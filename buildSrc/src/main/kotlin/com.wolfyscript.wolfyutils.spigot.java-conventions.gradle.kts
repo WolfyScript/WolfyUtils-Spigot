@@ -37,7 +37,7 @@ java {
 }
 
 group = "com.wolfyscript.wolfyutils.spigot"
-version = "4.16.15-beta.2"
+version = "4.16.15-beta.1"
 val apiVersion = "4.16.1-SNAPSHOT"
 
 dependencies {
