@@ -6,6 +6,7 @@ import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.executableitems.ExecutableItemsRef;
+import me.wolfyscript.utilities.compatibility.plugins.executableitems.ExecutableItemsStackIdentifier;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class ExecutableItemsImpl extends PluginIntegrationAbstract implements Ex
     @Override
     public void init(Plugin plugin) {
         core.registerAPIReference(new ExecutableItemsRef.Parser(ExecutableItemsAPI.getExecutableItemsManager()));
+        core.getRegistries().getStackIdentifierParsers().register(new ExecutableItemsStackIdentifier.Parser(ExecutableItemsAPI.getExecutableItemsManager()));
     }
 
     @Override

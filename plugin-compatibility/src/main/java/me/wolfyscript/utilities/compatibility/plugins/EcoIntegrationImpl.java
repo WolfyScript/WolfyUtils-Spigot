@@ -25,6 +25,7 @@ import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.eco.EcoRefImpl;
+import me.wolfyscript.utilities.compatibility.plugins.eco.EcoStackIdentifier;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -45,6 +46,7 @@ public class EcoIntegrationImpl extends PluginIntegrationAbstract implements Eco
     @Override
     public void init(Plugin plugin) {
         core.registerAPIReference(new EcoRefImpl.Parser());
+        core.getRegistries().getStackIdentifierParsers().register(new EcoStackIdentifier.Parser());
     }
 
     @Override

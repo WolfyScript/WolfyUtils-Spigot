@@ -24,6 +24,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import java.util.Objects;
+
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import org.bukkit.inventory.ItemStack;
@@ -68,6 +70,11 @@ public class MagicRefImpl extends APIReference implements MagicRef {
     @Override
     public void serialize(JsonGenerator gen, SerializerProvider provider) throws IOException {
         gen.writeStringField("magic", itemKey);
+    }
+
+    @Override
+    protected StackIdentifier convert() {
+        return new MagicStackIdentifier(Parser.magicAPI, itemKey);
     }
 
     @Override

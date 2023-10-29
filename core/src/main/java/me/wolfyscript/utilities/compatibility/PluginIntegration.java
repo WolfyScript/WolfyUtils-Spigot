@@ -44,6 +44,7 @@ public interface PluginIntegration {
      * @param reference The {@link APIReference} to check.
      * @return True if the reference is part of this integration; else false.
      */
+    @Deprecated(forRemoval = true, since = "4.16.15")
     default boolean isAPIReferenceIncluded(APIReference reference) { return false; }
 
     /**

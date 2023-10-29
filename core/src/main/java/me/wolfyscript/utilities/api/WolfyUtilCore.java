@@ -38,6 +38,8 @@ import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
 import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectData;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
+import com.wolfyscript.utilities.bukkit.world.items.reference.BukkitStackIdentifier;
+import com.wolfyscript.utilities.bukkit.world.items.reference.WolfyUtilsStackIdentifier;
 import com.wolfyscript.utilities.common.WolfyCore;
 import com.wolfyscript.utilities.bukkit.commands.ChatActionCommand;
 import com.wolfyscript.utilities.bukkit.commands.InfoCommand;
@@ -209,6 +211,13 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
         this.messageFactory = new MessageFactory(this);
         this.persistentStorage = new PersistentStorage(this);
         this.functionalRecipeGenerator = FunctionalRecipeGenerator.create(this);
+
+        // Data that needs to be registered
+        getLogger().info("Register Default StackIdentifiers");
+        var stackIdentifierParsers = getRegistries().getStackIdentifierParsers();
+        stackIdentifierParsers.register(new BukkitStackIdentifier.Parser());
+        stackIdentifierParsers.register(new WolfyUtilsStackIdentifier.Parser());
+
     }
 
     protected abstract CompatibilityManager createCompatibilityManager();

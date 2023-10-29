@@ -21,6 +21,8 @@ package me.wolfyscript.utilities.api.inventory.custom_items.references;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.wolfyscript.utilities.bukkit.world.items.reference.BukkitStackIdentifier;
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.util.json.jackson.JacksonUtil;
 import org.bukkit.inventory.ItemStack;
@@ -51,6 +53,7 @@ public class VanillaRef extends APIReference {
         return itemStack;
     }
 
+    @Deprecated
     @Override
     public ItemStack getIdItem() {
         return itemStack;
@@ -65,6 +68,11 @@ public class VanillaRef extends APIReference {
     public void serialize(JsonGenerator gen, SerializerProvider provider) throws IOException {
         gen.writeFieldName("item");
         JacksonUtil.getObjectMapper().writeValue(gen, itemStack);
+    }
+
+    @Override
+    protected StackIdentifier convert() {
+        return new BukkitStackIdentifier(itemStack);
     }
 
     @Override

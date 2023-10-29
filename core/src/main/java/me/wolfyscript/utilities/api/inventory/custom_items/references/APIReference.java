@@ -21,6 +21,11 @@ package me.wolfyscript.utilities.api.inventory.custom_items.references;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.wolfyscript.utilities.bukkit.world.items.reference.BukkitStackIdentifier;
+import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackReference;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.compatibility.plugins.itemsadder.ItemsAdderRef;
 import me.wolfyscript.utilities.compatibility.plugins.mmoitems.MMOItemsRef;
 import me.wolfyscript.utilities.compatibility.plugins.mythicmobs.MythicMobsRef;
@@ -52,6 +57,7 @@ import java.util.Objects;
  * <p>
  * You can register additional references inside your plugin (onEnable) using {@link me.wolfyscript.utilities.api.inventory.custom_items.CustomItem#registerAPIReferenceParser(Parser)}.
  */
+@Deprecated
 public abstract class APIReference {
 
     protected int amount;
@@ -141,6 +147,32 @@ public abstract class APIReference {
      * @param gen the initial JsonGenerator containing the custom amount field
      */
     public abstract void serialize(JsonGenerator gen, SerializerProvider provider) throws IOException;
+
+    /**
+     * Converts this old APIReference to the new {@link StackReference} system.
+     * By default, the StackReference will be using the {@link BukkitStackIdentifier},
+     * but APIReference implementations may choose to return their related StackReference implementation.
+     * <p>
+     *     Note that the {@link StackReference} contains the weight and amount, while the other data is
+     *     stored in the {@link StackIdentifier} and is one level lower.
+     * </p>
+     *
+     * @return The implementation related StackReference, or {@link BukkitStackIdentifier} by default
+     */
+    public final StackReference convertToStackReference() {
+        StackIdentifier identifier = convert();
+        return new StackReference(WolfyUtilCore.getInstance(), identifier, weight, amount, identifier.stack(ItemCreateContext.empty(amount)));
+    }
+
+    /**
+     * Custom implementation may choose to implement this to return their new implementation
+     * of {@link StackIdentifier}, for better integration, other plugins may use to detect the origin of the stack.
+     *
+     * @return The implementation related StackIdentifier, or {@link BukkitStackIdentifier} by default
+     */
+    protected StackIdentifier convert() {
+        return new BukkitStackIdentifier(getLinkedItem());
+    }
 
     @Override
     public boolean equals(Object o) {
