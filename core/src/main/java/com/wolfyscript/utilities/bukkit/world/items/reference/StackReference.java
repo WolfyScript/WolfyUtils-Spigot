@@ -320,7 +320,7 @@ public class StackReference implements Copyable<StackReference> {
 
         @Override
         public StackReference convert(JsonNode root, DeserializationContext ctxt) throws IOException {
-            if (root.has("type")) {
+            if (root.has("parser")) {
                 // New ItemReference used! No conversion required!
                 return new StackReference(core,
                         ctxt.readTreeAsValue(root.get("parser"), NamespacedKey.class),
