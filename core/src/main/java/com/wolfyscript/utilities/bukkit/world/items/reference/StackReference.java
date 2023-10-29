@@ -24,6 +24,13 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
+/**
+ * Acts as a wrapper for {@link StackIdentifier}, that links to an external ItemStack (like other Plugins).
+ * This keeps track of the original ItemStack, as a fallback, and the parser used to get the wrapped {@link StackIdentifier}.
+ * Additionally, it stores the amount, and other extra settings.
+ * <br>
+ * This is usually stored in JSON (HOCON) files, while the {@link StackIdentifier} is not.
+ */
 @JsonDeserialize(using = StackReference.Deserializer.class)
 public class StackReference implements Copyable<StackReference> {
 
@@ -86,6 +93,11 @@ public class StackReference implements Copyable<StackReference> {
         return new BukkitStackIdentifier(stack);
     }
 
+    /**
+     * Gets the currently wrapped StackIdentifier, parsed by the current {@link StackIdentifierParser}
+     *
+     * @return The currently wrapped StackIdentifier
+     */
     public StackIdentifier identifier() {
         return identifier;
     }
@@ -106,12 +118,19 @@ public class StackReference implements Copyable<StackReference> {
      * Convenience method to get the stack the identifier points to.<br>
      * This is the same as <code>{@link #identifier() identifier()}.{@link StackIdentifier#stack(ItemCreateContext) stack}({@link ItemCreateContext#of(StackReference) ItemCreateContext.of}({@link StackReference this}).{@link ItemCreateContext.Builder#build() build()})</code>
      *
-     * @return
+     * @return The stack the {@link #identifier()} points to
      */
     public ItemStack referencedStack() {
         return identifier().stack(ItemCreateContext.of(this).build());
     }
 
+    /**
+     * Convenience method to get the stack the identifier points to.<br>
+     * This is the same as <code>{@link #identifier() identifier()}.{@link StackIdentifier#stack(ItemCreateContext) stack}({@link ItemCreateContext#of(StackReference) ItemCreateContext.of}({@link StackReference this}).{@link ItemCreateContext.Builder#build() build()})</code>
+     *
+     * @param contextBuild provides a {@link ItemCreateContext.Builder} with this reference already applied
+     * @return The stack the {@link #identifier()} points to
+     */
     public ItemStack referencedStack(Consumer<ItemCreateContext.Builder> contextBuild) {
         ItemCreateContext.Builder builder = ItemCreateContext.of(this);
         contextBuild.accept(builder);
@@ -123,37 +142,59 @@ public class StackReference implements Copyable<StackReference> {
      * For the linked stack from for example an external plugin use {@link #identifier()}!
      *
      * @return The <b>ORIGINAL</b> stack this reference was created from
-     * @see #identifier() Get the externally linked stack of this reference!
+     * @see #identifier() Get the StackIdentifier pointing to the external stack
+     * @see #referencedStack() Get the externally referenced ItemStack
      */
     @JsonGetter("stack")
     public ItemStack originalStack() {
         return stack;
     }
 
+    /**
+     * Gets the weight associated with this reference inside a collection.<br>
+     * For example inside of a {@link me.wolfyscript.utilities.util.RandomCollection<StackReference>}
+     *
+     * @return The weight of this reference
+     */
     @JsonGetter("weight")
     public double weight() {
         return weight;
     }
 
+    /**
+     * Gets the stack amount for the referenced ItemStack
+     *
+     * @return The stack amount of the referenced ItemStack
+     */
     @JsonGetter("amount")
     public int amount() {
         return customAmount;
     }
 
-    @JsonIgnore
-    public int effectiveAmount() {
-        return amount() * originalStack().getAmount();
-    }
-
+    /**
+     * Gets the currently used {@link StackIdentifierParser}
+     *
+     * @return The current {@link StackIdentifierParser}
+     */
     public StackIdentifierParser<?> parser() {
         return parser;
     }
 
+    /**
+     * Swaps the current parser with the specified parser and parses the original stack to get the new StackIdentifier.
+     *
+     * @param parser The new parser to use to get the StackIdentifier
+     */
     public void swapParser(StackIdentifierParser<?> parser) {
         this.parser = parser;
         parseIdentifier();
     }
 
+    /**
+     * Gets the id of the current parser
+     *
+     * @return The id of the current parser
+     */
     @JsonGetter("parser")
     private NamespacedKey parserId() {
         return parser.getNamespacedKey();
@@ -169,7 +210,7 @@ public class StackReference implements Copyable<StackReference> {
      * <br><br>
      * <h3>Stackable  ({@link #originalStack()}.{@link ItemStack#getMaxStackSize() getMaxStackSize()} > 1 or stack count > 1):</h3>
      * <p>
-     * The stack is shrunk by the specified amount (<strong><code>{@link #effectiveAmount()} * totalAmount</code></strong>).<br>
+     * The stack is shrunk by the specified amount (<strong><code>{@link #amount()} * totalAmount</code></strong>).<br>
      * For applying stackable replacements it calls the stackReplacement function with the already shrunken stack and this reference.<br>
      * Default behaviour can be found here:
      * <ul>
@@ -189,14 +230,14 @@ public class StackReference implements Copyable<StackReference> {
      * @return The manipulated stack, default remain, or custom remains.
      */
     public ItemStack shrink(@NotNull ItemStack stack, int count, boolean useRemains, @NotNull BiFunction<StackIdentifier, ItemStack, ItemStack> stackReplacement) {
-        return identifier().shrink(stack, count, useRemains, stackReplacement);
+        return identifier().shrink(stack, count * amount(), useRemains, stackReplacement);
     }
 
     /**
      * Shrinks the specified stack by the given amount and returns the manipulated or replaced item!
      * <p>
      * <h3>Stackable  ({@link #originalStack()}.{@link ItemStack#getMaxStackSize() getMaxStackSize()} > 1 or stack count > 1):</h3>
-     * The stack is shrunk by the specified amount (<strong><code>{@link #effectiveAmount()} * count</code></strong>)
+     * The stack is shrunk by the specified amount (<strong><code>{@link #amount()} * count</code></strong>)
      * <p>
      * If this stack has craft remains:<br>
      * <ul>
@@ -252,7 +293,7 @@ public class StackReference implements Copyable<StackReference> {
     }
 
     /**
-     *
+     * Converts this StackReference into a legacy APIReference.
      */
     @Deprecated
     public APIReference convert() {
