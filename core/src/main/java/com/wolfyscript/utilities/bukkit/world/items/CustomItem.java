@@ -774,6 +774,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
         return reference.convert();
     }
 
+    @JsonGetter("reference")
     public StackReference stackReference() {
         return reference;
     }
