@@ -44,7 +44,7 @@ public class StackReference implements Copyable<StackReference> {
     /**
      * Used to store the previous parser result
      */
-    private final StackIdentifier identifier;
+    private StackIdentifier identifier;
     private StackIdentifierParser<?> parser;
 
     public static StackReference of(ItemStack itemStack) {
@@ -187,7 +187,7 @@ public class StackReference implements Copyable<StackReference> {
      */
     public void swapParser(StackIdentifierParser<?> parser) {
         this.parser = parser;
-        parseIdentifier();
+        this.identifier = parseIdentifier();
     }
 
     /**
