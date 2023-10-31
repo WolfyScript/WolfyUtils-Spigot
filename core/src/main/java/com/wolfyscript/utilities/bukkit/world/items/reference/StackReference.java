@@ -42,7 +42,7 @@ public class StackReference implements Copyable<StackReference> {
     /**
      * Used to store the previous parser result
      */
-    private final StackIdentifier identifier;
+    private StackIdentifier identifier;
     private StackIdentifierParser<?> parser;
 
     public StackReference(WolfyCore core, NamespacedKey parser, double weight, int customAmount, ItemStack item) {
@@ -181,7 +181,7 @@ public class StackReference implements Copyable<StackReference> {
      */
     public void swapParser(StackIdentifierParser<?> parser) {
         this.parser = parser;
-        parseIdentifier();
+        this.identifier = parseIdentifier();
     }
 
     /**
