@@ -31,6 +31,7 @@ public class DenizenIntegrationImpl extends PluginIntegrationAbstract {
     @Override
     public void init(Plugin plugin) {
         core.registerAPIReference(new DenizenRefImpl.Parser());
+        core.getRegistries().getStackIdentifierParsers().register(new DenizenStackIdentifier.Parser());
     }
 
     @Override
