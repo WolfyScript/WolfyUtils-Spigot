@@ -5,6 +5,7 @@ import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
 import me.wolfyscript.utilities.compatibility.plugins.denizen.DenizenRefImpl;
+import me.wolfyscript.utilities.compatibility.plugins.denizen.DenizenStackIdentifier;
 import org.bukkit.plugin.Plugin;
 
 @WUPluginIntegration(pluginName = DenizenIntegrationImpl.PLUGIN_NAME)
@@ -29,6 +30,7 @@ public class DenizenIntegrationImpl extends PluginIntegrationAbstract {
     @Override
     public void init(Plugin plugin) {
         core.registerAPIReference(new DenizenRefImpl.Parser());
+        core.getRegistries().getStackIdentifierParsers().register(new DenizenStackIdentifier.Parser());
     }
 
     @Override
