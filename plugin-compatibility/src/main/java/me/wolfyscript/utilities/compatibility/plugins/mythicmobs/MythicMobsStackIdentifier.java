@@ -64,7 +64,9 @@ public class MythicMobsStackIdentifier implements StackIdentifier {
 
         @Override
         public Optional<MythicMobsStackIdentifier> from(ItemStack itemStack) {
-            var value = NBTItem.convertItemtoNBT(itemStack).getCompound("tag").getString(ITEM_KEY);
+            var tag = NBTItem.convertItemtoNBT(itemStack).getCompound("tag");
+            if (tag == null) return Optional.empty();
+            var value = tag.getString(ITEM_KEY);
             if (value != null) {
                 return Optional.of(new MythicMobsStackIdentifier(value));
             }
