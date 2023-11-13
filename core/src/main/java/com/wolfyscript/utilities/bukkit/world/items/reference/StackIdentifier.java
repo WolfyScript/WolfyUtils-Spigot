@@ -85,7 +85,7 @@ public interface StackIdentifier extends Keyed {
         if (stack(ItemCreateContext.empty(count)).getMaxStackSize() == 1 && stack.getAmount() == 1) {
             return shrinkUnstackableItem(stack, useRemains);
         }
-        int amount = stack.getAmount() - (stack(ItemCreateContext.empty(count)).getAmount() * count);
+        int amount = stack.getAmount() - count;
         if (amount <= 0) {
             stack = new ItemStack(Material.AIR);
         } else {
