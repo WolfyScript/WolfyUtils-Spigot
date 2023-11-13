@@ -30,15 +30,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.SmithingMenu;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.SmithingRecipe;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import org.bukkit.craftbukkit.v1_20_R2.block.CraftFurnace;
-import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryCrafting;
-import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryFurnace;
-import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventorySmithing;
-import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftInventoryView;
-import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftResultInventory;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.*;
 import org.bukkit.craftbukkit.v1_20_R2.util.CraftNamespacedKey;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -57,7 +53,7 @@ public class RecipeUtilImpl extends me.wolfyscript.utilities.api.nms.RecipeUtil 
         FURNACE_BLOCK_ENTITY_FIELD = Arrays.stream(CraftFurnace.class.getFields()).filter(field -> field.getType().equals(AbstractFurnaceBlockEntity.class)).findFirst().orElse(null);
         CACHED_CHECK_LAST_RECIPE_FIELD = Arrays.stream(RecipeManager.CachedCheck.class.getFields()).filter(field -> field.getType().equals(ResourceLocation.class)).findFirst().orElse(null);
         CACHED_CHECK_FURNACE_FIELD = Arrays.stream(AbstractFurnaceBlockEntity.class.getFields()).filter(field -> field.getType().equals(RecipeManager.CachedCheck.class)).findFirst().orElse(null);
-        SMITHING_MENU_SELECTED_RECIPE_FIELD = Arrays.stream(SmithingMenu.class.getDeclaredFields()).filter(field -> field.getType().equals(SmithingRecipe.class)).findFirst().orElse(null);
+        SMITHING_MENU_SELECTED_RECIPE_FIELD = Arrays.stream(SmithingMenu.class.getDeclaredFields()).filter(field -> field.getType().equals(RecipeHolder.class)).findFirst().orElse(null);
     }
 
     protected RecipeUtilImpl(NMSUtil nmsUtil) {
