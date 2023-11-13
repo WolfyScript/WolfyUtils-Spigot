@@ -230,7 +230,7 @@ public class StackReference implements Copyable<StackReference> {
      * @return The manipulated stack, default remain, or custom remains.
      */
     public ItemStack shrink(@NotNull ItemStack stack, int count, boolean useRemains, @NotNull BiFunction<StackIdentifier, ItemStack, ItemStack> stackReplacement) {
-        return identifier().shrink(stack, count * amount(), useRemains, stackReplacement);
+        return identifier().shrink(stack, count, useRemains, stackReplacement);
     }
 
     /**
