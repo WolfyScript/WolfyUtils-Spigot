@@ -230,7 +230,7 @@ public class StackReference implements Copyable<StackReference> {
      * @return The manipulated stack, default remain, or custom remains.
      */
     public ItemStack shrink(@NotNull ItemStack stack, int count, boolean useRemains, @NotNull BiFunction<StackIdentifier, ItemStack, ItemStack> stackReplacement) {
-        return identifier().shrink(stack, count, useRemains, stackReplacement);
+        return identifier().shrink(stack, count * amount(), useRemains, stackReplacement);
     }
 
     /**
@@ -273,7 +273,7 @@ public class StackReference implements Copyable<StackReference> {
      * @return The manipulated stack, default remain, or custom remains.
      */
     public ItemStack shrink(ItemStack stack, int count, boolean useRemains, @Nullable final Inventory inventory, @Nullable final Player player, @Nullable final Location location) {
-        return identifier().shrink(stack, count, useRemains, inventory, player, location);
+        return identifier().shrink(stack, count * amount(), useRemains, inventory, player, location);
     }
 
     /**
