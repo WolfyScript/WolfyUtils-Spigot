@@ -162,7 +162,7 @@ public interface StackIdentifier extends Keyed {
                         }
                     }
                     return originalStack;
-                }).orElse(new ItemStack(Material.AIR)));
+                }).orElse(stack));
     }
 
     /**
