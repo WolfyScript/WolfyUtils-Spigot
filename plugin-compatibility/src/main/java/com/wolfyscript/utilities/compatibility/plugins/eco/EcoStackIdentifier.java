@@ -26,7 +26,9 @@ public class EcoStackIdentifier implements StackIdentifier {
 
     @Override
     public ItemStack stack(ItemCreateContext context) {
-        return Items.lookup(itemKey.toString()).getItem();
+        ItemStack stack = Items.lookup(itemKey.toString()).getItem();
+        stack.setAmount(context.amount());
+        return stack;
     }
 
     @Override

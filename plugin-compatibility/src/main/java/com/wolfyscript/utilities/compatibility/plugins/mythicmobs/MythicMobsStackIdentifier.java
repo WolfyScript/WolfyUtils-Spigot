@@ -30,7 +30,9 @@ public class MythicMobsStackIdentifier implements StackIdentifier {
 
     @Override
     public ItemStack stack(ItemCreateContext context) {
-        return mythicBukkit.getItemManager().getItemStack(itemName);
+        ItemStack stack = mythicBukkit.getItemManager().getItemStack(itemName);
+        stack.setAmount(context.amount());
+        return stack;
     }
 
     @Override
