@@ -33,7 +33,9 @@ public class FancyBagsStackIdentifier implements StackIdentifier {
     public ItemStack stack(ItemCreateContext context) {
         Backpack bag = CustomBackpacks.getBackpack(id);
         if (bag != null) {
-            return Utils.createBackpackItemStack(bag.getName(), bag.getTexture(), bag.getSlotsAmount(), bag.getId());
+            ItemStack stack = Utils.createBackpackItemStack(bag.getName(), bag.getTexture(), bag.getSlotsAmount(), bag.getId());
+            stack.setAmount(context.amount());
+            return stack;
         }
         return new ItemStack(Material.AIR);
     }

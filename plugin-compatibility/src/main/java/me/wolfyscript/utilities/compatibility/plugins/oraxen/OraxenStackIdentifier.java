@@ -32,7 +32,7 @@ public class OraxenStackIdentifier implements StackIdentifier {
     @Override
     public ItemStack stack(ItemCreateContext context) {
         if (OraxenItems.exists(itemID)) {
-            return OraxenItems.getItemById(itemID).build();
+            return OraxenItems.getItemById(itemID).setAmount(context.amount()).regen().build();
         }
         return ItemUtils.AIR;
     }
