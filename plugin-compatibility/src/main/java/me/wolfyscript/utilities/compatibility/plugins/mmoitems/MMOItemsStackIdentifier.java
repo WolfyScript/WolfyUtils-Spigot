@@ -32,7 +32,10 @@ public class MMOItemsStackIdentifier implements StackIdentifier {
     @Override
     public ItemStack stack(ItemCreateContext context) {
         MMOItem item = MMOItems.plugin.getMMOItem(itemType, itemName);
-        return item != null ? item.newBuilder().buildSilently() : null;
+        if (item == null) return null;
+        ItemStack stack = item.newBuilder().buildSilently();
+        stack.setAmount(context.amount());
+        return stack;
     }
 
     @Override

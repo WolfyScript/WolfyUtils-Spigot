@@ -33,7 +33,9 @@ public class ItemsAdderStackIdentifier implements StackIdentifier {
     public ItemStack stack(ItemCreateContext context) {
         var customStack = CustomStack.getInstance(itemId);
         if (customStack != null) {
-            return customStack.getItemStack();
+            ItemStack stack = customStack.getItemStack();
+            stack.setAmount(context.amount());
+            return stack;
         }
         return ItemUtils.AIR;
     }
