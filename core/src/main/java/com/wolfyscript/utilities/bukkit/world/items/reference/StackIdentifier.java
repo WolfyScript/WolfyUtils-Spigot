@@ -1,5 +1,6 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
+import com.wolfyscript.utilities.Keyed;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;

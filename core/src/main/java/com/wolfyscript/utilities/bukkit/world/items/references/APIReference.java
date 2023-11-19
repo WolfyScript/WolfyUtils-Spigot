@@ -46,14 +46,6 @@ import org.jetbrains.annotations.Nullable;
  *
  * <p>
  * There are following references available:
- * <ul>
- *     <li>{@link VanillaRef}</li>
- *     <li>{@link WolfyUtilitiesRef}</li>
- *     <li>{@link OraxenRef}</li>
- *     <li>{@link ItemsAdderRef}</li>
- *     <li>{@link MMOItemsRef}</li>
- *     <li>{@link MythicMobsRef}</li>
- * </ul>
  * </p>
  * <p>
  * You can register additional references inside your plugin (onEnable) using {@link CustomItem#registerAPIReferenceParser(Parser)}.

@@ -24,7 +24,6 @@ import com.wolfyscript.utilities.bukkit.console.Console;
 import com.wolfyscript.utilities.bukkit.gui.components.*;
 import com.wolfyscript.utilities.bukkit.gui.GUIInventoryListener;
 import com.wolfyscript.utilities.bukkit.gui.example.TestGUI;
-import com.wolfyscript.utilities.bukkit.json.serialization.APIReferenceSerialization;
 import com.wolfyscript.utilities.bukkit.json.serialization.ColorSerialization;
 import com.wolfyscript.utilities.bukkit.json.serialization.DustOptionsSerialization;
 import com.wolfyscript.utilities.bukkit.json.serialization.ItemStackSerialization;
@@ -341,8 +340,6 @@ public abstract class WolfyCoreImpl implements WolfyCore {
         PotionEffectTypeSerialization.create(module);
         PotionEffectSerialization.create(module);
         VectorSerialization.create(module);
-        // APIReference Deserializer
-        APIReferenceSerialization.create(module);
         // Serializer for the old CustomData
         module.addSerializer(CustomData.DeprecatedCustomDataWrapper.class, new CustomData.Serializer());
 
@@ -560,10 +557,6 @@ public abstract class WolfyCoreImpl implements WolfyCore {
         this.config = new WUConfig(api.getConfigAPI(), plugin);
         compatibilityManager.init();
 
-        // Register ItemReferences
-        registerAPIReference(new VanillaRef.Parser());
-        registerAPIReference(new WolfyUtilitiesRef.Parser());
-
         //Load Language
         api.getLanguageAPI().loadLangFile("en_US");
 
@@ -638,11 +631,7 @@ public abstract class WolfyCoreImpl implements WolfyCore {
      * @param parser an {@link APIReference.Parser} instance.
      * @see CustomItem#registerAPIReferenceParser(APIReference.Parser)
      */
-    public void registerAPIReference(APIReference.Parser<?> parser) {
-        if (parser instanceof VanillaRef.Parser || parser instanceof WolfyUtilitiesRef.Parser || config.isAPIReferenceEnabled(parser)) {
-            CustomItem.registerAPIReferenceParser(parser);
-        }
-    }
+    public void registerAPIReference(APIReference.Parser<?> parser) { }
 
     public MessageHandler getMessageHandler() {
         return messageHandler;

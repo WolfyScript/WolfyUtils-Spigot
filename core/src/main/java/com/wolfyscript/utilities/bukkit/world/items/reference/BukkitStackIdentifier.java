@@ -1,7 +1,12 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
 import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -10,7 +15,7 @@ import java.util.Optional;
 
 public class BukkitStackIdentifier implements StackIdentifier {
 
-    public static final NamespacedKey ID = BukkitStackIdentifier.wolfyutilties("bukkit");
+    public static final NamespacedKey ID = BukkitNamespacedKey.wolfyutilties("bukkit");
 
     private final ItemStack stack;
 
@@ -47,7 +52,7 @@ public class BukkitStackIdentifier implements StackIdentifier {
 
         @Override
         public Optional<BukkitStackIdentifier> from(ItemStack itemStack) {
-            return Optional.of(new BukkitStackIdentifier(this, itemStack.clone()));
+            return Optional.of(new BukkitStackIdentifier(itemStack.clone()));
         }
 
         @Override

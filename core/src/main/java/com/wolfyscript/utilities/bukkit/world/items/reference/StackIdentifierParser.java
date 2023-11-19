@@ -1,6 +1,6 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
-import me.wolfyscript.utilities.util.Keyed;
+import com.wolfyscript.utilities.Keyed;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;

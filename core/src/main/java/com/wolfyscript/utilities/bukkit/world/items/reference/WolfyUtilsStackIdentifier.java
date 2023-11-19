@@ -1,9 +1,9 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
-import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.api.WolfyUtilities;
-import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -16,8 +16,8 @@ import java.util.Optional;
 
 public class WolfyUtilsStackIdentifier implements StackIdentifier {
 
-    private static final org.bukkit.NamespacedKey CUSTOM_ITEM_KEY = new org.bukkit.NamespacedKey(WolfyUtilities.getWUPlugin(), "custom_item");
-    public static final NamespacedKey ID = NamespacedKey.wolfyutilties("wolfyutils");
+    private static final org.bukkit.NamespacedKey CUSTOM_ITEM_KEY = new org.bukkit.NamespacedKey(WolfyCoreImpl.getInstance().getPlugin(), "custom_item");
+    public static final NamespacedKey ID = BukkitNamespacedKey.wolfyutilties("wolfyutils");
 
     private final NamespacedKey namespacedKey;
 
@@ -34,7 +34,7 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
     @Override
     public ItemStack stack(ItemCreateContext context) {
         return customItem().map(customItem -> customItem.create(context.amount())).orElseGet(() -> {
-            WolfyUtilities.getWUCore().getConsole().warn("Couldn't find CustomItem for " + namespacedKey.toString());
+            WolfyCoreImpl.getInstance().getLogger().warning("Couldn't find CustomItem for " + namespacedKey.toString());
             return null;
         });
     }
@@ -45,7 +45,7 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
      * @return The referenced {@link CustomItem} of this identifier
      */
     public Optional<CustomItem> customItem() {
-        return Optional.ofNullable(WolfyUtilCore.getInstance().getRegistries().getCustomItems().get(namespacedKey));
+        return Optional.ofNullable(WolfyCoreImpl.getInstance().getRegistries().getCustomItems().get(namespacedKey));
     }
 
     @Override
@@ -55,7 +55,7 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
         if (itemMeta == null) return false;
         var container = itemMeta.getPersistentDataContainer();
         if (container.has(CUSTOM_ITEM_KEY, PersistentDataType.STRING)) {
-            return Objects.equals(this.namespacedKey, NamespacedKey.of(container.get(CUSTOM_ITEM_KEY, PersistentDataType.STRING)));
+            return Objects.equals(this.namespacedKey, BukkitNamespacedKey.of(container.get(CUSTOM_ITEM_KEY, PersistentDataType.STRING)));
         }
         return false;
     }
@@ -79,7 +79,7 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
             if (itemMeta != null) {
                 var container = itemMeta.getPersistentDataContainer();
                 if (container.has(CUSTOM_ITEM_KEY, PersistentDataType.STRING)) {
-                    return Optional.of(new WolfyUtilsStackIdentifier(NamespacedKey.of(container.get(CUSTOM_ITEM_KEY, PersistentDataType.STRING))));
+                    return Optional.of(new WolfyUtilsStackIdentifier(BukkitNamespacedKey.of(container.get(CUSTOM_ITEM_KEY, PersistentDataType.STRING))));
                 }
             }
             return Optional.empty();

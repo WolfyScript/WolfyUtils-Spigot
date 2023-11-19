@@ -47,7 +47,7 @@ public @interface ItemReferenceParserSettings {
                 // Annotation is not specified! No parser!
                 return null;
             }
-            if (annotation.parser() != (Class<ItemReference.Parser<?>>)(Object) ItemReference.Parser.class) {
+            if (annotation.parser() != ItemReference.Parser.class) {
                 // Specified Custom Parse class!
                 try {
                     Constructor<?> constructor = annotation.parser().getConstructor();
