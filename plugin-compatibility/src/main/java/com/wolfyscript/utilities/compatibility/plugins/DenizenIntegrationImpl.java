@@ -3,9 +3,8 @@ package com.wolfyscript.utilities.compatibility.plugins;
 import com.google.inject.Inject;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
-import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
-import com.wolfyscript.utilities.compatibility.plugins.denizen.DenizenRefImpl;
+import com.wolfyscript.utilities.compatibility.plugins.denizen.DenizenStackIdentifier;
 import org.bukkit.plugin.Plugin;
 
 @WUPluginIntegration(pluginName = DenizenIntegrationImpl.PLUGIN_NAME)
@@ -24,13 +23,7 @@ public class DenizenIntegrationImpl extends PluginIntegrationAbstract {
     }
 
     @Override
-    public boolean isAPIReferenceIncluded(APIReference reference) {
-        return reference instanceof DenizenRefImpl;
-    }
-
-    @Override
     public void init(Plugin plugin) {
-        core.registerAPIReference(new DenizenRefImpl.Parser());
         core.getRegistries().getStackIdentifierParsers().register(new DenizenStackIdentifier.Parser());
     }
 

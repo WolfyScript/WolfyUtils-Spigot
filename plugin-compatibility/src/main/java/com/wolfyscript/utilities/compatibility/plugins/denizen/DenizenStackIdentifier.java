@@ -1,10 +1,11 @@
-package me.wolfyscript.utilities.compatibility.plugins.denizen;
+package com.wolfyscript.utilities.compatibility.plugins.denizen;
 
 import com.denizenscript.denizen.scripts.containers.core.ItemScriptHelper;
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
-import me.wolfyscript.utilities.util.NamespacedKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -16,7 +17,7 @@ import java.util.Optional;
 
 public class DenizenStackIdentifier implements StackIdentifier {
 
-    public static final NamespacedKey ID = NamespacedKey.wolfyutilties("denizen");
+    public static final NamespacedKey ID = BukkitNamespacedKey.wolfyutilties("denizen");
     private final ItemStack displayItem;
     private final String itemScript;
 
@@ -35,14 +36,6 @@ public class DenizenStackIdentifier implements StackIdentifier {
     @Override
     public boolean matches(ItemStack other, int count, boolean exact, boolean ignoreAmount) {
         return Objects.equals(ItemScriptHelper.getItemScriptNameText(other), itemScript);
-    }
-
-    @Override
-    public DenizenRefImpl convert(double weight, int amount) {
-        DenizenRefImpl ref = new DenizenRefImpl(displayItem, itemScript);
-        ref.setWeight(weight);
-        ref.setAmount(amount);
-        return ref;
     }
 
     @Override
