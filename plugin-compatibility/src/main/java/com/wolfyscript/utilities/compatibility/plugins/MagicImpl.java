@@ -44,7 +44,7 @@ public class MagicImpl extends PluginIntegrationAbstract implements Listener {
     public void init(Plugin plugin) {
         core.registerAPIReference(new MagicRefImpl.Parser());
         Bukkit.getPluginManager().registerEvents(this, core.getWolfyUtils().getPlugin());
-        core.getRegistries().getStackIdentifierParsers().register(new me.wolfyscript.utilities.compatibility.plugins.magic.MagicStackIdentifier.Parser(Bukkit.getPluginManager().getPlugin("Magic") instanceof MagicAPI magicAPI ? magicAPI : null));
+        core.getRegistries().getStackIdentifierParsers().register(new com.wolfyscript.utilities.compatibility.plugins.magic.MagicStackIdentifier.Parser(Bukkit.getPluginManager().getPlugin("Magic") instanceof MagicAPI magicAPI ? magicAPI : null));
     }
 
     @Override

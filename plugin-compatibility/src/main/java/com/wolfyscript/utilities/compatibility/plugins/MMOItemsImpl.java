@@ -39,7 +39,7 @@ public class MMOItemsImpl extends PluginIntegrationAbstract {
     @Override
     public void init(Plugin plugin) {
         core.registerAPIReference(new MMOItemsRefImpl.Parser());
-        core.getRegistries().getStackIdentifierParsers().register(new me.wolfyscript.utilities.compatibility.plugins.mmoitems.MMOItemsStackIdentifier.Parser());
+        core.getRegistries().getStackIdentifierParsers().register(new com.wolfyscript.utilities.compatibility.plugins.mmoitems.MMOItemsStackIdentifier.Parser());
     }
 
     @Override

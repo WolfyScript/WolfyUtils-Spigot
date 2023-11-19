@@ -1,11 +1,11 @@
-package me.wolfyscript.utilities.compatibility.plugins.executableblocks;
+package com.wolfyscript.utilities.compatibility.plugins.executableblocks;
 
-import com.ssomar.executableblocks.executableblocks.ExecutableBlocksManager;
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.bukkit.compatibility.plugins.ExecutableBlocksIntegration;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
-import me.wolfyscript.utilities.compatibility.plugins.ExecutableBlocksIntegration;
-import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class ExecutableBlocksStackIdentifier implements StackIdentifier {
 
-    public static final NamespacedKey ID = NamespacedKey.wolfyutilties("executableblocks");
+    public static final NamespacedKey ID = BukkitNamespacedKey.wolfyutilties("executableblocks");
 
     private final ExecutableBlocksIntegration integration;
     private final ExecutableBlocksManager manager;

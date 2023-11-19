@@ -3,16 +3,13 @@ package com.wolfyscript.utilities.bukkit.registry;
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.world.items.reference.BukkitStackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackReference;
 import com.wolfyscript.utilities.common.registry.Registries;
 import com.wolfyscript.utilities.common.registry.RegistrySimple;
-import me.wolfyscript.utilities.registry.Registries;
-import me.wolfyscript.utilities.registry.RegistrySimple;
-import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.particles.ParticleAnimation;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Comparator;
@@ -26,7 +23,7 @@ public class RegistryStackIdentifierParsers extends RegistrySimple<StackIdentifi
     private final Registries registries;
 
     public RegistryStackIdentifierParsers(Registries registries) {
-        super(new BukkitNamespacedKey(registries.getCore(), "stack_identifier/parsers"), registries, (Class<StackIdentifierParser<?>>)(Object) StackIdentifierParser.class);
+        super(new BukkitNamespacedKey(registries.getCore().getWolfyUtils(), "stack_identifier/parsers"), registries, (Class<StackIdentifierParser<?>>)(Object) StackIdentifierParser.class);
         this.registries = registries;
     }
 
@@ -62,7 +59,7 @@ public class RegistryStackIdentifierParsers extends RegistrySimple<StackIdentifi
      * @return
      */
     public StackReference parseFrom(ItemStack stack) {
-        return new StackReference(registries.getCore(), parseIdentifier(stack), 1, stack.getAmount(), stack);
+        return new StackReference((WolfyCoreImpl) registries.getCore(), parseIdentifier(stack), 1, stack.getAmount(), stack);
     }
 
     private void reIndexParsers() {

@@ -1,12 +1,13 @@
-package me.wolfyscript.utilities.compatibility.plugins.magic;
+package com.wolfyscript.utilities.compatibility.plugins.magic;
 
 import com.elmakers.mine.bukkit.api.magic.MagicAPI;
 import com.google.common.base.Preconditions;
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
-import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
@@ -15,7 +16,7 @@ import java.util.Optional;
 
 public class MagicStackIdentifier implements StackIdentifier {
 
-    public static final NamespacedKey ID = NamespacedKey.wolfyutilties("magic");
+    public static final NamespacedKey ID = BukkitNamespacedKey.wolfyutilties("magic");
 
     private final String itemKey;
     private final MagicAPI magicAPI;

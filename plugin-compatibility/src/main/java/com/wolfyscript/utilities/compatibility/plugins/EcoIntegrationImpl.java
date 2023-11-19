@@ -24,9 +24,8 @@ import com.willfp.eco.core.items.Items;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.EcoIntegration;
-import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
-import com.wolfyscript.utilities.compatibility.plugins.eco.EcoRefImpl;
+import com.wolfyscript.utilities.compatibility.plugins.eco.EcoStackIdentifier;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -47,13 +46,7 @@ public class EcoIntegrationImpl extends PluginIntegrationAbstract implements Eco
 
     @Override
     public void init(Plugin plugin) {
-        core.registerAPIReference(new EcoRefImpl.Parser());
-        core.getRegistries().getStackIdentifierParsers().register(new me.wolfyscript.utilities.compatibility.plugins.eco.EcoStackIdentifier.Parser());
-    }
-
-    @Override
-    public boolean isAPIReferenceIncluded(APIReference reference) {
-        return reference instanceof EcoRefImpl;
+        core.getRegistries().getStackIdentifierParsers().register(new EcoStackIdentifier.Parser());
     }
 
     @Override

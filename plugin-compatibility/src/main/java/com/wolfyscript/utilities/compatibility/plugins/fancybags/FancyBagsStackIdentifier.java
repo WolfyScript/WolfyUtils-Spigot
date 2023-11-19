@@ -1,5 +1,7 @@
-package me.wolfyscript.utilities.compatibility.plugins.fancybags;
+package com.wolfyscript.utilities.compatibility.plugins.fancybags;
 
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
@@ -8,7 +10,6 @@ import de.tr7zw.changeme.nbtapi.NBTType;
 import me.chickenstyle.backpack.Backpack;
 import me.chickenstyle.backpack.Utils;
 import me.chickenstyle.backpack.configs.CustomBackpacks;
-import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -17,7 +18,7 @@ import java.util.Optional;
 public class FancyBagsStackIdentifier implements StackIdentifier {
 
     private static final String ID_TAG = "BackpackID";
-    public static final NamespacedKey ID = NamespacedKey.wolfyutilties("fancybags");
+    public static final NamespacedKey ID = BukkitNamespacedKey.wolfyutilties("fancybags");
 
     private final int id;
 

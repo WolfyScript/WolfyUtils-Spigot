@@ -33,7 +33,7 @@ public class ExecutableItemsImpl extends PluginIntegrationAbstract implements Ex
     @Override
     public void init(Plugin plugin) {
         core.registerAPIReference(new ExecutableItemsRef.Parser(ExecutableItemsAPI.getExecutableItemsManager()));
-        core.getRegistries().getStackIdentifierParsers().register(new me.wolfyscript.utilities.compatibility.plugins.executableitems.ExecutableItemsStackIdentifier.Parser(ExecutableItemsAPI.getExecutableItemsManager()));
+        core.getRegistries().getStackIdentifierParsers().register(new com.wolfyscript.utilities.compatibility.plugins.executableitems.ExecutableItemsStackIdentifier.Parser(ExecutableItemsAPI.getExecutableItemsManager()));
     }
 
     @Override

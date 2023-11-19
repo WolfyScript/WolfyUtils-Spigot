@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Optional;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.ExecutableBlocksIntegration;
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
+import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;

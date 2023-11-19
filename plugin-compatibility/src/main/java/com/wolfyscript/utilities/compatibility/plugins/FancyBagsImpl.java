@@ -25,7 +25,7 @@ public class FancyBagsImpl extends PluginIntegrationAbstract {
     @Override
     public void init(Plugin plugin) {
         core.registerAPIReference(new FancyBagsItemsRef.Parser());
-        core.getRegistries().getStackIdentifierParsers().register(new me.wolfyscript.utilities.compatibility.plugins.fancybags.FancyBagsStackIdentifier.Parser());
+        core.getRegistries().getStackIdentifierParsers().register(new com.wolfyscript.utilities.compatibility.plugins.fancybags.FancyBagsStackIdentifier.Parser());
     }
 
     @Override

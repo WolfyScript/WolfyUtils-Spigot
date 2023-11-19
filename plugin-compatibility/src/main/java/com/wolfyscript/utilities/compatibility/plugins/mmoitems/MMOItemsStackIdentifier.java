@@ -1,10 +1,11 @@
-package me.wolfyscript.utilities.compatibility.plugins.mmoitems;
+package com.wolfyscript.utilities.compatibility.plugins.mmoitems;
 
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import io.lumine.mythic.lib.api.item.NBTItem;
-import me.wolfyscript.utilities.util.NamespacedKey;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.Type;
 import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
@@ -19,7 +20,7 @@ import java.util.Optional;
 
 public class MMOItemsStackIdentifier implements StackIdentifier {
 
-    public static final NamespacedKey ID = NamespacedKey.wolfyutilties("mmoitems");
+    public static final NamespacedKey ID = BukkitNamespacedKey.wolfyutilties("mmoitems");
 
     private final Type itemType;
     private final String itemName;

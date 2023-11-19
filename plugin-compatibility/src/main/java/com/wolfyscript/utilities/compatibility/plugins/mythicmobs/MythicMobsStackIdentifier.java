@@ -1,11 +1,12 @@
-package me.wolfyscript.utilities.compatibility.plugins.mythicmobs;
+package com.wolfyscript.utilities.compatibility.plugins.mythicmobs;
 
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.lumine.mythic.bukkit.MythicBukkit;
-import me.wolfyscript.utilities.util.NamespacedKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -18,7 +19,7 @@ import java.util.Optional;
 public class MythicMobsStackIdentifier implements StackIdentifier {
 
     protected static final String ITEM_KEY = "MYTHIC_TYPE";
-    public static final NamespacedKey ID = NamespacedKey.wolfyutilties("mythicmobs");
+    public static final NamespacedKey ID = BukkitNamespacedKey.wolfyutilties("mythicmobs");
 
     private final MythicBukkit mythicBukkit;
     private final String itemName;

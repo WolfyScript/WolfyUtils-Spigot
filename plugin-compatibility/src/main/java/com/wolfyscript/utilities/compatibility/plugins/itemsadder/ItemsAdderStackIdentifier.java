@@ -1,11 +1,12 @@
-package me.wolfyscript.utilities.compatibility.plugins.itemsadder;
+package com.wolfyscript.utilities.compatibility.plugins.itemsadder;
 
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import dev.lone.itemsadder.api.CustomStack;
-import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -17,7 +18,7 @@ import java.util.Optional;
 
 public class ItemsAdderStackIdentifier implements StackIdentifier {
 
-    public static final NamespacedKey ID = NamespacedKey.wolfyutilties("itemsadder");
+    public static final NamespacedKey ID = BukkitNamespacedKey.wolfyutilties("itemsadder");
 
     private final String itemId;
 

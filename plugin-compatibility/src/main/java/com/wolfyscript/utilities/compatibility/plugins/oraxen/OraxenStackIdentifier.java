@@ -1,11 +1,12 @@
-package me.wolfyscript.utilities.compatibility.plugins.oraxen;
+package com.wolfyscript.utilities.compatibility.plugins.oraxen;
 
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
+import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import io.th0rgal.oraxen.api.OraxenItems;
-import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -17,7 +18,7 @@ import java.util.Optional;
 
 public class OraxenStackIdentifier implements StackIdentifier {
 
-    public static final NamespacedKey ID = NamespacedKey.wolfyutilties("oraxen");
+    public static final NamespacedKey ID = BukkitNamespacedKey.wolfyutilties("oraxen");
 
     private final String itemID;
 

@@ -1,10 +1,11 @@
-package me.wolfyscript.utilities.compatibility.plugins.eco;
+package com.wolfyscript.utilities.compatibility.plugins.eco;
 
 import com.willfp.eco.core.items.Items;
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
-import me.wolfyscript.utilities.util.NamespacedKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -16,7 +17,7 @@ import java.util.Optional;
 
 public class EcoStackIdentifier implements StackIdentifier {
 
-    public static final NamespacedKey ID = NamespacedKey.wolfyutilties("eco");
+    public static final NamespacedKey ID = BukkitNamespacedKey.wolfyutilties("eco");
 
     private final org.bukkit.NamespacedKey itemKey;
 
@@ -35,14 +36,6 @@ public class EcoStackIdentifier implements StackIdentifier {
     public boolean matches(ItemStack other, int count, boolean exact, boolean ignoreAmount) {
         var item = Items.getCustomItem(other);
         return item != null && Objects.equals(itemKey, item.getKey());
-    }
-
-    @Override
-    public EcoRefImpl convert(double weight, int amount) {
-        EcoRefImpl ref = new EcoRefImpl(itemKey);
-        ref.setWeight(weight);
-        ref.setAmount(amount);
-        return ref;
     }
 
     @Override

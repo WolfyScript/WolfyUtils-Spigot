@@ -1,10 +1,11 @@
-package me.wolfyscript.utilities.compatibility.plugins.executableitems;
+package com.wolfyscript.utilities.compatibility.plugins.executableitems;
 
 import com.ssomar.score.api.executableitems.config.ExecutableItemsManagerInterface;
+import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
-import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -12,7 +13,7 @@ import java.util.Optional;
 
 public class ExecutableItemsStackIdentifier implements StackIdentifier {
 
-    public static final NamespacedKey ID = NamespacedKey.wolfyutilties("executableitems");
+    public static final NamespacedKey ID = BukkitNamespacedKey.wolfyutilties("executableitems");
 
     private final ExecutableItemsManagerInterface manager;
     private final String id;
