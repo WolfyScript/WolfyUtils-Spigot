@@ -204,7 +204,6 @@ public abstract class WolfyCoreImpl implements WolfyCore {
     private final WolfyUtilsBukkit api;
     private final BukkitRegistries registries;
     private final Logger logger;
-    private final FunctionalRecipeGenerator functionalRecipeGenerator;
     private final WolfyCoreBootstrap plugin;
 
     /**
@@ -221,7 +220,6 @@ public abstract class WolfyCoreImpl implements WolfyCore {
         this.compatibilityManager = new CompatibilityManagerBukkit(this);
         this.persistentStorage = new PersistentStorage(this);
         this.registries = new BukkitRegistries(this);
-        this.functionalRecipeGenerator = new FunctionalRecipeGenerator(this);
     }
 
     /**
@@ -241,10 +239,6 @@ public abstract class WolfyCoreImpl implements WolfyCore {
      * @return The {@link CompatibilityManagerBukkit}.
      */
     public abstract CompatibilityManager getCompatibilityManager();
-
-    public FunctionalRecipeGenerator getFunctionalRecipeGenerator() {
-        return functionalRecipeGenerator;
-    }
 
     /**
      * Gets the {@link Reflections} instance of the plugins' package.
@@ -318,8 +312,6 @@ public abstract class WolfyCoreImpl implements WolfyCore {
             binder.bind(WolfyCore.class).toInstance(this);
             binder.requestStaticInjection(KeyedTypeIdResolver.class);
         });
-        getLogger().info("Generate Functional Recipes");
-        functionalRecipeGenerator.generateRecipeClasses();
 
         // Jackson Serializer
         getLogger().info("Register JSON de-/serializers");
