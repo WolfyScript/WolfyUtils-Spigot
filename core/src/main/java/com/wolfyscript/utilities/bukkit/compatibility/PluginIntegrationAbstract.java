@@ -21,6 +21,8 @@ package com.wolfyscript.utilities.bukkit.compatibility;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
+import com.wolfyscript.utilities.bukkit.events.compatibility.PluginIntegrationEnableEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -101,7 +103,7 @@ public abstract class PluginIntegrationAbstract implements PluginIntegration {
     protected final void enable() {
         if (!this.enabled) {
             this.enabled = true;
-            core.getConsole().getLogger().info("Enabled plugin integration for " + getAssociatedPlugin());
+            core.getLogger().info("Enabled plugin integration for " + getAssociatedPlugin());
             Bukkit.getPluginManager().callEvent(new PluginIntegrationEnableEvent(core, this));
             ((PluginsBukkit) core.getCompatibilityManager().getPlugins()).checkDependencies();
         }

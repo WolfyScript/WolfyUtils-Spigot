@@ -22,7 +22,7 @@
 
 package com.wolfyscript.utilities.validator;
 
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.NamespacedKey;
 
 import java.util.Collection;
 import java.util.EnumMap;

@@ -22,7 +22,7 @@
 
 package com.wolfyscript.utilities.validator;
 
-import me.wolfyscript.utilities.util.Keyed;
+import com.wolfyscript.utilities.Keyed;
 
 public interface Validator<T_VALUE> extends Keyed {
     ValidationContainer<T_VALUE> validate(T_VALUE value);

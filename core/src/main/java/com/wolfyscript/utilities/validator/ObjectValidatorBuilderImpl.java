@@ -22,7 +22,7 @@
 
 package com.wolfyscript.utilities.validator;
 
-import me.wolfyscript.utilities.util.NamespacedKey;
+import com.wolfyscript.utilities.NamespacedKey;
 
 class ObjectValidatorBuilderImpl<T> extends ValidatorBuilderImpl<T> implements ObjectValidatorBuilder<T> {
 
