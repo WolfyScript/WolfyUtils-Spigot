@@ -51,14 +51,6 @@ public class FancyBagsStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public FancyBagsItemsRef convert(double weight, int amount) {
-        FancyBagsItemsRef ref = new FancyBagsItemsRef(id);
-        ref.setWeight(weight);
-        ref.setAmount(amount);
-        return ref;
-    }
-
-    @Override
     public NamespacedKey getNamespacedKey() {
         return ID;
     }

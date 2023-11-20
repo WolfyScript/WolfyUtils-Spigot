@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
-import com.wolfyscript.utilities.compatibility.plugins.fancybags.FancyBagsItemsRef;
 import org.bukkit.plugin.Plugin;
 
 @WUPluginIntegration(pluginName = FancyBagsImpl.KEY)
@@ -24,7 +23,6 @@ public class FancyBagsImpl extends PluginIntegrationAbstract {
 
     @Override
     public void init(Plugin plugin) {
-        core.registerAPIReference(new FancyBagsItemsRef.Parser());
         core.getRegistries().getStackIdentifierParsers().register(new com.wolfyscript.utilities.compatibility.plugins.fancybags.FancyBagsStackIdentifier.Parser());
     }
 

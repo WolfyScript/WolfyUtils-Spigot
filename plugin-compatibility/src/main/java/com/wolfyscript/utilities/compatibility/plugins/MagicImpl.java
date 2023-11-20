@@ -19,12 +19,12 @@
 package com.wolfyscript.utilities.compatibility.plugins;
 
 import com.elmakers.mine.bukkit.api.event.LoadEvent;
+import com.elmakers.mine.bukkit.api.magic.MagicAPI;
 import com.google.inject.Inject;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
-import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
-import com.wolfyscript.utilities.compatibility.plugins.magic.MagicRefImpl;
+import com.wolfyscript.utilities.compatibility.plugins.magic.MagicStackIdentifier;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -42,19 +42,13 @@ public class MagicImpl extends PluginIntegrationAbstract implements Listener {
 
     @Override
     public void init(Plugin plugin) {
-        core.registerAPIReference(new MagicRefImpl.Parser());
         Bukkit.getPluginManager().registerEvents(this, core.getWolfyUtils().getPlugin());
-        core.getRegistries().getStackIdentifierParsers().register(new com.wolfyscript.utilities.compatibility.plugins.magic.MagicStackIdentifier.Parser(Bukkit.getPluginManager().getPlugin("Magic") instanceof MagicAPI magicAPI ? magicAPI : null));
+        core.getRegistries().getStackIdentifierParsers().register(new MagicStackIdentifier.Parser(Bukkit.getPluginManager().getPlugin("Magic") instanceof MagicAPI magicAPI ? magicAPI : null));
     }
 
     @Override
     public boolean hasAsyncLoading() {
         return true;
-    }
-
-    @Override
-    public boolean isAPIReferenceIncluded(APIReference reference) {
-        return reference instanceof MagicRefImpl;
     }
 
     @EventHandler

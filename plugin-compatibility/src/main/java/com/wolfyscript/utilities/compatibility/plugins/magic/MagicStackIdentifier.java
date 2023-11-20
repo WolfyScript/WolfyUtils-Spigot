@@ -44,14 +44,6 @@ public class MagicStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public MagicRefImpl convert(double weight, int amount) {
-        MagicRefImpl ref = new MagicRefImpl(itemKey);
-        ref.setWeight(weight);
-        ref.setAmount(amount);
-        return ref;
-    }
-
-    @Override
     public NamespacedKey getNamespacedKey() {
         return ID;
     }

@@ -20,7 +20,6 @@ package com.wolfyscript.utilities.bukkit.compatibility;
 
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
-import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 
 public interface PluginIntegration {
 
@@ -37,15 +36,6 @@ public interface PluginIntegration {
      * @return The name of the plugin associated with this integration.
      */
     String getAssociatedPlugin();
-
-    /**
-     * Checks if the APIReference is part of this integration.
-     *
-     * @param reference The {@link APIReference} to check.
-     * @return True if the reference is part of this integration; else false.
-     */
-    @Deprecated(forRemoval = true, since = "4.16.15")
-    default boolean isAPIReferenceIncluded(APIReference reference) { return false; }
 
     /**
      * Gets the plugin core.

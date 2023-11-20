@@ -24,11 +24,10 @@ import com.wolfyscript.utilities.bukkit.compatibility.plugins.ItemsAdderIntegrat
 import com.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomBlockWrapper;
 import com.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomItemListener;
 import com.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomStackWrapper;
-import com.wolfyscript.utilities.compatibility.plugins.itemsadder.ItemsAdderRefImpl;
+import com.wolfyscript.utilities.compatibility.plugins.itemsadder.ItemsAdderStackIdentifier;
 import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
 import java.util.Optional;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
-import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.itemsadder.CustomBlock;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.itemsadder.CustomStack;
@@ -50,8 +49,7 @@ public class ItemsAdderImpl extends PluginIntegrationAbstract implements ItemsAd
 
     @Override
     public void init(Plugin plugin) {
-        core.registerAPIReference(new ItemsAdderRefImpl.Parser());
-        core.getRegistries().getStackIdentifierParsers().register(new com.wolfyscript.utilities.compatibility.plugins.itemsadder.ItemsAdderStackIdentifier.Parser());
+        core.getRegistries().getStackIdentifierParsers().register(new ItemsAdderStackIdentifier.Parser());
         Bukkit.getPluginManager().registerEvents(this, core.getWolfyUtils().getPlugin());
         Bukkit.getPluginManager().registerEvents(new CustomItemListener(this), core.getWolfyUtils().getPlugin());
     }
@@ -59,11 +57,6 @@ public class ItemsAdderImpl extends PluginIntegrationAbstract implements ItemsAd
     @Override
     public boolean hasAsyncLoading() {
         return true;
-    }
-
-    @Override
-    public boolean isAPIReferenceIncluded(APIReference reference) {
-        return reference instanceof ItemsAdderRefImpl;
     }
 
     @EventHandler

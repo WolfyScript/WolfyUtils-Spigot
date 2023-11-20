@@ -21,9 +21,7 @@ package com.wolfyscript.utilities.compatibility.plugins;
 import com.google.inject.Inject;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
-import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
-import com.wolfyscript.utilities.compatibility.plugins.mmoitems.MMOItemsRefImpl;
 import org.bukkit.plugin.Plugin;
 
 @WUPluginIntegration(pluginName = MMOItemsImpl.PLUGIN_NAME)
@@ -38,7 +36,6 @@ public class MMOItemsImpl extends PluginIntegrationAbstract {
 
     @Override
     public void init(Plugin plugin) {
-        core.registerAPIReference(new MMOItemsRefImpl.Parser());
         core.getRegistries().getStackIdentifierParsers().register(new com.wolfyscript.utilities.compatibility.plugins.mmoitems.MMOItemsStackIdentifier.Parser());
     }
 
@@ -47,8 +44,4 @@ public class MMOItemsImpl extends PluginIntegrationAbstract {
         return false;
     }
 
-    @Override
-    public boolean isAPIReferenceIncluded(APIReference reference) {
-        return reference instanceof MMOItemsRefImpl;
-    }
 }

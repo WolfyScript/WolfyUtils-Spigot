@@ -21,9 +21,7 @@ package com.wolfyscript.utilities.bukkit.registry;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
-import com.wolfyscript.utilities.bukkit.world.items.reference.WolfyUtilsItemReference;
 import com.wolfyscript.utilities.bukkit.world.items.reference.WolfyUtilsStackIdentifier;
-import com.wolfyscript.utilities.bukkit.world.items.references.WolfyUtilitiesRef;
 import com.wolfyscript.utilities.common.registry.AbstractRegistry;
 import java.util.HashMap;
 import java.util.List;
@@ -107,7 +105,7 @@ public class RegistryCustomItem extends AbstractRegistry<Map<NamespacedKey, Cust
      * If the registry already contains a value for the NamespacedKey then the value will be updated with the new one.
      * <br>
      * <b>
-     * If the CustomItem is linked with a {@link WolfyUtilitiesRef}, which NamespacedKey is the same as the passed in NamespacedKey, the CustomItem will neither be added or updated!
+     * If the CustomItem is linked with a {@link WolfyUtilsStackIdentifier}, which NamespacedKey is the same as the passed in NamespacedKey, the CustomItem will neither be added or updated!
      * <br>
      * This is to prevent a infinite loop where a reference tries to call itself when it tries to get the values from it's parent item.
      * </b>

@@ -5,8 +5,6 @@ import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
-import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
-import com.wolfyscript.utilities.bukkit.world.items.references.VanillaRef;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -188,24 +186,4 @@ public interface StackIdentifier extends Keyed {
     @Override
     NamespacedKey getNamespacedKey();
 
-    /**
-     * Used for backwards compatibility with {@link APIReference}s.
-     * By default, this returns a {@link VanillaRef} build using the {@link #stack(ItemCreateContext)} method.
-     * Other implementations may choose to return their old related APIReference implementation.
-     * <p>
-     * Note that the new Identifiers are one level lower than APIReferences, so they no longer share the weight, and amount properties.
-     * Those properties are now part of the higher level {@link StackReference}.
-     * </p>
-     *
-     * @param weight The weight of the StackReference
-     * @param amount The amount of the StackReference
-     * @return The old APIReference, either implementation specific, or {@link VanillaRef} by default
-     */
-    @Deprecated
-    default APIReference convert(double weight, int amount) {
-        var ref = new VanillaRef(stack(ItemCreateContext.empty(1)));
-        ref.setWeight(weight);
-        ref.setAmount(amount);
-        return ref;
-    }
 }

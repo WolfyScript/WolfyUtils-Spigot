@@ -49,14 +49,6 @@ public class ItemsAdderStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public ItemsAdderRefImpl convert(double weight, int amount) {
-        ItemsAdderRefImpl ref = new ItemsAdderRefImpl(itemId);
-        ref.setWeight(weight);
-        ref.setAmount(amount);
-        return ref;
-    }
-
-    @Override
     public NamespacedKey getNamespacedKey() {
         return ID;
     }

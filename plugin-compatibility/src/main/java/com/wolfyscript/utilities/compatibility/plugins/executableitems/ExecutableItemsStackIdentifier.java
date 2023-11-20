@@ -40,14 +40,6 @@ public class ExecutableItemsStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public ExecutableItemsRef convert(double weight, int amount) {
-        ExecutableItemsRef ref = new ExecutableItemsRef(manager, id);
-        ref.setWeight(weight);
-        ref.setAmount(amount);
-        return ref;
-    }
-
-    @Override
     public NamespacedKey getNamespacedKey() {
         return ID;
     }

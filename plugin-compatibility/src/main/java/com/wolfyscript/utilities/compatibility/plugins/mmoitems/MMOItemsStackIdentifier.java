@@ -49,14 +49,6 @@ public class MMOItemsStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public MMOItemsRefImpl convert(double weight, int amount) {
-        MMOItemsRefImpl ref = new MMOItemsRefImpl(itemType, itemName);
-        ref.setWeight(weight);
-        ref.setAmount(amount);
-        return ref;
-    }
-
-    @Override
     public NamespacedKey getNamespacedKey() {
         return ID;
     }

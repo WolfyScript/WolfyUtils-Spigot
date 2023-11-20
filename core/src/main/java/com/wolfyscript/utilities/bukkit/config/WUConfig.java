@@ -19,16 +19,11 @@
 package com.wolfyscript.utilities.bukkit.config;
 
 import com.wolfyscript.utilities.bukkit.WolfyCoreBootstrap;
-import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 
 public class WUConfig extends YamlConfiguration {
 
     public WUConfig(ConfigAPI configAPI, WolfyCoreBootstrap plugin) {
         super(configAPI, plugin.getDataFolder().getPath(), "config", "", "config", false);
-    }
-
-    public boolean isAPIReferenceEnabled(APIReference.Parser<?> parser) {
-        return getBoolean("api_references." + parser.getId(), true);
     }
 
 }

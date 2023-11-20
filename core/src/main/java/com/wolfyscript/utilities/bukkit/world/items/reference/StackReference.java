@@ -1,28 +1,18 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.deser.std.StdNodeBasedDeserializer;
 import com.wolfyscript.utilities.Copyable;
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
-import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
-import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.collection.RandomCollection;
 import com.wolfyscript.utilities.common.WolfyCore;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -34,7 +24,6 @@ import java.util.function.Consumer;
  * <br>
  * This is usually stored in JSON (HOCON) files, while the {@link StackIdentifier} is not.
  */
-@JsonDeserialize(using = StackReference.Deserializer.class)
 public class StackReference implements Copyable<StackReference> {
 
     private final WolfyCore core;
@@ -291,52 +280,4 @@ public class StackReference implements Copyable<StackReference> {
         return identifier().shrinkUnstackableItem(stack, useRemains);
     }
 
-    /**
-     * Converts this StackReference into a legacy APIReference.
-     */
-    @Deprecated
-    public APIReference convert() {
-        return identifier().convert(weight, customAmount);
-    }
-
-    /**
-     * Converts this reference to the old behaviour of the CustomItem.
-     * If the reference points to a WolfyUtils CustomItem, then that item is returned.
-     * Otherwise, it returns a CustomItem wrapping this reference.
-     *
-     * @return A CustomItem wrapping this reference, or the saved CustomItem if pointing to a WolfyUtils Item
-     */
-    @Deprecated
-    public CustomItem convertToLegacy() {
-        if (identifier() instanceof WolfyUtilsStackIdentifier wolfyUtilsStackIdentifier) {
-            return wolfyUtilsStackIdentifier.customItem().orElse(new CustomItem(Material.AIR));
-        }
-        return new CustomItem(core.getWolfyUtils(), stack);
-    }
-
-    public static class Deserializer extends StdNodeBasedDeserializer<StackReference> {
-
-        private final WolfyCoreImpl core;
-
-        protected Deserializer() {
-            super(StackReference.class);
-            this.core = WolfyCoreImpl.getInstance();
-        }
-
-        @Override
-        public StackReference convert(JsonNode root, DeserializationContext ctxt) throws IOException {
-            if (root.has("parser")) {
-                // New ItemReference used! No conversion required!
-                return new StackReference(core,
-                        ctxt.readTreeAsValue(root.get("parser"), NamespacedKey.class),
-                        root.get("weight").asDouble(1),
-                        root.get("amount").asInt(1),
-                        ctxt.readTreeAsValue(root.get("stack"), ItemStack.class)
-                );
-            }
-            // Need to convert APIReference
-            APIReference apiReference = ctxt.readTreeAsValue(root, APIReference.class);
-            return apiReference.convertToStackReference();
-        }
-    }
 }

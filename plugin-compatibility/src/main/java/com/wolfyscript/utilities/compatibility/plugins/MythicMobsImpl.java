@@ -20,15 +20,11 @@ package com.wolfyscript.utilities.compatibility.plugins;
 
 import com.google.inject.Inject;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.MythicMobsIntegration;
-import com.wolfyscript.utilities.compatibility.plugins.mythicmobs.MythicMobs5RefImpl;
-import com.wolfyscript.utilities.compatibility.plugins.mythicmobs.MythicMobsRefImpl;
 import io.lumine.xikage.mythicmobs.MythicMobs;
 import io.lumine.xikage.mythicmobs.adapters.bukkit.BukkitAdapter;
 import io.lumine.xikage.mythicmobs.mobs.MythicMob;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
-import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
@@ -43,22 +39,12 @@ public class MythicMobsImpl extends PluginIntegrationAbstract implements MythicM
 
     @Override
     public void init(Plugin plugin) {
-        if (WolfyCoreImpl.hasClass("io.lumine.mythic.bukkit.MythicBukkit")) {
-            core.registerAPIReference(new MythicMobs5RefImpl.Parser());
-        } else {
-            core.registerAPIReference(new MythicMobsRefImpl.Parser());
-        }
         core.getRegistries().getStackIdentifierParsers().register(new com.wolfyscript.utilities.compatibility.plugins.mythicmobs.MythicMobsStackIdentifier.Parser());
     }
 
     @Override
     public boolean hasAsyncLoading() {
         return false;
-    }
-
-    @Override
-    public boolean isAPIReferenceIncluded(APIReference reference) {
-        return reference instanceof MythicMobsRefImpl;
     }
 
     @Override

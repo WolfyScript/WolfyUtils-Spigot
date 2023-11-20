@@ -21,8 +21,6 @@ package com.wolfyscript.utilities.compatibility.plugins.oraxen;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.OraxenIntegration;
-import com.wolfyscript.utilities.bukkit.compatibility.plugins.oraxen.OraxenRef;
-import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import org.bukkit.plugin.Plugin;
 
@@ -37,11 +35,6 @@ public class OraxenImpl extends PluginIntegrationAbstract implements OraxenInteg
 
     @Override
     public void init(Plugin plugin) {
-        if (IS_LATEST_API) {
-            core.registerAPIReference(new OraxenRefImpl.Parser());
-        } else {
-            core.registerAPIReference(new OraxenRefOldImpl.Parser());
-        }
         core.getRegistries().getStackIdentifierParsers().register(new OraxenStackIdentifier.Parser());
     }
 
@@ -54,8 +47,4 @@ public class OraxenImpl extends PluginIntegrationAbstract implements OraxenInteg
         return false;
     }
 
-    @Override
-    public boolean isAPIReferenceIncluded(APIReference reference) {
-        return reference instanceof OraxenRef;
-    }
 }

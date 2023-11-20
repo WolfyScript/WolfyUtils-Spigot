@@ -48,14 +48,6 @@ public class OraxenStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public OraxenRefImpl convert(double weight, int amount) {
-        OraxenRefImpl ref = new OraxenRefImpl(itemID);
-        ref.setWeight(weight);
-        ref.setAmount(amount);
-        return ref;
-    }
-
-    @Override
     public NamespacedKey getNamespacedKey() {
         return ID;
     }

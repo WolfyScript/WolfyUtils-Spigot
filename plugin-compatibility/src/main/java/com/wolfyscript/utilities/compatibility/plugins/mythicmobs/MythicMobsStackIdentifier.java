@@ -46,14 +46,6 @@ public class MythicMobsStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public MythicMobs5RefImpl convert(double weight, int amount) {
-        MythicMobs5RefImpl ref = new MythicMobs5RefImpl(itemName);
-        ref.setWeight(weight);
-        ref.setAmount(amount);
-        return ref;
-    }
-
-    @Override
     public NamespacedKey getNamespacedKey() {
         return ID;
     }

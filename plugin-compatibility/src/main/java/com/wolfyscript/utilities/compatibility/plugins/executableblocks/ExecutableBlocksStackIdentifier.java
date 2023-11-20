@@ -43,14 +43,6 @@ public class ExecutableBlocksStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public ExecutableBlocksRef convert(double weight, int amount) {
-        ExecutableBlocksRef ref = new ExecutableBlocksRef(integration, manager, id);
-        ref.setWeight(weight);
-        ref.setAmount(amount);
-        return ref;
-    }
-
-    @Override
     public NamespacedKey getNamespacedKey() {
         return ID;
     }

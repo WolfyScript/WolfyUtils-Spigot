@@ -2,6 +2,7 @@ package com.wolfyscript.utilities.compatibility.plugins.executableblocks;
 
 import com.ssomar.score.api.executableblocks.ExecutableBlocksAPI;
 import com.ssomar.score.api.executableblocks.config.ExecutableBlocksManagerInterface;
+import com.ssomar.score.api.executableitems.ExecutableItemsAPI;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
@@ -9,6 +10,7 @@ import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import java.util.List;
 import java.util.Optional;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.ExecutableBlocksIntegration;
+import com.wolfyscript.utilities.compatibility.plugins.executableitems.ExecutableItemsStackIdentifier;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
@@ -31,7 +33,7 @@ public class ExecutableBlocksImpl extends PluginIntegrationAbstract implements E
     @Override
     public void init(Plugin plugin) {
         this.manager = ExecutableBlocksAPI.getExecutableBlocksManager();
-        core.registerAPIReference(new ExecutableBlocksRef.Parser(this, manager));
+        core.getRegistries().getStackIdentifierParsers().register(new ExecutableBlocksStackIdentifier.Parser(this, manager));
     }
 
     @Override

@@ -10,7 +10,6 @@ import com.wolfyscript.jackson.dataformat.hocon.HoconMapper;
 import com.wolfyscript.utilities.Platform;
 import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
 import com.wolfyscript.utilities.bukkit.commands.ChatActionCommand;
-import com.wolfyscript.utilities.bukkit.commands.DebugSimpleStackConfigCommand;
 import com.wolfyscript.utilities.bukkit.commands.GuiExampleCommand;
 import com.wolfyscript.utilities.bukkit.commands.InfoCommand;
 import com.wolfyscript.utilities.bukkit.commands.InputCommand;
@@ -98,13 +97,6 @@ import com.wolfyscript.utilities.bukkit.world.items.meta.PlayerHeadMeta;
 import com.wolfyscript.utilities.bukkit.world.items.meta.PotionMeta;
 import com.wolfyscript.utilities.bukkit.world.items.meta.RepairCostMeta;
 import com.wolfyscript.utilities.bukkit.world.items.meta.UnbreakableMeta;
-import com.wolfyscript.utilities.bukkit.world.items.reference.BukkitItemReference;
-import com.wolfyscript.utilities.bukkit.world.items.reference.ItemReference;
-import com.wolfyscript.utilities.bukkit.world.items.reference.SimpleBukkitItemReference;
-import com.wolfyscript.utilities.bukkit.world.items.reference.WolfyUtilsItemReference;
-import com.wolfyscript.utilities.bukkit.world.items.references.APIReference;
-import com.wolfyscript.utilities.bukkit.world.items.references.VanillaRef;
-import com.wolfyscript.utilities.bukkit.world.items.references.WolfyUtilitiesRef;
 import com.wolfyscript.utilities.bukkit.world.particles.animators.Animator;
 import com.wolfyscript.utilities.bukkit.world.particles.animators.AnimatorBasic;
 import com.wolfyscript.utilities.bukkit.world.particles.animators.AnimatorCircle;
@@ -366,11 +358,6 @@ public abstract class WolfyCoreImpl implements WolfyCore {
         api.getJacksonMapperUtil().setGlobalMapper(mapper);
 
         // Initialise all the Registers
-        console.info("Register Item references");
-        var itemReferences = getRegistries().getItemReferences();
-        itemReferences.register(BukkitItemReference.class);
-        itemReferences.register(SimpleBukkitItemReference.class);
-        itemReferences.register(WolfyUtilsItemReference.class);
 
         getLogger().info("Register JSON Operators");
         var operators = getRegistries().getOperators();
@@ -534,7 +521,6 @@ public abstract class WolfyCoreImpl implements WolfyCore {
 
         // Register the Registries to resolve type references in JSON
         KeyedTypeIdResolver.registerTypeRegistry(CustomItemData.class, registries.getCustomItemDataTypeRegistry());
-        KeyedTypeIdResolver.registerTypeRegistry(ItemReference.class, itemReferences);
         KeyedTypeIdResolver.registerTypeRegistry(Meta.class, nbtChecks);
         KeyedTypeIdResolver.registerTypeRegistry(Animator.class, particleAnimators);
         KeyedTypeIdResolver.registerTypeRegistry(Shape.class, particleShapes);
@@ -583,7 +569,6 @@ public abstract class WolfyCoreImpl implements WolfyCore {
                 new SpawnParticleAnimationCommand(this),
                 new SpawnParticleEffectCommand(this),
                 new QueryDebugCommand(this),
-                new DebugSimpleStackConfigCommand(this),
                 new GuiExampleCommand(this)
         );
     }
@@ -624,14 +609,6 @@ public abstract class WolfyCoreImpl implements WolfyCore {
     private void onJUnitTests() {
         registerCommands();
     }
-
-    /**
-     * Register a new {@link APIReference.Parser} that can parse ItemStacks and keys from another plugin to a usable {@link APIReference}
-     *
-     * @param parser an {@link APIReference.Parser} instance.
-     * @see CustomItem#registerAPIReferenceParser(APIReference.Parser)
-     */
-    public void registerAPIReference(APIReference.Parser<?> parser) { }
 
     public MessageHandler getMessageHandler() {
         return messageHandler;
