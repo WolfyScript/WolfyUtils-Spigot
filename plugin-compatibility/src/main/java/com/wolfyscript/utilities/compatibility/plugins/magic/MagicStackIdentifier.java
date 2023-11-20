@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Objects;
 import java.util.Optional;
 
-public class MagicStackIdentifier implements StackIdentifier {
+class MagicStackIdentifier implements StackIdentifier, com.wolfyscript.utilities.bukkit.compatibility.plugins.magic.MagicStackIdentifier {
 
     public static final NamespacedKey ID = BukkitNamespacedKey.wolfyutilties("magic");
 

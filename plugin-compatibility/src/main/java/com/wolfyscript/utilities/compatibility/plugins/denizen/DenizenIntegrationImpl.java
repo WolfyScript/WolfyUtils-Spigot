@@ -1,10 +1,9 @@
-package com.wolfyscript.utilities.compatibility.plugins;
+package com.wolfyscript.utilities.compatibility.plugins.denizen;
 
 import com.google.inject.Inject;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
-import com.wolfyscript.utilities.compatibility.plugins.denizen.DenizenStackIdentifier;
 import org.bukkit.plugin.Plugin;
 
 @WUPluginIntegration(pluginName = DenizenIntegrationImpl.PLUGIN_NAME)

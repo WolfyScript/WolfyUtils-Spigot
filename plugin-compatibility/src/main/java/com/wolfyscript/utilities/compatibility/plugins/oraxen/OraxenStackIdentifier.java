@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Objects;
 import java.util.Optional;
 
-public class OraxenStackIdentifier implements StackIdentifier {
+class OraxenStackIdentifier implements StackIdentifier, com.wolfyscript.utilities.bukkit.compatibility.plugins.oraxen.OraxenStackIdentifier {
 
     public static final NamespacedKey ID = BukkitNamespacedKey.wolfyutilties("oraxen");
 

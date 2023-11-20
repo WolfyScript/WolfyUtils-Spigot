@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
 
-public class ExecutableItemsStackIdentifier implements StackIdentifier {
+class ExecutableItemsStackIdentifier implements StackIdentifier {
 
     public static final NamespacedKey ID = BukkitNamespacedKey.wolfyutilties("executableitems");
 

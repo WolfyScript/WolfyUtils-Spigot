@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Objects;
 import java.util.Optional;
 
-public class EcoStackIdentifier implements StackIdentifier {
+class EcoStackIdentifier implements StackIdentifier, com.wolfyscript.utilities.bukkit.compatibility.plugins.eco.EcoStackIdentifier {
 
     public static final NamespacedKey ID = BukkitNamespacedKey.wolfyutilties("eco");
 
@@ -41,6 +41,11 @@ public class EcoStackIdentifier implements StackIdentifier {
     @Override
     public NamespacedKey getNamespacedKey() {
         return ID;
+    }
+
+    @Override
+    public org.bukkit.NamespacedKey itemKey() {
+        return itemKey;
     }
 
     public static class Parser implements StackIdentifierParser<EcoStackIdentifier> {

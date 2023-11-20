@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Objects;
 import java.util.Optional;
 
-public class ItemsAdderStackIdentifier implements StackIdentifier {
+class ItemsAdderStackIdentifier implements StackIdentifier, com.wolfyscript.utilities.bukkit.compatibility.plugins.itemsadder.ItemsAdderStackIdentifier {
 
     public static final NamespacedKey ID = BukkitNamespacedKey.wolfyutilties("itemsadder");
 

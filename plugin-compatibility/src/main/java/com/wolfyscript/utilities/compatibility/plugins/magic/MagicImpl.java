@@ -16,32 +16,46 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.compatibility.plugins;
+package com.wolfyscript.utilities.compatibility.plugins.magic;
 
+import com.elmakers.mine.bukkit.api.event.LoadEvent;
+import com.elmakers.mine.bukkit.api.magic.MagicAPI;
 import com.google.inject.Inject;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
+import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
-@WUPluginIntegration(pluginName = MMOItemsImpl.PLUGIN_NAME)
-public class MMOItemsImpl extends PluginIntegrationAbstract {
+@WUPluginIntegration(pluginName = MagicImpl.PLUGIN_NAME)
+public class MagicImpl extends PluginIntegrationAbstract implements Listener {
 
-    static final String PLUGIN_NAME = "MMOItems";
+    static final String PLUGIN_NAME = "Magic";
 
     @Inject
-    protected MMOItemsImpl(WolfyCoreBukkit core) {
+    protected MagicImpl(WolfyCoreBukkit core) {
         super(core, PLUGIN_NAME);
     }
 
     @Override
     public void init(Plugin plugin) {
-        core.getRegistries().getStackIdentifierParsers().register(new com.wolfyscript.utilities.compatibility.plugins.mmoitems.MMOItemsStackIdentifier.Parser());
+        Bukkit.getPluginManager().registerEvents(this, core.getWolfyUtils().getPlugin());
+        core.getRegistries().getStackIdentifierParsers().register(new MagicStackIdentifier.Parser(Bukkit.getPluginManager().getPlugin("Magic") instanceof MagicAPI magicAPI ? magicAPI : null));
     }
 
     @Override
     public boolean hasAsyncLoading() {
-        return false;
+        return true;
     }
 
+    @EventHandler
+    public void onComplete(LoadEvent event) {
+        if (event.getController() != null) { //Makes sure to only mark as done when Magic will actually be enabled!
+            markAsDoneLoading();
+        } else {
+            ignore();
+        }
+    }
 }

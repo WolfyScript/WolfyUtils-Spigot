@@ -16,10 +16,9 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.bukkit.compatibility.plugins.magic;
+package com.wolfyscript.utilities.bukkit.compatibility.plugins.mythicmobs;
 
-public interface MagicRef {
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 
-
-
+public interface MythicMobsStackIdentifier extends StackIdentifier {
 }

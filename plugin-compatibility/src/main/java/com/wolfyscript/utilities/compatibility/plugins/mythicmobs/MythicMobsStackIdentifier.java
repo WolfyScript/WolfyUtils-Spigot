@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Objects;
 import java.util.Optional;
 
-public class MythicMobsStackIdentifier implements StackIdentifier {
+class MythicMobsStackIdentifier implements StackIdentifier, com.wolfyscript.utilities.bukkit.compatibility.plugins.mythicmobs.MythicMobsStackIdentifier {
 
     protected static final String ITEM_KEY = "MYTHIC_TYPE";
     public static final NamespacedKey ID = BukkitNamespacedKey.wolfyutilties("mythicmobs");

@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Objects;
 import java.util.Optional;
 
-public class DenizenStackIdentifier implements StackIdentifier {
+class DenizenStackIdentifier implements StackIdentifier {
 
     public static final NamespacedKey ID = BukkitNamespacedKey.wolfyutilties("denizen");
     private final ItemStack displayItem;

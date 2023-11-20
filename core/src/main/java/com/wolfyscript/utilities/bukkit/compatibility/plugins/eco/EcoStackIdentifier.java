@@ -16,7 +16,12 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.bukkit.compatibility.plugins.mmoitems;
+package com.wolfyscript.utilities.bukkit.compatibility.plugins.eco;
 
-public interface MMOItemsRef {
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
+import org.bukkit.NamespacedKey;
+
+public interface EcoStackIdentifier extends StackIdentifier {
+
+    NamespacedKey itemKey();
 }

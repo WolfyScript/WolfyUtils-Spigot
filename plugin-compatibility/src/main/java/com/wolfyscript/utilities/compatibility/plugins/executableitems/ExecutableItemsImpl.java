@@ -1,4 +1,4 @@
-package com.wolfyscript.utilities.compatibility.plugins;
+package com.wolfyscript.utilities.compatibility.plugins.executableitems;
 
 import com.google.inject.Inject;
 import com.ssomar.score.api.executableitems.ExecutableItemsAPI;

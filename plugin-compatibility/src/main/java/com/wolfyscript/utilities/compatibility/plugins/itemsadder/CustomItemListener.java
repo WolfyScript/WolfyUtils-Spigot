@@ -8,7 +8,6 @@ import com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.WorldStorage;
 import dev.lone.itemsadder.api.Events.CustomBlockBreakEvent;
 import dev.lone.itemsadder.api.Events.CustomBlockPlaceEvent;
-import com.wolfyscript.utilities.compatibility.plugins.ItemsAdderImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;

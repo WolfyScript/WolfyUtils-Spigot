@@ -16,10 +16,12 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.bukkit.compatibility.plugins.itemsadder;
+package com.wolfyscript.utilities.bukkit.compatibility.plugins.oraxen;
 
-public interface ItemsAdderRef {
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 
-    String getItemID();
+public interface OraxenStackIdentifier extends StackIdentifier {
+
+    String itemId();
 
 }

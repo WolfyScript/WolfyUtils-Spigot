@@ -16,11 +16,12 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.bukkit.compatibility.plugins.eco;
+package com.wolfyscript.utilities.bukkit.compatibility.plugins.magic;
 
-import org.bukkit.NamespacedKey;
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 
-public interface EcoRef {
+public interface MagicStackIdentifier extends StackIdentifier {
 
-    NamespacedKey getKey();
+
+
 }

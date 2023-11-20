@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
 
-public class FancyBagsStackIdentifier implements StackIdentifier {
+class FancyBagsStackIdentifier implements StackIdentifier {
 
     private static final String ID_TAG = "BackpackID";
     public static final NamespacedKey ID = BukkitNamespacedKey.wolfyutilties("fancybags");

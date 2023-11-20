@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.compatibility.plugins;
+package com.wolfyscript.utilities.compatibility.plugins.itemsadder;
 
 import com.google.inject.Inject;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
