@@ -113,8 +113,6 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     @JsonAlias({"api_reference", "apiReference", "item"})
     private final StackReference reference;
 
-    @JsonAlias("custom_data")
-    private final CustomData.DeprecatedCustomDataWrapper customDataMap = new CustomData.DeprecatedCustomDataWrapper(this);
     @JsonIgnore
     private final Map<NamespacedKey, CustomItemData> indexedData = new HashMap<>();
 
@@ -196,10 +194,6 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
         this.nbtChecks = customItem.nbtChecks;
         this.permission = customItem.permission;
         this.rarityPercentage = customItem.rarityPercentage;
-        this.customDataMap.clear();
-        for (Map.Entry<NamespacedKey, CustomData> entry : customItem.customDataMap.entrySet()) {
-            this.customDataMap.put(entry.getKey(), entry.getValue().clone());
-        }
         this.indexedData.clear();
         for (Map.Entry<NamespacedKey, CustomItemData> entry : customItem.indexedData.entrySet()) {
             this.indexedData.put(entry.getKey(), entry.getValue().copy());
@@ -520,7 +514,6 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
                 blockPlacement == that.blockPlacement &&
                 blockVanillaEquip == that.blockVanillaEquip &&
                 blockVanillaRecipes == that.blockVanillaRecipes &&
-                Objects.equals(customDataMap, that.customDataMap) &&
                 Objects.equals(namespacedKey, that.namespacedKey) &&
                 Objects.equals(replacement, that.replacement) &&
                 Objects.equals(fuelSettings, that.fuelSettings) &&
@@ -946,8 +939,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     @Override
     public String toString() {
         return "CustomItem{" +
-                "customDataMap=" + customDataMap +
-                ", namespacedKey=" + namespacedKey +
+                "namespacedKey=" + namespacedKey +
                 ", craftRemain=" + craftRemain +
                 ", consumed=" + consumed +
                 ", replacement=" + replacement +

@@ -13,7 +13,7 @@ import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
 import com.wolfyscript.utilities.json.KeyedTypeResolver;
 
 /**
- * This is the direct replacement for the old {@link CustomData}
+ * This is the direct replacement for the old CustomData
  *
  */
 @JsonTypeResolver(KeyedTypeResolver.class)

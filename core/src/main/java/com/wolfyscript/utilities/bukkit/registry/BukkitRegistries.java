@@ -25,7 +25,6 @@ import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
 import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import com.wolfyscript.utilities.bukkit.tags.Tags;
-import com.wolfyscript.utilities.bukkit.world.items.CustomData;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItemData;
 import com.wolfyscript.utilities.bukkit.world.items.actions.Action;
@@ -73,7 +72,6 @@ public class BukkitRegistries extends Registries {
 
     //Value registries
     private final RegistryCustomItem customItems;
-    private final Registry<CustomData.Provider<?>> customItemData;
     private final RegistryParticleEffect particleEffects;
     private final RegistryParticleAnimation particleAnimations;
     private final Registry<Action<?>> customItemActionValues;
@@ -102,7 +100,6 @@ public class BukkitRegistries extends Registries {
         super(core);
 
         customItems = new RegistryCustomItem(this);
-        customItemData = new RegistrySimple<>(new BukkitNamespacedKey(core.getWolfyUtils(), "custom_item_data"), this);
         particleEffects = new RegistryParticleEffect(this);
         particleAnimations = new RegistryParticleAnimation(this);
         customItemActionValues = new RegistrySimple<>(ITEM_ACTION_VALUES, this, (Class<Action<?>>)(Object) Action.class);
@@ -139,21 +136,6 @@ public class BukkitRegistries extends Registries {
      */
     public RegistryCustomItem getCustomItems() {
         return customItems;
-    }
-
-    /**
-     * Contains {@link CustomData.Provider} that can be used in any Custom Item from the point of registration.
-     * <br>
-     * You can register any CustomData you might want to add to your CustomItems and then save and load it from config too.
-     * <br>
-     * It allows you to save and load custom data into a CustomItem and makes things a lot easier if you have some items that perform specific actions with the data etc.
-     * <br>
-     * For example CustomCrafting registers its own CustomData, that isn't in this core API, for its Elite Workbenches that open up custom GUIs dependent on their CustomData.
-     * And also the Recipe Book uses a CustomData object to store some data.
-     * @return The registry of {@link CustomData.Provider}
-     */
-    public Registry<CustomData.Provider<?>> getCustomItemData() {
-        return customItemData;
     }
 
     /**

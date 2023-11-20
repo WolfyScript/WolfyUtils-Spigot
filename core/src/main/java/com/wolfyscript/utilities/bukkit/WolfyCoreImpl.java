@@ -57,15 +57,12 @@ import com.wolfyscript.utilities.bukkit.nbt.QueryNodeShort;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNodeString;
 import com.wolfyscript.utilities.bukkit.network.messages.MessageFactory;
 import com.wolfyscript.utilities.bukkit.network.messages.MessageHandler;
-import com.wolfyscript.utilities.bukkit.nms.item.crafting.FunctionalRecipeGenerator;
 import com.wolfyscript.utilities.bukkit.persistent.PersistentStorage;
 import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectData;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import com.wolfyscript.utilities.bukkit.world.inventory.CreativeModeTab;
-import com.wolfyscript.utilities.bukkit.world.items.CustomData;
-import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItemBlockData;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItemData;
 import com.wolfyscript.utilities.bukkit.world.items.actions.Action;
@@ -324,8 +321,6 @@ public abstract class WolfyCoreImpl implements WolfyCore {
         PotionEffectTypeSerialization.create(module);
         PotionEffectSerialization.create(module);
         VectorSerialization.create(module);
-        // Serializer for the old CustomData
-        module.addSerializer(CustomData.DeprecatedCustomDataWrapper.class, new CustomData.Serializer());
 
         // Add module to WU Modules and register it to the old JacksonUtil.
         jsonMapperModules.add(module);
