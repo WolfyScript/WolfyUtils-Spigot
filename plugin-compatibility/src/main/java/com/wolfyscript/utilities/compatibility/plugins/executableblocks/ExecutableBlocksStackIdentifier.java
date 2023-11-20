@@ -1,5 +1,6 @@
 package com.wolfyscript.utilities.compatibility.plugins.executableblocks;
 
+import com.ssomar.executableblocks.executableblocks.ExecutableBlocksManager;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.ExecutableBlocksIntegration;

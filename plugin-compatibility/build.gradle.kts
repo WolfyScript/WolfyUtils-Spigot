@@ -7,7 +7,8 @@ plugins {
 }
 
 dependencies {
-    compileOnly("com.github.Ssomar-Developement:SCore:3.9.25")
+    compileOnly("com.ssomar:SCore:4.0.1")
+    compileOnly("com.ssomar.executableblocks:ExecutableBlocks:4.0.1")
     compileOnly("com.denizenscript:denizen:1.2.5-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.1")
     compileOnly("com.willfp:eco:6.13.0")

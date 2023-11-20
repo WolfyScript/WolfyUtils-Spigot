@@ -1,15 +1,12 @@
 package com.wolfyscript.utilities.compatibility.plugins.executableblocks;
 
 import com.ssomar.executableblocks.executableblocks.ExecutableBlocksManager;
-import com.ssomar.score.api.executableitems.ExecutableItemsAPI;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import java.util.List;
 import java.util.Optional;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.ExecutableBlocksIntegration;
-import com.wolfyscript.utilities.compatibility.plugins.executableitems.ExecutableItemsStackIdentifier;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
