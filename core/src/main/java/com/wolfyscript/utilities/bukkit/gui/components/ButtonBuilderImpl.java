@@ -22,8 +22,11 @@ import com.wolfyscript.utilities.common.items.ItemStackConfig;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import it.unimi.dsi.fastutil.ints.IntList;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
@@ -32,6 +35,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 public class ButtonBuilderImpl extends AbstractComponentBuilderImpl<Button, Component> implements ButtonBuilder {
 
     private InteractionCallback interactionCallback = (guiHolder, interactionDetails) -> InteractionResult.cancel(true);
+    private Function<GuiHolder, Optional<Sound>> soundFunction = holder -> Optional.of(Sound.sound(Key.key("minecraft:ui.button.click"), Sound.Source.MASTER, 0.25f, 1));;
     private final IconBuilderImpl iconBuilder;
 
     /**
@@ -66,8 +70,15 @@ public class ButtonBuilderImpl extends AbstractComponentBuilderImpl<Button, Comp
     }
 
     @Override
+    public ButtonBuilder sound(Function<GuiHolder, Optional<Sound>> soundFunction) {
+        Preconditions.checkArgument(soundFunction != null, "Sound function must be non-null!");
+        this.soundFunction = soundFunction;
+        return this;
+    }
+
+    @Override
     public Button create(Component parent) {
-        ButtonImpl button = new ButtonImpl(getWolfyUtils(), getID(), parent, iconBuilder.create(), interactionCallback, getSlots());
+        ButtonImpl button = new ButtonImpl(getWolfyUtils(), getID(), parent, iconBuilder.create(), soundFunction, interactionCallback, getSlots());
         for (Signal<?> signal : iconBuilder.signals) {
             signal.linkTo(button);
         }

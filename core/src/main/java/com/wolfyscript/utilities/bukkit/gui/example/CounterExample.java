@@ -1,13 +1,18 @@
 package com.wolfyscript.utilities.bukkit.gui.example;
 
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.common.gui.GuiAPIManager;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.components.ButtonBuilder;
 import com.wolfyscript.utilities.common.gui.signal.Signal;
 import com.wolfyscript.utilities.common.gui.signal.Store;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.WeakHashMap;
 
 public class CounterExample {
@@ -46,18 +51,20 @@ public class CounterExample {
 
                             renderer
                                     .titleSignals(count)
-                                    // Sometimes we want to render components dependent on signals
                                     .render("count_down", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                                             .interact((guiHolder, interactionDetails) -> {
                                                 count.update(old -> --old);
                                                 return InteractionResult.cancel(true);
                                             })
                                     )
+                                    // Sometimes we want to render components dependent on signals
                                     .ifThenRender(() -> count.get() != 0, "reset", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                                             .interact((guiHolder, interactionDetails) -> {
                                                 count.set(0); // The set method changes the value of the signal and prompts the listener of the signal to re-render.
                                                 return InteractionResult.cancel(true);
-                                            }))
+                                            })
+                                            .sound(holder -> Optional.of(Sound.sound(Key.key("minecraft:entity.dragon_fireball.explode"), Sound.Source.MASTER, 0.25f, 1)))
+                                    )
                                     // The state of a component is only reconstructed if the slot it is positioned at changes.
                                     // Here the slot will always have the same type of component, so the state is created only once.
                                     .render("count_up", ButtonBuilder.class, countUpSettings -> countUpSettings
