@@ -6,6 +6,7 @@ import com.wolfyscript.utilities.common.adapters.ItemStack;
 import com.wolfyscript.utilities.common.gui.GuiAPIManager;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
 import com.wolfyscript.utilities.common.gui.InteractionResult;
+import com.wolfyscript.utilities.common.gui.Position;
 import com.wolfyscript.utilities.common.gui.signal.Signal;
 import com.wolfyscript.utilities.common.gui.components.ButtonBuilder;
 import com.wolfyscript.utilities.common.gui.components.ComponentClusterBuilder;
@@ -38,7 +39,7 @@ public class TestGUI {
 
                                     // Here the slot will always have the same type of component, so the state is created only once.
                                     // Static Rendering, uses the positions specified previously!
-                                    .renderAt(4, "count_up", ButtonBuilder.class, settingsBtn -> settingsBtn
+                                    .renderAt(Position.relative(4), "count_up", ButtonBuilder.class, settingsBtn -> settingsBtn
                                             .icon(icon -> icon
                                                     .stack(() -> {
                                                         BukkitItemStackConfig config = new BukkitItemStackConfig(core.getWolfyUtils(), "minecraft:green_concrete");
@@ -50,7 +51,7 @@ public class TestGUI {
                                                 count.update(integer -> ++integer);
                                                 return InteractionResult.cancel(true);
                                             }))
-                                    .renderAt(13, "counter", ButtonBuilder.class, settingsBtn -> settingsBtn
+                                    .renderAt(Position.relative(13), "counter", ButtonBuilder.class, settingsBtn -> settingsBtn
                                             .icon(icon -> icon
                                                     .stack(() -> {
                                                         BukkitItemStackConfig config = new BukkitItemStackConfig(core.getWolfyUtils(), "minecraft:redstone");
@@ -66,7 +67,7 @@ public class TestGUI {
                                             // These components may be cleared when count == 0, so the state is recreated whenever the count changes from 0 to >0.
                                             return reactiveBuilder
                                                     .render("count_down_reset", ComponentClusterBuilder.class, b -> b
-                                                            .renderAt(22, "count_down", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                                                            .renderAt(Position.absolute(22), "count_down", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                                                                     .icon(icon -> icon
                                                                             .stack(() -> {
                                                                                 BukkitItemStackConfig config = new BukkitItemStackConfig(core.getWolfyUtils(), "minecraft:red_concrete");
@@ -78,7 +79,7 @@ public class TestGUI {
                                                                         count.update(integer -> --integer);
                                                                         return InteractionResult.cancel(true);
                                                                     }))
-                                                            .renderAt(10, "reset", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                                                            .renderAt(Position.absolute(10), "reset", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                                                                     .icon(icon -> icon.stack(() -> {
                                                                         BukkitItemStackConfig config = new BukkitItemStackConfig(core.getWolfyUtils(), "minecraft:tnt");
                                                                         config.setName(new ValueProviderStringConst(core.getWolfyUtils(), "<b><red>Reset Clicks!"));
