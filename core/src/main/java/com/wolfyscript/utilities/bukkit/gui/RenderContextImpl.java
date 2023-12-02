@@ -25,17 +25,18 @@ public class RenderContextImpl implements RenderContext {
         this.currentNode = null;
     }
 
-    public void setSlotOffsetToParent(int offset) {
+    public void setSlotOffset(int offset) {
         this.slotOffsetToParent = offset;
     }
 
     @Override
-    public int getCurrentOffset() {
+    public int currentOffset() {
         return slotOffsetToParent;
     }
 
     public void enterNode(Component component) {
         this.currentNode = component;
+        this.slotOffsetToParent = component.offset();
     }
 
     public void exitNode() {

@@ -9,29 +9,32 @@ import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentBuilder;
+import com.wolfyscript.utilities.common.gui.Position;
 import com.wolfyscript.utilities.common.gui.ReactiveRenderBuilder;
 import com.wolfyscript.utilities.tuple.Pair;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
 public class ReactiveRenderBuilderImpl implements com.wolfyscript.utilities.common.gui.ReactiveRenderBuilder {
 
     final WolfyUtils wolfyUtils;
-    final Multimap<ComponentBuilder<?, ?>, Integer> componentBuilderPositions = ArrayListMultimap.create();
+    final Map<ComponentBuilder<?, ?>, Position> componentBuilderPositions = new HashMap<>();
     final Set<ComponentBuilder<?, ?>> toRender = new HashSet<>();
 
-    public ReactiveRenderBuilderImpl(WolfyUtils wolfyUtils, Multimap<ComponentBuilder<?, ?>, Integer> nonRenderedComponents) {
+    public ReactiveRenderBuilderImpl(WolfyUtils wolfyUtils, Map<ComponentBuilder<?, ?>, Position> nonRenderedComponents) {
         this.wolfyUtils = wolfyUtils;
         this.componentBuilderPositions.putAll(nonRenderedComponents);
     }
 
     @Override
-    public <B extends ComponentBuilder<? extends Component, Component>> ReactiveRenderBuilder.ReactiveResult renderAt(int slot, String id, Class<B> builderType, Consumer<B> builderConsumer) {
+    public <B extends ComponentBuilder<? extends Component, Component>> ReactiveRenderBuilder.ReactiveResult renderAt(Position position, String id, Class<B> builderType, Consumer<B> builderConsumer) {
         Pair<NamespacedKey, Class<B>> builderTypeInfo = WindowDynamicConstructorImpl.getBuilderType(wolfyUtils, id, builderType);
         B builder = componentBuilderPositions.keySet().stream()
-                .filter(entry -> entry.getID().equals(id) && entry.getType().equals(builderTypeInfo.getKey()))
+                .filter(entry -> entry.id().equals(id) && entry.getType().equals(builderTypeInfo.getKey()))
                 .findFirst()
                 .map(builderTypeInfo.getValue()::cast)
                 .orElseGet(() -> {
@@ -41,7 +44,7 @@ public class ReactiveRenderBuilderImpl implements com.wolfyscript.utilities.comm
                     });
                     return injector.getInstance(builderTypeInfo.getValue());
                 });
-        componentBuilderPositions.put(builder, slot);
+        componentBuilderPositions.put(builder, position);
         builderConsumer.accept(builder);
 
         return new ReactiveResultImpl(builder);
@@ -50,8 +53,8 @@ public class ReactiveRenderBuilderImpl implements com.wolfyscript.utilities.comm
     @Override
     public <B extends ComponentBuilder<? extends Component, Component>> ReactiveRenderBuilder.ReactiveResult render(String id, Class<B> builderType, Consumer<B> builderConsumer) {
         Pair<NamespacedKey, Class<B>> builderTypeInfo = WindowDynamicConstructorImpl.getBuilderType(wolfyUtils, id, builderType);
-        B builder = builderTypeInfo.getValue().cast(componentBuilderPositions.keys().stream()
-                .filter(entry -> entry.getID().equals(id) && entry.getType().equals(builderTypeInfo.getKey()))
+        B builder = builderTypeInfo.getValue().cast(componentBuilderPositions.keySet().stream()
+                .filter(entry -> entry.id().equals(id) && entry.getType().equals(builderTypeInfo.getKey()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException(String.format("Failed to link to component '%s'! Cannot find existing placement", id))));
         builderConsumer.accept(builder);
@@ -59,10 +62,10 @@ public class ReactiveRenderBuilderImpl implements com.wolfyscript.utilities.comm
         return new ReactiveResultImpl(builder);
     }
 
-    public Multimap<ComponentBuilder<?, ?>, Integer> getComponentBuildersToRender() {
-        Multimap<ComponentBuilder<?, ?>, Integer> renderComponents = ArrayListMultimap.create();
+    public Map<ComponentBuilder<?, ?>, Position> getComponentBuildersToRender() {
+        Map<ComponentBuilder<?, ?>, Position> renderComponents = new HashMap<>();
         for (ComponentBuilder<?, ?> componentBuilder : toRender) {
-            renderComponents.putAll(componentBuilder, componentBuilderPositions.get(componentBuilder));
+            renderComponents.put(componentBuilder, componentBuilderPositions.get(componentBuilder));
         }
         return renderComponents;
     }

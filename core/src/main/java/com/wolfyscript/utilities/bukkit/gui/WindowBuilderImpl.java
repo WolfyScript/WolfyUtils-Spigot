@@ -33,7 +33,7 @@ public class WindowBuilderImpl  implements WindowBuilder {
     private String staticTitle = null;
     private InteractionCallback interactionCallback = (guiHolder, interactionDetails) -> InteractionResult.def();
     private Consumer<WindowDynamicConstructor> rendererConstructor = builder -> {};
-    private final Multimap<ComponentBuilder<?, ?>, Integer> componentBuilderPositions = ArrayListMultimap.create();
+    private final Map<ComponentBuilder<?, ?>, Position> componentBuilderPositions = new HashMap<>();
     private final Set<ComponentBuilder<?, ?>> componentRenderSet = new HashSet<>();
 
     @Inject
@@ -81,7 +81,7 @@ public class WindowBuilderImpl  implements WindowBuilder {
     @JsonSetter("placement")
     private void setPlacement(List<ComponentBuilder<?, ?>> componentBuilders) {
         for (ComponentBuilder<?, ?> componentBuilder : componentBuilders) {
-            componentBuilderPositions.putAll(componentBuilder, componentBuilder.getSlots());
+            componentBuilderPositions.put(componentBuilder, componentBuilder.position());
         }
     }
 
@@ -100,7 +100,7 @@ public class WindowBuilderImpl  implements WindowBuilder {
     }
 
     @Override
-    public <B extends ComponentBuilder<? extends Component, Component>> WindowBuilder init(int slot, String id, Class<B> builderType, SerializableConsumer<B> builderConsumer) {
+    public <B extends ComponentBuilder<? extends Component, Component>> WindowBuilder init(Position position, String id, Class<B> builderType, SerializableConsumer<B> builderConsumer) {
         Pair<NamespacedKey, Class<B>> builderTypeInfo = getBuilderType(wolfyUtils, id, builderType);
         findExistingComponentBuilder(id, builderTypeInfo.getValue(), builderTypeInfo.getKey()).ifPresentOrElse(builderConsumer, () -> {
             Injector injector = Guice.createInjector(Stage.PRODUCTION, binder -> {
@@ -109,7 +109,7 @@ public class WindowBuilderImpl  implements WindowBuilder {
             });
             B builder = injector.getInstance(builderTypeInfo.getValue());
             builderConsumer.accept(builder);
-            componentBuilderPositions.put(builder, slot);
+            componentBuilderPositions.put(builder, position);
         });
         return this;
     }
@@ -125,7 +125,7 @@ public class WindowBuilderImpl  implements WindowBuilder {
     }
 
     @Override
-    public <B extends ComponentBuilder<? extends Component, Component>> WindowBuilder renderAt(int slot, String id, Class<B> builderType, SerializableConsumer<B> builderConsumer) {
+    public <B extends ComponentBuilder<? extends Component, Component>> WindowBuilder renderAt(Position position, String id, Class<B> builderType, SerializableConsumer<B> builderConsumer) {
         Pair<NamespacedKey, Class<B>> builderTypeInfo = getBuilderType(wolfyUtils, id, builderType);
         findExistingComponentBuilder(id, builderTypeInfo.getValue(), builderTypeInfo.getKey()).ifPresentOrElse(builderConsumer, () -> {
             Injector injector = Guice.createInjector(Stage.PRODUCTION, binder -> {
@@ -134,7 +134,7 @@ public class WindowBuilderImpl  implements WindowBuilder {
             });
             B builder = injector.getInstance(builderTypeInfo.getValue());
             builderConsumer.accept(builder);
-            componentBuilderPositions.put(builder, slot);
+            componentBuilderPositions.put(builder, position);
             componentRenderSet.add(builder);
         });
         return this;
@@ -142,7 +142,7 @@ public class WindowBuilderImpl  implements WindowBuilder {
 
     private <B extends ComponentBuilder<? extends Component, Component>> Optional<B> findExistingComponentBuilder(String id, Class<B> builderImplType, NamespacedKey builderKey) {
         return componentBuilderPositions.keySet().stream()
-                .filter(componentBuilder -> componentBuilder.getID().equals(id) && componentBuilder.getType().equals(builderKey))
+                .filter(componentBuilder -> componentBuilder.id().equals(id) && componentBuilder.getType().equals(builderKey))
                 .findFirst()
                 .map(builderImplType::cast);
     }
@@ -159,16 +159,16 @@ public class WindowBuilderImpl  implements WindowBuilder {
 
     @Override
     public Window create(Router parent) {
-        Multimap<Component, Integer> staticComponents = ArrayListMultimap.create();
-        Multimap<ComponentBuilder<?, ?>, Integer> nonRenderedComponents = ArrayListMultimap.create();
+        Map<Component, Position> staticComponents = new HashMap<>();
+        Map<ComponentBuilder<?, ?>, Position> nonRenderedComponents = new HashMap<>();
 
         for (ComponentBuilder<?, ?> componentBuilder : componentBuilderPositions.keySet()) {
-            Collection<Integer> slots = componentBuilderPositions.get(componentBuilder);
+            Position position = componentBuilderPositions.get(componentBuilder);
             if (componentRenderSet.contains(componentBuilder)) {
-                staticComponents.putAll(componentBuilder.create(null), slots);
+                staticComponents.put(componentBuilder.create(null), position);
                 continue;
             }
-            nonRenderedComponents.putAll(componentBuilder, slots);
+            nonRenderedComponents.put(componentBuilder, position);
         }
 
         return new WindowImpl(

@@ -1,7 +1,6 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.*;
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
@@ -34,8 +33,8 @@ public final class WindowImpl implements Window {
     private String staticTitle = null;
     private SerializableSupplier<net.kyori.adventure.text.Component> dynamicTitle;
     private final InteractionCallback interactionCallback;
-    final Multimap<Component, Integer> staticComponents;
-    final Multimap<ComponentBuilder<?, ?>, Integer> nonRenderedComponents;
+    final Map<Component, Position> staticComponents;
+    final Map<ComponentBuilder<?, ?>, Position> nonRenderedComponents;
 
     WindowImpl(String id,
                Router router,
@@ -43,8 +42,8 @@ public final class WindowImpl implements Window {
                WindowType type,
                String staticTitle,
                InteractionCallback interactionCallback,
-               Multimap<Component, Integer> staticComponents,
-               Multimap<ComponentBuilder<?, ?>, Integer> nonRenderedComponents,
+               Map<Component, Position> staticComponents,
+               Map<ComponentBuilder<?, ?>, Position> nonRenderedComponents,
                Consumer<WindowDynamicConstructor> rendererConstructor) {
         Preconditions.checkNotNull(id);
         Preconditions.checkNotNull(interactionCallback);
@@ -72,11 +71,11 @@ public final class WindowImpl implements Window {
         this.staticTitle = staticWindow.staticTitle;
         this.dynamicTitle = staticWindow.dynamicTitle;
         this.interactionCallback = staticWindow.interactionCallback;
-        this.staticComponents = MultimapBuilder.hashKeys().arrayListValues().build(staticWindow.staticComponents);
-        this.nonRenderedComponents = MultimapBuilder.hashKeys().arrayListValues().build(staticWindow.nonRenderedComponents);
+        this.staticComponents = new HashMap<>(staticWindow.staticComponents);
+        this.nonRenderedComponents = new HashMap<>(staticWindow.nonRenderedComponents);
     }
 
-    public WindowImpl dynamicCopy(Multimap<Component, Integer> dynamicComponents, Multimap<ComponentBuilder<?, ?>, Integer> nonRenderedComponents, SerializableSupplier<net.kyori.adventure.text.Component> dynamicTitle) {
+    public WindowImpl dynamicCopy(Map<Component, Position> dynamicComponents, Map<ComponentBuilder<?, ?>, Position> nonRenderedComponents, SerializableSupplier<net.kyori.adventure.text.Component> dynamicTitle) {
         WindowImpl copy = new WindowImpl(this);
         copy.staticComponents.putAll(dynamicComponents);
         copy.nonRenderedComponents.putAll(nonRenderedComponents);
@@ -109,11 +108,10 @@ public final class WindowImpl implements Window {
             }
         }
 
-        for (Map.Entry<Component, Integer> entry : staticComponents.entries()) {
-            int slot = entry.getValue();
-            Component component = entry.getKey();
-            renderContext.setSlotOffsetToParent(slot);
-            ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(component, slot);
+        for (Map.Entry<Component, Position> entry : staticComponents.entrySet()) {
+            var position = entry.getValue();
+            var component = entry.getKey();
+            ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(component, position.slot());
             renderContext.enterNode(component);
             if (component.construct(guiHolder, viewManager) instanceof SignalledObject signalledObject) {
                 signalledObject.update(viewManager, guiHolder, renderContext);

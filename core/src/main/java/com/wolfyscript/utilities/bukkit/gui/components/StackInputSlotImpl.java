@@ -26,8 +26,8 @@ public class StackInputSlotImpl extends AbstractComponentImpl implements Interac
     private final InteractionCallback interactionCallback;
     private final Signal<ItemStack> value;
 
-    public StackInputSlotImpl(String internalID, WolfyUtils wolfyUtils, Component parent, Consumer<ItemStack> onValueChange, InteractionCallback interactionCallback, Signal<ItemStack> value, IntList slots) {
-        super(internalID, wolfyUtils, parent, slots);
+    public StackInputSlotImpl(String internalID, WolfyUtils wolfyUtils, Component parent, Consumer<ItemStack> onValueChange, InteractionCallback interactionCallback, Signal<ItemStack> value, Position position) {
+        super(internalID, wolfyUtils, parent, position);
         this.onValueChange = onValueChange;
         this.interactionCallback = (holder, details) -> {
             if (details instanceof ClickInteractionDetailsImpl clickInteractionDetails) {
@@ -50,18 +50,14 @@ public class StackInputSlotImpl extends AbstractComponentImpl implements Interac
     @Override
     public void update(GuiViewManager viewManager, GuiHolder guiHolder, RenderContext renderContext) {
         if (!(value.get() instanceof ItemStackImpl stackImpl)) return;
-        for (int slot : getSlots()) {
-            renderContext.setNativeStack(slot, stackImpl.getBukkitRef());
-            ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(this, slot);
-        }
+        renderContext.setNativeStack(renderContext.currentOffset() + position().slot(), stackImpl.getBukkitRef());
+        ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(this, renderContext.currentOffset() + position().slot());
     }
 
     @Override
     public void remove(GuiHolder guiHolder, GuiViewManager guiViewManager, RenderContext renderContext) {
-        for (int slot : getSlots()) {
-            renderContext.setNativeStack(slot, null);
-            ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(null, slot);
-        }
+        renderContext.setNativeStack(renderContext.currentOffset() + position().slot(), null);
+        ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(null, renderContext.currentOffset() + position().slot());
     }
 
     @Override

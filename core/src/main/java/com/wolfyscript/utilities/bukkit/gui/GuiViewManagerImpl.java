@@ -2,14 +2,13 @@ package com.wolfyscript.utilities.bukkit.gui;
 
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.*;
-
-import java.util.*;
-
 import com.wolfyscript.utilities.common.gui.callback.TextInputCallback;
 import com.wolfyscript.utilities.common.gui.callback.TextInputTabCompleteCallback;
 import com.wolfyscript.utilities.common.gui.impl.AbstractComponentImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.*;
 
 public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
 
@@ -104,10 +103,7 @@ public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
         for (SignalledObject signalledObject : updatedSignalsSinceLastUpdate) {
             if (signalledObject instanceof AbstractComponentImpl component) {
                 context.enterNode(component);
-                for (int slot : component.getSlots()) {
-                    context.setSlotOffsetToParent(slot);
-                    signalledObject.update(this, (GuiHolder) context.getInventory().getHolder(), context);
-                }
+                signalledObject.update(this, (GuiHolder) context.getInventory().getHolder(), context);
             } else {
                 signalledObject.update(this, (GuiHolder) context.getInventory().getHolder(), context);
             }

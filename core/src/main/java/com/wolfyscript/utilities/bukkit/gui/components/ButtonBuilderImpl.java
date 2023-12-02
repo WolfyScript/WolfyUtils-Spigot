@@ -24,7 +24,6 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import it.unimi.dsi.fastutil.ints.IntList;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -45,14 +44,14 @@ public class ButtonBuilderImpl extends AbstractComponentBuilderImpl<Button, Comp
      * @param wolfyUtils The wolfyutils that this button belongs to.
      */
     @Inject
-    private ButtonBuilderImpl(String id, WolfyUtils wolfyUtils, IntList slots) {
-        super(id, wolfyUtils, slots);
+    private ButtonBuilderImpl(String id, WolfyUtils wolfyUtils, Position position) {
+        super(id, wolfyUtils, position);
         this.iconBuilder = new IconBuilderImpl();
     }
 
     @JsonCreator
-    public ButtonBuilderImpl(@JsonProperty("id") String id, @JsonProperty("icon") IconBuilderImpl iconBuilder, @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils, @JsonProperty("slots") int[] slots) {
-        super(id, wolfyUtils, IntList.of(slots));
+    public ButtonBuilderImpl(@JsonProperty("id") String id, @JsonProperty("icon") IconBuilderImpl iconBuilder, @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils, @JsonProperty("position") Position position) {
+        super(id, wolfyUtils, position);
         this.iconBuilder = iconBuilder;
     }
 
@@ -78,7 +77,7 @@ public class ButtonBuilderImpl extends AbstractComponentBuilderImpl<Button, Comp
 
     @Override
     public Button create(Component parent) {
-        ButtonImpl button = new ButtonImpl(getWolfyUtils(), getID(), parent, iconBuilder.create(), soundFunction, interactionCallback, getSlots());
+        ButtonImpl button = new ButtonImpl(getWolfyUtils(), id(), parent, iconBuilder.create(), soundFunction, interactionCallback, position(), animationSignal);
         for (Signal<?> signal : iconBuilder.signals) {
             signal.linkTo(button);
         }

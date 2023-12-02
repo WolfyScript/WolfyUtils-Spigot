@@ -26,8 +26,8 @@ public class StackInputSlotBuilderImpl extends AbstractComponentBuilderImpl<Stac
     private Signal<ItemStack> valueSignal;
 
     @JsonCreator
-    protected StackInputSlotBuilderImpl(@JsonProperty("id") String id, @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils, @JsonProperty("slots") int[] slots) {
-        super(id, wolfyUtils, IntList.of(slots));
+    protected StackInputSlotBuilderImpl(@JsonProperty("id") String id, @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils, @JsonProperty("position") Position position) {
+        super(id, wolfyUtils, position);
     }
 
     @Override
@@ -49,6 +49,6 @@ public class StackInputSlotBuilderImpl extends AbstractComponentBuilderImpl<Stac
 
     @Override
     public StackInputSlot create(Component component) {
-        return new StackInputSlotImpl(getID(), getWolfyUtils(), component, onValueChange, interactionCallback, valueSignal, getSlots());
+        return new StackInputSlotImpl(id(), getWolfyUtils(), component, onValueChange, interactionCallback, valueSignal, position());
     }
 }

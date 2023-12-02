@@ -77,16 +77,14 @@ public class ButtonImpl extends AbstractComponentImpl implements Button {
 
     @Override
     public void remove(GuiHolder guiHolder, GuiViewManager guiViewManager, RenderContext renderContext) {
-        for (int slot : getSlots()) {
-            renderContext.setNativeStack(slot, null);
-            ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(null, slot);
-        }
+        renderContext.setNativeStack(renderContext.currentOffset() + position().slot(), null);
+        ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(null, renderContext.currentOffset() + position().slot());
     }
 
     @Override
     public void update(GuiViewManager viewManager, GuiHolder guiHolder, RenderContext context) {
         if (!(context instanceof RenderContextImpl renderContext)) return;
-        renderContext.setNativeStack(renderContext.getCurrentOffset(),
+        renderContext.setNativeStack(renderContext.currentOffset() + position().slot(),
                 ((BukkitItemStackConfig) icon().getStack()).constructItemStack(
                         new EvalContextPlayer(((GUIHolder) guiHolder).getBukkitPlayer()),
                         WolfyCoreBukkit.getInstance().getWolfyUtils().getChat().getMiniMessage(),

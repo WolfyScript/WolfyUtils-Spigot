@@ -1,6 +1,5 @@
 package com.wolfyscript.utilities.bukkit.gui.components;
 
-import com.google.common.collect.Multimap;
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.gui.GuiViewManagerImpl;
 import com.wolfyscript.utilities.bukkit.gui.RenderContextImpl;
@@ -8,45 +7,42 @@ import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.*;
 import com.wolfyscript.utilities.common.gui.components.ComponentCluster;
 import com.wolfyscript.utilities.common.gui.impl.AbstractComponentImpl;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
-import it.unimi.dsi.fastutil.ints.IntLists;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @KeyedStaticId(key = "cluster")
 public class ComponentClusterImpl extends AbstractComponentImpl implements ComponentCluster {
 
     private int width;
     private int height;
-    private final Multimap<Component, Integer> children;
+    private final List<Component> children;
 
-    public ComponentClusterImpl(String internalID, WolfyUtils wolfyUtils, Component parent, IntList slots, Multimap<Component, Integer> children) {
-        super(internalID, wolfyUtils, parent, slots);
+    public ComponentClusterImpl(String internalID, WolfyUtils wolfyUtils, Component parent, Position position, List<Component> children) {
+        super(internalID, wolfyUtils, parent, position);
         this.children = children;
 
         int topLeft = 54;
         int bottomRight = 0;
 
-        for (int slot : this.children.values()) {
-            topLeft = Math.min(slot, topLeft);
-            bottomRight = Math.max(slot, bottomRight);
+        for (Component child : this.children) {
+            if (child.position().type() == Position.Type.RELATIVE) {
+                // Only take relative positions into account
+                topLeft = Math.min(child.position().slot(), topLeft);
+                bottomRight = Math.max(child.position().slot(), bottomRight);
+            }
         }
         this.width = Math.abs((topLeft % 9) - (bottomRight % 9)) + 1;
         this.height = Math.abs((topLeft / 9) - (bottomRight / 9)) + 1;
     }
 
     public ComponentClusterImpl(ComponentClusterImpl staticComponent) {
-        super(staticComponent.getID(), staticComponent.getWolfyUtils(), staticComponent.parent(), staticComponent.getSlots());
+        super(staticComponent.getID(), staticComponent.getWolfyUtils(), staticComponent.parent(), staticComponent.position());
         this.children = staticComponent.children;
-
     }
 
     @Override
     public Set<? extends Component> childComponents() {
-        return children.keySet();
+        return new HashSet<>(children);
     }
 
     @Override
@@ -61,7 +57,7 @@ public class ComponentClusterImpl extends AbstractComponentImpl implements Compo
 
     @Override
     public void remove(GuiHolder guiHolder, GuiViewManager guiViewManager, RenderContext renderContext) {
-        for (Component component : children.keySet()) {
+        for (Component component : children) {
             component.remove(guiHolder, guiViewManager, renderContext);
         }
     }
@@ -70,16 +66,14 @@ public class ComponentClusterImpl extends AbstractComponentImpl implements Compo
     public void update(GuiViewManager viewManager, GuiHolder guiHolder, RenderContext context) {
         if (!(context instanceof RenderContextImpl renderContext)) return;
 
-        for (Component component : children.keySet()) {
-            for (Integer slot : component.getSlots()) {
-                renderContext.setSlotOffsetToParent(slot);
-                ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(component, slot);
-                renderContext.enterNode(component);
-                if (component.construct(guiHolder, viewManager) instanceof SignalledObject signalledObject) {
-                    signalledObject.update(viewManager, guiHolder, renderContext);
-                }
-                renderContext.exitNode();
+        for (Component component : children) {
+            var childPos = component.position();
+            ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(component, childPos.slot());
+            renderContext.enterNode(component);
+            if (component.construct(guiHolder, viewManager) instanceof SignalledObject signalledObject) {
+                signalledObject.update(viewManager, guiHolder, renderContext);
             }
+            renderContext.exitNode();
         }
     }
 

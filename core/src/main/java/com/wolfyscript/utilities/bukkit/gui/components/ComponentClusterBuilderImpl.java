@@ -16,6 +16,7 @@ import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentBuilder;
 import com.wolfyscript.utilities.common.gui.ComponentBuilderSettings;
+import com.wolfyscript.utilities.common.gui.Position;
 import com.wolfyscript.utilities.common.gui.components.ComponentCluster;
 import com.wolfyscript.utilities.common.gui.components.ComponentClusterBuilder;
 import com.wolfyscript.utilities.common.gui.impl.AbstractComponentBuilderImpl;
@@ -30,18 +31,18 @@ import java.util.function.Consumer;
 @ComponentBuilderSettings(base = ComponentClusterBuilder.class, component = ComponentCluster.class)
 public class ComponentClusterBuilderImpl extends AbstractComponentBuilderImpl<ComponentCluster, Component> implements ComponentClusterBuilder {
 
-    private final Multimap<ComponentBuilder<?, ?>, Integer> componentBuilderPositions = ArrayListMultimap.create();
-    private final Set<ComponentBuilder<?, ?>> componentRenderSet = new HashSet<>();
+    private final Map<ComponentBuilder<?, Component>, Position> componentBuilderPositions = new HashMap<>();
+    private final Set<ComponentBuilder<?, Component>> componentRenderSet = new HashSet<>();
 
     @JsonCreator
-    public ComponentClusterBuilderImpl(@JsonProperty("id") String id, @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils, @JsonProperty("slots") int[] slots) {
-        super(id, wolfyUtils, IntList.of(slots));
+    public ComponentClusterBuilderImpl(@JsonProperty("id") String id, @JacksonInject("wolfyUtils") WolfyUtils wolfyUtils, @JsonProperty("position") Position position) {
+        super(id, wolfyUtils, position);
     }
 
     @JsonSetter("placement")
-    private void setPlacement(List<ComponentBuilder<?, ?>> componentBuilders) {
-        for (ComponentBuilder<?, ?> componentBuilder : componentBuilders) {
-            componentBuilderPositions.putAll(componentBuilder, componentBuilder.getSlots());
+    private void setPlacement(List<ComponentBuilder<?, Component>> componentBuilders) {
+        for (ComponentBuilder<?, Component> componentBuilder : componentBuilders) {
+            componentBuilderPositions.put(componentBuilder, componentBuilder.position());
         }
     }
 
@@ -56,7 +57,7 @@ public class ComponentClusterBuilderImpl extends AbstractComponentBuilderImpl<Co
     }
 
     @Override
-    public <B extends ComponentBuilder<? extends Component, Component>> ComponentClusterBuilder renderAt(int slot, String id, Class<B> builderType, Consumer<B> builderConsumer) {
+    public <B extends ComponentBuilder<? extends Component, Component>> ComponentClusterBuilder renderAt(Position position, String id, Class<B> builderType, Consumer<B> builderConsumer) {
         Pair<NamespacedKey, Class<B>> builderTypeInfo = getBuilderType(getWolfyUtils(), id, builderType);
         findExistingComponentBuilder(id, builderTypeInfo.getValue(), builderTypeInfo.getKey()).ifPresentOrElse(builderConsumer, () -> {
             Injector injector = Guice.createInjector(Stage.PRODUCTION, binder -> {
@@ -65,7 +66,7 @@ public class ComponentClusterBuilderImpl extends AbstractComponentBuilderImpl<Co
             });
             B builder = injector.getInstance(builderTypeInfo.getValue());
             builderConsumer.accept(builder);
-            componentBuilderPositions.put(builder, slot);
+            componentBuilderPositions.put(builder, position);
             componentRenderSet.add(builder);
         });
         return this;
@@ -83,25 +84,26 @@ public class ComponentClusterBuilderImpl extends AbstractComponentBuilderImpl<Co
 
     private <B extends ComponentBuilder<? extends Component, Component>> Optional<B> findExistingComponentBuilder(String id, Class<B> builderImplType, NamespacedKey builderKey) {
         return componentBuilderPositions.keySet().stream()
-                .filter(componentBuilder -> componentBuilder.getID().equals(id) && componentBuilder.getType().equals(builderKey))
+                .filter(componentBuilder -> componentBuilder.id().equals(id) && componentBuilder.getType().equals(builderKey))
                 .findFirst()
                 .map(builderImplType::cast);
     }
 
     @Override
     public ComponentClusterImpl create(Component component) {
-        Multimap<Component, Integer> staticComponents = ArrayListMultimap.create();
-        Multimap<ComponentBuilder<?, ?>, Integer> nonRenderedComponents = ArrayListMultimap.create();
+        List<Component> staticComponents = new ArrayList<>();
+        Map<ComponentBuilder<?, ?>, Position> nonRenderedComponents = new HashMap<>();
 
-        for (ComponentBuilder<?, ?> componentBuilder : componentBuilderPositions.keySet()) {
-            Collection<Integer> slots = componentBuilderPositions.get(componentBuilder);
+        var build = new ComponentClusterImpl(id(), getWolfyUtils(), component, position(), staticComponents);
+        for (ComponentBuilder<?, Component> componentBuilder : componentBuilderPositions.keySet()) {
+            Position position = componentBuilderPositions.get(componentBuilder);
+
             if (componentRenderSet.contains(componentBuilder)) {
-                staticComponents.putAll(componentBuilder.create(null), slots);
+                staticComponents.add(componentBuilder.create(build));
                 continue;
             }
-            nonRenderedComponents.putAll(componentBuilder, slots);
+            nonRenderedComponents.put(componentBuilder, position);
         }
-
-        return new ComponentClusterImpl(getID(), getWolfyUtils(), component, getSlots(), staticComponents);
+        return build;
     }
 }

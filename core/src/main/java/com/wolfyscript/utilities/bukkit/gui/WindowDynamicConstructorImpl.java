@@ -1,11 +1,8 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
@@ -37,7 +34,7 @@ public class WindowDynamicConstructorImpl implements WindowDynamicConstructor {
     final GuiViewManager viewManager;
     final GuiHolder holder;
     final WindowImpl window;
-    final Multimap<ComponentBuilder<?, ?>, Integer> componentBuilderPositions = ArrayListMultimap.create();
+    final Map<ComponentBuilder<?, ?>, Position> componentBuilderPositions = new HashMap<>();
     final Set<ComponentBuilder<?, ?>> componentRenderSet = new HashSet<>();
     final Map<String, Signal<?>> usedSignals = new HashMap<>();
     private final List<TagResolver> titleTagResolvers = new ArrayList<>();
@@ -71,18 +68,18 @@ public class WindowDynamicConstructorImpl implements WindowDynamicConstructor {
     @JsonSetter("placement")
     private void setPlacement(List<ComponentBuilder<?, ?>> componentBuilders) {
         for (ComponentBuilder<?, ?> componentBuilder : componentBuilders) {
-            componentBuilderPositions.putAll(componentBuilder, componentBuilder.getSlots());
+            componentBuilderPositions.put(componentBuilder, componentBuilder.position());
         }
     }
 
     @Override
     public GuiViewManager viewManager() {
-        return null;
+        return viewManager;
     }
 
     @Override
     public GuiHolder holder() {
-        return null;
+        return holder;
     }
 
     @Override
@@ -134,15 +131,11 @@ public class WindowDynamicConstructorImpl implements WindowDynamicConstructor {
                 }
 
                 renderContext.enterNode(component);
-                for (int slot : component.getSlots()) {
-                    renderContext.setSlotOffsetToParent(slot);
-                    component.executeForAllSlots(slot, internalSlot -> ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(component, internalSlot));
-                    if (component instanceof SignalledObject signalledObject) {
-                        signalledObject.update(viewManager, guiHolder, renderContext);
-                    }
+                component.executeForAllSlots(component.offset() + component.position().slot(), internalSlot -> ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(component, internalSlot));
+                if (component instanceof SignalledObject signalledObject) {
+                    signalledObject.update(viewManager, guiHolder, renderContext);
                 }
                 renderContext.exitNode();
-
             }
         };
         for (Signal<?> signal : consumer.getSignalsUsed()) {
@@ -152,7 +145,7 @@ public class WindowDynamicConstructorImpl implements WindowDynamicConstructor {
     }
 
     @Override
-    public <B extends ComponentBuilder<? extends Component, Component>> WindowDynamicConstructorImpl ifThenRender(SerializableSupplier<Boolean> condition, String id, Class<B> builderType, SerializableConsumer<B> builderConsumer) {
+    public <B extends ComponentBuilder<? extends Component, Component>> WindowDynamicConstructorImpl renderWhen(SerializableSupplier<Boolean> condition, String id, Class<B> builderType, SerializableConsumer<B> builderConsumer) {
         Pair<NamespacedKey, Class<B>> builderTypeInfo = getBuilderType(wolfyUtils, id, builderType);
         B builder = findExistingComponentBuilder(id, builderTypeInfo.getValue(), builderTypeInfo.getKey())
                 .orElseThrow(() -> new IllegalStateException(String.format("Failed to link to component '%s'! Cannot find existing placement", id)));
@@ -172,21 +165,16 @@ public class WindowDynamicConstructorImpl implements WindowDynamicConstructor {
                     previousResult = result;
                     if (result) {
                         renderContext.enterNode(component);
-                        for (int slot : component.getSlots()) {
-                            renderContext.setSlotOffsetToParent(slot);
-                            if (component.construct(guiHolder, viewManager) instanceof SignalledObject signalledObject) {
-                                signalledObject.update(viewManager, guiHolder, renderContext);
-                            }
-                            component.executeForAllSlots(slot, slot2 -> ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(component, slot2));
+                        if (component.construct(guiHolder, viewManager) instanceof SignalledObject signalledObject) {
+                            signalledObject.update(viewManager, guiHolder, renderContext);
                         }
+                        component.executeForAllSlots(component.offset() + component.position().slot(), slot2 -> ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(component, slot2));
                         renderContext.exitNode();
                     } else {
-                        for (int slot : component.getSlots()) {
-                            component.executeForAllSlots(slot, slot2 -> {
-                                renderContext.setNativeStack(slot2, null);
-                                ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(null, slot2);
-                            });
-                        }
+                        component.executeForAllSlots(component.offset() + component.position().slot(), slot2 -> {
+                            renderContext.setNativeStack(slot2, null);
+                            ((GuiViewManagerImpl) guiHolder.getViewManager()).updateLeaveNodes(null, slot2);
+                        });
                     }
                 }
             }
@@ -199,12 +187,12 @@ public class WindowDynamicConstructorImpl implements WindowDynamicConstructor {
     }
 
     @Override
-    public <BV extends ComponentBuilder<? extends Component, Component>, BI extends ComponentBuilder<? extends Component, Component>> WindowDynamicConstructorImpl ifThenRenderOr(SerializableSupplier<Boolean> serializableSupplier, Class<BV> validBuilderType, Consumer<BV> validBuilder, Class<BI> invalidBuilderType, SerializableConsumer<BI> invalidBuilder) {
+    public <BV extends ComponentBuilder<? extends Component, Component>, BI extends ComponentBuilder<? extends Component, Component>> WindowDynamicConstructorImpl renderWhenElse(SerializableSupplier<Boolean> serializableSupplier, Class<BV> validBuilderType, Consumer<BV> validBuilder, Class<BI> invalidBuilderType, SerializableConsumer<BI> invalidBuilder) {
         return null;
     }
 
     @Override
-    public <B extends ComponentBuilder<? extends Component, Component>> WindowDynamicConstructorImpl position(int slot, String id, Class<B> builderType, SerializableConsumer<B> builderConsumer) {
+    public <B extends ComponentBuilder<? extends Component, Component>> WindowDynamicConstructorImpl position(Position position, String id, Class<B> builderType, SerializableConsumer<B> builderConsumer) {
         Pair<NamespacedKey, Class<B>> builderTypeInfo = getBuilderType(wolfyUtils, id, builderType);
 
         findExistingComponentBuilder(id, builderTypeInfo.getValue(), builderTypeInfo.getKey()).ifPresentOrElse(builderConsumer, () -> {
@@ -214,14 +202,14 @@ public class WindowDynamicConstructorImpl implements WindowDynamicConstructor {
             });
             B builder = injector.getInstance(builderTypeInfo.getValue());
             builderConsumer.accept(builder);
-            componentBuilderPositions.put(builder, slot);
+            componentBuilderPositions.put(builder, position);
         });
         return this;
     }
 
     private <B extends ComponentBuilder<? extends Component, Component>> Optional<B> findExistingComponentBuilder(String id, Class<B> builderImplType, NamespacedKey builderKey) {
         return componentBuilderPositions.keySet().stream()
-                .filter(componentBuilder -> componentBuilder.getID().equals(id) && componentBuilder.getType().equals(builderKey))
+                .filter(componentBuilder -> componentBuilder.id().equals(id) && componentBuilder.getType().equals(builderKey))
                 .findFirst()
                 .map(builderImplType::cast);
     }
@@ -237,7 +225,7 @@ public class WindowDynamicConstructorImpl implements WindowDynamicConstructor {
     }
 
     @Override
-    public <B extends ComponentBuilder<? extends Component, Component>> WindowDynamicConstructorImpl renderAt(int slot, String id, Class<B> builderType, SerializableConsumer<B> builderConsumer) {
+    public <B extends ComponentBuilder<? extends Component, Component>> WindowDynamicConstructorImpl renderAt(Position position, String id, Class<B> builderType, SerializableConsumer<B> builderConsumer) {
         Pair<NamespacedKey, Class<B>> builderTypeInfo = getBuilderType(wolfyUtils, id, builderType);
         findExistingComponentBuilder(id, builderTypeInfo.getValue(), builderTypeInfo.getKey()).ifPresentOrElse(builderConsumer, () -> {
             Injector injector = Guice.createInjector(Stage.PRODUCTION, binder -> {
@@ -246,7 +234,7 @@ public class WindowDynamicConstructorImpl implements WindowDynamicConstructor {
             });
             B builder = injector.getInstance(builderTypeInfo.getValue());
             builderConsumer.accept(builder);
-            componentBuilderPositions.put(builder, slot);
+            componentBuilderPositions.put(builder, position);
             componentRenderSet.add(builder);
         });
         return this;
@@ -263,18 +251,16 @@ public class WindowDynamicConstructorImpl implements WindowDynamicConstructor {
     }
 
     public Window create(Window staticWindow) {
-        Multimap<Component, Integer> finalPostions = ArrayListMultimap.create();
-        Multimap<ComponentBuilder<?, ?>, Integer> nonRenderedComponents = ArrayListMultimap.create();
+        Map<Component, Position> finalPostions = new HashMap<>();
+        Map<ComponentBuilder<?, ?>, Position> nonRenderedComponents = new HashMap<>();
 
-        for (var entry : componentBuilderPositions.asMap().entrySet()) {
-            ComponentBuilder<?, ?> componentBuilder = entry.getKey();
-            Collection<Integer> slots = entry.getValue();
+        for (var componentBuilder : componentBuilderPositions.keySet()) {
             if (componentRenderSet.contains(componentBuilder)) {
                 Component component = componentBuilder.create(null);
-                finalPostions.putAll(component, slots);
+                finalPostions.put(component, componentBuilder.position());
                 continue;
             }
-            nonRenderedComponents.putAll(componentBuilder, slots);
+            nonRenderedComponents.put(componentBuilder, componentBuilder.position());
         }
 
         if (titleFunction == null && !titleTagResolvers.isEmpty()) {
