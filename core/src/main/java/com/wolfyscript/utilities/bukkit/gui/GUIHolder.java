@@ -54,6 +54,7 @@ public class GUIHolder extends GuiHolderCommonImpl implements InventoryHolder {
             // TODO: Handle bottom inventory clicks
         }
         Bukkit.getScheduler().runTask(((WolfyCoreBukkit) viewManager.getWolfyUtils().getCore()).getPlugin(), () -> {
+            ((GuiViewManagerImpl) viewManager).unblockedByInteraction();
             viewManager.getRenderContext(event.getWhoClicked().getUniqueId()).ifPresent(context -> {
                 ((GuiViewManagerImpl) viewManager).renderFor(player, (RenderContextImpl) context);
             });
@@ -80,6 +81,7 @@ public class GUIHolder extends GuiHolderCommonImpl implements InventoryHolder {
             }
 
             Bukkit.getScheduler().runTask(((WolfyCoreBukkit) viewManager.getWolfyUtils().getCore()).getPlugin(), () -> {
+                ((GuiViewManagerImpl) viewManager).unblockedByInteraction();
                 viewManager.getRenderContext(event.getWhoClicked().getUniqueId()).ifPresent(context -> {
                     ((GuiViewManagerImpl) viewManager).renderFor(player, (RenderContextImpl) context);
                 });
@@ -89,6 +91,10 @@ public class GUIHolder extends GuiHolderCommonImpl implements InventoryHolder {
 
     void onClose(InventoryCloseEvent event) {
         // TODO: Close Window
+        if (currentWindow == null) return;
+        if (Objects.equals(event.getInventory().getHolder(), this)) {
+            viewManager.getCurrentMenu().ifPresent(window -> window.close(viewManager));
+        }
     }
 
     void setActiveInventory(Inventory activeInventory) {

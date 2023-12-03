@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 
 @KeyedStaticId(key = "stack_input_slot")
 @ComponentBuilderSettings(base = StackInputSlotBuilder.class, component = StackInputSlot.class)
-public class StackInputSlotBuilderImpl extends AbstractComponentBuilderImpl<StackInputSlot, Component> implements StackInputSlotBuilder {
+public class StackInputSlotBuilderImpl extends AbstractBukkitComponentBuilderImpl<StackInputSlot, Component> implements StackInputSlotBuilder {
 
     private InteractionCallback interactionCallback = (guiHolder, interactionDetails) -> InteractionResult.cancel(false);
     private Consumer<ItemStack> onValueChange;

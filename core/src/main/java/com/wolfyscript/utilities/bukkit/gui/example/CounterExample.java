@@ -1,6 +1,5 @@
 package com.wolfyscript.utilities.bukkit.gui.example;
 
-import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.gui.GuiAPIManager;
 import com.wolfyscript.utilities.common.gui.GuiViewManager;
@@ -8,7 +7,6 @@ import com.wolfyscript.utilities.common.gui.InteractionResult;
 import com.wolfyscript.utilities.common.gui.components.ButtonBuilder;
 import com.wolfyscript.utilities.common.gui.signal.Signal;
 import com.wolfyscript.utilities.common.gui.signal.Store;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.Material;
@@ -52,6 +50,10 @@ public class CounterExample {
                             CounterStore counterStore = counterStores.computeIfAbsent(renderer.viewManager(), guiViewManager -> new CounterStore());
                             Store<Integer> count = renderer.syncStore("count", Integer.class, counterStore::getCount, counterStore::setCount);
 
+                            renderer.addIntervalTask(() -> {
+                                count.update(integer -> ++integer); // Updates the count periodically (every second increases it by 1)
+                            }, 20);
+
                             renderer
                                     .titleSignals(count)
                                     .render("count_down", ButtonBuilder.class, buttonBuilder -> buttonBuilder
@@ -59,11 +61,7 @@ public class CounterExample {
                                                 count.update(old -> --old);
                                                 return InteractionResult.cancel(true);
                                             })
-                                            .animation(renderer, animationBuilder -> animationBuilder
-                                                    .frame(frame -> frame.duration(2).stack(new BukkitItemStackConfig(renderer.viewManager().getWolfyUtils(), new ItemStack(Material.YELLOW_CONCRETE))))
-                                                    .frame(frame -> frame.duration(2).stack(new BukkitItemStackConfig(renderer.viewManager().getWolfyUtils(), new ItemStack(Material.ORANGE_CONCRETE))))
-                                                    .frame(frame -> frame.duration(2).stack(new BukkitItemStackConfig(renderer.viewManager().getWolfyUtils(), new ItemStack(Material.RED_CONCRETE))))
-                                            )
+
                                     )
                                     // Sometimes we want to render components dependent on signals
                                     .renderWhen(() -> count.get() != 0, "reset", ButtonBuilder.class, buttonBuilder -> buttonBuilder
@@ -80,6 +78,13 @@ public class CounterExample {
                                                 count.update(old -> ++old);
                                                 return InteractionResult.cancel(true);
                                             })
+                                            .animation(renderer, animationBuilder -> animationBuilder
+                                                    .customSignal(count) // This causes the animation to run each time the count is updated
+                                                    // Here we specify the frames to render after each other
+                                                    // So it first renders the cyan_concrete for 2 ticks, then lime_concrete for 2 ticks
+                                                    .frame(frame -> frame.duration(2).stack(new BukkitItemStackConfig(renderer.viewManager().getWolfyUtils(), new ItemStack(Material.CYAN_CONCRETE))))
+                                                    .frame(frame -> frame.duration(2).stack(new BukkitItemStackConfig(renderer.viewManager().getWolfyUtils(), new ItemStack(Material.LIME_CONCRETE))))
+                                            )
                                     )
                                     .render("counter", ButtonBuilder.class, bb -> bb.icon(ib -> ib.updateOnSignals(count)));
                         })

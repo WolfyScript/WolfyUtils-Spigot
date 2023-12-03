@@ -41,6 +41,8 @@ public class WindowDynamicConstructorImpl implements WindowDynamicConstructor {
     private SerializableSupplier<net.kyori.adventure.text.Component> titleFunction;
     private final Set<Signal<?>> titleSignals = new HashSet<>();
 
+    protected List<Pair<Runnable, Long>> intervalRunnables = new ArrayList<>();
+
     public WindowDynamicConstructorImpl(@JacksonInject WolfyUtils wolfyUtils, GuiHolder holder, WindowImpl window) {
         this.wolfyUtils = wolfyUtils;
         this.window = window;
@@ -105,6 +107,12 @@ public class WindowDynamicConstructorImpl implements WindowDynamicConstructor {
         var store = new StoreImpl<>(s, viewManager, aClass, supplier, consumer);
         usedSignals.put(s, store);
         return store;
+    }
+
+    @Override
+    public WindowDynamicConstructorImpl addIntervalTask(Runnable runnable, long l) {
+        this.intervalRunnables.add(new Pair<>(runnable, l));
+        return this;
     }
 
     @Override
@@ -282,7 +290,7 @@ public class WindowDynamicConstructorImpl implements WindowDynamicConstructor {
             }
         }
 
-        return ((WindowImpl) staticWindow).dynamicCopy(finalPostions, nonRenderedComponents, titleFunction);
+        return ((WindowImpl) staticWindow).dynamicCopy(finalPostions, nonRenderedComponents, titleFunction, intervalRunnables);
     }
 
 }

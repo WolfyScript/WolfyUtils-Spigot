@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 
 import com.wolfyscript.utilities.common.gui.callback.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.functions.SerializableSupplier;
+import com.wolfyscript.utilities.tuple.Pair;
 import com.wolfyscript.utilities.versioning.MinecraftVersion;
 import com.wolfyscript.utilities.versioning.ServerVersion;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
@@ -20,6 +21,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.scheduler.BukkitTask;
 
 @KeyedStaticId(key = "window")
 public final class WindowImpl implements Window {
@@ -35,6 +37,10 @@ public final class WindowImpl implements Window {
     private final InteractionCallback interactionCallback;
     final Map<Component, Position> staticComponents;
     final Map<ComponentBuilder<?, ?>, Position> nonRenderedComponents;
+
+    // Intervalls
+    final List<Pair<Runnable, Long>> intervalRunnables = new ArrayList<>();
+    final List<BukkitTask> intervalTasks = new ArrayList<>();
 
     WindowImpl(String id,
                Router router,
@@ -75,11 +81,15 @@ public final class WindowImpl implements Window {
         this.nonRenderedComponents = new HashMap<>(staticWindow.nonRenderedComponents);
     }
 
-    public WindowImpl dynamicCopy(Map<Component, Position> dynamicComponents, Map<ComponentBuilder<?, ?>, Position> nonRenderedComponents, SerializableSupplier<net.kyori.adventure.text.Component> dynamicTitle) {
+    public WindowImpl dynamicCopy(Map<Component, Position> dynamicComponents,
+                                  Map<ComponentBuilder<?, ?>, Position> nonRenderedComponents,
+                                  SerializableSupplier<net.kyori.adventure.text.Component> dynamicTitle,
+                                  List<Pair<Runnable, Long>> intervalRunnables) {
         WindowImpl copy = new WindowImpl(this);
         copy.staticComponents.putAll(dynamicComponents);
         copy.nonRenderedComponents.putAll(nonRenderedComponents);
         copy.dynamicTitle = dynamicTitle;
+        copy.intervalRunnables.addAll(intervalRunnables);
         return copy;
     }
 
@@ -93,7 +103,21 @@ public final class WindowImpl implements Window {
 
     @Override
     public void open(GuiViewManager guiViewManager) {
+        for (BukkitTask intervalTask : intervalTasks) {
+            intervalTask.cancel();
+        }
+        intervalTasks.clear();
+        for (Pair<Runnable, Long> intervall : intervalRunnables) {
+            intervalTasks.add(Bukkit.getScheduler().runTaskTimerAsynchronously(((WolfyUtilsBukkit) wolfyUtils).getCore().getPlugin(), intervall.getKey(), 1, intervall.getValue()));
+        }
+    }
 
+    @Override
+    public void close(GuiViewManager guiViewManager) {
+        for (BukkitTask intervalTask : intervalTasks) {
+            intervalTask.cancel();
+        }
+        intervalTasks.clear();
     }
 
     @Override

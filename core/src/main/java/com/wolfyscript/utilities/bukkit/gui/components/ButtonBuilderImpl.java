@@ -10,7 +10,6 @@ import com.google.inject.Inject;
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.gui.animation.AnimationBuilderImpl;
 import com.wolfyscript.utilities.bukkit.gui.animation.ButtonAnimationFrameBuilderImpl;
-import com.wolfyscript.utilities.bukkit.gui.animation.ButtonAnimationFrameImpl;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.*;
@@ -20,7 +19,6 @@ import com.wolfyscript.utilities.common.gui.components.Button;
 import com.wolfyscript.utilities.common.gui.components.ButtonBuilder;
 import com.wolfyscript.utilities.common.gui.components.ButtonIcon;
 import com.wolfyscript.utilities.common.gui.functions.SerializableSupplier;
-import com.wolfyscript.utilities.common.gui.impl.AbstractComponentBuilderImpl;
 import com.wolfyscript.utilities.common.gui.signal.Signal;
 import com.wolfyscript.utilities.common.items.ItemStackConfig;
 
@@ -35,7 +33,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 @KeyedStaticId(key = "button")
 @ComponentBuilderSettings(base = ButtonBuilder.class, component = Button.class)
-public class ButtonBuilderImpl extends AbstractComponentBuilderImpl<Button, Component> implements ButtonBuilder {
+public class ButtonBuilderImpl extends AbstractBukkitComponentBuilderImpl<Button, Component> implements ButtonBuilder {
 
     private InteractionCallback interactionCallback = (guiHolder, interactionDetails) -> InteractionResult.cancel(true);
     private Function<GuiHolder, Optional<Sound>> soundFunction = holder -> Optional.of(Sound.sound(Key.key("minecraft:ui.button.click"), Sound.Source.MASTER, 0.25f, 1));;
