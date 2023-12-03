@@ -10,20 +10,27 @@ import com.wolfyscript.utilities.bukkit.gui.RenderContextImpl;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.*;
+import com.wolfyscript.utilities.common.gui.animation.Animation;
+import com.wolfyscript.utilities.common.gui.animation.AnimationBuilder;
+import com.wolfyscript.utilities.common.gui.animation.ButtonAnimationFrame;
+import com.wolfyscript.utilities.common.gui.animation.ButtonAnimationFrameBuilder;
 import com.wolfyscript.utilities.common.gui.callback.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.components.Button;
 import com.wolfyscript.utilities.common.gui.components.ButtonIcon;
 import com.wolfyscript.utilities.common.gui.impl.AbstractComponentImpl;
+import com.wolfyscript.utilities.common.gui.signal.Signal;
 import com.wolfyscript.utilities.common.items.ItemStackConfig;
 import com.wolfyscript.utilities.eval.context.EvalContext;
-import it.unimi.dsi.fastutil.ints.IntList;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 @KeyedStaticId(key = "button")
@@ -32,19 +39,27 @@ public class ButtonImpl extends AbstractComponentImpl implements Button {
     private final InteractionCallback interactionCallback;
     private final ButtonIcon icon;
     private final Function<GuiHolder, Optional<Sound>> soundFunction;
+    private final Animation<ButtonAnimationFrame> animation;
 
-    ButtonImpl(WolfyUtils wolfyUtils, String id, Component parent, ButtonIcon icon, Function<GuiHolder, Optional<Sound>> soundFunction, InteractionCallback interactionCallback, IntList slots) {
-        super(id, wolfyUtils, parent, slots);
+    ButtonImpl(WolfyUtils wolfyUtils, String id, Component parent,
+               ButtonIcon icon,
+               Function<GuiHolder, Optional<Sound>> soundFunction,
+               InteractionCallback interactionCallback,
+               Position position,
+               AnimationBuilder<ButtonAnimationFrame, ButtonAnimationFrameBuilder> animation) {
+        super(id, wolfyUtils, parent, position);
         this.icon = icon;
         this.interactionCallback = interactionCallback;
         this.soundFunction = soundFunction;
+        this.animation = animation != null ? animation.build(this) : null;
     }
 
     private ButtonImpl(ButtonImpl button) {
-        super(button.getID(), button.getWolfyUtils(), button.parent(), button.getSlots());
+        super(button.getID(), button.getWolfyUtils(), button.parent(), button.position());
         this.interactionCallback = button.interactionCallback;
         this.icon = button.icon;
         this.soundFunction = button.soundFunction;
+        this.animation = button.animation; // TODO: Properly copy
     }
 
     @Override
@@ -58,10 +73,14 @@ public class ButtonImpl extends AbstractComponentImpl implements Button {
             InteractionResult result = interactableParent.interact(guiHolder, interactionDetails);
             if (result.isCancelled()) return result;
         }
+        if (animation != null) {
+            animation.updateSignal().update(o -> o);
+        }
         soundFunction.apply(guiHolder).ifPresent(sound -> {
             Audience audience = ((WolfyUtilsBukkit) guiHolder.getViewManager().getWolfyUtils()).getCore().getAdventure().player(guiHolder.getPlayer().uuid());
             audience.playSound(sound);
         });
+
         return interactionCallback.interact(guiHolder, interactionDetails);
     }
 

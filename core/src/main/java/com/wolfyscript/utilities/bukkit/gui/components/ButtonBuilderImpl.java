@@ -8,9 +8,13 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.wolfyscript.utilities.KeyedStaticId;
+import com.wolfyscript.utilities.bukkit.gui.animation.AnimationBuilderImpl;
+import com.wolfyscript.utilities.bukkit.gui.animation.ButtonAnimationFrameBuilderImpl;
+import com.wolfyscript.utilities.bukkit.gui.animation.ButtonAnimationFrameImpl;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.gui.*;
+import com.wolfyscript.utilities.common.gui.animation.*;
 import com.wolfyscript.utilities.common.gui.callback.InteractionCallback;
 import com.wolfyscript.utilities.common.gui.components.Button;
 import com.wolfyscript.utilities.common.gui.components.ButtonBuilder;
@@ -36,6 +40,8 @@ public class ButtonBuilderImpl extends AbstractComponentBuilderImpl<Button, Comp
     private InteractionCallback interactionCallback = (guiHolder, interactionDetails) -> InteractionResult.cancel(true);
     private Function<GuiHolder, Optional<Sound>> soundFunction = holder -> Optional.of(Sound.sound(Key.key("minecraft:ui.button.click"), Sound.Source.MASTER, 0.25f, 1));;
     private final IconBuilderImpl iconBuilder;
+    private Signal<Boolean> animationSignal = null;
+    private AnimationBuilder<ButtonAnimationFrame, ButtonAnimationFrameBuilder> animationBuilder;
 
     /**
      * Constructor used for non-config setups using Guice injection.
@@ -76,8 +82,16 @@ public class ButtonBuilderImpl extends AbstractComponentBuilderImpl<Button, Comp
     }
 
     @Override
+    public ButtonBuilder animation(DynamicConstructor dC, Consumer<AnimationBuilder<ButtonAnimationFrame, ButtonAnimationFrameBuilder>> animationBuild) {
+        AnimationBuilder<ButtonAnimationFrame, ButtonAnimationFrameBuilder> builder = new AnimationBuilderImpl<>(dC, ButtonAnimationFrameBuilderImpl::new);
+        animationBuild.accept(builder);
+        this.animationBuilder = builder;
+        return this;
+    }
+
+    @Override
     public Button create(Component parent) {
-        ButtonImpl button = new ButtonImpl(getWolfyUtils(), id(), parent, iconBuilder.create(), soundFunction, interactionCallback, position(), animationSignal);
+        ButtonImpl button = new ButtonImpl(getWolfyUtils(), id(), parent, iconBuilder.create(), soundFunction, interactionCallback, position(), animationBuilder);
         for (Signal<?> signal : iconBuilder.signals) {
             signal.linkTo(button);
         }
