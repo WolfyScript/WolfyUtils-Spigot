@@ -103,7 +103,7 @@ public class BukkitItemStackConfig extends ItemStackConfig<ItemStack> {
                 }
             }
             this.unbreakable = new BoolOperatorConst(wolfyUtils, meta.isUnbreakable());
-            this.customModelData = new ValueProviderIntegerConst(wolfyUtils, meta.getCustomModelData());
+            this.customModelData = meta.hasCustomModelData() ? new ValueProviderIntegerConst(wolfyUtils, meta.getCustomModelData()) : null;
         }
         this.enchants = stack.getEnchantments().entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey().getKey().toString(), entry -> new ValueProviderIntegerConst(wolfyUtils, entry.getValue())));
 
@@ -136,25 +136,37 @@ public class BukkitItemStackConfig extends ItemStackConfig<ItemStack> {
             // Apply ItemMeta afterwards to override possible NBT Tags
             ItemMeta meta = itemStack.getItemMeta();
             if (meta != null) {
+                // Apply Display options
+                String nameVal = this.name == null ? null : this.name.getValue(context);
                 if (usePaperDisplayOptions) {
-                    if (this.name != null) {
-                        meta.displayName(miniMsg.deserialize(this.name.getValue(context), tagResolvers));
+                    if (nameVal != null) {
+                        meta.displayName(miniMsg.deserialize(nameVal, tagResolvers));
                     }
                     if (this.lore != null && !this.lore.isEmpty()) {
                         meta.lore(this.lore.stream().filter(Objects::nonNull).map(stringValueProvider -> miniMsg.deserialize(stringValueProvider.getValue(context), tagResolvers)).toList());
                     }
                 } else {
-                    meta.setDisplayName(BukkitComponentSerializer.legacy().serialize(miniMsg.deserialize(name.getValue(context), tagResolvers)));
-                    meta.setLore(lore.stream().map(line -> BukkitComponentSerializer.legacy().serialize(miniMsg.deserialize(line.getValue(context), tagResolvers))).toList());
+                    if (nameVal != null) {
+                        meta.setDisplayName(BukkitComponentSerializer.legacy().serialize(miniMsg.deserialize(nameVal, tagResolvers)));
+                    }
+                    if (lore != null) {
+                        meta.setLore(lore.stream().map(line -> BukkitComponentSerializer.legacy().serialize(miniMsg.deserialize(line.getValue(context), tagResolvers))).toList());
+                    }
                 }
+                // Apply enchants
                 for (Map.Entry<String, ? extends ValueProvider<Integer>> entry : enchants.entrySet()) {
                     Enchantment enchant = Enchantment.getByKey(NamespacedKey.fromString(entry.getKey()));
                     if (enchant != null) {
                         meta.addEnchant(enchant, entry.getValue().getValue(context), true);
                     }
                 }
-                meta.setCustomModelData(customModelData.getValue(context));
+
+                if (customModelData != null) {
+                    meta.setCustomModelData(customModelData.getValue(context));
+                }
+
                 meta.setUnbreakable(unbreakable.evaluate(context));
+
                 itemStack.setItemMeta(meta);
             }
             return itemStack;
