@@ -11,7 +11,6 @@ pluginManagement {
 include(":core")
 include(":plugin-compatibility")
 include(":nmsutil")
-include(":nmsutil:v1_16_R3")
 include(":nmsutil:v1_17_R1")
 include(":nmsutil:v1_17_R1_P1")
 include(":nmsutil:v1_18_R1")
@@ -22,11 +21,11 @@ include(":nmsutil:v1_19_R1")
 include(":nmsutil:v1_19_R2")
 include(":nmsutil:v1_20_R1")
 include(":nmsutil:v1_20_R2")
+include(":nmsutil:v1_20_R3")
 
 project(":core").projectDir = file("core")
 project(":plugin-compatibility").projectDir = file("plugin-compatibility")
 project(":nmsutil").projectDir = file("nmsutil")
-project(":nmsutil:v1_16_R3").projectDir = file("nmsutil/v1_16_R3")
 project(":nmsutil:v1_17_R1").projectDir = file("nmsutil/v1_17_R1")
 project(":nmsutil:v1_17_R1_P1").projectDir = file("nmsutil/v1_17_R1_P1")
 project(":nmsutil:v1_18_R1").projectDir = file("nmsutil/v1_18_R1")
@@ -37,6 +36,7 @@ project(":nmsutil:v1_19_R2").projectDir = file("nmsutil/v1_19_R2")
 project(":nmsutil:v1_19_R3").projectDir = file("nmsutil/v1_19_R3")
 project(":nmsutil:v1_20_R1").projectDir = file("nmsutil/v1_20_R1")
 project(":nmsutil:v1_20_R2").projectDir = file("nmsutil/v1_20_R2")
+project(":nmsutil:v1_20_R3").projectDir = file("nmsutil/v1_20_R3")
 
 dependencyResolutionManagement {
     versionCatalogs {

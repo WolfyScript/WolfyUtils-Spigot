@@ -51,11 +51,6 @@ minecraftServers {
     libName.set("${project.name}-${version}.jar")
     val debugPortMapping = "${debugPort}:${debugPort}"
     servers {
-        register("spigot_1_16") {
-            version.set("1.16.5")
-            type.set("SPIGOT")
-            ports.set(setOf(debugPortMapping, "25564:25565"))
-        }
         register("spigot_1_17") {
             version.set("1.17.1")
             type.set("SPIGOT")
