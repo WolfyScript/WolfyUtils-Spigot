@@ -41,6 +41,7 @@ minecraftDockerRun {
     val customEnv = env.get().toMutableMap()
     customEnv["MEMORY"] = "2G"
     customEnv["JVM_OPTS"] = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:${debugPort}"
+    customEnv["FORCE_REDOWNLOAD"] = "false"
     env.set(customEnv)
     arguments("--cpus", "2", "-it") // Constrain to only use 2 cpus, and allow for console interactivity with 'docker attach'
 }
@@ -50,11 +51,6 @@ minecraftServers {
     libName.set("${project.name}-${version}.jar")
     val debugPortMapping = "${debugPort}:${debugPort}"
     servers {
-        register("spigot_1_16") {
-            version.set("1.16.5")
-            type.set("SPIGOT")
-            ports.set(setOf(debugPortMapping, "25564:25565"))
-        }
         register("spigot_1_17") {
             version.set("1.17.1")
             type.set("SPIGOT")
@@ -71,8 +67,9 @@ minecraftServers {
             ports.set(setOf(debugPortMapping, "25567:25565"))
         }
         register("spigot_1_20") {
-            version.set("1.20.2")
+            version.set("1.20.3")
             type.set("SPIGOT")
+            extraEnv.put("BUILD_FROM_SOURCE", "true") // 1.20.3 not available as download yet
             ports.set(setOf(debugPortMapping, "25568:25565"))
         }
         // Paper test servers
