@@ -1,7 +1,6 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -35,7 +34,7 @@ import java.util.function.Consumer;
 public class StackReference implements Copyable<StackReference> {
 
     private final WolfyUtilCore core;
-    private final int customAmount;
+    private final int amount;
     private final double weight;
     /**
      * Used to store the original stack
@@ -51,8 +50,8 @@ public class StackReference implements Copyable<StackReference> {
         return new StackReference(WolfyUtilCore.getInstance(), new BukkitStackIdentifier(itemStack), 1, 1, itemStack);
     }
 
-    public StackReference(WolfyUtilCore core, NamespacedKey parser, double weight, int customAmount, ItemStack item) {
-        this.customAmount = customAmount;
+    public StackReference(WolfyUtilCore core, NamespacedKey parser, double weight, int amount, ItemStack item) {
+        this.amount = amount;
         this.weight = weight;
         this.core = core;
         this.parser = core.getRegistries().getStackIdentifierParsers().get(parser);
@@ -60,8 +59,8 @@ public class StackReference implements Copyable<StackReference> {
         this.identifier = parseIdentifier();
     }
 
-    public StackReference(WolfyUtilCore core, @NotNull StackIdentifierParser<?> parser, double weight, int customAmount, ItemStack item) {
-        this.customAmount = customAmount;
+    public StackReference(WolfyUtilCore core, @NotNull StackIdentifierParser<?> parser, double weight, int amount, ItemStack item) {
+        this.amount = amount;
         this.weight = weight;
         this.core = core;
         this.parser = parser;
@@ -69,8 +68,8 @@ public class StackReference implements Copyable<StackReference> {
         this.identifier = parseIdentifier();
     }
 
-    public StackReference(WolfyUtilCore core, @NotNull StackIdentifier identifier, double weight, int customAmount, ItemStack item) {
-        this.customAmount = customAmount;
+    public StackReference(WolfyUtilCore core, @NotNull StackIdentifier identifier, double weight, int amount, ItemStack item) {
+        this.amount = amount;
         this.weight = weight;
         this.core = core;
         this.parser = core.getRegistries().getStackIdentifierParsers().get(identifier.getNamespacedKey());
@@ -80,7 +79,7 @@ public class StackReference implements Copyable<StackReference> {
 
     private StackReference(StackReference stackReference) {
         this.weight = stackReference.weight;
-        this.customAmount = stackReference.customAmount;
+        this.amount = stackReference.amount;
         this.core = stackReference.core;
         this.parser = stackReference.parser;
         this.stack = stackReference.stack;
@@ -111,7 +110,7 @@ public class StackReference implements Copyable<StackReference> {
     }
 
     public boolean matches(ItemStack other, boolean exact, boolean ignoreAmount) {
-        return identifier().matches(other, customAmount, exact, ignoreAmount);
+        return identifier().matches(other, amount, exact, ignoreAmount);
     }
 
     /**
@@ -168,7 +167,7 @@ public class StackReference implements Copyable<StackReference> {
      */
     @JsonGetter("amount")
     public int amount() {
-        return customAmount;
+        return amount;
     }
 
     /**
@@ -297,7 +296,7 @@ public class StackReference implements Copyable<StackReference> {
      */
     @Deprecated
     public APIReference convert() {
-        return identifier().convert(weight, customAmount);
+        return identifier().convert(weight, amount);
     }
 
     /**
