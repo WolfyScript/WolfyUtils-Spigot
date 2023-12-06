@@ -52,7 +52,9 @@ public class BukkitStackIdentifier implements StackIdentifier {
 
         @Override
         public Optional<BukkitStackIdentifier> from(ItemStack itemStack) {
-            return Optional.of(new BukkitStackIdentifier(itemStack.clone()));
+            ItemStack copy = itemStack.clone();
+            copy.setAmount(1); // The identifiers should only have a stack of 1, the amount is handled by the StackReference
+            return Optional.of(new BukkitStackIdentifier(copy));
         }
 
         @Override
