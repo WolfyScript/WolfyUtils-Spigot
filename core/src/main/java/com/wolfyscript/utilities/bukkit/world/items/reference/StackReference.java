@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 public class StackReference implements Copyable<StackReference> {
 
     private final WolfyCore core;
-    private final int customAmount;
+    private final int amount;
     private final double weight;
     /**
      * Used to store the original stack
@@ -39,8 +39,8 @@ public class StackReference implements Copyable<StackReference> {
     private StackIdentifier identifier;
     private StackIdentifierParser<?> parser;
 
-    public StackReference(WolfyCoreImpl core, NamespacedKey parser, double weight, int customAmount, ItemStack item) {
-        this.customAmount = customAmount;
+    public StackReference(WolfyCoreImpl core, NamespacedKey parser, double weight, int amount, ItemStack item) {
+        this.amount = amount;
         this.weight = weight;
         this.core = core;
         this.parser = core.getRegistries().getStackIdentifierParsers().get(parser);
@@ -48,8 +48,8 @@ public class StackReference implements Copyable<StackReference> {
         this.identifier = parseIdentifier();
     }
 
-    public StackReference(WolfyCoreImpl core, @NotNull StackIdentifierParser<?> parser, double weight, int customAmount, ItemStack item) {
-        this.customAmount = customAmount;
+    public StackReference(WolfyCoreImpl core, @NotNull StackIdentifierParser<?> parser, double weight, int amount, ItemStack item) {
+        this.amount = amount;
         this.weight = weight;
         this.core = core;
         this.parser = parser;
@@ -57,8 +57,8 @@ public class StackReference implements Copyable<StackReference> {
         this.identifier = parseIdentifier();
     }
 
-    public StackReference(WolfyCoreImpl core, @NotNull StackIdentifier identifier, double weight, int customAmount, ItemStack item) {
-        this.customAmount = customAmount;
+    public StackReference(WolfyCoreImpl core, @NotNull StackIdentifier identifier, double weight, int amount, ItemStack item) {
+        this.amount = amount;
         this.weight = weight;
         this.core = core;
         this.parser = core.getRegistries().getStackIdentifierParsers().get(identifier.getNamespacedKey());
@@ -68,7 +68,7 @@ public class StackReference implements Copyable<StackReference> {
 
     private StackReference(StackReference stackReference) {
         this.weight = stackReference.weight;
-        this.customAmount = stackReference.customAmount;
+        this.amount = stackReference.amount;
         this.core = stackReference.core;
         this.parser = stackReference.parser;
         this.stack = stackReference.stack;
@@ -99,7 +99,7 @@ public class StackReference implements Copyable<StackReference> {
     }
 
     public boolean matches(ItemStack other, boolean exact, boolean ignoreAmount) {
-        return identifier().matches(other, customAmount, exact, ignoreAmount);
+        return identifier().matches(other, amount, exact, ignoreAmount);
     }
 
     /**
@@ -156,7 +156,7 @@ public class StackReference implements Copyable<StackReference> {
      */
     @JsonGetter("amount")
     public int amount() {
-        return customAmount;
+        return amount;
     }
 
     /**
