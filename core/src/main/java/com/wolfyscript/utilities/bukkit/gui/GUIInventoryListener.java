@@ -31,6 +31,7 @@ public class GUIInventoryListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInvClick(InventoryClickEvent event) {
         if (event.getInventory().getHolder() instanceof GUIHolder guiHolder) {
+            ((GuiViewManagerImpl) guiHolder.getViewManager()).blockedByInteraction();
             guiHolder.onClick(event);
         }
     }
@@ -38,6 +39,7 @@ public class GUIInventoryListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onItemDrag(InventoryDragEvent event) {
         if (event.getInventory().getHolder() instanceof GUIHolder guiHolder) {
+            ((GuiViewManagerImpl) guiHolder.getViewManager()).blockedByInteraction();
             guiHolder.onDrag(event);
         }
     }
@@ -45,6 +47,7 @@ public class GUIInventoryListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onClose(InventoryCloseEvent event) {
         if (event.getInventory().getHolder() instanceof GUIHolder guiHolder) {
+            ((GuiViewManagerImpl) guiHolder.getViewManager()).blockedByInteraction();
             guiHolder.onClose(event);
         }
     }

@@ -18,6 +18,7 @@ public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
     private final Map<Integer, Component> leaveNodes = new HashMap<>();
     private final Map<UUID, RenderContextImpl> viewerContexts = new HashMap<>();
     private final Set<SignalledObject> updatedSignalsSinceLastUpdate = new HashSet<>();
+    private boolean blockedByInteraction = false;
 
     private TextInputCallback textInputCallback;
     private TextInputTabCompleteCallback textInputTabCompleteCallback;
@@ -31,12 +32,44 @@ public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
         return id;
     }
 
+    synchronized void blockedByInteraction() {
+        this.blockedByInteraction = true;
+    }
+
+    synchronized void unblockedByInteraction() {
+        this.blockedByInteraction = false;
+    }
+
     Optional<Component> getLeaveNode(int slot) {
         return Optional.ofNullable(leaveNodes.get(slot));
     }
 
     void updateObjects(Set<SignalledObject> objects) {
-        updatedSignalsSinceLastUpdate.addAll(objects);
+        if (blockedByInteraction) {
+            updatedSignalsSinceLastUpdate.addAll(objects);
+            return;
+        }
+        getCurrentMenu().ifPresent(window -> {
+            for (UUID viewer : getViewers()) {
+                Player player = Bukkit.getPlayer(viewer);
+                if (player == null) continue;
+
+                getRenderContext(viewer).ifPresent(context -> {
+                    updateSignalQueue(objects, (RenderContextImpl) context);
+                });
+            }
+        });
+    }
+
+    private void updateSignalQueue(Set<SignalledObject> objects, RenderContextImpl context) {
+        for (SignalledObject signalledObject : objects) {
+            if (signalledObject instanceof AbstractComponentImpl component) {
+                context.enterNode(component);
+                signalledObject.update(this, (GuiHolder) context.getInventory().getHolder(), context);
+            } else {
+                signalledObject.update(this, (GuiHolder) context.getInventory().getHolder(), context);
+            }
+        }
     }
 
     public void updateLeaveNodes(Component state, int... slots) {
@@ -80,6 +113,7 @@ public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
 
     @Override
     public void openNew(String... path) {
+        unblockedByInteraction();
         Window window = getRouter().open(this, path);
         setCurrentRoot(window);
         for (UUID viewer : getViewers()) {
@@ -96,18 +130,13 @@ public class GuiViewManagerImpl extends GuiViewManagerCommonImpl {
             player.openInventory(context.getInventory());
             getCurrentMenu().ifPresent(window -> {
                 GuiHolder holder = (GuiHolder) context.getInventory().getHolder();
-                window.construct(holder, this).render(holder, this, context);
+                var dynamic = window.construct(holder, this);
+                dynamic.open(this);
+                dynamic.render(holder, this, context);
+                setCurrentRoot(dynamic);
             });
         }
-
-        for (SignalledObject signalledObject : updatedSignalsSinceLastUpdate) {
-            if (signalledObject instanceof AbstractComponentImpl component) {
-                context.enterNode(component);
-                signalledObject.update(this, (GuiHolder) context.getInventory().getHolder(), context);
-            } else {
-                signalledObject.update(this, (GuiHolder) context.getInventory().getHolder(), context);
-            }
-        }
+        updateSignalQueue(updatedSignalsSinceLastUpdate, context);
         updatedSignalsSinceLastUpdate.clear();
     }
 

@@ -17,19 +17,22 @@ import com.wolfyscript.utilities.common.gui.Component;
 import com.wolfyscript.utilities.common.gui.ComponentBuilder;
 import com.wolfyscript.utilities.common.gui.ComponentBuilderSettings;
 import com.wolfyscript.utilities.common.gui.Position;
+import com.wolfyscript.utilities.common.gui.components.ButtonBuilder;
 import com.wolfyscript.utilities.common.gui.components.ComponentCluster;
 import com.wolfyscript.utilities.common.gui.components.ComponentClusterBuilder;
+import com.wolfyscript.utilities.common.gui.functions.SerializableRunnable;
 import com.wolfyscript.utilities.common.gui.impl.AbstractComponentBuilderImpl;
 import com.wolfyscript.utilities.common.registry.RegistryGUIComponentBuilders;
 import com.wolfyscript.utilities.tuple.Pair;
 import it.unimi.dsi.fastutil.ints.IntList;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 @KeyedStaticId(key = "cluster")
 @ComponentBuilderSettings(base = ComponentClusterBuilder.class, component = ComponentCluster.class)
-public class ComponentClusterBuilderImpl extends AbstractComponentBuilderImpl<ComponentCluster, Component> implements ComponentClusterBuilder {
+public class ComponentClusterBuilderImpl extends AbstractBukkitComponentBuilderImpl<ComponentCluster, Component> implements ComponentClusterBuilder {
 
     private final Map<ComponentBuilder<?, Component>, Position> componentBuilderPositions = new HashMap<>();
     private final Set<ComponentBuilder<?, Component>> componentRenderSet = new HashSet<>();
