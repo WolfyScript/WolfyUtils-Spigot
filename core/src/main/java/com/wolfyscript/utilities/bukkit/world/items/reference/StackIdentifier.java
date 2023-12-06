@@ -162,7 +162,7 @@ public interface StackIdentifier extends Keyed {
                         }
                     }
                     return originalStack;
-                }).orElse(stack));
+                }).orElse(resultStack));
     }
 
     /**
