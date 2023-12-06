@@ -54,16 +54,7 @@ public class StackReference implements Copyable<StackReference> {
         this.amount = amount;
         this.weight = weight;
         this.core = core;
-        this.parser = core.getRegistries().getStackIdentifierParsers().get(parser);
-        this.stack = item;
-        this.identifier = parseIdentifier();
-    }
-
-    public StackReference(WolfyUtilCore core, @NotNull StackIdentifierParser<?> parser, double weight, int amount, ItemStack item) {
-        this.amount = amount;
-        this.weight = weight;
-        this.core = core;
-        this.parser = parser;
+        setParser(core.getRegistries().getStackIdentifierParsers().get(parser));
         this.stack = item;
         this.identifier = parseIdentifier();
     }
@@ -72,7 +63,7 @@ public class StackReference implements Copyable<StackReference> {
         this.amount = amount;
         this.weight = weight;
         this.core = core;
-        this.parser = core.getRegistries().getStackIdentifierParsers().get(identifier.getNamespacedKey());
+        setParser(core.getRegistries().getStackIdentifierParsers().get(identifier.getNamespacedKey()));
         this.stack = item;
         this.identifier = identifier;
     }
@@ -81,15 +72,19 @@ public class StackReference implements Copyable<StackReference> {
         this.weight = stackReference.weight;
         this.amount = stackReference.amount;
         this.core = stackReference.core;
-        this.parser = stackReference.parser;
+        setParser(stackReference.parser);
         this.stack = stackReference.stack;
         this.identifier = parseIdentifier();
+    }
+
+    private void setParser(StackIdentifierParser<?> parser) {
+        this.parser = parser != null ? parser : core.getRegistries().getStackIdentifierParsers().get(BukkitStackIdentifier.ID);
     }
 
     private StackIdentifier parseIdentifier() {
         Optional<? extends StackIdentifier> identifierOptional = parser.from(stack);
         if (identifierOptional.isPresent()) return identifierOptional.get();
-        return new BukkitStackIdentifier(stack);
+        return core.getRegistries().getStackIdentifierParsers().get(BukkitStackIdentifier.ID).from(stack).orElseThrow();
     }
 
     /**
@@ -185,7 +180,7 @@ public class StackReference implements Copyable<StackReference> {
      * @param parser The new parser to use to get the StackIdentifier
      */
     public void swapParser(StackIdentifierParser<?> parser) {
-        this.parser = parser;
+        setParser(parser);
         this.identifier = parseIdentifier();
     }
 
