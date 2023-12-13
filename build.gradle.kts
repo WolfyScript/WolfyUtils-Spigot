@@ -67,14 +67,14 @@ minecraftServers {
             ports.set(setOf(debugPortMapping, "25567:25565"))
         }
         register("spigot_1_20") {
-            version.set("1.20.3")
+            version.set("1.20.4")
             type.set("SPIGOT")
             extraEnv.put("BUILD_FROM_SOURCE", "true") // 1.20.3 not available as download yet
             ports.set(setOf(debugPortMapping, "25568:25565"))
         }
         // Paper test servers
         register("paper_1_20") {
-            version.set("1.20.2")
+            version.set("1.20.4")
             type.set("PAPER")
             ports.set(setOf(debugPortMapping, "25569:25565"))
         }
