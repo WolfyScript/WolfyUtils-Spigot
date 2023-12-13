@@ -1,5 +1,5 @@
 description = "v1_20_R3"
-private val mcVersion = "1.20.3"
+private val mcVersion = "1.20.4"
 
 plugins {
     id("com.wolfyscript.wolfyutils.spigot.java-conventions")
@@ -8,7 +8,7 @@ plugins {
 }
 
 dependencies {
-    compileOnly(group = "org.spigotmc", name = "spigot", version = "1.20.3-R0.1-SNAPSHOT", classifier = "remapped-mojang")
+    compileOnly(group = "org.spigotmc", name = "spigot", version = "1.20.4-R0.1-SNAPSHOT", classifier = "remapped-mojang")
     compileOnly(project(":core"))
 }
 
