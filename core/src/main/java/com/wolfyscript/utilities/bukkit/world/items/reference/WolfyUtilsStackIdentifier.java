@@ -25,6 +25,10 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
         this.namespacedKey = namespacedKey;
     }
 
+    public NamespacedKey itemKey() {
+        return namespacedKey;
+    }
+
     /**
      * Gets the stack this identifier references.
      * It uses the {@link CustomItem#create()} method to create the stack, or returns null if the referenced {@link CustomItem} is unavailable.
