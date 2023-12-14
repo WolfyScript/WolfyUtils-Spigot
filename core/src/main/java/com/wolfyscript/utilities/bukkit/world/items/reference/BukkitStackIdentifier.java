@@ -19,6 +19,10 @@ public class BukkitStackIdentifier implements StackIdentifier {
         this.stack = stack;
     }
 
+    public ItemStack stack() {
+        return stack;
+    }
+
     @Override
     public ItemStack stack(ItemCreateContext context) {
         ItemStack cloned = stack.clone();
