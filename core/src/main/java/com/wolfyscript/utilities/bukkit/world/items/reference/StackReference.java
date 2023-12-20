@@ -92,8 +92,8 @@ public class StackReference implements Copyable<StackReference> {
      *
      * @return The currently wrapped StackIdentifier
      */
-    public StackIdentifier identifier() {
-        return identifier;
+    public Optional<StackIdentifier> identifier() {
+        return Optional.ofNullable(identifier);
     }
 
     public boolean matches(ItemStack other) {
