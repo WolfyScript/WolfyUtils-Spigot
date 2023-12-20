@@ -9,6 +9,7 @@ import com.wolfyscript.utilities.Copyable;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
+import me.wolfyscript.utilities.api.inventory.custom_items.references.VanillaRef;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -78,7 +79,7 @@ public class StackReference implements Copyable<StackReference> {
     }
 
     private void setParser(StackIdentifierParser<?> parser) {
-        this.parser = parser != null ? parser : core.getRegistries().getStackIdentifierParsers().get(BukkitStackIdentifier.ID);
+        this.parser = parser;
     }
 
     private StackIdentifier parseIdentifier() {
@@ -105,7 +106,7 @@ public class StackReference implements Copyable<StackReference> {
     }
 
     public boolean matches(ItemStack other, boolean exact, boolean ignoreAmount) {
-        return identifier().matches(other, amount, exact, ignoreAmount);
+        return identifier().map(identifier -> identifier.matches(other, amount, exact, ignoreAmount)).orElse(false);
     }
 
     /**
@@ -115,7 +116,7 @@ public class StackReference implements Copyable<StackReference> {
      * @return The stack the {@link #identifier()} points to
      */
     public ItemStack referencedStack() {
-        return identifier().stack(ItemCreateContext.of(this).build());
+        return identifier().map(stackIdentifier -> stackIdentifier.stack(ItemCreateContext.of(this).build())).orElse(new ItemStack(Material.AIR));
     }
 
     /**
@@ -126,9 +127,11 @@ public class StackReference implements Copyable<StackReference> {
      * @return The stack the {@link #identifier()} points to
      */
     public ItemStack referencedStack(Consumer<ItemCreateContext.Builder> contextBuild) {
-        ItemCreateContext.Builder builder = ItemCreateContext.of(this);
-        contextBuild.accept(builder);
-        return identifier().stack(builder.build());
+        return identifier().map(stackIdentifier -> {
+            ItemCreateContext.Builder builder = ItemCreateContext.of(this);
+            contextBuild.accept(builder);
+            return stackIdentifier.stack(builder.build());
+        }).orElse(new ItemStack(Material.AIR));
     }
 
     /**
@@ -224,7 +227,7 @@ public class StackReference implements Copyable<StackReference> {
      * @return The manipulated stack, default remain, or custom remains.
      */
     public ItemStack shrink(@NotNull ItemStack stack, int count, boolean useRemains, @NotNull BiFunction<StackIdentifier, ItemStack, ItemStack> stackReplacement) {
-        return identifier().shrink(stack, count * amount(), useRemains, stackReplacement);
+        return identifier().map(stackIdentifier -> stackIdentifier.shrink(stack, count * amount(), useRemains, stackReplacement)).orElse(stack);
     }
 
     /**
@@ -267,7 +270,7 @@ public class StackReference implements Copyable<StackReference> {
      * @return The manipulated stack, default remain, or custom remains.
      */
     public ItemStack shrink(ItemStack stack, int count, boolean useRemains, @Nullable final Inventory inventory, @Nullable final Player player, @Nullable final Location location) {
-        return identifier().shrink(stack, count * amount(), useRemains, inventory, player, location);
+        return identifier().map(stackIdentifier -> stackIdentifier.shrink(stack, count * amount(), useRemains, inventory, player, location)).orElse(stack);
     }
 
     /**
@@ -283,7 +286,7 @@ public class StackReference implements Copyable<StackReference> {
      * @return The manipulated (damaged) stack, default remain, or custom remains.
      */
     public ItemStack shrinkUnstackableItem(ItemStack stack, boolean useRemains) {
-        return identifier().shrinkUnstackableItem(stack, useRemains);
+        return identifier().map(stackIdentifier -> stackIdentifier.shrinkUnstackableItem(stack, useRemains)).orElse(stack);
     }
 
     /**
@@ -291,7 +294,7 @@ public class StackReference implements Copyable<StackReference> {
      */
     @Deprecated
     public APIReference convert() {
-        return identifier().convert(weight, amount);
+        return identifier().map(stackIdentifier -> stackIdentifier.convert(weight, amount)).orElse(new VanillaRef(new ItemStack(Material.AIR)));
     }
 
     /**
@@ -303,10 +306,12 @@ public class StackReference implements Copyable<StackReference> {
      */
     @Deprecated
     public CustomItem convertToLegacy() {
-        if (identifier() instanceof WolfyUtilsStackIdentifier wolfyUtilsStackIdentifier) {
-            return wolfyUtilsStackIdentifier.customItem().orElse(new CustomItem(Material.AIR));
-        }
-        return new CustomItem(this);
+        return identifier().map(stackIdentifier -> {
+            if (stackIdentifier instanceof WolfyUtilsStackIdentifier wolfyUtilsStackIdentifier) {
+                return wolfyUtilsStackIdentifier.customItem().orElse(new CustomItem(Material.AIR));
+            }
+            return new CustomItem(Material.AIR);
+        }).orElse(new CustomItem(Material.AIR));
     }
 
     public static class Deserializer extends StdNodeBasedDeserializer<StackReference> {

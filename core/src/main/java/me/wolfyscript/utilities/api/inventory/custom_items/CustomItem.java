@@ -692,7 +692,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      */
     @Override
     public ItemStack getItemStack() {
-        return reference.identifier().stack(ItemCreateContext.empty(getAmount()));
+        return reference.identifier().map(stackIdentifier -> stackIdentifier.stack(ItemCreateContext.empty(getAmount()))).orElse(new ItemStack(Material.AIR));
     }
 
     /**
@@ -716,19 +716,21 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @return the item from the external API that is linked to this object
      */
     public ItemStack create(int amount) {
-        var itemStack = reference.identifier().stack(ItemCreateContext.empty(amount)).clone();
-        if (this.hasNamespacedKey()) {
-            var itemMeta = itemStack.getItemMeta();
-            var container = itemMeta.getPersistentDataContainer();
-            synchronized (container.getClass()) { // The container has a thread-unsafe map usage, so we need to synchronise it
-                container.set(new org.bukkit.NamespacedKey(WolfyUtilities.getWUPlugin(), "custom_item"), PersistentDataType.STRING, namespacedKey.toString());
+        return reference.identifier().map(stackIdentifier -> {
+            var itemStack = stackIdentifier.stack(ItemCreateContext.empty(amount)).clone();
+            if (this.hasNamespacedKey()) {
+                var itemMeta = itemStack.getItemMeta();
+                var container = itemMeta.getPersistentDataContainer();
+                synchronized (container.getClass()) { // The container has a thread-unsafe map usage, so we need to synchronise it
+                    container.set(new org.bukkit.NamespacedKey(WolfyUtilities.getWUPlugin(), "custom_item"), PersistentDataType.STRING, namespacedKey.toString());
+                }
+                itemStack.setItemMeta(itemMeta);
             }
-            itemStack.setItemMeta(itemMeta);
-        }
-        if (amount > 0) {
-            itemStack.setAmount(amount);
-        }
-        return itemStack;
+            if (amount > 0) {
+                itemStack.setAmount(amount);
+            }
+            return itemStack;
+        }).orElse(new ItemStack(Material.AIR));
     }
 
     /**
@@ -1053,7 +1055,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @param replacement The new replacement, or null to unset it
      */
     public void replacement(StackReference replacement) {
-        if(replacement != null && replacement.identifier() != null && !ItemUtils.isAirOrNull(replacement.identifier().stack(ItemCreateContext.empty(getAmount())))) {
+        if(replacement != null && replacement.identifier().map(stackIdentifier -> !ItemUtils.isAirOrNull(stackIdentifier.stack(ItemCreateContext.empty(getAmount())))).orElse(false)) {
             this.replacement = replacement;
         } else {
             this.replacement = null;
