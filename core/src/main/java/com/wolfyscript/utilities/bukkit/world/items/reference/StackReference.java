@@ -83,9 +83,8 @@ public class StackReference implements Copyable<StackReference> {
     }
 
     private StackIdentifier parseIdentifier() {
-        Optional<? extends StackIdentifier> identifierOptional = parser.from(stack);
-        if (identifierOptional.isPresent()) return identifierOptional.get();
-        return core.getRegistries().getStackIdentifierParsers().get(BukkitStackIdentifier.ID).from(stack).orElseThrow();
+        if (parser == null) return null;
+        return parser.from(stack).orElse(null);
     }
 
     /**
