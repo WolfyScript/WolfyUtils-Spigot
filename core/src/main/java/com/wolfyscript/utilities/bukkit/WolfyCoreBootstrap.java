@@ -1,6 +1,6 @@
 package com.wolfyscript.utilities.bukkit;
 
-import com.wolfyscript.utilities.common.WolfyCore;
+import com.wolfyscript.utilities.WolfyCore;
 import com.wolfyscript.utilities.versioning.ServerVersion;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.ServicePriority;

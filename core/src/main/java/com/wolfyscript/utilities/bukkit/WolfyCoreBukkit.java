@@ -2,21 +2,16 @@ package com.wolfyscript.utilities.bukkit;
 
 import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManager;
 import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManagerBukkit;
-import com.wolfyscript.utilities.common.WolfyCore;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.kyori.adventure.text.event.ClickCallback;
-import net.kyori.adventure.util.Services;
-import org.jetbrains.annotations.NotNull;
+import com.wolfyscript.utilities.WolfyCore;
 
 /**
  * The core implementation of WolfyUtils.<br>
  * It manages the core plugin of WolfyUtils and there is only one instance of it.<br>
  *
- * If you want to use the plugin specific API, see {@link com.wolfyscript.utilities.common.WolfyUtils} & {@link WolfyUtilsBukkit}
+ * If you want to use the plugin specific API, see {@link com.wolfyscript.utilities.WolfyUtils} & {@link WolfyUtilsBukkit}
  */
 public final class WolfyCoreBukkit extends WolfyCoreImpl implements WolfyCore {
 
-    private BukkitAudiences adventure;
     private final CompatibilityManager compatibilityManager;
 
     /**
@@ -24,6 +19,7 @@ public final class WolfyCoreBukkit extends WolfyCoreImpl implements WolfyCore {
      */
     public WolfyCoreBukkit(WolfyCoreBukkitBootstrap plugin) {
         super(plugin);
+        this.platform = new PlatformImpl(this);
         this.compatibilityManager = new CompatibilityManagerBukkit(this);
     }
 
@@ -43,14 +39,6 @@ public final class WolfyCoreBukkit extends WolfyCoreImpl implements WolfyCore {
         return compatibilityManager;
     }
 
-    @NotNull
-    public BukkitAudiences getAdventure() {
-        if (this.adventure == null) {
-            throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
-        }
-        return this.adventure;
-    }
-
     @Override
     public void load() {
         super.load();
@@ -58,17 +46,14 @@ public final class WolfyCoreBukkit extends WolfyCoreImpl implements WolfyCore {
 
     @Override
     public void enable() {
-        this.adventure = BukkitAudiences.create(getPlugin());
         super.enable();
+        ((PlatformImpl) platform).init();
     }
 
     @Override
     public void disable() {
         super.disable();
-        if (this.adventure != null) {
-            this.adventure.close();
-            this.adventure = null;
-        }
+        ((PlatformImpl) platform).unLoad();
     }
 
 }

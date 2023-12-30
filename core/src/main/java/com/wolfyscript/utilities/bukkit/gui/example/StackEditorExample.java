@@ -2,23 +2,18 @@ package com.wolfyscript.utilities.bukkit.gui.example;
 
 import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl;
 import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
-import com.wolfyscript.utilities.bukkit.gui.GUIHolder;
-import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
-import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.common.adapters.ItemStack;
-import com.wolfyscript.utilities.common.chat.Chat;
-import com.wolfyscript.utilities.common.gui.GuiAPIManager;
-import com.wolfyscript.utilities.common.gui.GuiViewManager;
-import com.wolfyscript.utilities.common.gui.InteractionResult;
-import com.wolfyscript.utilities.common.gui.ReactiveRenderBuilder;
-import com.wolfyscript.utilities.common.gui.components.ButtonBuilder;
-import com.wolfyscript.utilities.common.gui.components.ComponentClusterBuilder;
-import com.wolfyscript.utilities.common.gui.components.StackInputSlotBuilder;
-import com.wolfyscript.utilities.common.gui.signal.Signal;
-import com.wolfyscript.utilities.common.gui.signal.Store;
+import com.wolfyscript.utilities.bukkit.gui.BukkitInventoryGuiHolder;
+import com.wolfyscript.utilities.platform.adapters.ItemStack;
+import com.wolfyscript.utilities.gui.GuiAPIManager;
+import com.wolfyscript.utilities.gui.GuiViewManager;
+import com.wolfyscript.utilities.gui.InteractionResult;
+import com.wolfyscript.utilities.gui.ReactiveRenderBuilder;
+import com.wolfyscript.utilities.gui.components.ButtonBuilder;
+import com.wolfyscript.utilities.gui.components.ComponentClusterBuilder;
+import com.wolfyscript.utilities.gui.components.StackInputSlotBuilder;
+import com.wolfyscript.utilities.gui.signal.Signal;
+import com.wolfyscript.utilities.gui.signal.Store;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -32,7 +27,6 @@ public class StackEditorExample {
     private static class StackEditorStore {
 
         private ItemStack stack;
-
 
         public ItemStack getStack() {
             return stack;
@@ -114,7 +108,7 @@ public class StackEditorExample {
                 .render("set_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                         .interact((holder, details) -> {
                             BukkitChat chat = (BukkitChat) holder.getViewManager().getWolfyUtils().getChat();
-                            Player player = ((GUIHolder) holder).getBukkitPlayer();
+                            Player player = ((BukkitInventoryGuiHolder) holder).player();
                             chat.sendMessage(player, Component.text("Click me"));
                             holder.getViewManager().setTextInputCallback((p, guiViewManager, s, strings) -> {
                                 stackToEdit.update(stack -> {

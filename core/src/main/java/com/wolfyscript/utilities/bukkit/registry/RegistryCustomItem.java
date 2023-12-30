@@ -22,7 +22,7 @@ import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
 import com.wolfyscript.utilities.bukkit.world.items.reference.WolfyUtilsStackIdentifier;
-import com.wolfyscript.utilities.common.registry.AbstractRegistry;
+import com.wolfyscript.utilities.registry.AbstractRegistry;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

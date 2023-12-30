@@ -1,8 +1,8 @@
 package com.wolfyscript.utilities.bukkit.adapters;
 
-import com.wolfyscript.utilities.common.adapters.Block;
-import com.wolfyscript.utilities.common.adapters.Location;
-import com.wolfyscript.utilities.common.adapters.World;
+import com.wolfyscript.utilities.platform.adapters.Block;
+import com.wolfyscript.utilities.platform.adapters.Location;
+import com.wolfyscript.utilities.platform.adapters.World;
 import org.jetbrains.annotations.NotNull;
 
 public class WorldImpl extends BukkitRefAdapter<org.bukkit.World> implements World {

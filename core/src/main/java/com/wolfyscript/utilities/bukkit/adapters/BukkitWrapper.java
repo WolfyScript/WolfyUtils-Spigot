@@ -1,9 +1,9 @@
 package com.wolfyscript.utilities.bukkit.adapters;
 
-import com.wolfyscript.utilities.common.adapters.Entity;
-import com.wolfyscript.utilities.common.adapters.Location;
-import com.wolfyscript.utilities.common.adapters.Player;
-import com.wolfyscript.utilities.common.adapters.World;
+import com.wolfyscript.utilities.platform.adapters.Entity;
+import com.wolfyscript.utilities.platform.adapters.Location;
+import com.wolfyscript.utilities.platform.adapters.Player;
+import com.wolfyscript.utilities.platform.adapters.World;
 
 public class BukkitWrapper {
 

@@ -18,6 +18,7 @@
 
 package com.wolfyscript.utilities.util;
 
+import com.wolfyscript.utilities.world.items.crafting.RecipeUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

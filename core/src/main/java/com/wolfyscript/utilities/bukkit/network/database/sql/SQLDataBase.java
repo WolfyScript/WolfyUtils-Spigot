@@ -18,7 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.network.database.sql;
 
-import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.WolfyUtils;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;

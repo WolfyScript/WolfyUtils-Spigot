@@ -28,7 +28,7 @@ import com.google.common.collect.Multimap;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.world.items.actions.Data;
 import com.wolfyscript.utilities.bukkit.world.items.actions.Event;
-import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.WolfyUtils;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;

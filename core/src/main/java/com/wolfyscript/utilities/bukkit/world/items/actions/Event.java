@@ -26,10 +26,10 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import com.wolfyscript.utilities.Keyed;
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
-import com.wolfyscript.utilities.json.KeyedTypeResolver;
-import com.wolfyscript.utilities.json.annotations.OptionalKeyReference;
+import com.wolfyscript.utilities.WolfyUtils;
+import com.wolfyscript.utilities.config.jackson.KeyedTypeIdResolver;
+import com.wolfyscript.utilities.config.jackson.KeyedTypeResolver;
+import com.wolfyscript.utilities.config.jackson.OptionalKeyReference;
 import java.util.List;
 import java.util.Objects;
 

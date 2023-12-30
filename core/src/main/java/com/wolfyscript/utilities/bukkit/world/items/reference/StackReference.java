@@ -5,7 +5,7 @@ import com.wolfyscript.utilities.Copyable;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.collection.RandomCollection;
-import com.wolfyscript.utilities.common.WolfyCore;
+import com.wolfyscript.utilities.WolfyCore;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -26,7 +26,7 @@ import java.util.function.Consumer;
  */
 public class StackReference implements Copyable<StackReference> {
 
-    private final WolfyCore core;
+    private final WolfyCoreImpl core;
     private final int amount;
     private final double weight;
     /**

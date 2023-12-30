@@ -7,7 +7,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
 import com.wolfyscript.jackson.dataformat.hocon.HoconMapper;
-import com.wolfyscript.utilities.Platform;
 import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
 import com.wolfyscript.utilities.bukkit.commands.ChatActionCommand;
 import com.wolfyscript.utilities.bukkit.commands.GuiExampleCommand;
@@ -20,7 +19,6 @@ import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManager;
 import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManagerBukkit;
 import com.wolfyscript.utilities.bukkit.config.WUConfig;
 import com.wolfyscript.utilities.bukkit.console.Console;
-import com.wolfyscript.utilities.bukkit.gui.components.*;
 import com.wolfyscript.utilities.bukkit.gui.GUIInventoryListener;
 import com.wolfyscript.utilities.bukkit.gui.example.TestGUI;
 import com.wolfyscript.utilities.bukkit.json.serialization.ColorSerialization;
@@ -63,6 +61,7 @@ import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectDa
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import com.wolfyscript.utilities.bukkit.world.inventory.CreativeModeTab;
+import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItemBlockData;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItemData;
 import com.wolfyscript.utilities.bukkit.world.items.actions.Action;
@@ -112,9 +111,9 @@ import com.wolfyscript.utilities.bukkit.world.particles.timer.Timer;
 import com.wolfyscript.utilities.bukkit.world.particles.timer.TimerLinear;
 import com.wolfyscript.utilities.bukkit.world.particles.timer.TimerPi;
 import com.wolfyscript.utilities.bukkit.world.particles.timer.TimerRandom;
-import com.wolfyscript.utilities.common.WolfyCore;
-import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.common.gui.ComponentBuilder;
+import com.wolfyscript.utilities.WolfyCore;
+import com.wolfyscript.utilities.WolfyUtils;
+import com.wolfyscript.utilities.gui.ComponentBuilder;
 import com.wolfyscript.utilities.eval.operator.BoolOperatorConst;
 import com.wolfyscript.utilities.eval.operator.ComparisonOperatorEqual;
 import com.wolfyscript.utilities.eval.operator.ComparisonOperatorGreater;
@@ -142,11 +141,13 @@ import com.wolfyscript.utilities.eval.value_provider.ValueProviderShortConst;
 import com.wolfyscript.utilities.eval.value_provider.ValueProviderShortVar;
 import com.wolfyscript.utilities.eval.value_provider.ValueProviderStringConst;
 import com.wolfyscript.utilities.eval.value_provider.ValueProviderStringVar;
-import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
-import com.wolfyscript.utilities.json.annotations.OptionalKeyReference;
-import com.wolfyscript.utilities.json.annotations.OptionalValueDeserializer;
-import com.wolfyscript.utilities.json.annotations.OptionalValueSerializer;
-import com.wolfyscript.utilities.json.jackson.JacksonUtil;
+import com.wolfyscript.utilities.config.jackson.KeyedTypeIdResolver;
+import com.wolfyscript.utilities.config.jackson.OptionalKeyReference;
+import com.wolfyscript.utilities.config.jackson.OptionalValueDeserializer;
+import com.wolfyscript.utilities.config.jackson.OptionalValueSerializer;
+import com.wolfyscript.utilities.config.jackson.JacksonUtil;
+import com.wolfyscript.utilities.gui.components.*;
+import com.wolfyscript.utilities.gui.example.CounterExample;
 import com.wolfyscript.utilities.nbt.NBTTagConfigBoolean;
 import com.wolfyscript.utilities.nbt.NBTTagConfigByte;
 import com.wolfyscript.utilities.nbt.NBTTagConfigByteArray;
@@ -164,6 +165,7 @@ import com.wolfyscript.utilities.nbt.NBTTagConfigListString;
 import com.wolfyscript.utilities.nbt.NBTTagConfigLong;
 import com.wolfyscript.utilities.nbt.NBTTagConfigShort;
 import com.wolfyscript.utilities.nbt.NBTTagConfigString;
+import com.wolfyscript.utilities.platform.Platform;
 import com.wolfyscript.utilities.versioning.ServerVersion;
 
 import java.lang.reflect.Field;
@@ -172,6 +174,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import com.wolfyscript.utilities.world.items.ItemStackConfig;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -185,7 +189,7 @@ import org.reflections.Reflections;
  * The core implementation of WolfyUtils.<br>
  * It manages the core plugin of WolfyUtils and there is only one instance of it.<br>
  * <p>
- * If you want to use the plugin specific API, see {@link com.wolfyscript.utilities.common.WolfyUtils} & {@link WolfyUtilsBukkit}
+ * If you want to use the plugin specific API, see {@link com.wolfyscript.utilities.WolfyUtils} & {@link WolfyUtilsBukkit}
  */
 public abstract class WolfyCoreImpl implements WolfyCore {
 
@@ -202,6 +206,7 @@ public abstract class WolfyCoreImpl implements WolfyCore {
     private final BukkitRegistries registries;
     private final Logger logger;
     private final WolfyCoreBootstrap plugin;
+    protected Platform platform;
 
     /**
      * Constructor invoked by Spigot when the plugin is loaded.
@@ -263,8 +268,8 @@ public abstract class WolfyCoreImpl implements WolfyCore {
     }
 
     @Override
-    public Platform getPlatform() {
-        return Platform.SPIGOT;
+    public Platform platform() {
+        return platform;
     }
 
     /**
@@ -322,6 +327,9 @@ public abstract class WolfyCoreImpl implements WolfyCore {
         PotionEffectSerialization.create(module);
         VectorSerialization.create(module);
 
+        // Register implementation types to use for de/serialization
+        module.addAbstractTypeMapping(ItemStackConfig.class, BukkitItemStackConfig.class);
+
         // Add module to WU Modules and register it to the old JacksonUtil.
         jsonMapperModules.add(module);
         JacksonUtil.registerModule(module);
@@ -345,7 +353,6 @@ public abstract class WolfyCoreImpl implements WolfyCore {
         api.getJacksonMapperUtil().setGlobalMapper(mapper);
 
         // Initialise all the Registers
-
         getLogger().info("Register JSON Operators");
         var operators = getRegistries().getOperators();
         operators.register(BoolOperatorConst.class);
@@ -537,7 +544,6 @@ public abstract class WolfyCoreImpl implements WolfyCore {
         registerCommands();
 
         TestGUI testGUI = new TestGUI(this);
-
         testGUI.initWithConfig();
 
         CreativeModeTab.init();

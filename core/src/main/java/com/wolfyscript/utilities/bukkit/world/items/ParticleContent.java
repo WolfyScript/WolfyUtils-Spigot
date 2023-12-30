@@ -29,7 +29,7 @@ import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.world.particles.ParticleAnimation;
 import com.wolfyscript.utilities.bukkit.world.particles.ParticleLocation;
-import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.WolfyUtils;
 import java.util.Objects;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;

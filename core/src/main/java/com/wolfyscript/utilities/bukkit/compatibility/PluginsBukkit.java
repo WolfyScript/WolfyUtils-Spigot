@@ -29,7 +29,7 @@ import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.events.DependenciesLoadedEvent;
-import com.wolfyscript.utilities.common.WolfyCore;
+import com.wolfyscript.utilities.WolfyCore;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;

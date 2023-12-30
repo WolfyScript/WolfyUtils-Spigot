@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.WolfyUtils;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Objects;
@@ -40,7 +40,7 @@ import org.jetbrains.annotations.Nullable;
  * It consists of a unique namespace and a key. (The same key can exist in different namespaces) <br>
  * <br>
  * Usually the namespace should be the plugins' (lowercase) name and identifies resources as part of that plugin.<br>
- * e.g. when registering data using the {@link com.wolfyscript.utilities.common.registry.Registry}, etc.<br>
+ * e.g. when registering data using the {@link com.wolfyscript.utilities.registry.Registry}, etc.<br>
  * In those cases the {@link #BukkitNamespacedKey(WolfyUtils, String)} constructor should be used.
  * <br>
  * They can however be used inside a plugin itself with non-plugin namespaces, when resources are only accessible internally.<br>

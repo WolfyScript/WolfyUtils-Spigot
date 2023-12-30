@@ -18,7 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.chat;
 
-import com.wolfyscript.utilities.common.chat.ClickActionCallback;
+import com.wolfyscript.utilities.chat.ClickActionCallback;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.entity.Player;
@@ -27,7 +27,7 @@ import org.bukkit.entity.Player;
  * This adds the old backwards compatible methods that use the Bukkit {@link Player} instead of the
  * new adapter.
  * (Yes this could be an interface, but for backwards compatibility it must be a class!)
- * @deprecated Only contains deprecated methods! Use {@link com.wolfyscript.utilities.common.chat.Chat} instead!
+ * @deprecated Only contains deprecated methods! Use {@link com.wolfyscript.utilities.chat.Chat} instead!
  */
 @Deprecated
 public interface IBukkitChat {
@@ -62,7 +62,7 @@ public interface IBukkitChat {
     /**
      * Sends chat component messages to the player.<br>
      * If `prefix` is set to false, then the messages are just composed of the component.<br>
-     * Otherwise, it does the same as {@link com.wolfyscript.utilities.common.chat.Chat#sendMessages(com.wolfyscript.utilities.common.adapters.Player, Component...)}
+     * Otherwise, it does the same as {@link com.wolfyscript.utilities.chat.Chat#sendMessages(com.wolfyscript.utilities.platform.adapters.Player, Component...)}
      *
      * @param player The player to send the messages to.
      * @param components The components to send.

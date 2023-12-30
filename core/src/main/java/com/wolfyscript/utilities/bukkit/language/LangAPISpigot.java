@@ -2,9 +2,10 @@ package com.wolfyscript.utilities.bukkit.language;
 
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.wolfyscript.utilities.WolfyUtils;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.chat.ChatColor;
-import com.wolfyscript.utilities.common.language.LanguageAPI;
+import com.wolfyscript.utilities.language.LanguageAPI;
 import com.wolfyscript.utilities.language.Language;
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class LangAPISpigot extends LanguageAPI {
 
     private static final Pattern LEGACY_PLACEHOLDER_PATTERN = Pattern.compile("%([^%]+)%");
 
-    public LangAPISpigot(WolfyUtilsBukkit api) {
+    public LangAPISpigot(WolfyUtils api) {
         super(api);
     }
 

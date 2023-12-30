@@ -25,10 +25,10 @@ package com.wolfyscript.utilities.bukkit.nbt;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.WolfyUtils;
 import com.wolfyscript.utilities.eval.context.EvalContext;
 import com.wolfyscript.utilities.eval.value_provider.ValueProvider;
-import com.wolfyscript.utilities.json.annotations.KeyedBaseType;
+import com.wolfyscript.utilities.config.jackson.KeyedBaseType;
 import de.tr7zw.changeme.nbtapi.NBTType;
 import java.util.Objects;
 

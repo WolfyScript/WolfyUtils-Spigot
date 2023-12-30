@@ -21,7 +21,7 @@ package com.wolfyscript.utilities.compatibility.plugins.placeholderapi.value_pro
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
-import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.WolfyUtils;
 import com.wolfyscript.utilities.eval.context.EvalContext;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.PlaceholderAPIIntegration;
 import com.wolfyscript.utilities.bukkit.eval.context.EvalContextPlayer;

@@ -1,15 +1,15 @@
 package com.wolfyscript.utilities.bukkit.adapters;
 
-import com.wolfyscript.utilities.common.adapters.Location;
-import com.wolfyscript.utilities.common.adapters.Vector3D;
-import com.wolfyscript.utilities.common.adapters.World;
+import com.wolfyscript.utilities.platform.adapters.Location;
+import com.wolfyscript.utilities.platform.adapters.Vector3D;
+import com.wolfyscript.utilities.platform.adapters.World;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class EntityImpl<T extends Entity> extends BukkitRefAdapter<T> implements com.wolfyscript.utilities.common.adapters.Entity {
+public class EntityImpl<T extends Entity> extends BukkitRefAdapter<T> implements com.wolfyscript.utilities.platform.adapters.Entity {
 
     public EntityImpl(T entity) {
         super(entity);

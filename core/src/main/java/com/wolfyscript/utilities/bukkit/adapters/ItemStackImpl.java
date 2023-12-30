@@ -4,9 +4,9 @@ import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
-import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.common.adapters.ItemStack;
-import com.wolfyscript.utilities.common.items.ItemStackConfig;
+import com.wolfyscript.utilities.WolfyUtils;
+import com.wolfyscript.utilities.platform.adapters.ItemStack;
+import com.wolfyscript.utilities.world.items.ItemStackConfig;
 
 public class ItemStackImpl extends BukkitRefAdapter<org.bukkit.inventory.ItemStack> implements ItemStack {
 
@@ -28,7 +28,7 @@ public class ItemStackImpl extends BukkitRefAdapter<org.bukkit.inventory.ItemSta
     }
 
     @Override
-    public ItemStackConfig<?> snapshot() {
-        return new BukkitItemStackConfig(wolfyUtils, getBukkitRef());
+    public ItemStackConfig snapshot() {
+        return new BukkitItemStackConfig(wolfyUtils, this);
     }
 }

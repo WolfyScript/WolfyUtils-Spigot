@@ -25,10 +25,3 @@ dependencies {
 }
 
 description = "core"
-
-
-tasks.named<ShadowJar>("shadowJar") {
-    dependencies {
-        include("com.wolfyscript.wolfyutils:wolfyutilities:5.0-SNAPSHOT")
-    }
-}

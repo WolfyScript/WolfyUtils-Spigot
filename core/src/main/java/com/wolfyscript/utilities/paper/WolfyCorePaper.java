@@ -25,7 +25,7 @@ public final class WolfyCorePaper extends WolfyCoreImpl {
 
     /**
      * Gets an instance of the core plugin.
-     * <strong>Only use this if necessary! First try to get the instance via your {@link com.wolfyscript.utilities.common.WolfyUtils} instance!</strong>
+     * <strong>Only use this if necessary! First try to get the instance via your {@link com.wolfyscript.utilities.WolfyUtils} instance!</strong>
      *
      * @return The instance of the core.
      */

@@ -18,7 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.world.inventory.item_builder;
 
-import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.WolfyUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 

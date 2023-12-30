@@ -10,7 +10,8 @@ plugins {
 description = "wolfyutils-spigot"
 
 dependencies {
-    api(apis.wolfyutils)
+    api(apis.wolfyutils.api)
+    implementation(apis.wolfyutils.common)
     implementation(project(":core"))
     implementation(project(":plugin-compatibility"))
     implementation(project(":nmsutil"))
@@ -88,12 +89,16 @@ minecraftServers {
 
 tasks.named<ShadowJar>("shadowJar") {
     dependsOn(project(":nmsutil").tasks.named("shadowJar"))
+    dependsOn(project(":core").tasks.named("shadowJar"))
     mustRunAfter("jar")
 
     archiveClassifier.set("")
 
+    include("**")
+
     dependencies {
-        include(dependency(apis.wolfyutils.get().toString()))
+        include(dependency(apis.wolfyutils.common.get().toString()))
+        include(dependency(apis.wolfyutils.api.get().toString()))
         include(dependency(apis.dataformat.hocon.get().toString()))
         include(dependency("${libs.bstats.get().group}:.*"))
         include(dependency("${libs.nbtapi.api.get().group}:.*"))

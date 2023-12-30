@@ -1,8 +1,8 @@
 package com.wolfyscript.utilities.bukkit;
 
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.common.Identifiers;
-import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.Identifiers;
+import com.wolfyscript.utilities.WolfyUtils;
 import java.util.Locale;
 
 public class BukkitIdentifiers implements Identifiers {

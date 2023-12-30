@@ -21,7 +21,7 @@ package com.wolfyscript.utilities.bukkit.config;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.wolfyscript.utilities.json.jackson.JacksonUtil;
+import com.wolfyscript.utilities.config.jackson.JacksonUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;

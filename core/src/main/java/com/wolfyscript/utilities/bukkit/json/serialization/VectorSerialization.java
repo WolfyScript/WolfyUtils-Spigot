@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.json.jackson.JacksonUtil;
+import com.wolfyscript.utilities.config.jackson.JacksonUtil;
 import org.bukkit.util.Vector;
 
 public class VectorSerialization {

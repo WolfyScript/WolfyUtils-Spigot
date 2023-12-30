@@ -15,7 +15,7 @@ import com.wolfyscript.utilities.bukkit.persistent.world.ChunkStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import com.wolfyscript.utilities.bukkit.world.particles.ParticleLocation;
 import com.wolfyscript.utilities.bukkit.world.particles.ParticleUtils;
-import com.wolfyscript.utilities.common.WolfyCore;
+import com.wolfyscript.utilities.WolfyCore;
 import java.util.Optional;
 import java.util.UUID;
 import org.bukkit.Bukkit;

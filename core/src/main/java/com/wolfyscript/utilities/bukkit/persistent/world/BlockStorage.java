@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.InjectableValues;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
-import com.wolfyscript.utilities.common.WolfyCore;
+import com.wolfyscript.utilities.WolfyCore;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;

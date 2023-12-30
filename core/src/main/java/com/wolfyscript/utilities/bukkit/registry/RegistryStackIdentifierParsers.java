@@ -8,8 +8,8 @@ import com.wolfyscript.utilities.bukkit.world.items.reference.BukkitStackIdentif
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackReference;
-import com.wolfyscript.utilities.common.registry.Registries;
-import com.wolfyscript.utilities.common.registry.RegistrySimple;
+import com.wolfyscript.utilities.registry.Registries;
+import com.wolfyscript.utilities.registry.RegistrySimple;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Comparator;

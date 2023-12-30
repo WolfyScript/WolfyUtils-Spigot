@@ -31,7 +31,7 @@ import com.wolfyscript.utilities.bukkit.world.particles.pos.ParticlePosBlock;
 import com.wolfyscript.utilities.bukkit.world.particles.pos.ParticlePosEntity;
 import com.wolfyscript.utilities.bukkit.world.particles.pos.ParticlePosLocation;
 import com.wolfyscript.utilities.bukkit.world.particles.pos.ParticlePosPlayer;
-import com.wolfyscript.utilities.json.annotations.OptionalKeyReference;
+import com.wolfyscript.utilities.config.jackson.OptionalKeyReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;

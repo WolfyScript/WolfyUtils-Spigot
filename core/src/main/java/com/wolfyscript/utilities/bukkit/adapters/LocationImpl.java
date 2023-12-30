@@ -1,6 +1,6 @@
 package com.wolfyscript.utilities.bukkit.adapters;
 
-import com.wolfyscript.utilities.common.adapters.Location;
+import com.wolfyscript.utilities.platform.adapters.Location;
 
 public class LocationImpl extends BukkitRefAdapter<org.bukkit.Location> implements Location {
 

@@ -19,7 +19,7 @@
 package com.wolfyscript.utilities.bukkit.events.compatibility;
 
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegration;
-import com.wolfyscript.utilities.common.WolfyCore;
+import com.wolfyscript.utilities.WolfyCore;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;

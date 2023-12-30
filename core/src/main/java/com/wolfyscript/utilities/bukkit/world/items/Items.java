@@ -2,7 +2,7 @@ package com.wolfyscript.utilities.bukkit.world.items;
 
 import com.wolfyscript.utilities.bukkit.chat.ChatColor;
 import com.wolfyscript.utilities.bukkit.world.inventory.item_builder.ItemBuilder;
-import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.WolfyUtils;
 import java.util.List;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemFlag;

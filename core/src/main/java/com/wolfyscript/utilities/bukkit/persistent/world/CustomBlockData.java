@@ -10,8 +10,8 @@ import com.wolfyscript.utilities.Keyed;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItemBlockData;
-import com.wolfyscript.utilities.json.KeyedTypeIdResolver;
-import com.wolfyscript.utilities.json.KeyedTypeResolver;
+import com.wolfyscript.utilities.config.jackson.KeyedTypeIdResolver;
+import com.wolfyscript.utilities.config.jackson.KeyedTypeResolver;
 
 /**
  * This data is used to store persistent data on Blocks.<br>

@@ -35,13 +35,13 @@ import com.wolfyscript.utilities.bukkit.world.particles.ParticleEffect;
 import com.wolfyscript.utilities.bukkit.world.particles.animators.Animator;
 import com.wolfyscript.utilities.bukkit.world.particles.shapes.Shape;
 import com.wolfyscript.utilities.bukkit.world.particles.timer.Timer;
-import com.wolfyscript.utilities.common.gui.Component;
-import com.wolfyscript.utilities.common.registry.Registries;
-import com.wolfyscript.utilities.common.registry.Registry;
-import com.wolfyscript.utilities.common.registry.RegistryGUIComponentBuilders;
-import com.wolfyscript.utilities.common.registry.RegistrySimple;
-import com.wolfyscript.utilities.common.registry.TypeRegistry;
-import com.wolfyscript.utilities.common.registry.UniqueTypeRegistrySimple;
+import com.wolfyscript.utilities.gui.Component;
+import com.wolfyscript.utilities.registry.Registries;
+import com.wolfyscript.utilities.registry.Registry;
+import com.wolfyscript.utilities.registry.RegistryGUIComponentBuilders;
+import com.wolfyscript.utilities.registry.RegistrySimple;
+import com.wolfyscript.utilities.registry.TypeRegistry;
+import com.wolfyscript.utilities.registry.UniqueTypeRegistrySimple;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -126,7 +126,7 @@ public class BukkitRegistries extends Registries {
     }
 
     @Override
-    protected void indexTypedRegistry(@NotNull com.wolfyscript.utilities.common.registry.Registry<?> registry) {
+    protected void indexTypedRegistry(@NotNull com.wolfyscript.utilities.registry.Registry<?> registry) {
         super.indexTypedRegistry(registry);
     }
 

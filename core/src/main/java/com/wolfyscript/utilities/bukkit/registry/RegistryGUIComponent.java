@@ -1,9 +1,9 @@
 package com.wolfyscript.utilities.bukkit.registry;
 
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.common.gui.Component;
-import com.wolfyscript.utilities.common.registry.Registries;
-import com.wolfyscript.utilities.common.registry.UniqueTypeRegistrySimple;
+import com.wolfyscript.utilities.gui.Component;
+import com.wolfyscript.utilities.registry.Registries;
+import com.wolfyscript.utilities.registry.UniqueTypeRegistrySimple;
 
 public class RegistryGUIComponent extends UniqueTypeRegistrySimple<Component> {
 

@@ -18,37 +18,37 @@
 
 package com.wolfyscript.utilities.bukkit.gui;
 
+import com.wolfyscript.utilities.gui.GuiViewManagerImpl;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class GUIInventoryListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInvClick(InventoryClickEvent event) {
-        if (event.getInventory().getHolder() instanceof GUIHolder guiHolder) {
-            ((GuiViewManagerImpl) guiHolder.getViewManager()).blockedByInteraction();
-            guiHolder.onClick(event);
+        if (event.getInventory().getHolder() instanceof BukkitInventoryGuiHolder bukkitInventoryGuiHolder) {
+            ((GuiViewManagerImpl) bukkitInventoryGuiHolder.guiHolder().getViewManager()).blockedByInteraction();
+            bukkitInventoryGuiHolder.onClick(event);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onItemDrag(InventoryDragEvent event) {
-        if (event.getInventory().getHolder() instanceof GUIHolder guiHolder) {
-            ((GuiViewManagerImpl) guiHolder.getViewManager()).blockedByInteraction();
-            guiHolder.onDrag(event);
+        if (event.getInventory().getHolder() instanceof BukkitInventoryGuiHolder bukkitInventoryGuiHolder) {
+            ((GuiViewManagerImpl) bukkitInventoryGuiHolder.guiHolder().getViewManager()).blockedByInteraction();
+            bukkitInventoryGuiHolder.onDrag(event);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onClose(InventoryCloseEvent event) {
-        if (event.getInventory().getHolder() instanceof GUIHolder guiHolder) {
-            ((GuiViewManagerImpl) guiHolder.getViewManager()).blockedByInteraction();
-            guiHolder.onClose(event);
+        if (event.getInventory().getHolder() instanceof BukkitInventoryGuiHolder bukkitInventoryGuiHolder) {
+            ((GuiViewManagerImpl) bukkitInventoryGuiHolder.guiHolder().getViewManager()).blockedByInteraction();
+            bukkitInventoryGuiHolder.onClose(event);
         }
     }
 

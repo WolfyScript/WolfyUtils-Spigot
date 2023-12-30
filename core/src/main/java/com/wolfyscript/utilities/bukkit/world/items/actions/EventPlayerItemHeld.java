@@ -21,7 +21,7 @@ package com.wolfyscript.utilities.bukkit.world.items.actions;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.WolfyUtils;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 
 public class EventPlayerItemHeld extends EventPlayer<DataPlayerEvent<PlayerItemHeldEvent>> {

@@ -23,14 +23,12 @@ import com.mojang.authlib.properties.Property;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.world.inventory.item_builder.ItemBuilder;
 import java.lang.reflect.Field;
+import java.util.Base64;
 import java.util.UUID;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-
-import static com.wolfyscript.utilities.util.EncryptionUtils.getBase64EncodedString;
-
 
 public class PlayerHeadUtils {
 
@@ -102,7 +100,7 @@ public class PlayerHeadUtils {
         if (value != null && !value.isEmpty()) {
             String texture = value;
             if (value.startsWith("https://") || value.startsWith("http://")) {
-                texture = getBase64EncodedString(String.format("{\"textures\":{\"SKIN\":{\"url\":\"%s\"}}}", value));
+                texture = Base64.getEncoder().encodeToString(String.format("{\"textures\":{\"SKIN\":{\"url\":\"%s\"}}}", value).getBytes());
             }
             GameProfile profile = new GameProfile(UUID.randomUUID(), null);
             profile.getProperties().put("textures", new Property("textures", texture));

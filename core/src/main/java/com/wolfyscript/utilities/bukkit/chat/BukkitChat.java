@@ -4,8 +4,8 @@ import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.adapters.BukkitWrapper;
 import com.wolfyscript.utilities.bukkit.adapters.PlayerImpl;
-import com.wolfyscript.utilities.common.chat.Chat;
-import com.wolfyscript.utilities.common.chat.ClickActionCallback;
+import com.wolfyscript.utilities.chat.Chat;
+import com.wolfyscript.utilities.chat.ClickActionCallback;
 import com.wolfyscript.utilities.tuple.Pair;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,14 +17,10 @@ import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -55,22 +51,22 @@ public class BukkitChat extends Chat implements IBukkitChat {
      * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     @Override
-    public void sendMessage(com.wolfyscript.utilities.common.adapters.Player player, Component component) {
+    public void sendMessage(com.wolfyscript.utilities.platform.adapters.Player player, Component component) {
         checkAndExc(player, player1 -> sendMessage(player1, component));
     }
 
     @Override
-    public void sendMessage(com.wolfyscript.utilities.common.adapters.Player player, boolean legacyColor, Component component) {
+    public void sendMessage(com.wolfyscript.utilities.platform.adapters.Player player, boolean legacyColor, Component component) {
         checkAndExc(player, player1 -> sendMessage(player1, legacyColor, component));
     }
 
     @Override
-    public void sendMessages(com.wolfyscript.utilities.common.adapters.Player player, Component... components) {
+    public void sendMessages(com.wolfyscript.utilities.platform.adapters.Player player, Component... components) {
         checkAndExc(player, player1 -> sendMessages(player1, components));
     }
 
     @Override
-    public void sendMessages(com.wolfyscript.utilities.common.adapters.Player player, boolean legacyColor, Component... components) {
+    public void sendMessages(com.wolfyscript.utilities.platform.adapters.Player player, boolean legacyColor, Component... components) {
         checkAndExc(player, player1 -> sendMessages(player1, legacyColor, components));
     }
 
@@ -96,7 +92,7 @@ public class BukkitChat extends Chat implements IBukkitChat {
      * @param playerAdapter The Player adapter to use.
      * @param consumer The task to run when the bukkit player is available.
      */
-    private void checkAndExc(com.wolfyscript.utilities.common.adapters.Player playerAdapter, Consumer<Player> consumer) {
+    private void checkAndExc(com.wolfyscript.utilities.platform.adapters.Player playerAdapter, Consumer<Player> consumer) {
         if (playerAdapter instanceof PlayerImpl bukkitPlayer) {
             consumer.accept(bukkitPlayer.getBukkitRef());
         }
@@ -141,7 +137,7 @@ public class BukkitChat extends Chat implements IBukkitChat {
     }
 
     @Override
-    public net.kyori.adventure.text.event.ClickEvent executable(com.wolfyscript.utilities.common.adapters.Player player, boolean discard, ClickActionCallback actionCallback) {
+    public net.kyori.adventure.text.event.ClickEvent executable(com.wolfyscript.utilities.platform.adapters.Player player, boolean discard, ClickActionCallback actionCallback) {
         Preconditions.checkArgument(actionCallback != null, "The click action cannot be null!");
         UUID id;
         do {

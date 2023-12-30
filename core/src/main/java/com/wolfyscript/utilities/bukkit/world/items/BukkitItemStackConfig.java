@@ -3,9 +3,13 @@ package com.wolfyscript.utilities.bukkit.world.items;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wolfyscript.utilities.platform.adapters.ItemStack;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.common.items.ItemStackConfig;
+import com.wolfyscript.utilities.WolfyUtils;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.bukkit.adapters.BukkitWrapper;
+import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl;
+import com.wolfyscript.utilities.world.items.ItemStackConfig;
 import com.wolfyscript.utilities.nbt.NBTTagConfig;
 import com.wolfyscript.utilities.nbt.NBTTagConfigBoolean;
 import com.wolfyscript.utilities.nbt.NBTTagConfigByte;
@@ -63,10 +67,9 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class BukkitItemStackConfig extends ItemStackConfig<ItemStack> {
+public class BukkitItemStackConfig extends ItemStackConfig {
 
     private final boolean usePaperDisplayOptions;
     private final Set<String> HANDLED_NBT_TAGS = Set.of("display.Name", "display.Lore", "CustomModelData", "Damage", "Enchantments");
@@ -77,8 +80,10 @@ public class BukkitItemStackConfig extends ItemStackConfig<ItemStack> {
         this.usePaperDisplayOptions = ((WolfyCoreBukkit) wolfyUtils.getCore()).getCompatibilityManager().isPaper() && ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 18, 2));
     }
 
-    public BukkitItemStackConfig(WolfyUtils wolfyUtils, ItemStack stack) {
-        super(wolfyUtils, stack.getType().getKey().toString());
+    public BukkitItemStackConfig(WolfyUtils wolfyUtils, ItemStack wrappedStack) {
+        super(wolfyUtils, ((ItemStackImpl) wrappedStack).getBukkitRef().getType().getKey().toString());
+        org.bukkit.inventory.ItemStack stack = ((ItemStackImpl) wrappedStack).getBukkitRef();
+
         this.usePaperDisplayOptions = ((WolfyCoreBukkit) wolfyUtils.getCore()).getCompatibilityManager().isPaper() && ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 18, 2));
 
         // Read from ItemStack
@@ -111,19 +116,20 @@ public class BukkitItemStackConfig extends ItemStackConfig<ItemStack> {
     }
 
     @Override
-    public ItemStack constructItemStack() {
+    public ItemStackImpl constructItemStack() {
         return constructItemStack(new EvalContext());
     }
 
     @Override
-    public ItemStack constructItemStack(EvalContext context) {
+    public ItemStackImpl constructItemStack(EvalContext context) {
         return constructItemStack(context, wolfyUtils.getChat().getMiniMessage(), TagResolver.empty());
     }
 
-    public ItemStack constructItemStack(EvalContext context, MiniMessage miniMsg, TagResolver... tagResolvers) {
+    @Override
+    public ItemStackImpl constructItemStack(EvalContext context, MiniMessage miniMsg, TagResolver tagResolvers) {
         Material type = Material.matchMaterial(itemId);
         if (type != null) {
-            ItemStack itemStack = new ItemStack(type);
+            var itemStack = new org.bukkit.inventory.ItemStack(type);
             itemStack.setAmount(amount.getValue(context));
 
             // Apply the NBT of the stack
@@ -169,7 +175,7 @@ public class BukkitItemStackConfig extends ItemStackConfig<ItemStack> {
 
                 itemStack.setItemMeta(meta);
             }
-            return itemStack;
+            return new ItemStackImpl((WolfyUtilsBukkit) wolfyUtils, itemStack);
         }
         return null;
     }

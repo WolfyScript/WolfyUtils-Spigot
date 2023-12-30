@@ -3,7 +3,7 @@ package com.wolfyscript.utilities.bukkit.nbt;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wolfyscript.utilities.KeyedStaticId;
-import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.WolfyUtils;
 import de.tr7zw.changeme.nbtapi.NBTType;
 import java.util.List;
 

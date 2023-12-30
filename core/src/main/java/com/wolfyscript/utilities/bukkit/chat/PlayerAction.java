@@ -21,8 +21,8 @@ package com.wolfyscript.utilities.bukkit.chat;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import java.util.UUID;
 
-import com.wolfyscript.utilities.common.adapters.Player;
-import com.wolfyscript.utilities.common.chat.ClickActionCallback;
+import com.wolfyscript.utilities.platform.adapters.Player;
+import com.wolfyscript.utilities.chat.ClickActionCallback;
 import net.kyori.adventure.audience.Audience;
 
 /**
@@ -42,7 +42,7 @@ public class PlayerAction {
         this.discard = discard;
     }
 
-    public void run(com.wolfyscript.utilities.common.adapters.Player player) {
+    public void run(com.wolfyscript.utilities.platform.adapters.Player player) {
         if (clickAction != null) {
             clickAction.run(api, player);
         }

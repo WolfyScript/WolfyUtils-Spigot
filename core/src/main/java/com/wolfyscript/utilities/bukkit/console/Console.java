@@ -20,8 +20,8 @@ package com.wolfyscript.utilities.bukkit.console;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.common.language.LanguageAPI;
+import com.wolfyscript.utilities.WolfyUtils;
+import com.wolfyscript.utilities.language.LanguageAPI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;

@@ -19,7 +19,7 @@
 package com.wolfyscript.utilities.bukkit.world.items.actions;
 
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.common.WolfyUtils;
+import com.wolfyscript.utilities.WolfyUtils;
 import java.util.List;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;

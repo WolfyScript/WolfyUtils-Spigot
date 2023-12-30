@@ -2,12 +2,12 @@ package com.wolfyscript.utilities.bukkit.registry;
 
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.common.gui.Component;
-import com.wolfyscript.utilities.common.gui.ComponentBuilder;
-import com.wolfyscript.utilities.common.gui.ComponentBuilderSettings;
-import com.wolfyscript.utilities.common.registry.Registries;
-import com.wolfyscript.utilities.common.registry.RegistryGUIComponentBuilders;
-import com.wolfyscript.utilities.common.registry.UniqueTypeRegistrySimple;
+import com.wolfyscript.utilities.gui.Component;
+import com.wolfyscript.utilities.gui.ComponentBuilder;
+import com.wolfyscript.utilities.gui.ComponentBuilderSettings;
+import com.wolfyscript.utilities.registry.Registries;
+import com.wolfyscript.utilities.registry.RegistryGUIComponentBuilders;
+import com.wolfyscript.utilities.registry.UniqueTypeRegistrySimple;
 import java.util.HashMap;
 import java.util.Map;
 

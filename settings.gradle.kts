@@ -56,7 +56,11 @@ dependencyResolutionManagement {
             library("adventure-api", "net.kyori", "adventure-api").versionRef("adventure")
             library("adventure-minimessage", "net.kyori", "adventure-text-minimessage").versionRef("adventure")
             library("adventure-platform-bukkit", "net.kyori", "adventure-platform-bukkit").version("4.1.2")
-            library("jackson", "com.fasterxml.jackson.core", "jackson-databind").version("2.14.0-rc1")
+
+            library("jackson-annotations", "com.fasterxml.jackson.core", "jackson-annotations").version("2.16.1")
+            library("jackson-databind", "com.fasterxml.jackson.core", "jackson-databind").version("2.16.1")
+            library("jackson-core", "com.fasterxml.jackson.core", "jackson-core").version("2.16.1")
+
             library("fastutil", "it.unimi.dsi", "fastutil").version("8.5.6")
             library("typesafe.config", "com.typesafe", "config").version("1.3.1")
             library("bstats", "org.bstats", "bstats-bukkit").version("3.0.0")
@@ -71,7 +75,8 @@ dependencyResolutionManagement {
         }
         // internal apis
         create("apis") {
-            library("wolfyutils", "com.wolfyscript.wolfyutils", "wolfyutilities").version("5.0-SNAPSHOT")
+            library("wolfyutils-common", "com.wolfyscript.wolfyutils", "common").version("5.0-alpha.1-SNAPSHOT")
+            library("wolfyutils-api", "com.wolfyscript.wolfyutils", "api").version("5.0-alpha.1-SNAPSHOT")
             library("dataformat-hocon", "com.wolfyscript", "jackson-dataformat-hocon").version("2.1-SNAPSHOT")
         }
 

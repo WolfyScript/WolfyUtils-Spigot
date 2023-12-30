@@ -22,17 +22,15 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
-import com.wolfyscript.utilities.common.WolfyUtils;
-import com.wolfyscript.utilities.util.EncryptionUtils;
+import com.wolfyscript.utilities.WolfyUtils;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTCompoundList;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.NBTListCompound;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -397,7 +395,7 @@ public abstract class AbstractItemBuilder<T extends AbstractItemBuilder<?>> {
         Preconditions.checkArgument(!name.isEmpty(), "Name of Skull cannot be empty!");
         String textureValue = value;
         if (value.startsWith("https://") || value.startsWith("http://")) {
-            textureValue = EncryptionUtils.getBase64EncodedString(String.format("{textures:{SKIN:{url:\"%s\"}}}", value));
+            textureValue = Base64.getEncoder().encodeToString(String.format("{textures:{SKIN:{url:\"%s\"}}}", value).getBytes(StandardCharsets.UTF_8));
         }
         NBTItem nbtItem = new NBTItem(getItemStack(), true);
         NBTCompound skull = nbtItem.addCompound("SkullOwner");
