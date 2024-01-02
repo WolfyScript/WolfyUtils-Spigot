@@ -6,6 +6,7 @@ import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierPar
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -31,12 +32,15 @@ public class MythicMobsStackIdentifier implements StackIdentifier {
     @Override
     public ItemStack stack(ItemCreateContext context) {
         ItemStack stack = mythicBukkit.getItemManager().getItemStack(itemName);
-        stack.setAmount(context.amount());
+        if (stack != null) {
+            stack.setAmount(context.amount());
+        }
         return stack;
     }
 
     @Override
     public boolean matches(ItemStack other, int count, boolean exact, boolean ignoreAmount) {
+        if (ItemUtils.isAirOrNull(other)) return false;
         var value = NBTItem.convertItemtoNBT(other).getString(ITEM_KEY);
         if (value != null) {
             return Objects.equals(this.itemName, value);
@@ -66,6 +70,7 @@ public class MythicMobsStackIdentifier implements StackIdentifier {
 
         @Override
         public Optional<MythicMobsStackIdentifier> from(ItemStack itemStack) {
+            if (ItemUtils.isAirOrNull(itemStack)) return Optional.empty();
             var tag = NBTItem.convertItemtoNBT(itemStack).getCompound("tag");
             if (tag == null) return Optional.empty();
             var value = tag.getString(ITEM_KEY);

@@ -42,6 +42,7 @@ public class ItemsAdderStackIdentifier implements StackIdentifier {
 
     @Override
     public boolean matches(ItemStack other, int count, boolean exact, boolean ignoreAmount) {
+        if (ItemUtils.isAirOrNull(other)) return false;
         if (!ignoreAmount && other.getAmount() < stack(ItemCreateContext.empty(count)).getAmount() * count) return false;
         var customStack = CustomStack.byItemStack(other);
         return customStack != null && Objects.equals(itemId, customStack.getNamespacedID());

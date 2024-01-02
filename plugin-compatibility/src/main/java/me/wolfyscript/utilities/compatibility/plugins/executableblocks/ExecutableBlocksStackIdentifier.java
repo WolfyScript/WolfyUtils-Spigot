@@ -6,6 +6,7 @@ import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import me.wolfyscript.utilities.compatibility.plugins.ExecutableBlocksIntegration;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -38,6 +39,7 @@ public class ExecutableBlocksStackIdentifier implements StackIdentifier {
 
     @Override
     public boolean matches(ItemStack other, int count, boolean exact, boolean ignoreAmount) {
+        if (ItemUtils.isAirOrNull(other)) return false;
         if (!ignoreAmount && other.getAmount() < stack(ItemCreateContext.empty(count)).getAmount() * count) return false;
         return integration.getExecutableBlock(other).map(eB -> eB.equals(id)).orElse(false);
     }

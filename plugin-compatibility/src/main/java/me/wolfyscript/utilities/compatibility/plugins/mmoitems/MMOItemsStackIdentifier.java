@@ -5,6 +5,7 @@ import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import io.lumine.mythic.lib.api.item.NBTItem;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.Type;
 import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
@@ -40,11 +41,10 @@ public class MMOItemsStackIdentifier implements StackIdentifier {
 
     @Override
     public boolean matches(ItemStack other, int count, boolean exact, boolean ignoreAmount) {
+        if (ItemUtils.isAirOrNull(other)) return false;
         var nbtItem = NBTItem.get(other);
-        if (nbtItem.hasType()) {
-            return Objects.equals(this.itemType, MMOItems.plugin.getTypes().get(nbtItem.getType())) && Objects.equals(this.itemName, nbtItem.getString("MMOITEMS_ITEM_ID"));
-        }
-        return false;
+        if (!nbtItem.hasType()) return false;
+        return Objects.equals(this.itemType, MMOItems.plugin.getTypes().get(nbtItem.getType())) && Objects.equals(this.itemName, nbtItem.getString("MMOITEMS_ITEM_ID"));
     }
 
     @Override
@@ -69,6 +69,7 @@ public class MMOItemsStackIdentifier implements StackIdentifier {
 
         @Override
         public Optional<MMOItemsStackIdentifier> from(ItemStack itemStack) {
+            if (ItemUtils.isAirOrNull(itemStack)) return Optional.empty();
             NBTItem nbtItem = NBTItem.get(itemStack);
             if (nbtItem.hasType()) {
                 Type type = MMOItems.plugin.getTypes().get(nbtItem.getType());

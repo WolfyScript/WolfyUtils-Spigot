@@ -9,6 +9,7 @@ import me.chickenstyle.backpack.Backpack;
 import me.chickenstyle.backpack.Utils;
 import me.chickenstyle.backpack.configs.CustomBackpacks;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -71,6 +72,7 @@ public class FancyBagsStackIdentifier implements StackIdentifier {
 
         @Override
         public Optional<FancyBagsStackIdentifier> from(ItemStack itemStack) {
+            if (ItemUtils.isAirOrNull(itemStack)) return Optional.empty();
             NBTItem nbtItem = new NBTItem(itemStack);
             if (nbtItem.hasTag(ID_TAG, NBTType.NBTTagInt)) {
                 return Optional.of(new FancyBagsStackIdentifier(nbtItem.getInteger(ID_TAG)));
