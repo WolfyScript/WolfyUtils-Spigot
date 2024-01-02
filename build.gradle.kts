@@ -88,6 +88,7 @@ minecraftServers {
 
 tasks.named<ShadowJar>("shadowJar") {
     dependsOn(project(":nmsutil").tasks.named("shadowJar"))
+    dependsOn(project(":core").tasks.named("shadowJar"))
     mustRunAfter("jar")
 
     archiveClassifier.set("")
