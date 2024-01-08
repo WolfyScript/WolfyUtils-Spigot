@@ -4,6 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
+/**
+ * Used to keep track of old {@link me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference} data from the config.
+ * Because APIReferences did not store the original ItemStack in the config, the StackIdentifiers need to be parsed from the old data instead.
+ */
 public class LegacyStackReference extends StackReference {
 
     private final JsonNode data;
