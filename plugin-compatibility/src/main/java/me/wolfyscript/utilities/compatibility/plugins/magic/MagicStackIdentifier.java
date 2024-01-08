@@ -1,8 +1,10 @@
 package me.wolfyscript.utilities.compatibility.plugins.magic;
 
 import com.elmakers.mine.bukkit.api.magic.MagicAPI;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
+import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import me.wolfyscript.utilities.util.NamespacedKey;
@@ -55,7 +57,7 @@ public class MagicStackIdentifier implements StackIdentifier {
         return ID;
     }
 
-    public static class Parser implements StackIdentifierParser<MagicStackIdentifier> {
+    public static class Parser implements StackIdentifierParser<MagicStackIdentifier>, LegacyParser<MagicStackIdentifier> {
 
         private final MagicAPI magicAPI;
 
@@ -79,6 +81,11 @@ public class MagicStackIdentifier implements StackIdentifier {
         @Override
         public NamespacedKey getNamespacedKey() {
             return ID;
+        }
+
+        @Override
+        public Optional<MagicStackIdentifier> from(JsonNode legacyData) {
+            return Optional.of(new MagicStackIdentifier(legacyData.asText()));
         }
     }
 

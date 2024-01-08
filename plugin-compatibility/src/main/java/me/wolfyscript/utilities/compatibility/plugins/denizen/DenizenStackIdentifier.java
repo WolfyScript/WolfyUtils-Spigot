@@ -1,10 +1,14 @@
 package me.wolfyscript.utilities.compatibility.plugins.denizen;
 
 import com.denizenscript.denizen.scripts.containers.core.ItemScriptHelper;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
+import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -50,7 +54,7 @@ public class DenizenStackIdentifier implements StackIdentifier {
         return ID;
     }
 
-    public static class Parser implements StackIdentifierParser<DenizenStackIdentifier> {
+    public static class Parser implements StackIdentifierParser<DenizenStackIdentifier>, LegacyParser<DenizenStackIdentifier> {
 
         @Override
         public int priority() {
@@ -77,6 +81,20 @@ public class DenizenStackIdentifier implements StackIdentifier {
                     Component.text("Denizen").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD),
                     new DisplayConfiguration.MaterialIconSettings(Material.COMMAND_BLOCK)
             );
+        }
+
+        @Override
+        public Optional<DenizenStackIdentifier> from(JsonNode legacyData) {
+            if (legacyData.isObject()) {
+                ItemStack item = WolfyUtilCore.getInstance().getWolfyUtils().getJacksonMapperUtil().getGlobalMapper().convertValue(legacyData.path("display_item"), ItemStack.class);
+                if(!ItemUtils.isAirOrNull(item)) {
+                    String script = legacyData.path("script").asText("");
+                    if (!script.isBlank()) {
+                        return Optional.of(new DenizenStackIdentifier(item, script));
+                    }
+                }
+            }
+            return Optional.empty();
         }
     }
 

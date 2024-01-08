@@ -1,6 +1,8 @@
 package me.wolfyscript.utilities.compatibility.plugins.itemsadder;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
+import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import dev.lone.itemsadder.api.CustomStack;
@@ -61,7 +63,7 @@ public class ItemsAdderStackIdentifier implements StackIdentifier {
         return ID;
     }
 
-    public static class Parser implements StackIdentifierParser<ItemsAdderStackIdentifier> {
+    public static class Parser implements StackIdentifierParser<ItemsAdderStackIdentifier>, LegacyParser<ItemsAdderStackIdentifier> {
 
         @Override
         public int priority() {
@@ -88,6 +90,11 @@ public class ItemsAdderStackIdentifier implements StackIdentifier {
                     Component.text("ItemsAdder").color(NamedTextColor.YELLOW).decorate(TextDecoration.BOLD),
                     new DisplayConfiguration.MaterialIconSettings(Material.GRASS_BLOCK)
             );
+        }
+
+        @Override
+        public Optional<ItemsAdderStackIdentifier> from(JsonNode legacyData) {
+            return Optional.of(new ItemsAdderStackIdentifier(legacyData.asText()));
         }
     }
 

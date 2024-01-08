@@ -1,7 +1,9 @@
 package me.wolfyscript.utilities.compatibility.plugins.eco;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.willfp.eco.core.items.Items;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
+import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import me.wolfyscript.utilities.util.NamespacedKey;
@@ -54,7 +56,7 @@ public class EcoStackIdentifier implements StackIdentifier {
         return ID;
     }
 
-    public static class Parser implements StackIdentifierParser<EcoStackIdentifier> {
+    public static class Parser implements StackIdentifierParser<EcoStackIdentifier>, LegacyParser<EcoStackIdentifier> {
 
         @Override
         public int priority() {
@@ -83,6 +85,11 @@ public class EcoStackIdentifier implements StackIdentifier {
                     Component.text("Eco").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD),
                     new DisplayConfiguration.MaterialIconSettings(Material.EMERALD)
             );
+        }
+
+        @Override
+        public Optional<EcoStackIdentifier> from(JsonNode legacyData) {
+            return Optional.of(new EcoStackIdentifier(org.bukkit.NamespacedKey.fromString(legacyData.asText())));
         }
     }
 

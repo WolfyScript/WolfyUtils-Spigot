@@ -1,7 +1,9 @@
 package me.wolfyscript.utilities.compatibility.plugins.executableitems;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.ssomar.score.api.executableitems.config.ExecutableItemsManagerInterface;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
+import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import me.wolfyscript.utilities.util.NamespacedKey;
@@ -36,6 +38,7 @@ public class ExecutableItemsStackIdentifier implements StackIdentifier {
     @Override
     public boolean matches(ItemStack other, int count, boolean exact, boolean ignoreAmount) {
         if (ItemUtils.isAirOrNull(other)) return false;
+        // TODO: DO NOT build the stack here!!!!
         if (!ignoreAmount && other.getAmount() < stack(ItemCreateContext.empty(count)).getAmount() * count) return false;
         return manager.getExecutableItem(other).map(exeItem -> exeItem.getId().equals(id)).orElse(false);
     }
@@ -53,7 +56,7 @@ public class ExecutableItemsStackIdentifier implements StackIdentifier {
         return ID;
     }
 
-    public static class Parser implements StackIdentifierParser<ExecutableItemsStackIdentifier> {
+    public static class Parser implements StackIdentifierParser<ExecutableItemsStackIdentifier>, LegacyParser<ExecutableItemsStackIdentifier> {
 
         private final ExecutableItemsManagerInterface manager;
 
@@ -74,6 +77,11 @@ public class ExecutableItemsStackIdentifier implements StackIdentifier {
         @Override
         public NamespacedKey getNamespacedKey() {
             return ID;
+        }
+
+        @Override
+        public Optional<ExecutableItemsStackIdentifier> from(JsonNode legacyData) {
+            return Optional.of(new ExecutableItemsStackIdentifier(manager, legacyData.asText()));
         }
     }
 

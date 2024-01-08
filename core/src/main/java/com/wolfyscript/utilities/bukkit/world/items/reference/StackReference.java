@@ -5,12 +5,15 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.deser.std.StdNodeBasedDeserializer;
+import com.google.common.collect.Streams;
 import com.wolfyscript.utilities.Copyable;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.VanillaRef;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import me.wolfyscript.utilities.util.inventory.ItemUtils;
+import me.wolfyscript.utilities.util.json.jackson.serialization.APIReferenceSerialization;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -40,22 +43,23 @@ public class StackReference implements Copyable<StackReference> {
     /**
      * Used to store the original stack
      */
-    private final ItemStack stack;
+    protected ItemStack stack;
     /**
      * Used to store the previous parser result
      */
-    private StackIdentifier identifier;
+    protected StackIdentifier identifier;
+    private NamespacedKey parserKey;
     private StackIdentifierParser<?> parser;
 
     public static StackReference of(ItemStack itemStack) {
         return new StackReference(WolfyUtilCore.getInstance(), new BukkitStackIdentifier(itemStack), 1, 1, itemStack);
     }
 
-    public StackReference(WolfyUtilCore core, NamespacedKey parser, double weight, int amount, ItemStack item) {
+    public StackReference(WolfyUtilCore core, NamespacedKey parserKey, double weight, int amount, ItemStack item) {
         this.amount = amount;
         this.weight = weight;
         this.core = core;
-        setParser(core.getRegistries().getStackIdentifierParsers().get(parser));
+        setParserKey(parserKey);
         this.stack = item;
         this.identifier = parseIdentifier();
     }
@@ -64,7 +68,7 @@ public class StackReference implements Copyable<StackReference> {
         this.amount = amount;
         this.weight = weight;
         this.core = core;
-        setParser(core.getRegistries().getStackIdentifierParsers().get(identifier.getNamespacedKey()));
+        setParserKey(identifier.getNamespacedKey());
         this.stack = item;
         this.identifier = identifier;
     }
@@ -73,18 +77,26 @@ public class StackReference implements Copyable<StackReference> {
         this.weight = stackReference.weight;
         this.amount = stackReference.amount;
         this.core = stackReference.core;
-        setParser(stackReference.parser);
+        setParserKey(stackReference.parserKey);
         this.stack = stackReference.stack;
         this.identifier = parseIdentifier();
     }
 
-    private void setParser(StackIdentifierParser<?> parser) {
-        this.parser = parser;
+    private void setParserKey(NamespacedKey parserKey) {
+        this.parserKey = parserKey;
     }
 
-    private StackIdentifier parseIdentifier() {
-        if (parser == null) return null;
-        return parser.from(stack).orElse(null);
+    /**
+     * Parses the identifier when it is not available, or returns the current identifier.
+     *
+     * @return The parsed Identifier, or null if not available.
+     */
+    protected StackIdentifier parseIdentifier() {
+        if (identifier == null) {
+            if (parser() == null) return null;
+            identifier = parser.from(stack).orElse(null);
+        }
+        return identifier;
     }
 
     /**
@@ -93,7 +105,7 @@ public class StackReference implements Copyable<StackReference> {
      * @return The currently wrapped StackIdentifier
      */
     public Optional<StackIdentifier> identifier() {
-        return Optional.ofNullable(identifier);
+        return Optional.ofNullable(parseIdentifier());
     }
 
     public boolean matches(ItemStack other) {
@@ -173,6 +185,9 @@ public class StackReference implements Copyable<StackReference> {
      * @return The current {@link StackIdentifierParser}
      */
     public StackIdentifierParser<?> parser() {
+        if (parser == null) {
+            parser = core.getRegistries().getStackIdentifierParsers().get(parserKey);
+        }
         return parser;
     }
 
@@ -182,7 +197,8 @@ public class StackReference implements Copyable<StackReference> {
      * @param parser The new parser to use to get the StackIdentifier
      */
     public void swapParser(StackIdentifierParser<?> parser) {
-        setParser(parser);
+        setParserKey(parser.getNamespacedKey());
+        this.identifier = null;
         this.identifier = parseIdentifier();
     }
 
@@ -193,7 +209,7 @@ public class StackReference implements Copyable<StackReference> {
      */
     @JsonGetter("parser")
     private NamespacedKey parserId() {
-        return parser.getNamespacedKey();
+        return parserKey;
     }
 
     @Override
@@ -333,9 +349,35 @@ public class StackReference implements Copyable<StackReference> {
                         ctxt.readTreeAsValue(root.get("stack"), ItemStack.class)
                 );
             }
-            // Need to convert APIReference
-            APIReference apiReference = ctxt.readTreeAsValue(root, APIReference.class);
-            return apiReference.convertToStackReference();
+
+            // Legacy API Reference! Need to convert!
+            if (root.isObject()) {
+                int customAmount = root.path(APIReferenceSerialization.CUSTOM_AMOUNT).asInt(0);
+                double weight = root.path(APIReferenceSerialization.WEIGHT).asDouble(0);
+                return Streams.stream(root.fieldNames()).filter(s -> !s.equals(APIReferenceSerialization.WEIGHT) && !s.equals(APIReferenceSerialization.CUSTOM_AMOUNT)).findFirst()
+                        .map(key -> {
+                            APIReference.Parser<?> parser = CustomItem.getApiReferenceParser(key);
+                            if (parser != null) {
+                                APIReference reference = parser.parse(root.path(key));
+                                if (reference != null) {
+                                    reference.setAmount(customAmount);
+                                    reference.setWeight(weight);
+                                    return reference.convertToStackReference();
+                                }
+                            }
+                            return new LegacyStackReference(core, NamespacedKey.wolfyutilties(key), weight, customAmount, root.path(key));
+                        }).orElseGet(() -> StackReference.of(ItemUtils.AIR));
+            }
+            if (root.isTextual()) {
+                //Legacy items saved as string!
+                APIReference apiReference = ctxt.readTreeAsValue(root, VanillaRef.class);
+                if (apiReference != null) {
+                    return StackReference.of(apiReference.getLinkedItem() != null ? apiReference.getLinkedItem() : ItemUtils.AIR);
+                }
+                return StackReference.of(ItemUtils.AIR);
+            }
+            // Unknown type
+            return StackReference.of(ItemUtils.AIR);
         }
     }
 }

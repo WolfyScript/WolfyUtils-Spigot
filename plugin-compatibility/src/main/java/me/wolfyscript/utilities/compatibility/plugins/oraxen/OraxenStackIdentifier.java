@@ -1,6 +1,8 @@
 package me.wolfyscript.utilities.compatibility.plugins.oraxen;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
+import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import io.th0rgal.oraxen.api.OraxenItems;
@@ -59,7 +61,7 @@ public class OraxenStackIdentifier implements StackIdentifier {
         return ID;
     }
 
-    public static class Parser implements StackIdentifierParser<OraxenStackIdentifier> {
+    public static class Parser implements StackIdentifierParser<OraxenStackIdentifier>, LegacyParser<OraxenStackIdentifier> {
 
         @Override
         public int priority() {
@@ -86,6 +88,11 @@ public class OraxenStackIdentifier implements StackIdentifier {
                     Component.text("Oraxen").color(NamedTextColor.DARK_AQUA).decorate(TextDecoration.BOLD),
                     new DisplayConfiguration.MaterialIconSettings(Material.DIAMOND)
             );
+        }
+
+        @Override
+        public Optional<OraxenStackIdentifier> from(JsonNode legacyData) {
+            return Optional.of(new OraxenStackIdentifier(legacyData.asText()));
         }
     }
 
