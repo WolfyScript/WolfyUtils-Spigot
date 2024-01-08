@@ -52,7 +52,7 @@ public class StackReference implements Copyable<StackReference> {
     private StackIdentifierParser<?> parser;
 
     public static StackReference of(ItemStack itemStack) {
-        return new StackReference(WolfyUtilCore.getInstance(), new BukkitStackIdentifier(itemStack), 1, 1, itemStack);
+        return new StackReference(WolfyUtilCore.getInstance(), new BukkitStackIdentifier(itemStack), 1, itemStack.getAmount(), itemStack);
     }
 
     public StackReference(WolfyUtilCore core, NamespacedKey parserKey, double weight, int amount, ItemStack item) {
@@ -117,6 +117,8 @@ public class StackReference implements Copyable<StackReference> {
     }
 
     public boolean matches(ItemStack other, boolean exact, boolean ignoreAmount) {
+        if (ItemUtils.isAirOrNull(other)) return false;
+        if (!ignoreAmount && other.getAmount() < amount) return false;
         return identifier().map(identifier -> identifier.matches(other, amount, exact, ignoreAmount)).orElse(false);
     }
 
