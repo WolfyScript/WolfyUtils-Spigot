@@ -1,6 +1,8 @@
 package me.wolfyscript.utilities.compatibility.plugins.mmoitems;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
+import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import io.lumine.mythic.lib.api.item.NBTItem;
@@ -60,7 +62,7 @@ public class MMOItemsStackIdentifier implements StackIdentifier {
         return ID;
     }
 
-    public static class Parser implements StackIdentifierParser<MMOItemsStackIdentifier> {
+    public static class Parser implements StackIdentifierParser<MMOItemsStackIdentifier>, LegacyParser<MMOItemsStackIdentifier> {
 
         @Override
         public int priority() {
@@ -90,6 +92,17 @@ public class MMOItemsStackIdentifier implements StackIdentifier {
                     Component.text("MMOItems").color(NamedTextColor.DARK_GRAY).decorate(TextDecoration.BOLD),
                     new DisplayConfiguration.MaterialIconSettings(Material.IRON_SWORD)
             );
+        }
+
+        @Override
+        public Optional<MMOItemsStackIdentifier> from(JsonNode legacyData) {
+            if (legacyData.has("type") && legacyData.has("name")) {
+                String typeID = legacyData.get("type").asText();
+                if (MMOItems.plugin.getTypes().has(typeID)) {
+                    return Optional.of(new MMOItemsStackIdentifier(MMOItems.plugin.getTypes().get(typeID), legacyData.get("name").asText()));
+                }
+            }
+            return Optional.empty();
         }
     }
 

@@ -1,6 +1,8 @@
 package me.wolfyscript.utilities.compatibility.plugins.mythicmobs;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
+import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import de.tr7zw.changeme.nbtapi.NBTItem;
@@ -61,7 +63,7 @@ public class MythicMobsStackIdentifier implements StackIdentifier {
         return ID;
     }
 
-    public static class Parser implements StackIdentifierParser<MythicMobsStackIdentifier> {
+    public static class Parser implements StackIdentifierParser<MythicMobsStackIdentifier>, LegacyParser<MythicMobsStackIdentifier> {
 
         @Override
         public int priority() {
@@ -91,6 +93,11 @@ public class MythicMobsStackIdentifier implements StackIdentifier {
                     Component.text("MythicMobs").color(NamedTextColor.DARK_PURPLE).decorate(TextDecoration.BOLD),
                     new DisplayConfiguration.MaterialIconSettings(Material.WITHER_SKELETON_SKULL)
             );
+        }
+
+        @Override
+        public Optional<MythicMobsStackIdentifier> from(JsonNode legacyData) {
+            return Optional.of(new MythicMobsStackIdentifier(legacyData.asText()));
         }
     }
 

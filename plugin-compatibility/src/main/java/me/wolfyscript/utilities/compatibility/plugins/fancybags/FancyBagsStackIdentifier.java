@@ -1,6 +1,8 @@
 package me.wolfyscript.utilities.compatibility.plugins.fancybags;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
+import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import de.tr7zw.changeme.nbtapi.NBTItem;
@@ -63,7 +65,7 @@ public class FancyBagsStackIdentifier implements StackIdentifier {
         return ID;
     }
 
-    public static class Parser implements StackIdentifierParser<FancyBagsStackIdentifier> {
+    public static class Parser implements StackIdentifierParser<FancyBagsStackIdentifier>, LegacyParser<FancyBagsStackIdentifier> {
 
         @Override
         public int priority() {
@@ -83,6 +85,11 @@ public class FancyBagsStackIdentifier implements StackIdentifier {
         @Override
         public NamespacedKey getNamespacedKey() {
             return ID;
+        }
+
+        @Override
+        public Optional<FancyBagsStackIdentifier> from(JsonNode legacyData) {
+            return Optional.of(new FancyBagsStackIdentifier(legacyData.asInt()));
         }
     }
 

@@ -1,7 +1,9 @@
 package me.wolfyscript.utilities.compatibility.plugins.executableblocks;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.ssomar.executableblocks.executableblocks.ExecutableBlocksManager;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
+import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import me.wolfyscript.utilities.compatibility.plugins.ExecutableBlocksIntegration;
@@ -57,7 +59,7 @@ public class ExecutableBlocksStackIdentifier implements StackIdentifier {
         return ID;
     }
 
-    public static class Parser implements StackIdentifierParser<ExecutableBlocksStackIdentifier> {
+    public static class Parser implements StackIdentifierParser<ExecutableBlocksStackIdentifier>, LegacyParser<ExecutableBlocksStackIdentifier> {
 
         private final ExecutableBlocksIntegration integration;
         private final ExecutableBlocksManager manager;
@@ -80,6 +82,11 @@ public class ExecutableBlocksStackIdentifier implements StackIdentifier {
         @Override
         public NamespacedKey getNamespacedKey() {
             return ID;
+        }
+
+        @Override
+        public Optional<ExecutableBlocksStackIdentifier> from(JsonNode legacyData) {
+            return Optional.of(new ExecutableBlocksStackIdentifier(integration, manager, legacyData.asText()));
         }
     }
 
