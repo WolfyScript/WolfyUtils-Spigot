@@ -32,8 +32,8 @@ import java.util.stream.Collectors;
 
 public class APIReferenceSerialization {
 
-    private static final String CUSTOM_AMOUNT = "custom_amount";
-    private static final String WEIGHT = "weight";
+    public static final String CUSTOM_AMOUNT = "custom_amount";
+    public static final String WEIGHT = "weight";
 
     private APIReferenceSerialization() {
     }

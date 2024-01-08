@@ -349,9 +349,35 @@ public class StackReference implements Copyable<StackReference> {
                         ctxt.readTreeAsValue(root.get("stack"), ItemStack.class)
                 );
             }
-            // Need to convert APIReference
-            APIReference apiReference = ctxt.readTreeAsValue(root, APIReference.class);
-            return apiReference.convertToStackReference();
+
+            // Legacy API Reference! Need to convert!
+            if (root.isObject()) {
+                int customAmount = root.path(APIReferenceSerialization.CUSTOM_AMOUNT).asInt(0);
+                double weight = root.path(APIReferenceSerialization.WEIGHT).asDouble(0);
+                return Streams.stream(root.fieldNames()).filter(s -> !s.equals(APIReferenceSerialization.WEIGHT) && !s.equals(APIReferenceSerialization.CUSTOM_AMOUNT)).findFirst()
+                        .map(key -> {
+                            APIReference.Parser<?> parser = CustomItem.getApiReferenceParser(key);
+                            if (parser != null) {
+                                APIReference reference = parser.parse(root.path(key));
+                                if (reference != null) {
+                                    reference.setAmount(customAmount);
+                                    reference.setWeight(weight);
+                                    return reference.convertToStackReference();
+                                }
+                            }
+                            return new LegacyStackReference(core, NamespacedKey.wolfyutilties(key), weight, customAmount, root.path(key));
+                        }).orElseGet(() -> StackReference.of(ItemUtils.AIR));
+            }
+            if (root.isTextual()) {
+                //Legacy items saved as string!
+                APIReference apiReference = ctxt.readTreeAsValue(root, VanillaRef.class);
+                if (apiReference != null) {
+                    return StackReference.of(apiReference.getLinkedItem() != null ? apiReference.getLinkedItem() : ItemUtils.AIR);
+                }
+                return StackReference.of(ItemUtils.AIR);
+            }
+            // Unknown type
+            return StackReference.of(ItemUtils.AIR);
         }
     }
 }
