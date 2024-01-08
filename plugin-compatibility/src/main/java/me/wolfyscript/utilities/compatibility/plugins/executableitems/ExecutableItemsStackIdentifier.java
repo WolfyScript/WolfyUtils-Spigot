@@ -38,8 +38,6 @@ public class ExecutableItemsStackIdentifier implements StackIdentifier {
     @Override
     public boolean matches(ItemStack other, int count, boolean exact, boolean ignoreAmount) {
         if (ItemUtils.isAirOrNull(other)) return false;
-        // TODO: DO NOT build the stack here!!!!
-        if (!ignoreAmount && other.getAmount() < stack(ItemCreateContext.empty(count)).getAmount() * count) return false;
         return manager.getExecutableItem(other).map(exeItem -> exeItem.getId().equals(id)).orElse(false);
     }
 
