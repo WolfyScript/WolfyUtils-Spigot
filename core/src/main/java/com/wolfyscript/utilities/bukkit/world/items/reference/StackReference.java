@@ -43,7 +43,7 @@ public class StackReference implements Copyable<StackReference> {
     /**
      * Used to store the original stack
      */
-    private ItemStack stack;
+    protected ItemStack stack;
     /**
      * Used to store the previous parser result
      */

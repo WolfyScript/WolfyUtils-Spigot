@@ -3,6 +3,7 @@ package com.wolfyscript.utilities.bukkit.world.items.reference;
 import com.fasterxml.jackson.databind.JsonNode;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Used to keep track of old {@link me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference} data from the config.
@@ -19,6 +20,14 @@ public class LegacyStackReference extends StackReference {
 
     public JsonNode data() {
         return data;
+    }
+
+    @Override
+    public ItemStack originalStack() {
+        if (stack == null) {
+            stack = identifier().map(stackIdentifier -> stackIdentifier.stack(ItemCreateContext.empty(amount()))).orElse(null);
+        }
+        return super.originalStack();
     }
 
     @Override
