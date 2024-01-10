@@ -28,6 +28,7 @@ public class ExecutableBlocksImpl extends PluginIntegrationAbstract implements E
     public void init(Plugin plugin) {
         this.manager = ExecutableBlocksManager.getInstance();
         core.registerAPIReference(new ExecutableBlocksRef.Parser(this, manager));
+        core.getRegistries().getStackIdentifierParsers().register(new ExecutableBlocksStackIdentifier.Parser(this, manager));
     }
 
     @Override
