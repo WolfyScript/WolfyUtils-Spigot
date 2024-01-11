@@ -344,9 +344,10 @@ public class StackReference implements Copyable<StackReference> {
         public StackReference convert(JsonNode root, DeserializationContext ctxt) throws IOException {
             if (root.has("parser")) {
                 // New ItemReference used! No conversion required!
+                double weight = root.get("amount").asDouble(1);
                 return new StackReference(core,
                         ctxt.readTreeAsValue(root.get("parser"), NamespacedKey.class),
-                        root.get("weight").asDouble(1),
+                        weight <= 0 ? 1 : weight, // make sure weight is greater than 0, so it never disappears unintentionally (e.g. in Recipe results)!
                         root.get("amount").asInt(1),
                         ctxt.readTreeAsValue(root.get("stack"), ItemStack.class)
                 );
@@ -355,7 +356,7 @@ public class StackReference implements Copyable<StackReference> {
             // Legacy API Reference! Need to convert!
             if (root.isObject()) {
                 int customAmount = root.path(APIReferenceSerialization.CUSTOM_AMOUNT).asInt(0);
-                double weight = root.path(APIReferenceSerialization.WEIGHT).asDouble(0);
+                double weight = root.path(APIReferenceSerialization.WEIGHT).asDouble(1);
                 return Streams.stream(root.fieldNames()).filter(s -> !s.equals(APIReferenceSerialization.WEIGHT) && !s.equals(APIReferenceSerialization.CUSTOM_AMOUNT)).findFirst()
                         .map(key -> {
                             APIReference.Parser<?> parser = CustomItem.getApiReferenceParser(key);
