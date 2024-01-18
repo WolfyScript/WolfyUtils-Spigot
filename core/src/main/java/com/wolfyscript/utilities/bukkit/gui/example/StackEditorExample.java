@@ -3,26 +3,19 @@ package com.wolfyscript.utilities.bukkit.gui.example;
 import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl;
 import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
 import com.wolfyscript.utilities.bukkit.gui.BukkitInventoryGuiHolder;
-import com.wolfyscript.utilities.platform.adapters.ItemStack;
 import com.wolfyscript.utilities.gui.GuiAPIManager;
-import com.wolfyscript.utilities.gui.GuiViewManager;
 import com.wolfyscript.utilities.gui.InteractionResult;
 import com.wolfyscript.utilities.gui.ReactiveRenderBuilder;
 import com.wolfyscript.utilities.gui.components.ButtonBuilder;
 import com.wolfyscript.utilities.gui.components.ComponentClusterBuilder;
 import com.wolfyscript.utilities.gui.components.StackInputSlotBuilder;
 import com.wolfyscript.utilities.gui.signal.Signal;
-import com.wolfyscript.utilities.gui.signal.Store;
+import com.wolfyscript.utilities.platform.adapters.ItemStack;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Map;
-import java.util.WeakHashMap;
-
 public class StackEditorExample {
-
-    private static final Map<GuiViewManager, StackEditorStore> editorStores = new WeakHashMap<>();
 
     private static class StackEditorStore {
 
@@ -44,62 +37,59 @@ public class StackEditorExample {
     }
 
     static void register(GuiAPIManager manager) {
-        manager.registerGuiFromFiles("stack_editor", builder -> builder
-                .window(mainMenu -> mainMenu
-                        .size(9 * 6)
-                        .construct((renderer) -> {
-                            // This is only called upon creation of the state. So this is not called when the signal is updated!
-                            StackEditorStore editorStore = editorStores.computeIfAbsent(renderer.viewManager(), guiViewManager -> new StackEditorStore());
+        manager.registerGuiFromFiles("stack_editor", (reactiveSrc, builder) -> {
+                    builder.window((reactiveSrc2, mainMenu) -> {
+                        mainMenu.size(9 * 6);
+                        // This is only called upon creation of the state. So this is not called when the signal is updated!
 
-                            // Persistent data stores
-                            Store<ItemStack> stackToEdit = renderer.syncStore("stack_to_edit", ItemStack.class, editorStore::getStack, editorStore::setStack);
+                        // Persistent data stores
+                        Signal<ItemStack> stackToEdit = reactiveSrc.createStore(viewRuntime -> new StackEditorStore(), StackEditorStore::getStack, StackEditorStore::setStack);
 
-                            // Weak data signals
-                            Signal<Tab> selectedTab = renderer.signal("selected_tab", Tab.class, () -> Tab.NONE);
+                        // Weak data signals
+                        Signal<Tab> selectedTab = reactiveSrc.createSignal(Tab.NONE);
 
-                            renderer
-                                    .reactive(reactiveBuilder -> {
-                                        // Reactive parts are called everytime the signal used inside this closure is updated.
-                                        ItemStack itemStack = stackToEdit.get();
-                                        if (itemStack == null || itemStack.getItem() == null || itemStack.getItem().getKey().equals("air"))
-                                            return null;
+                        mainMenu.reactive(reactiveBuilder -> {
+                                    // Reactive parts are called everytime the signal used inside this closure is updated.
+                                    ItemStack itemStack = stackToEdit.get();
+                                    if (itemStack == null || itemStack.getItem() == null || itemStack.getItem().getKey().equals("air"))
+                                        return null;
 
-                                        return switch (selectedTab.get()) {
-                                            case DISPLAY_NAME -> displayNameTab(reactiveBuilder, stackToEdit);
-                                            case LORE ->
-                                                    reactiveBuilder.render("lore_tab", ComponentClusterBuilder.class, displayNameClusterBuilder -> displayNameClusterBuilder
-                                                            .render("edit_lore", ButtonBuilder.class, buttonBuilder -> buttonBuilder
-                                                                    .interact((holder, details) -> {
+                                    return switch (selectedTab.get()) {
+                                        case DISPLAY_NAME -> displayNameTab(reactiveBuilder, stackToEdit);
+                                        case LORE ->
+                                                reactiveBuilder.render("lore_tab", ComponentClusterBuilder.class, displayNameClusterBuilder -> displayNameClusterBuilder
+                                                        .render("edit_lore", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                                                                .interact((holder, details) -> {
 
-                                                                        return InteractionResult.cancel(true);
-                                                                    }))
-                                                            .render("clear_lore", ButtonBuilder.class, buttonBuilder -> buttonBuilder
-                                                                    .interact((holder, details) -> {
+                                                                    return InteractionResult.cancel(true);
+                                                                }))
+                                                        .render("clear_lore", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                                                                .interact((holder, details) -> {
 
-                                                                        return InteractionResult.cancel(true);
-                                                                    })));
-                                            default -> null; // No tab selected!
-                                        };
-                                    })
-                                    // The state of a component is only reconstructed if the slot it is positioned at changes.
-                                    // Here the slot will always have the same type of component, so the state is created only once.
-                                    .render("stack_slot", StackInputSlotBuilder.class, inputSlotBuilder -> inputSlotBuilder
-                                            .interact((guiHolder, interactionDetails) -> InteractionResult.cancel(false))
-                                            .onValueChange(stackToEdit::set)
-                                            .value(stackToEdit)
-                                    )
-                                    .render("display_name_tab_selector", ButtonBuilder.class, buttonBuilder -> buttonBuilder
-                                            .interact((holder, details) -> {
-                                                selectedTab.set(Tab.DISPLAY_NAME);
-                                                return InteractionResult.cancel(true);
-                                            }))
-                                    .render("lore_tab_selector", ButtonBuilder.class, buttonBuilder -> buttonBuilder
-                                            .interact((holder, details) -> {
-                                                selectedTab.set(Tab.LORE);
-                                                return InteractionResult.cancel(true);
-                                            }));
-                        })
-                )
+                                                                    return InteractionResult.cancel(true);
+                                                                })));
+                                        default -> null; // No tab selected!
+                                    };
+                                })
+                                // The state of a component is only reconstructed if the slot it is positioned at changes.
+                                // Here the slot will always have the same type of component, so the state is created only once.
+                                .component("stack_slot", StackInputSlotBuilder.class, inputSlotBuilder -> inputSlotBuilder
+                                        .interact((guiHolder, interactionDetails) -> InteractionResult.cancel(false))
+                                        .onValueChange(stackToEdit::set)
+                                        .value(stackToEdit)
+                                )
+                                .component("display_name_tab_selector", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                                        .interact((holder, details) -> {
+                                            selectedTab.set(Tab.DISPLAY_NAME);
+                                            return InteractionResult.cancel(true);
+                                        }))
+                                .component("lore_tab_selector", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                                        .interact((holder, details) -> {
+                                            selectedTab.set(Tab.LORE);
+                                            return InteractionResult.cancel(true);
+                                        }));
+                    });
+                }
         );
     }
 

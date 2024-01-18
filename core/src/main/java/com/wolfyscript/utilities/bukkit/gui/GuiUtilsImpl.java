@@ -17,7 +17,7 @@ import java.util.UUID;
 public class GuiUtilsImpl implements GuiUtils {
 
     @Override
-    public RenderContext createRenderContext(Window window, GuiViewManager viewManager, UUID viewer) {
+    public RenderContext createRenderContext(Window window, ViewRuntime viewManager, UUID viewer) {
         Player bukkitPlayer = Bukkit.getPlayer(viewer);
         if (bukkitPlayer == null) return null;
         Inventory topInventory = bukkitPlayer.getOpenInventory().getTopInventory();

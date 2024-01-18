@@ -157,16 +157,15 @@ public class RenderContextImpl implements RenderContext {
     }
 
     @Override
-    public void openAndRenderMenuFor(GuiViewManager viewManager, UUID viewer) {
+    public void openAndRenderMenuFor(ViewRuntime viewManager, UUID viewer) {
         Player player = Bukkit.getPlayer(viewer);
         if (player.getOpenInventory().getTopInventory() != inventory) {
             player.openInventory(inventory);
             viewManager.getCurrentMenu().ifPresent(window -> {
                 GuiHolder holder = ((BukkitInventoryGuiHolder) getInventory().getHolder()).guiHolder();
-                var dynamic = window.construct(holder, viewManager);
-                dynamic.open(viewManager);
-                dynamic.render(holder, viewManager, this);
-                ((GuiViewManagerImpl) viewManager).setCurrentRoot(dynamic);
+                window.open(viewManager);
+                window.render(holder, viewManager, this);
+                ((ViewRuntimeImpl) viewManager).setCurrentRoot(window);
             });
         }
         viewManager.updateSignalQueue(this);

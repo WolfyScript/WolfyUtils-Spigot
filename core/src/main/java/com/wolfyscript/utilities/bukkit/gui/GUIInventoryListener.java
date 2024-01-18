@@ -18,7 +18,6 @@
 
 package com.wolfyscript.utilities.bukkit.gui;
 
-import com.wolfyscript.utilities.gui.GuiViewManagerImpl;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -31,7 +30,7 @@ public class GUIInventoryListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInvClick(InventoryClickEvent event) {
         if (event.getInventory().getHolder() instanceof BukkitInventoryGuiHolder bukkitInventoryGuiHolder) {
-            ((GuiViewManagerImpl) bukkitInventoryGuiHolder.guiHolder().getViewManager()).blockedByInteraction();
+            bukkitInventoryGuiHolder.guiHolder().getViewManager().blockedByInteraction();
             bukkitInventoryGuiHolder.onClick(event);
         }
     }
@@ -39,7 +38,7 @@ public class GUIInventoryListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onItemDrag(InventoryDragEvent event) {
         if (event.getInventory().getHolder() instanceof BukkitInventoryGuiHolder bukkitInventoryGuiHolder) {
-            ((GuiViewManagerImpl) bukkitInventoryGuiHolder.guiHolder().getViewManager()).blockedByInteraction();
+            bukkitInventoryGuiHolder.guiHolder().getViewManager().blockedByInteraction();
             bukkitInventoryGuiHolder.onDrag(event);
         }
     }
@@ -47,7 +46,7 @@ public class GUIInventoryListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onClose(InventoryCloseEvent event) {
         if (event.getInventory().getHolder() instanceof BukkitInventoryGuiHolder bukkitInventoryGuiHolder) {
-            ((GuiViewManagerImpl) bukkitInventoryGuiHolder.guiHolder().getViewManager()).blockedByInteraction();
+            bukkitInventoryGuiHolder.guiHolder().getViewManager().blockedByInteraction();
             bukkitInventoryGuiHolder.onClose(event);
         }
     }

@@ -21,7 +21,7 @@ package com.wolfyscript.utilities.bukkit.commands;
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.adapters.BukkitWrapper;
-import com.wolfyscript.utilities.gui.GuiViewManager;
+import com.wolfyscript.utilities.gui.ViewRuntime;
 import com.wolfyscript.utilities.gui.callback.TextInputCallback;
 import com.wolfyscript.utilities.gui.callback.TextInputTabCompleteCallback;
 import com.wolfyscript.utilities.tuple.Pair;
@@ -61,7 +61,7 @@ public final class InputCommand extends Command implements PluginIdentifiableCom
                 .map(viewManager -> new Pair<>(viewManager, viewManager.textInputCallback()))
                 .filter(pair -> pair.getValue().isPresent())
                 .forEach(pair -> {
-                    GuiViewManager viewManager = pair.getKey();
+                    ViewRuntime viewManager = pair.getKey();
                     TextInputCallback textInputCallback = pair.getValue().get();
                     String text = String.join(" ", args).trim();
 
@@ -86,7 +86,7 @@ public final class InputCommand extends Command implements PluginIdentifiableCom
                     .filter(pair -> pair.getValue().isPresent())
                     .findFirst()
                     .map(pair -> {
-                        GuiViewManager viewManager = pair.getKey();
+                        ViewRuntime viewManager = pair.getKey();
                         TextInputTabCompleteCallback textInputCallback = pair.getValue().get();
                         return textInputCallback.apply(BukkitWrapper.adapt(player), viewManager, String.join(" ", args).trim(), args);
                     }).orElse(List.of());

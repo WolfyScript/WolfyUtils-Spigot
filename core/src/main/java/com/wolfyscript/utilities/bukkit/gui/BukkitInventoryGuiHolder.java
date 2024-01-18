@@ -40,7 +40,7 @@ public class BukkitInventoryGuiHolder implements InventoryHolder {
     void onClick(InventoryClickEvent event) {
         if (currentWindow() == null || event.getClickedInventory() == null) return;
         if (Objects.equals(event.getClickedInventory().getHolder(), this)) {
-            GuiViewManagerImpl guiViewManager = (GuiViewManagerImpl) guiHolder.getViewManager();
+            ViewRuntimeImpl guiViewManager = (ViewRuntimeImpl) guiHolder.getViewManager();
             guiHolder.getViewManager().getCurrentMenu().ifPresent(window -> {
                 InteractionResult result = guiViewManager.getLeaveNode(event.getSlot())
                         .map(component -> {
@@ -75,7 +75,7 @@ public class BukkitInventoryGuiHolder implements InventoryHolder {
         if (Objects.equals(event.getInventory().getHolder(), this)) {
             var interactionDetails = new DragInteractionDetailsImpl(event);
             for (int slot : event.getInventorySlots()) {
-                if (((GuiViewManagerImpl) guiHolder.getViewManager()).getLeaveNode(slot).map(component -> {
+                if (((ViewRuntimeImpl) guiHolder.getViewManager()).getLeaveNode(slot).map(component -> {
                     if (component instanceof Interactable interactable) {
                         return interactable.interact(guiHolder, interactionDetails);
                     }

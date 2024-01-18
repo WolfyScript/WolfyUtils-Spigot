@@ -75,8 +75,8 @@ dependencyResolutionManagement {
         }
         // internal apis
         create("apis") {
-            library("wolfyutils-common", "com.wolfyscript.wolfyutils", "common").version("5.0-alpha.1-SNAPSHOT")
-            library("wolfyutils-api", "com.wolfyscript.wolfyutils", "api").version("5.0-alpha.1-SNAPSHOT")
+            library("wolfyutils-common", "com.wolfyscript.wolfyutils", "common").version("5.0-alpha.2-SNAPSHOT")
+            library("wolfyutils-api", "com.wolfyscript.wolfyutils", "api").version("5.0-alpha.2-SNAPSHOT")
             library("dataformat-hocon", "com.wolfyscript", "jackson-dataformat-hocon").version("2.1-SNAPSHOT")
         }
 
