@@ -44,7 +44,7 @@ public class FancyBagsStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public boolean matches(ItemStack other, int count, boolean exact, boolean ignoreAmount) {
+    public boolean matchesIgnoreCount(ItemStack other, boolean exact) {
         NBTItem nbtItem = new NBTItem(other);
         if (nbtItem.hasTag(ID_TAG, NBTType.NBTTagInt)) {
             return nbtItem.getInteger(ID_TAG) == id;

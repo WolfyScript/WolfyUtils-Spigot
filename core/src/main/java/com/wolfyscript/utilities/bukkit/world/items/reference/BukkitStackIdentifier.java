@@ -31,9 +31,7 @@ public class BukkitStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public boolean matches(ItemStack other, int count, boolean exact, boolean ignoreAmount) {
-        if (other.getType() != stack.getType()) return false;
-        if (!ignoreAmount && other.getAmount() < stack.getAmount() * count) return false;
+    public boolean matchesIgnoreCount(ItemStack other, boolean exact) {
         if (stack.hasItemMeta() || exact) return stack.isSimilar(other);
         return true;
     }

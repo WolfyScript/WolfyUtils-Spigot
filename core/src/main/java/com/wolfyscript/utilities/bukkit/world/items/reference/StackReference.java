@@ -119,7 +119,7 @@ public class StackReference implements Copyable<StackReference> {
     public boolean matches(ItemStack other, boolean exact, boolean ignoreAmount) {
         if (ItemUtils.isAirOrNull(other)) return false;
         if (!ignoreAmount && other.getAmount() < amount) return false;
-        return identifier().map(identifier -> identifier.matches(other, amount, exact, ignoreAmount)).orElse(false);
+        return identifier().map(identifier -> identifier.matchesIgnoreCount(other, exact)).orElse(false);
     }
 
     /**

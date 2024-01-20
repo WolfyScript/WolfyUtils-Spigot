@@ -41,7 +41,7 @@ public class MythicMobsStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public boolean matches(ItemStack other, int count, boolean exact, boolean ignoreAmount) {
+    public boolean matchesIgnoreCount(ItemStack other, boolean exact) {
         if (ItemUtils.isAirOrNull(other)) return false;
         var value = NBTItem.convertItemtoNBT(other).getString(ITEM_KEY);
         if (value != null) {

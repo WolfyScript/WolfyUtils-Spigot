@@ -36,7 +36,7 @@ public class ExecutableItemsStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public boolean matches(ItemStack other, int count, boolean exact, boolean ignoreAmount) {
+    public boolean matchesIgnoreCount(ItemStack other, boolean exact) {
         if (ItemUtils.isAirOrNull(other)) return false;
         return manager.getExecutableItem(other).map(exeItem -> exeItem.getId().equals(id)).orElse(false);
     }

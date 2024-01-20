@@ -36,18 +36,20 @@ public interface StackIdentifier extends Keyed {
      * @return true if the other stack matches this identifier
      */
     default boolean matches(ItemStack other) {
-        return matches(other, true, false);
+        return matches(other, true);
     }
 
     default boolean matches(ItemStack other, boolean exact) {
-        return matches(other, exact, false);
+        return matches(other, 1, exact);
     }
 
-    default boolean matches(ItemStack other, boolean exact, boolean ignoreAmount) {
-        return matches(other, 1, exact, ignoreAmount);
+    default boolean matches(ItemStack other, int count, boolean exact) {
+        if (ItemUtils.isAirOrNull(other)) return false;
+        if (other.getAmount() < count) return false;
+        return matchesIgnoreCount(other, exact);
     }
 
-    boolean matches(ItemStack other, int count, boolean exact, boolean ignoreAmount);
+    boolean matchesIgnoreCount(ItemStack other, boolean exact);
 
     /**
      * Gets the optional permission string this identifier requires

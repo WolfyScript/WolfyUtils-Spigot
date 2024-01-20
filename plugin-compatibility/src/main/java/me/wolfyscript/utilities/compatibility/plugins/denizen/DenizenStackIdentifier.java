@@ -37,7 +37,7 @@ public class DenizenStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public boolean matches(ItemStack other, int count, boolean exact, boolean ignoreAmount) {
+    public boolean matchesIgnoreCount(ItemStack other, boolean exact) {
         return Objects.equals(ItemScriptHelper.getItemScriptNameText(other), itemScript);
     }
 

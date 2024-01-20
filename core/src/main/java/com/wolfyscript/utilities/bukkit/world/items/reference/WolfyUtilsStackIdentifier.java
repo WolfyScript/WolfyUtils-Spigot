@@ -53,7 +53,7 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public boolean matches(ItemStack other, int count, boolean exact, boolean ignoreAmount) {
+    public boolean matchesIgnoreCount(ItemStack other, boolean exact) {
         if (other == null) return false;
         var itemMeta = other.getItemMeta();
         if (itemMeta == null) return false;
