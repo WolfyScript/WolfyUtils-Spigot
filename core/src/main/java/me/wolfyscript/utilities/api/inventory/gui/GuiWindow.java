@@ -19,6 +19,7 @@
 package me.wolfyscript.utilities.api.inventory.gui;
 
 import com.wolfyscript.utilities.bukkit.TagResolverUtil;
+import com.wolfyscript.utilities.bukkit.gui.GUIInventoryDeferrer;
 import me.wolfyscript.utilities.api.chat.Chat;
 import me.wolfyscript.utilities.api.chat.ClickAction;
 import me.wolfyscript.utilities.api.chat.ClickData;
@@ -46,6 +47,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.Nullable;
@@ -486,7 +488,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
         return wolfyUtilities.getLanguageAPI().getComponent("inventories." + namespacedKey.getNamespace() + "." + namespacedKey.getKey() + ".gui_name", TagResolverUtil.papi(player));
     }
 
-    Component updateTitle(Player player, GUIInventory<C> guiInventory, GuiHandler<C> guiHandler) {
+    Component updateTitle(Player player, Inventory guiInventory, GuiHandler<C> guiHandler) {
         if (useLegacyTitleUpdate) {
             //This window still uses the deprecated update method
             String title = onUpdateTitle(BukkitComponentSerializer.legacy().serialize(getInventoryTitle(player)), null, guiHandler);
@@ -499,7 +501,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
             }
             return BukkitComponentSerializer.legacy().deserialize(title);
         }
-        return onUpdateTitle(player, guiInventory, guiHandler);
+        return onUpdateTitle(player, new GUIInventoryDeferrer<>(guiInventory, this, guiHandler), guiHandler);
     }
 
     /**
