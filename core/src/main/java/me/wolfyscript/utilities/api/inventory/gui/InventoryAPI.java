@@ -205,8 +205,9 @@ public class InventoryAPI<C extends CustomCache> implements Listener {
         return cluster != null ? cluster.getButton(namespacedKey.getKey()) : null;
     }
 
-    public void onClick(GuiHandler<C> guiHandler, GUIInventory<C> inventory, InventoryClickEvent event) {
-        GuiWindow<C> guiWindow = inventory.getWindow();
+    public void onClick(GuiHandler<C> guiHandler, GUIInventory<C> guiInventory, InventoryClickEvent event) {
+        GuiWindow<C> guiWindow = guiInventory.getWindow();
+        var inventory = guiInventory.inventory();
         event.setCancelled(true);
         if (guiWindow == null) return;
         HashMap<Integer, Button<C>> buttons = new HashMap<>();
@@ -214,7 +215,7 @@ public class InventoryAPI<C extends CustomCache> implements Listener {
             Button<C> clickedBtn = guiHandler.getButton(guiWindow, event.getSlot());
             if (clickedBtn != null) {
                 buttons.put(event.getSlot(), clickedBtn);
-                event.setCancelled(executeButton(clickedBtn, guiHandler, (Player) event.getWhoClicked(), inventory, event.getSlot(), event));
+                event.setCancelled(executeButton(clickedBtn, guiHandler, (Player) event.getWhoClicked(), guiInventory, event.getSlot(), event));
                 if (Objects.equals(clickedBtn.getType(), ButtonType.ITEM_SLOT)) { //If the button is marked as an Item slot it may affect other buttons too!
                     if (event.getAction().equals(InventoryAction.COLLECT_TO_CURSOR) || event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
                         var clickedBtnClass = clickedBtn.getClass();
@@ -223,7 +224,7 @@ public class InventoryAPI<C extends CustomCache> implements Listener {
                                 Button<C> button = guiWindow.getButton(buttonEntry.getValue());
                                 if (clickedBtnClass.isInstance(button)) { //Make sure to only execute the buttons that are of the same type as the clicked one.
                                     buttons.put(buttonEntry.getKey(), button);
-                                    event.setCancelled(executeButton(button, guiHandler, (Player) event.getWhoClicked(), inventory, buttonEntry.getKey(), event));
+                                    event.setCancelled(executeButton(button, guiHandler, (Player) event.getWhoClicked(), guiInventory, buttonEntry.getKey(), event));
                                 }
                             }
                         }
@@ -237,7 +238,7 @@ public class InventoryAPI<C extends CustomCache> implements Listener {
                     Button<C> button = guiWindow.getButton(buttonEntry.getValue());
                     if (button instanceof ItemInputButton) {
                         buttons.put(buttonEntry.getKey(), button);
-                        if (executeButton(button, guiHandler, (Player) event.getWhoClicked(), inventory, buttonEntry.getKey(), event)) {
+                        if (executeButton(button, guiHandler, (Player) event.getWhoClicked(), guiInventory, buttonEntry.getKey(), event)) {
                             event.setCancelled(true);
                             break;
                         }
@@ -248,11 +249,12 @@ public class InventoryAPI<C extends CustomCache> implements Listener {
         if (guiHandler.openedPreviousWindow) {
             guiHandler.openedPreviousWindow = false;
         } else if (guiHandler.getWindow() != null && guiHandler.isWindowOpen()) {
-            guiWindow.update(inventory, buttons, event);
+            guiWindow.update(guiInventory, buttons, event);
         }
     }
 
-    public void onDrag(GuiHandler<C> guiHandler, GUIInventory<C> inventory, InventoryDragEvent event) {
+    public void onDrag(GuiHandler<C> guiHandler, GUIInventory<C> guiInventory, InventoryDragEvent event) {
+        var inventory = guiInventory.inventory();
         if (event.getRawSlots().parallelStream().anyMatch(rawSlot -> !Objects.equals(event.getView().getInventory(rawSlot), inventory))) {
             event.setCancelled(true);
             return;
@@ -269,12 +271,12 @@ public class InventoryAPI<C extends CustomCache> implements Listener {
                 buttons.put(slot, button);
             }
             for (Map.Entry<Integer, Button<C>> button : buttons.entrySet()) {
-                event.setCancelled(executeButton(button.getValue(), guiHandler, (Player) event.getWhoClicked(), inventory, button.getKey(), event));
+                event.setCancelled(executeButton(button.getValue(), guiHandler, (Player) event.getWhoClicked(), guiInventory, button.getKey(), event));
             }
             if (guiHandler.openedPreviousWindow) {
                 guiHandler.openedPreviousWindow = false;
             } else if (guiHandler.getWindow() != null) {
-                guiWindow.update(inventory, buttons, event);
+                guiWindow.update(guiInventory, buttons, event);
             }
         }
     }
