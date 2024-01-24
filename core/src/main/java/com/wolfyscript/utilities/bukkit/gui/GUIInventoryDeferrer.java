@@ -47,6 +47,11 @@ public class GUIInventoryDeferrer<C extends CustomCache> implements GUIInventory
     }
 
     @Override
+    public Inventory inventory() {
+        return inventory;
+    }
+
+    @Override
     public int getSize() {
         return inventory.getSize();
     }

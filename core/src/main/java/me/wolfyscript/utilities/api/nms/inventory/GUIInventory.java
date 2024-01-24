@@ -48,6 +48,8 @@ public interface GUIInventory<C extends CustomCache> extends Inventory {
      */
     GuiHandler<C> getGuiHandler();
 
+    Inventory inventory();
+
     @Deprecated(forRemoval = true)
     default void onClick(InventoryClickEvent event) {
         getGuiHandler().getInvAPI().onClick(getGuiHandler(), this, event);
