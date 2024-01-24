@@ -18,6 +18,8 @@
 
 package me.wolfyscript.utilities.api.inventory.gui;
 
+import com.wolfyscript.utilities.bukkit.gui.GUIInventoryDeferrer;
+import com.wolfyscript.utilities.bukkit.gui.GUIInventoryHolder;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.gui.button.Button;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
@@ -48,27 +50,31 @@ public class GuiUpdate<C extends CustomCache> {
     private final InventoryAPI<C> inventoryAPI;
     private final WolfyUtilities wolfyUtilities;
     private final Player player;
-    private final GUIInventory<C> inventory;
+    private final Inventory inventory;
+    private final GUIInventoryDeferrer<C> inventoryDeferrer;
     private final Inventory queueInventory;
     private final GuiWindow<C> guiWindow;
 
-    GuiUpdate(GUIInventory<C> inventory, GuiHandler<C> guiHandler, GuiWindow<C> guiWindow) {
+    GuiUpdate(GUIInventory<C> guiInventory, GuiHandler<C> guiHandler, GuiWindow<C> guiWindow) {
         this.guiHandler = guiHandler;
         this.inventoryAPI = guiHandler.getInvAPI();
         this.wolfyUtilities = guiHandler.getApi();
         this.player = guiHandler.getPlayer();
         this.guiWindow = guiWindow;
         this.queueInventory = Bukkit.createInventory(null, 54, "");
-        if (inventory != null) {
-            this.inventory = inventory;
+        if (guiInventory != null) {
+            this.inventory = guiInventory.inventory();
         } else {
             String title = BukkitComponentSerializer.legacy().serializeOr(guiWindow.updateTitle(player, null, guiHandler), " ");
+            var inventoryHolder = new GUIInventoryHolder<>(guiHandler, guiWindow);
             if (guiWindow.getInventoryType() == null) {
-                this.inventory = wolfyUtilities.getNmsUtil().getInventoryUtil().createGUIInventory(guiHandler, guiWindow, guiWindow.getSize(), title);
+                this.inventory = Bukkit.createInventory(inventoryHolder, guiWindow.getSize(), title);
             } else {
-                this.inventory = wolfyUtilities.getNmsUtil().getInventoryUtil().createGUIInventory(guiHandler, guiWindow, guiWindow.getInventoryType(), title);
+                this.inventory = Bukkit.createInventory(inventoryHolder, guiWindow.getInventoryType(), title);
             }
+            inventoryHolder.setInventory(this.inventory);
         }
+        this.inventoryDeferrer = new GUIInventoryDeferrer<>(this.inventory, guiWindow, guiHandler);
     }
 
     /**
@@ -88,7 +94,7 @@ public class GuiUpdate<C extends CustomCache> {
     /**
      * @return The {@link GUIInventory} this update was called from.
      */
-    public final GUIInventory<C> getInventory() {
+    public final Inventory getInventory() {
         return inventory;
     }
 
@@ -181,8 +187,8 @@ public class GuiUpdate<C extends CustomCache> {
     private void renderButton(Button<C> button, GuiHandler<C> guiHandler, Player player, int slot, boolean help) {
         try {
             var itemStack = this.inventory.getItem(slot);
-            button.preRender(guiHandler, player, this.inventory, itemStack, slot, help);
-            button.render(guiHandler, player, this.inventory, this.queueInventory, itemStack, slot, guiHandler.isHelpEnabled());
+            button.preRender(guiHandler, player, this.inventoryDeferrer, itemStack, slot, help);
+            button.render(guiHandler, player, this.inventoryDeferrer, this.queueInventory, itemStack, slot, guiHandler.isHelpEnabled());
         } catch (IOException e) {
             wolfyUtilities.getConsole().severe("Error while rendering Button \"" + button.getId() + "\"!");
             e.printStackTrace();
@@ -199,7 +205,7 @@ public class GuiUpdate<C extends CustomCache> {
         if (postExecuteBtns != null) {
             postExecuteBtns.forEach((slot, btn) -> {
                 try {
-                    btn.postExecute(guiHandler, player, inventory, inventory.getItem(slot), slot, event);
+                    btn.postExecute(guiHandler, player, inventoryDeferrer, inventory.getItem(slot), slot, event);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

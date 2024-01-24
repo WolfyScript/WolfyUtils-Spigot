@@ -35,6 +35,7 @@ import org.bukkit.inventory.Inventory;
  *
  * @param <C> The type of {@link CustomCache}
  */
+@Deprecated
 public interface GUIInventory<C extends CustomCache> extends Inventory {
 
     /**
@@ -47,14 +48,19 @@ public interface GUIInventory<C extends CustomCache> extends Inventory {
      */
     GuiHandler<C> getGuiHandler();
 
+    Inventory inventory();
+
+    @Deprecated(forRemoval = true)
     default void onClick(InventoryClickEvent event) {
         getGuiHandler().getInvAPI().onClick(getGuiHandler(), this, event);
     }
 
+    @Deprecated(forRemoval = true)
     default void onDrag(InventoryDragEvent event) {
         getGuiHandler().getInvAPI().onDrag(getGuiHandler(), this, event);
     }
 
+    @Deprecated(forRemoval = true)
     default void onClose(InventoryCloseEvent event) {
         getGuiHandler().onClose(this, event);
     }

@@ -41,21 +41,37 @@ public abstract class InventoryUtil extends UtilComponent {
         super(nmsUtil);
     }
 
+    /**
+     * @deprecated Does not work on Paper and may break on Spigot in later versions than 1.20.4
+     */
+    @Deprecated
     public <C extends CustomCache> GUIInventory<C> createGUIInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, InventoryType type) {
         Inventory inventory = Bukkit.createInventory(null, type);
         return InjectGUIInventory.patchInventory(guiHandler, window, inventory, null);
     }
 
+    /**
+     * @deprecated Does not work on Paper and may break on Spigot in later versions than 1.20.4
+     */
+    @Deprecated
     public <C extends CustomCache> GUIInventory<C> createGUIInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, InventoryType type, String title) {
         Inventory inventory = Bukkit.createInventory(null, type, title);
         return InjectGUIInventory.patchInventory(guiHandler, window, inventory, title);
     }
 
+    /**
+     * @deprecated Does not work on Paper and may break on Spigot in later versions than 1.20.4
+     */
+    @Deprecated
     public <C extends CustomCache> GUIInventory<C> createGUIInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, int size) {
         Inventory inventory = Bukkit.createInventory(null, size);
         return InjectGUIInventory.patchInventory(guiHandler, window, inventory, null);
     }
 
+    /**
+     * @deprecated Does not work on Paper and may break on Spigot in later versions than 1.20.4
+     */
+    @Deprecated
     public <C extends CustomCache> GUIInventory<C> createGUIInventory(GuiHandler<C> guiHandler, GuiWindow<C> window, int size, String title) {
         Inventory inventory = Bukkit.createInventory(null, size, title);
         return InjectGUIInventory.patchInventory(guiHandler, window, inventory, title);
