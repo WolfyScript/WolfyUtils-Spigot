@@ -1,5 +1,6 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
+import com.google.common.base.Preconditions;
 import me.wolfyscript.utilities.api.inventory.gui.GuiHandler;
 import me.wolfyscript.utilities.api.inventory.gui.GuiWindow;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
@@ -20,6 +21,7 @@ public class GUIInventoryHolder<C extends CustomCache> implements InventoryHolde
 
     private final GuiWindow<C> window;
     private final GuiHandler<C> guiHandler;
+    private Inventory inventory;
 
     public GUIInventoryHolder(GuiHandler<C> guiHandler, GuiWindow<C> window) {
         this.guiHandler = guiHandler;
@@ -34,21 +36,25 @@ public class GUIInventoryHolder<C extends CustomCache> implements InventoryHolde
         return window;
     }
 
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
+    }
+
     @NotNull
     @Override
     public Inventory getInventory() {
-        return guiHandler.getPlayer().getInventory();
+        return inventory;
     }
 
     public void onClick(InventoryClickEvent event) {
-        guiHandler.getInvAPI().onClick(guiHandler, new GUIInventoryDeferrer<>(getInventory(), window, guiHandler), event);
+        guiHandler.getInvAPI().onClick(guiHandler, new GUIInventoryDeferrer<>(inventory, window, guiHandler), event);
     }
 
     public void onDrag(InventoryDragEvent event) {
-        guiHandler.getInvAPI().onDrag(guiHandler, new GUIInventoryDeferrer<>(getInventory(), window, guiHandler), event);
+        guiHandler.getInvAPI().onDrag(guiHandler, new GUIInventoryDeferrer<>(inventory, window, guiHandler), event);
     }
 
     public void onClose(InventoryCloseEvent event) {
-        guiHandler.onClose(new GUIInventoryDeferrer<>(getInventory(), window, guiHandler), event);
+        guiHandler.onClose(new GUIInventoryDeferrer<>(inventory, window, guiHandler), event);
     }
 }

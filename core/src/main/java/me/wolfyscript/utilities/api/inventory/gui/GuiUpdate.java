@@ -55,15 +55,15 @@ public class GuiUpdate<C extends CustomCache> {
     private final Inventory queueInventory;
     private final GuiWindow<C> guiWindow;
 
-    GuiUpdate(GUIInventory<C> inventory, GuiHandler<C> guiHandler, GuiWindow<C> guiWindow) {
+    GuiUpdate(GUIInventory<C> guiInventory, GuiHandler<C> guiHandler, GuiWindow<C> guiWindow) {
         this.guiHandler = guiHandler;
         this.inventoryAPI = guiHandler.getInvAPI();
         this.wolfyUtilities = guiHandler.getApi();
         this.player = guiHandler.getPlayer();
         this.guiWindow = guiWindow;
         this.queueInventory = Bukkit.createInventory(null, 54, "");
-        if (inventory != null) {
-            this.inventory = inventory;
+        if (guiInventory != null) {
+            this.inventory = guiInventory.inventory();
         } else {
             String title = BukkitComponentSerializer.legacy().serializeOr(guiWindow.updateTitle(player, null, guiHandler), " ");
             var inventoryHolder = new GUIInventoryHolder<>(guiHandler, guiWindow);
@@ -72,8 +72,9 @@ public class GuiUpdate<C extends CustomCache> {
             } else {
                 this.inventory = Bukkit.createInventory(inventoryHolder, guiWindow.getInventoryType(), title);
             }
+            inventoryHolder.setInventory(this.inventory);
         }
-        this.inventoryDeferrer = new GUIInventoryDeferrer<>(inventory, guiWindow, guiHandler);
+        this.inventoryDeferrer = new GUIInventoryDeferrer<>(this.inventory, guiWindow, guiHandler);
     }
 
     /**
