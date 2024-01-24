@@ -75,9 +75,8 @@ public class MythicMobsStackIdentifier implements StackIdentifier {
             if (ItemUtils.isAirOrNull(itemStack)) return Optional.empty();
             var tag = NBTItem.convertItemtoNBT(itemStack).getCompound("tag");
             if (tag == null) return Optional.empty();
-            var value = tag.getString(ITEM_KEY);
-            if (value != null) {
-                return Optional.of(new MythicMobsStackIdentifier(value));
+            if (tag.hasTag(ITEM_KEY)) {
+                return Optional.of(new MythicMobsStackIdentifier(tag.getString(ITEM_KEY)));
             }
             return Optional.empty();
         }
