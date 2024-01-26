@@ -7,6 +7,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class BukkitStackIdentifier implements StackIdentifier {
@@ -32,6 +33,8 @@ public class BukkitStackIdentifier implements StackIdentifier {
 
     @Override
     public boolean matchesIgnoreCount(ItemStack other, boolean exact) {
+        if (other == null) return false;
+        if (!Objects.equals(stack.getType(), other.getType())) return false;
         if (stack.hasItemMeta() || exact) return stack.isSimilar(other);
         return true;
     }
