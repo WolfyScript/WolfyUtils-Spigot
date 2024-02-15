@@ -287,7 +287,7 @@ public abstract class GuiWindow<C extends CustomCache> extends GuiMenuComponent<
         guiUpdate.applyChanges();
         if (openInventory) {
             Bukkit.getScheduler().runTask(wolfyUtilities.getPlugin(), () -> {
-                var inv = guiUpdate.getInventory();
+                var inv = guiUpdate.inventory();
                 guiHandler.setSwitchWindow(true);
                 guiHandler.getPlayer().openInventory(inv);
                 guiHandler.setSwitchWindow(false);

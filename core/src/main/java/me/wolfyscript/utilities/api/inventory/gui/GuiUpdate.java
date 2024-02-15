@@ -94,7 +94,15 @@ public class GuiUpdate<C extends CustomCache> {
     /**
      * @return The {@link GUIInventory} this update was called from.
      */
-    public final Inventory getInventory() {
+    @Deprecated
+    public final GUIInventory<C> getInventory() {
+        return inventoryDeferrer;
+    }
+
+    /**
+     * @return The current inventory, that this update was called from
+     */
+    public final Inventory inventory() {
         return inventory;
     }
 
