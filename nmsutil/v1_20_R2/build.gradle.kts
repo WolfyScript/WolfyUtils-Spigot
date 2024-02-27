@@ -5,6 +5,7 @@ plugins {
     id("com.wolfyscript.wolfyutils.spigot.java-conventions")
     id("io.github.patrick.remapper") version "1.4.0"
     id("com.wolfyscript.devtools.buildtools") version ("2.0-SNAPSHOT")
+    kotlin("jvm")
 }
 
 dependencies {

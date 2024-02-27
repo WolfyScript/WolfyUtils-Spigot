@@ -3,6 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
     id("com.wolfyscript.wolfyutils.spigot.java-conventions")
     id("com.github.johnrengelman.shadow") version ("8.1.1")
+    kotlin("jvm")
 }
 
 description = "nmsutil"

@@ -5,6 +5,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version ("8.1.1")
     id("com.wolfyscript.devtools.docker.run") version ("2.0-SNAPSHOT")
     id("com.wolfyscript.devtools.docker.minecraft_servers") version ("2.0-SNAPSHOT")
+    kotlin("jvm")
 }
 
 description = "wolfyutils-spigot"
