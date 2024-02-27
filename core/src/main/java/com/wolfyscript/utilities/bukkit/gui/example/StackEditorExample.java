@@ -38,7 +38,7 @@ public class StackEditorExample {
 
     static void register(GuiAPIManager manager) {
         manager.registerGuiFromFiles("stack_editor", (reactiveSrc, builder) -> {
-                    builder.window((reactiveSrc2, mainMenu) -> {
+                    builder.window((mainMenu, reactiveSrc2) -> {
                         mainMenu.size(9 * 6);
                         // This is only called upon creation of the state. So this is not called when the signal is updated!
 
@@ -57,13 +57,13 @@ public class StackEditorExample {
                                     return switch (selectedTab.get()) {
                                         case DISPLAY_NAME -> displayNameTab(reactiveBuilder, stackToEdit);
                                         case LORE ->
-                                                reactiveBuilder.render("lore_tab", ComponentClusterBuilder.class, displayNameClusterBuilder -> displayNameClusterBuilder
-                                                        .render("edit_lore", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                                                reactiveBuilder.component("lore_tab", ComponentClusterBuilder.class, displayNameClusterBuilder -> displayNameClusterBuilder
+                                                        .component("edit_lore", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                                                                 .interact((holder, details) -> {
 
                                                                     return InteractionResult.cancel(true);
                                                                 }))
-                                                        .render("clear_lore", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                                                        .component("clear_lore", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                                                                 .interact((holder, details) -> {
 
                                                                     return InteractionResult.cancel(true);
@@ -94,8 +94,8 @@ public class StackEditorExample {
     }
 
     static ReactiveRenderBuilder.ReactiveResult displayNameTab(ReactiveRenderBuilder reactiveBuilder, Signal<ItemStack> stackToEdit) {
-        return reactiveBuilder.render("display_name_tab", ComponentClusterBuilder.class, displayNameClusterBuilder -> displayNameClusterBuilder
-                .render("set_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+        return reactiveBuilder.component("display_name_tab", ComponentClusterBuilder.class, displayNameClusterBuilder -> displayNameClusterBuilder
+                .component("set_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                         .interact((holder, details) -> {
                             BukkitChat chat = (BukkitChat) holder.getViewManager().getWolfyUtils().getChat();
                             Player player = ((BukkitInventoryGuiHolder) holder).player();
@@ -115,7 +115,7 @@ public class StackEditorExample {
                             });
                             return InteractionResult.cancel(true);
                         }))
-                .render("reset_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                .component("reset_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                         .interact((holder, details) -> {
                             stackToEdit.update(stack -> {
                                 if (stack instanceof ItemStackImpl stackImpl) {
