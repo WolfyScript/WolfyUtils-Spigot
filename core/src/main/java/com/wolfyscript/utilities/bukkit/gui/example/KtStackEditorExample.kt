@@ -71,18 +71,18 @@ fun register(manager: GuiAPIManager) {
             }
             // The state of a component is only reconstructed if the slot it is positioned at changes.
             // Here the slot will always have the same type of component, so the state is created only once.
-            component("stack_slot", StackInputSlotBuilder::class.java) {
+            component<StackInputSlotBuilder>("stack_slot") {
                 interact { _, _ -> InteractionResult.cancel(false) }
                 onValueChange { v -> stackToEdit.set(v) }
                 value(stackToEdit)
             }
-            component("display_name_tab_selector", ButtonBuilder::class.java) {
+            component<ButtonBuilder>("display_name_tab_selector") {
                 interact { _: GuiHolder?, _: InteractionDetails? ->
                     selectedTab.set(Tab.DISPLAY_NAME)
                     InteractionResult.cancel(true)
                 }
             }
-            component("lore_tab_selector", ButtonBuilder::class.java) {
+            component<ButtonBuilder>("lore_tab_selector") {
                 interact { _: GuiHolder?, _: InteractionDetails? ->
                     selectedTab.set(Tab.LORE)
                     InteractionResult.cancel(true)
