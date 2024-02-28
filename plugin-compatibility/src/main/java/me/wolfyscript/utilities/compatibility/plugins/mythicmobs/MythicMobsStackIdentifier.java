@@ -43,9 +43,10 @@ public class MythicMobsStackIdentifier implements StackIdentifier {
     @Override
     public boolean matchesIgnoreCount(ItemStack other, boolean exact) {
         if (ItemUtils.isAirOrNull(other)) return false;
-        var value = NBTItem.convertItemtoNBT(other).getString(ITEM_KEY);
-        if (value != null) {
-            return Objects.equals(this.itemName, value);
+        var tag = NBTItem.convertItemtoNBT(other).getCompound("tag");
+        if(tag == null) return false;
+        if (tag.hasTag(ITEM_KEY)) {
+            return Objects.equals(this.itemName, tag.getString(ITEM_KEY));
         }
         return false;
     }
