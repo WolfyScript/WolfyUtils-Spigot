@@ -39,6 +39,9 @@ dependencies:
     Denizen:
       required: false
       load: OMIT
+    FancyBags:
+      required: false
+      load: OMIT
     # Mythic Plugins
     MythicMobs:
       required: false
