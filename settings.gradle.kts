@@ -44,10 +44,15 @@ project(":nmsutil:v1_20_R1").projectDir = file("nmsutil/v1_20_R1")
 project(":nmsutil:v1_20_R2").projectDir = file("nmsutil/v1_20_R2")
 project(":nmsutil:v1_20_R3").projectDir = file("nmsutil/v1_20_R3")
 
+embeddedKotlinVersion
+
 dependencyResolutionManagement {
     versionCatalogs {
         // Third-party libraries
         create("libs") {
+            //kotlin
+            library("kotlin-stdlib-sdk", "org.jetbrains.kotlin", "kotlin-stdlib-jdk8").version("1.9.22")
+
             // versions
             version("adventure", "4.14.0")
 

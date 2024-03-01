@@ -18,6 +18,7 @@ libraries:
   - "${libs.adventure.api.get()}"
   - "${libs.adventure.minimessage.get()}"
   - "${libs.adventure.platform.bukkit.get()}"
+  - "${libs.kotlin.stdlib.sdk.get()}"
 
 loadbefore:
   - ChatColor
