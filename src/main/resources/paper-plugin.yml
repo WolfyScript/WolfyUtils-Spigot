@@ -53,6 +53,12 @@ dependencies:
     SCore:
       load: BEFORE
       required: false
+    ExecutableItems:
+      required: false
+      load: OMIT
+    ExecutableBlocks:
+      required: false
+      load: OMIT
     # Plugins that must load after WolfyUtils
     ChatColor:
       load: AFTER
