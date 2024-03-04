@@ -187,7 +187,7 @@ public class StackReference implements Copyable<StackReference> {
      * @return The current {@link StackIdentifierParser}
      */
     public StackIdentifierParser<?> parser() {
-        if (parser == null) {
+        if (parser == null || !parser.getNamespacedKey().equals(parserKey)) {
             parser = core.getRegistries().getStackIdentifierParsers().get(parserKey);
         }
         return parser;
