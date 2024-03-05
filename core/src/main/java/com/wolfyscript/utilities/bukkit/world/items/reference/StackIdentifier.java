@@ -138,34 +138,43 @@ public interface StackIdentifier extends Keyed {
      * @return The manipulated stack, default remain, or custom remains.
      */
     default ItemStack shrink(ItemStack stack, int count, boolean useRemains, @Nullable final Inventory inventory, @Nullable final Player player, @Nullable final Location location) {
-        return shrink(stack, count, useRemains, (customItem, resultStack) -> CustomItem.craftRemain(stack(ItemCreateContext.empty(count)))
-                .map(material -> useRemains ? new ItemStack(material) : null)
-                .map(replacement -> {
-                    var originalStack = resultStack;
-                    int replacementAmount = count;
-                    if (ItemUtils.isAirOrNull(originalStack)) {
-                        int returnableAmount = Math.min(replacement.getMaxStackSize(), replacementAmount);
-                        replacementAmount -= returnableAmount;
-                        originalStack = replacement.clone();
-                        originalStack.setAmount(replacementAmount);
-                    }
-                    if (replacementAmount > 0) {
-                        replacement.setAmount(replacementAmount);
-                        Location loc = location;
-                        if (player != null) {
-                            replacement = player.getInventory().addItem(replacement).get(0);
-                            loc = player.getLocation();
+        return shrink(stack, count, useRemains, (stackIdentifier, resultStack) -> {
+            Optional<ItemStack> remains = Optional.empty();
+
+            // Use custom remains options if it is a custom item
+            CustomItem customItem = CustomItem.getByItemStack(stack);
+            if (customItem != null) {
+                remains = !customItem.isConsumed() ? Optional.of(stack) : customItem.replacement().map(StackReference::referencedStack);
+            }
+            remains.or(() -> useRemains ? CustomItem.craftRemain(stack).map(ItemStack::new) : Optional.empty());
+
+            return remains.map(replacement -> {
+                        var originalStack = resultStack;
+                        int replacementAmount = count;
+                        if (ItemUtils.isAirOrNull(originalStack)) {
+                            int returnableAmount = Math.min(replacement.getMaxStackSize(), replacementAmount);
+                            replacementAmount -= returnableAmount;
+                            originalStack = replacement.clone();
+                            originalStack.setAmount(replacementAmount);
                         }
-                        if (inventory != null && replacement != null) {
-                            replacement = inventory.addItem(replacement).get(0);
-                            if (loc == null) loc = inventory.getLocation();
+                        if (replacementAmount > 0) {
+                            replacement.setAmount(replacementAmount);
+                            Location loc = location;
+                            if (player != null) {
+                                replacement = player.getInventory().addItem(replacement).get(0);
+                                loc = player.getLocation();
+                            }
+                            if (inventory != null && replacement != null) {
+                                replacement = inventory.addItem(replacement).get(0);
+                                if (loc == null) loc = inventory.getLocation();
+                            }
+                            if (loc != null && replacement != null && loc.getWorld() != null) {
+                                loc.getWorld().dropItemNaturally(loc.add(0.5, 1.0, 0.5), replacement);
+                            }
                         }
-                        if (loc != null && replacement != null && loc.getWorld() != null) {
-                            loc.getWorld().dropItemNaturally(loc.add(0.5, 1.0, 0.5), replacement);
-                        }
-                    }
-                    return originalStack;
-                }).orElse(resultStack));
+                        return originalStack;
+                    }).orElse(resultStack);
+        });
     }
 
     default ItemStack shrinkUnstackableItem(ItemStack stack, boolean useRemains, BiFunction<StackIdentifier, ItemStack, Optional<ItemStack>> remainsFunction, Function<ItemStack, ItemStack> manipulator) {
