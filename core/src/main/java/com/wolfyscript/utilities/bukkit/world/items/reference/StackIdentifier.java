@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public interface StackIdentifier extends Keyed {
 
@@ -165,6 +166,17 @@ public interface StackIdentifier extends Keyed {
                     }
                     return originalStack;
                 }).orElse(resultStack));
+    }
+
+    default ItemStack shrinkUnstackableItem(ItemStack stack, boolean useRemains, BiFunction<StackIdentifier, ItemStack, Optional<ItemStack>> remainsFunction, Function<ItemStack, ItemStack> manipulator) {
+        return remainsFunction.apply(this, stack)
+                .map(itemStack -> stack(ItemCreateContext.empty(1)))
+                .or(() -> {
+                    if (useRemains) return CustomItem.craftRemain(stack).map(ItemStack::new);
+                    return Optional.empty();
+                })
+                .map(manipulator)
+                .orElse(ItemUtils.AIR);
     }
 
     /**

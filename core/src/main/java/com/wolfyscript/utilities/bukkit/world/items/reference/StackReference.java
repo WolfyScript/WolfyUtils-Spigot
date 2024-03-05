@@ -306,6 +306,11 @@ public class StackReference implements Copyable<StackReference> {
         return identifier().map(stackIdentifier -> stackIdentifier.shrinkUnstackableItem(stack, useRemains)).orElse(stack);
     }
 
+
+    public ItemStack shrinkUnstackableItem(ItemStack stack, boolean useRemains, BiFunction<StackIdentifier, ItemStack, Optional<ItemStack>> remainsFunction, Function<ItemStack, ItemStack> manipulator) {
+        return identifier().map(stackIdentifier -> stackIdentifier.shrinkUnstackableItem(stack, useRemains, remainsFunction, manipulator)).orElse(stack);
+    }
+
     /**
      * Converts this StackReference into a legacy APIReference.
      */
