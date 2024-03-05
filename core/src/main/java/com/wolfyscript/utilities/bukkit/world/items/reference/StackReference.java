@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Acts as a wrapper for {@link StackIdentifier}, that links to an external ItemStack (like other Plugins).
