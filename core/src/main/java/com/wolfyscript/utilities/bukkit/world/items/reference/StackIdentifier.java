@@ -192,7 +192,20 @@ public interface StackIdentifier extends Keyed {
      * @return The manipulated (damaged) stack, default remain, or custom remains.
      */
     default ItemStack shrinkUnstackableItem(ItemStack stack, boolean useRemains) {
-        return CustomItem.craftRemain(stack(ItemCreateContext.empty(1))).map(material -> useRemains ? new ItemStack(material) : null).orElse(new ItemStack(Material.AIR));
+        return shrinkUnstackableItem(stack, useRemains, (stackIdentifier, itemStack) -> {
+            CustomItem customItem = CustomItem.getByItemStack(itemStack);
+            if (customItem != null) {
+                if (!customItem.isConsumed()) return Optional.of(stack);
+                return customItem.replacement().map(StackReference::referencedStack);
+            }
+            return Optional.empty();
+        }, result -> {
+            CustomItem customItem = CustomItem.getByItemStack(result);
+            if (customItem != null) {
+                return CustomItem.changeDurability(customItem, stack, result);
+            }
+            return result;
+        });
     }
 
     default StackIdentifierParser<?> parser() {
