@@ -86,7 +86,7 @@ public interface StackIdentifier extends Keyed {
      * @return The manipulated stack, default remain, or custom remains.
      */
     default ItemStack shrink(@NotNull ItemStack stack, int count, boolean useRemains, @NotNull BiFunction<StackIdentifier, ItemStack, ItemStack> stackReplacement) {
-        if (stack(ItemCreateContext.empty(count)).getMaxStackSize() == 1 && stack.getAmount() == 1) {
+        if (stack.getMaxStackSize() == 1 && stack.getAmount() == 1) {
             return shrinkUnstackableItem(stack, useRemains);
         }
         int amount = stack.getAmount() - count;
