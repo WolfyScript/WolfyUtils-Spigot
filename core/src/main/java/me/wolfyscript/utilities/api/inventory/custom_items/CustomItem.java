@@ -1255,19 +1255,15 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @return The manipulated (damaged) stack, default remain, or custom remains.
      */
     public ItemStack shrinkUnstackableItem(ItemStack stack, boolean useRemains) {
-        ItemStack result = replacement()
-                .map(StackReference::originalStack)
-                .orElseGet(() -> {
-                    if (this.isConsumed() && craftRemain != null && useRemains) {
-                        return new ItemStack(craftRemain);
-                    }
-                    return new ItemStack(Material.AIR);
-                });
-        if (this.getDurabilityCost() != 0) {
+        return reference.shrinkUnstackableItem(stack, useRemains, (stackIdentifier, itemStack) -> replacement().map(StackReference::referencedStack), result -> changeDurability(this, stack, result));
+    }
+
+    public static ItemStack changeDurability(CustomItem customItem, ItemStack stack, ItemStack result) {
+        if (customItem.getDurabilityCost() != 0) {
             // handle custom durability
             var itemBuilder = new ItemBuilder(stack);
             if (itemBuilder.hasCustomDurability()) {
-                int damage = itemBuilder.getCustomDamage() + this.getDurabilityCost();
+                int damage = itemBuilder.getCustomDamage() + customItem.getDurabilityCost();
                 if (damage > itemBuilder.getCustomDurability()) {
                     return result;
                 }
@@ -1276,8 +1272,8 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
             }
             // handle vanilla durability
             if (stack.getItemMeta() instanceof Damageable itemMeta) {
-                int damage = itemMeta.getDamage() + this.getDurabilityCost();
-                if (damage > type.getMaxDurability()) {
+                int damage = itemMeta.getDamage() + customItem.getDurabilityCost();
+                if (damage > customItem.type.getMaxDurability()) {
                     return result;
                 }
                 itemMeta.setDamage(damage);
