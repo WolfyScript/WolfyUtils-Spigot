@@ -1055,7 +1055,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @param replacement The new replacement, or null to unset it
      */
     public void replacement(StackReference replacement) {
-        if(replacement != null && replacement.identifier().map(stackIdentifier -> !ItemUtils.isAirOrNull(stackIdentifier.stack(ItemCreateContext.empty(getAmount())))).orElse(false)) {
+        if (replacement != null && replacement.identifier().map(stackIdentifier -> !ItemUtils.isAirOrNull(stackIdentifier.stack(ItemCreateContext.empty(getAmount())))).orElse(false)) {
             this.replacement = replacement;
         } else {
             this.replacement = null;
@@ -1210,36 +1210,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @return The manipulated stack, default remain, or custom remains.
      */
     public ItemStack shrink(ItemStack stack, int count, boolean useRemains, @Nullable final Inventory inventory, @Nullable final Player player, @Nullable final Location location) {
-        return shrink(stack, count, useRemains, (customItem, resultStack) -> {
-            ItemStack replacement = replacement()
-                    .map(StackReference::originalStack)
-                    .orElseGet(() -> isConsumed() && useRemains && craftRemain != null ? new ItemStack(craftRemain) : null);
-            if (!ItemUtils.isAirOrNull(replacement)) {
-                int replacementAmount = replacement.getAmount() * count;
-                if (ItemUtils.isAirOrNull(resultStack)) {
-                    int returnableAmount = Math.min(replacement.getMaxStackSize(), replacementAmount);
-                    replacementAmount -= returnableAmount;
-                    resultStack = replacement.clone();
-                    resultStack.setAmount(replacementAmount);
-                }
-                if (replacementAmount > 0) {
-                    replacement.setAmount(replacementAmount);
-                    Location loc = location;
-                    if (player != null) {
-                        replacement = player.getInventory().addItem(replacement).get(0);
-                        loc = player.getLocation();
-                    }
-                    if (inventory != null && replacement != null) {
-                        replacement = inventory.addItem(replacement).get(0);
-                        if (loc == null) loc = inventory.getLocation();
-                    }
-                    if (loc != null && replacement != null && loc.getWorld() != null) {
-                        loc.getWorld().dropItemNaturally(loc.add(0.5, 1.0, 0.5), replacement);
-                    }
-                }
-            }
-            return resultStack;
-        });
+        return reference.shrink(stack, count, useRemains, inventory, player, location);
     }
 
     /**
@@ -1255,19 +1226,15 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @return The manipulated (damaged) stack, default remain, or custom remains.
      */
     public ItemStack shrinkUnstackableItem(ItemStack stack, boolean useRemains) {
-        ItemStack result = replacement()
-                .map(StackReference::originalStack)
-                .orElseGet(() -> {
-                    if (this.isConsumed() && craftRemain != null && useRemains) {
-                        return new ItemStack(craftRemain);
-                    }
-                    return new ItemStack(Material.AIR);
-                });
-        if (this.getDurabilityCost() != 0) {
+        return reference.shrinkUnstackableItem(stack, useRemains, (stackIdentifier, itemStack) -> replacement().map(StackReference::referencedStack), result -> changeDurability(this, stack, result));
+    }
+
+    public static ItemStack changeDurability(CustomItem customItem, ItemStack stack, ItemStack result) {
+        if (customItem.getDurabilityCost() != 0) {
             // handle custom durability
             var itemBuilder = new ItemBuilder(stack);
             if (itemBuilder.hasCustomDurability()) {
-                int damage = itemBuilder.getCustomDamage() + this.getDurabilityCost();
+                int damage = itemBuilder.getCustomDamage() + customItem.getDurabilityCost();
                 if (damage > itemBuilder.getCustomDurability()) {
                     return result;
                 }
@@ -1276,8 +1243,8 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
             }
             // handle vanilla durability
             if (stack.getItemMeta() instanceof Damageable itemMeta) {
-                int damage = itemMeta.getDamage() + this.getDurabilityCost();
-                if (damage > type.getMaxDurability()) {
+                int damage = itemMeta.getDamage() + customItem.getDurabilityCost();
+                if (damage > customItem.type.getMaxDurability()) {
                     return result;
                 }
                 itemMeta.setDamage(damage);

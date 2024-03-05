@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Acts as a wrapper for {@link StackIdentifier}, that links to an external ItemStack (like other Plugins).
@@ -304,6 +305,11 @@ public class StackReference implements Copyable<StackReference> {
      */
     public ItemStack shrinkUnstackableItem(ItemStack stack, boolean useRemains) {
         return identifier().map(stackIdentifier -> stackIdentifier.shrinkUnstackableItem(stack, useRemains)).orElse(stack);
+    }
+
+
+    public ItemStack shrinkUnstackableItem(ItemStack stack, boolean useRemains, BiFunction<StackIdentifier, ItemStack, Optional<ItemStack>> remainsFunction, Function<ItemStack, ItemStack> manipulator) {
+        return identifier().map(stackIdentifier -> stackIdentifier.shrinkUnstackableItem(stack, useRemains, remainsFunction, manipulator)).orElse(stack);
     }
 
     /**

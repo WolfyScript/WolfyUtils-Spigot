@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public interface StackIdentifier extends Keyed {
 
@@ -85,7 +86,7 @@ public interface StackIdentifier extends Keyed {
      * @return The manipulated stack, default remain, or custom remains.
      */
     default ItemStack shrink(@NotNull ItemStack stack, int count, boolean useRemains, @NotNull BiFunction<StackIdentifier, ItemStack, ItemStack> stackReplacement) {
-        if (stack(ItemCreateContext.empty(count)).getMaxStackSize() == 1 && stack.getAmount() == 1) {
+        if (stack.getMaxStackSize() == 1 && stack.getAmount() == 1) {
             return shrinkUnstackableItem(stack, useRemains);
         }
         int amount = stack.getAmount() - count;
@@ -137,34 +138,54 @@ public interface StackIdentifier extends Keyed {
      * @return The manipulated stack, default remain, or custom remains.
      */
     default ItemStack shrink(ItemStack stack, int count, boolean useRemains, @Nullable final Inventory inventory, @Nullable final Player player, @Nullable final Location location) {
-        return shrink(stack, count, useRemains, (customItem, resultStack) -> CustomItem.craftRemain(stack(ItemCreateContext.empty(count)))
-                .map(material -> useRemains ? new ItemStack(material) : null)
-                .map(replacement -> {
-                    var originalStack = resultStack;
-                    int replacementAmount = count;
-                    if (ItemUtils.isAirOrNull(originalStack)) {
-                        int returnableAmount = Math.min(replacement.getMaxStackSize(), replacementAmount);
-                        replacementAmount -= returnableAmount;
-                        originalStack = replacement.clone();
-                        originalStack.setAmount(replacementAmount);
-                    }
-                    if (replacementAmount > 0) {
-                        replacement.setAmount(replacementAmount);
-                        Location loc = location;
-                        if (player != null) {
-                            replacement = player.getInventory().addItem(replacement).get(0);
-                            loc = player.getLocation();
+        return shrink(stack, count, useRemains, (stackIdentifier, resultStack) -> {
+            Optional<ItemStack> remains = Optional.empty();
+
+            // Use custom remains options if it is a custom item
+            CustomItem customItem = CustomItem.getByItemStack(stack);
+            if (customItem != null) {
+                remains = !customItem.isConsumed() ? Optional.of(stack) : customItem.replacement().map(StackReference::referencedStack);
+            }
+            remains.or(() -> useRemains ? CustomItem.craftRemain(stack).map(ItemStack::new) : Optional.empty());
+
+            return remains.map(replacement -> {
+                        var originalStack = resultStack;
+                        int replacementAmount = count;
+                        if (ItemUtils.isAirOrNull(originalStack)) {
+                            int returnableAmount = Math.min(replacement.getMaxStackSize(), replacementAmount);
+                            replacementAmount -= returnableAmount;
+                            originalStack = replacement.clone();
+                            originalStack.setAmount(replacementAmount);
                         }
-                        if (inventory != null && replacement != null) {
-                            replacement = inventory.addItem(replacement).get(0);
-                            if (loc == null) loc = inventory.getLocation();
+                        if (replacementAmount > 0) {
+                            replacement.setAmount(replacementAmount);
+                            Location loc = location;
+                            if (player != null) {
+                                replacement = player.getInventory().addItem(replacement).get(0);
+                                loc = player.getLocation();
+                            }
+                            if (inventory != null && replacement != null) {
+                                replacement = inventory.addItem(replacement).get(0);
+                                if (loc == null) loc = inventory.getLocation();
+                            }
+                            if (loc != null && replacement != null && loc.getWorld() != null) {
+                                loc.getWorld().dropItemNaturally(loc.add(0.5, 1.0, 0.5), replacement);
+                            }
                         }
-                        if (loc != null && replacement != null && loc.getWorld() != null) {
-                            loc.getWorld().dropItemNaturally(loc.add(0.5, 1.0, 0.5), replacement);
-                        }
-                    }
-                    return originalStack;
-                }).orElse(resultStack));
+                        return originalStack;
+                    }).orElse(resultStack);
+        });
+    }
+
+    default ItemStack shrinkUnstackableItem(ItemStack stack, boolean useRemains, BiFunction<StackIdentifier, ItemStack, Optional<ItemStack>> remainsFunction, Function<ItemStack, ItemStack> manipulator) {
+        return remainsFunction.apply(this, stack)
+                .map(itemStack -> stack(ItemCreateContext.empty(1)))
+                .or(() -> {
+                    if (useRemains) return CustomItem.craftRemain(stack).map(ItemStack::new);
+                    return Optional.empty();
+                })
+                .map(manipulator)
+                .orElse(ItemUtils.AIR);
     }
 
     /**
@@ -180,7 +201,20 @@ public interface StackIdentifier extends Keyed {
      * @return The manipulated (damaged) stack, default remain, or custom remains.
      */
     default ItemStack shrinkUnstackableItem(ItemStack stack, boolean useRemains) {
-        return CustomItem.craftRemain(stack(ItemCreateContext.empty(1))).map(material -> useRemains ? new ItemStack(material) : null).orElse(new ItemStack(Material.AIR));
+        return shrinkUnstackableItem(stack, useRemains, (stackIdentifier, itemStack) -> {
+            CustomItem customItem = CustomItem.getByItemStack(itemStack);
+            if (customItem != null) {
+                if (!customItem.isConsumed()) return Optional.of(stack);
+                return customItem.replacement().map(StackReference::referencedStack);
+            }
+            return Optional.empty();
+        }, result -> {
+            CustomItem customItem = CustomItem.getByItemStack(result);
+            if (customItem != null) {
+                return CustomItem.changeDurability(customItem, stack, result);
+            }
+            return result;
+        });
     }
 
     default StackIdentifierParser<?> parser() {
