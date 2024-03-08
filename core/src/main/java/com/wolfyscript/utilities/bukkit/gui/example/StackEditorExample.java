@@ -1,8 +1,7 @@
 package com.wolfyscript.utilities.bukkit.gui.example;
 
-import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl;
-import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
-import com.wolfyscript.utilities.bukkit.gui.BukkitInventoryGuiHolder;
+import com.wolfyscript.utilities.chat.Chat;
+import com.wolfyscript.utilities.data.Keys;
 import com.wolfyscript.utilities.gui.GuiAPIManager;
 import com.wolfyscript.utilities.gui.InteractionResult;
 import com.wolfyscript.utilities.gui.ReactiveRenderBuilder;
@@ -12,8 +11,6 @@ import com.wolfyscript.utilities.gui.components.StackInputSlotBuilder;
 import com.wolfyscript.utilities.gui.signal.Signal;
 import com.wolfyscript.utilities.platform.adapters.ItemStack;
 import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class StackEditorExample {
 
@@ -97,17 +94,12 @@ public class StackEditorExample {
         return reactiveBuilder.component("display_name_tab", ComponentClusterBuilder.class, displayNameClusterBuilder -> displayNameClusterBuilder
                 .component("set_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                         .interact((holder, details) -> {
-                            BukkitChat chat = (BukkitChat) holder.getViewManager().getWolfyUtils().getChat();
-                            Player player = ((BukkitInventoryGuiHolder) holder).player();
-                            chat.sendMessage(player, Component.text("Click me"));
+                            Chat chat = holder.getViewManager().getWolfyUtils().getChat();
+                            chat.sendMessage(holder.getPlayer(), Component.text("Click me"));
                             holder.getViewManager().setTextInputCallback((p, guiViewManager, s, strings) -> {
                                 stackToEdit.update(stack -> {
-                                    if (stack instanceof ItemStackImpl stackImpl) {
-                                        var bukkitStack = stackImpl.getBukkitRef();
-                                        ItemMeta meta = bukkitStack.getItemMeta();
-                                        meta.setDisplayName(s);
-                                        bukkitStack.setItemMeta(meta);
-                                        stackToEdit.set(stack);
+                                    if (stack != null) {
+                                        stack.data().set(Keys::customName, guiViewManager.getWolfyUtils().getChat().getMiniMessage().deserialize(s));
                                     }
                                     return stack;
                                 });
@@ -118,11 +110,8 @@ public class StackEditorExample {
                 .component("reset_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                         .interact((holder, details) -> {
                             stackToEdit.update(stack -> {
-                                if (stack instanceof ItemStackImpl stackImpl) {
-                                    var bukkitStack = stackImpl.getBukkitRef();
-                                    ItemMeta meta = bukkitStack.getItemMeta();
-                                    meta.setDisplayName(null);
-                                    bukkitStack.setItemMeta(meta);
+                                if (stack != null) {
+                                    stack.data().remove(Keys::customName);
                                 }
                                 return stack;
                             });

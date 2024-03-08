@@ -1,34 +1,35 @@
-package com.wolfyscript.utilities.bukkit.adapters;
+package com.wolfyscript.utilities.bukkit.adapters
 
-import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
-import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig;
-import com.wolfyscript.utilities.WolfyUtils;
-import com.wolfyscript.utilities.platform.adapters.ItemStack;
-import com.wolfyscript.utilities.world.items.ItemStackConfig;
+import com.wolfyscript.utilities.NamespacedKey
+import com.wolfyscript.utilities.WolfyUtils
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit
+import com.wolfyscript.utilities.bukkit.data.DataComponentMapImpl
+import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig
+import com.wolfyscript.utilities.data.DataComponentMap
+import com.wolfyscript.utilities.world.items.ItemStackConfig
+import org.bukkit.inventory.ItemStack
 
-public class ItemStackImpl extends BukkitRefAdapter<org.bukkit.inventory.ItemStack> implements ItemStack {
+class ItemStackImpl(wolfyUtils: WolfyUtilsBukkit, bukkitRef: ItemStack?) : BukkitRefAdapter<ItemStack?>(bukkitRef), com.wolfyscript.utilities.platform.adapters.ItemStack {
+    private val wolfyUtils: WolfyUtils = wolfyUtils
+    private val componentMap: DataComponentMap = DataComponentMapImpl(this)
 
-    private final WolfyUtils wolfyUtils;
-
-    public ItemStackImpl(WolfyUtilsBukkit wolfyUtils, org.bukkit.inventory.ItemStack bukkitRef) {
-        super(bukkitRef);
-        this.wolfyUtils = wolfyUtils;
+    override fun getItem(): NamespacedKey {
+        if (getBukkitRef() == null) {
+            throw IllegalStateException()
+        }
+        return BukkitNamespacedKey.fromBukkit(getBukkitRef()!!.type.key)
     }
 
-    @Override
-    public NamespacedKey getItem() {
-        return getBukkitRef() == null ? null : BukkitNamespacedKey.fromBukkit(getBukkitRef().getType().getKey());
+    override fun getAmount(): Int {
+        return getBukkitRef()!!.amount
     }
 
-    @Override
-    public int getAmount() {
-        return getBukkitRef().getAmount();
+    override fun snapshot(): ItemStackConfig {
+        return BukkitItemStackConfig(wolfyUtils, this)
     }
 
-    @Override
-    public ItemStackConfig snapshot() {
-        return new BukkitItemStackConfig(wolfyUtils, this);
+    override fun data(): DataComponentMap {
+        return componentMap
     }
 }
