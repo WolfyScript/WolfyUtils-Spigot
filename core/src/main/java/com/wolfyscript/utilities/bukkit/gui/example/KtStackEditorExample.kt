@@ -4,7 +4,8 @@ import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl
 import com.wolfyscript.utilities.bukkit.chat.BukkitChat
 import com.wolfyscript.utilities.bukkit.gui.BukkitInventoryGuiHolder
 import com.wolfyscript.utilities.gui.*
-import com.wolfyscript.utilities.gui.signal.Signal
+import com.wolfyscript.utilities.gui.reactivity.Signal
+import com.wolfyscript.utilities.gui.reactivity.createSignal
 import com.wolfyscript.utilities.platform.adapters.ItemStack
 import net.kyori.adventure.text.Component
 import org.bukkit.inventory.meta.ItemMeta
@@ -28,23 +29,22 @@ private enum class Tab {
 }
 
 fun register(manager: GuiAPIManager) {
-    manager.registerGuiFromFiles("stack_editor") { _, builder ->
-        builder.window { reactiveSource ->
-            // This is only called upon the initiation. So this is not called when the signal is updated!
+    manager.registerGuiFromFiles("stack_editor") {
+        window {
+            /*
+             This whole construction is only called upon the initiation and creates a reactivity graph
+             from the signals and effects used and only updates the necessary parts at runtime.
+             */
+
             size(9 * 6)
 
             // Persistent data stores
-            val stackToEdit = reactiveSource.createStore(
-                { _ -> StackEditorStore() },
-                StackEditorStore::getStack,
-                StackEditorStore::setStack
-            )
-
+            val stackToEdit = createStore({ StackEditorStore() }, { getStack() }, { setStack(it) })
             // Weak data signals
-            val selectedTab = reactiveSource.createSignal(Tab.NONE)
+            val selectedTab = createSignal(Tab.NONE)
 
             reactive {
-                // Reactive parts are called everytime the signal used inside this closure is updated.
+                // Reactive parts are only called when a signal used inside this closure is updated.
                 val itemStack = stackToEdit.get()
                 if (itemStack == null || itemStack.item == null || itemStack.item.key == "air") {
                     return@reactive null

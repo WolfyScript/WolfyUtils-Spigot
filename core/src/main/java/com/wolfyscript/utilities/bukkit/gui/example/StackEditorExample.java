@@ -9,7 +9,7 @@ import com.wolfyscript.utilities.gui.ReactiveRenderBuilder;
 import com.wolfyscript.utilities.gui.components.ButtonBuilder;
 import com.wolfyscript.utilities.gui.components.ComponentClusterBuilder;
 import com.wolfyscript.utilities.gui.components.StackInputSlotBuilder;
-import com.wolfyscript.utilities.gui.signal.Signal;
+import com.wolfyscript.utilities.gui.reactivity.Signal;
 import com.wolfyscript.utilities.platform.adapters.ItemStack;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
@@ -37,16 +37,16 @@ public class StackEditorExample {
     }
 
     static void register(GuiAPIManager manager) {
-        manager.registerGuiFromFiles("stack_editor", (reactiveSrc, builder) -> {
-                    builder.window((mainMenu, reactiveSrc2) -> {
+        manager.registerGuiFromFiles("stack_editor", (builder) -> {
+                    builder.window((mainMenu) -> {
                         mainMenu.size(9 * 6);
                         // This is only called upon creation of the state. So this is not called when the signal is updated!
 
                         // Persistent data stores
-                        Signal<ItemStack> stackToEdit = reactiveSrc.createStore(viewRuntime -> new StackEditorStore(), StackEditorStore::getStack, StackEditorStore::setStack);
+                        Signal<ItemStack> stackToEdit = mainMenu.createStore(viewRuntime -> new StackEditorStore(), StackEditorStore::getStack, StackEditorStore::setStack);
 
                         // Weak data signals
-                        Signal<Tab> selectedTab = reactiveSrc.createSignal(Tab.NONE);
+                        Signal<Tab> selectedTab = mainMenu.createSignal(Tab.class, r -> Tab.NONE);
 
                         mainMenu.reactive(reactiveBuilder -> {
                                     // Reactive parts are called everytime the signal used inside this closure is updated.
@@ -98,7 +98,7 @@ public class StackEditorExample {
                 .component("set_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                         .interact((holder, details) -> {
                             BukkitChat chat = (BukkitChat) holder.getViewManager().getWolfyUtils().getChat();
-                            Player player = ((BukkitInventoryGuiHolder) holder).player();
+                            Player player = null;
                             chat.sendMessage(player, Component.text("Click me"));
                             holder.getViewManager().setTextInputCallback((p, guiViewManager, s, strings) -> {
                                 stackToEdit.update(stack -> {

@@ -17,16 +17,10 @@ import java.util.Objects;
 public class BukkitInventoryGuiHolder implements InventoryHolder {
 
     private final GuiHolder guiHolder;
-    private final Player player;
     private Inventory activeInventory;
 
-    public BukkitInventoryGuiHolder(Player player, GuiHolder guiHolder) {
-        this.player = player;
+    public BukkitInventoryGuiHolder(GuiHolder guiHolder) {
         this.guiHolder = guiHolder;
-    }
-
-    public Player player() {
-        return player;
     }
 
     private Window currentWindow() {
@@ -41,26 +35,16 @@ public class BukkitInventoryGuiHolder implements InventoryHolder {
         if (currentWindow() == null || event.getClickedInventory() == null) return;
         if (Objects.equals(event.getClickedInventory().getHolder(), this)) {
             ViewRuntimeImpl guiViewManager = (ViewRuntimeImpl) guiHolder.getViewManager();
-            guiHolder.getViewManager().getCurrentMenu().ifPresent(window -> {
-                InteractionResult result = guiViewManager.getLeaveNode(event.getSlot())
-                        .map(component -> {
-                            if (component instanceof Interactable interactable) {
-                                return interactable.interact(guiHolder, new ClickInteractionDetailsImpl(event));
-                            }
-                            return InteractionResult.cancel(true);
-                        })
-                        .orElse(InteractionResult.cancel(true));
-                event.setCancelled(result.isCancelled());
-            });
+            // TODO: Call Interaction handler here
         } else if (!event.getAction().equals(InventoryAction.COLLECT_TO_CURSOR)) {
             event.setCancelled(false);
             // TODO: Handle bottom inventory clicks
         }
         Bukkit.getScheduler().runTask(((WolfyCoreBukkit) guiHolder.getViewManager().getWolfyUtils().getCore()).getPlugin(),
                 () -> {
-                    guiHolder.getViewManager().unblockedByInteraction();
-                    guiHolder.getViewManager().getRenderContext(event.getWhoClicked().getUniqueId()).ifPresent(context -> {
-                        context.openAndRenderMenuFor(guiHolder.getViewManager(), player.getUniqueId());
+//                    guiHolder.getViewManager().unblockedByInteraction();
+                    guiHolder.getViewManager().getCurrentMenu().ifPresent(window -> {
+                        window.open(guiHolder().getViewManager());
                     });
                 }
         );
@@ -74,23 +58,9 @@ public class BukkitInventoryGuiHolder implements InventoryHolder {
         if (currentWindow() == null) return;
         if (Objects.equals(event.getInventory().getHolder(), this)) {
             var interactionDetails = new DragInteractionDetailsImpl(event);
-            for (int slot : event.getInventorySlots()) {
-                if (((ViewRuntimeImpl) guiHolder.getViewManager()).getLeaveNode(slot).map(component -> {
-                    if (component instanceof Interactable interactable) {
-                        return interactable.interact(guiHolder, interactionDetails);
-                    }
-                    return InteractionResult.cancel(true);
-                }).orElse(InteractionResult.cancel(true)).isCancelled()) {
-                    event.setCancelled(true);
-                }
-            }
+            // TODO: Call Interaction handler here
 
-            Bukkit.getScheduler().runTask(((WolfyCoreBukkit) guiHolder.getViewManager().getWolfyUtils().getCore()).getPlugin(), () -> {
-                guiHolder.getViewManager().unblockedByInteraction();
-                guiHolder.getViewManager().getRenderContext(event.getWhoClicked().getUniqueId()).ifPresent(context -> {
-                    context.openAndRenderMenuFor(guiHolder.getViewManager(), player.getUniqueId());
-                });
-            });
+            Bukkit.getScheduler().runTask(((WolfyCoreBukkit) guiHolder.getViewManager().getWolfyUtils().getCore()).getPlugin(), () -> {});
         }
     }
 
@@ -102,7 +72,7 @@ public class BukkitInventoryGuiHolder implements InventoryHolder {
         }
     }
 
-    void setActiveInventory(Inventory activeInventory) {
+    public void setActiveInventory(Inventory activeInventory) {
         this.activeInventory = activeInventory;
     }
 
