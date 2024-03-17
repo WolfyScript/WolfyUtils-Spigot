@@ -93,9 +93,6 @@ fun ReactiveRenderBuilder.displayNameTab(stackToEdit: Signal<ItemStack?>): React
     return group("display_name_tab") {
         button("set_display_name") {
             interact { holder, _ ->
-                val chat: BukkitChat = holder.viewManager.wolfyUtils.chat as BukkitChat;
-                val player: org.bukkit.entity.Player? = (holder as BukkitInventoryGuiHolder).player();
-                chat.sendMessage(player, Component.text("Click me"));
                 holder.viewManager.setTextInputCallback { _, _, s, _ ->
                     stackToEdit.update { stack ->
                         if (stack is ItemStackImpl) {
