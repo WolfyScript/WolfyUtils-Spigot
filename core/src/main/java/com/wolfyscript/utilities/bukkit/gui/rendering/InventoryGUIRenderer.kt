@@ -11,9 +11,9 @@ import com.wolfyscript.utilities.gui.*
 import com.wolfyscript.utilities.gui.components.Button
 import com.wolfyscript.utilities.gui.components.ComponentCluster
 import com.wolfyscript.utilities.gui.components.StackInputSlot
+import com.wolfyscript.utilities.gui.rendering.ComponentRenderingNode
 import com.wolfyscript.utilities.gui.rendering.PropertyPosition
 import com.wolfyscript.utilities.gui.rendering.Renderer
-import com.wolfyscript.utilities.gui.rendering.RenderingGraph
 import com.wolfyscript.utilities.gui.rendering.RenderingNode
 import com.wolfyscript.utilities.platform.adapters.ItemStack
 import com.wolfyscript.utilities.versioning.MinecraftVersion
@@ -28,10 +28,11 @@ import java.util.*
 class InventoryGUIRenderer(val runtime: ViewRuntimeImpl) : Renderer<InvGUIRenderContext> {
 
     private var inventory: Inventory? = Bukkit.createInventory(null, 27)
-    private val computedProperties: MutableMap<Long, ComputedProperties> = mutableMapOf()
+    private val computedProperties: MutableMap<Long, CachedProperties> = mutableMapOf()
     private var window: Window? = null
 
-    fun changeWindow(window: Window) {
+    override fun changeWindow(window: Window) {
+        this.window = window
         // No active Window or it is another Window, need to recreate inventory
         val guiHolder: GuiHolder = GuiHolderImpl(window, runtime, null)
         val holder = BukkitInventoryGuiHolder(guiHolder)
@@ -62,42 +63,65 @@ class InventoryGUIRenderer(val runtime: ViewRuntimeImpl) : Renderer<InvGUIRender
         if (inventory == null) return
         if (window == null) return
 
+        runtime.viewers.forEach {
+            Bukkit.getPlayer(it)?.openInventory(inventory!!)
+        }
+
         val graph = runtime.renderingGraph
 
         val context = InvGUIRenderContext(this)
-        computedProperties[0] = ComputedProperties(ComputedProperties.Positioning.FIXED, 0, window!!.width(), window!!.height())
+        computedProperties[0] = CachedProperties(0)
         context.setSlotOffset(0)
 
         for (child in graph.children(0)) {
             graph.getNode(child)?.let {
-                renderChild(graph, context, it)
+                calculatePosition(it, context)
+                renderChild(context, it)
             }
         }
 
     }
 
-    private fun renderChild(graph: RenderingGraph, context: InvGUIRenderContext, node: RenderingNode) {
-        when (val component = node.component) {
-            is Button -> {
-                InventoryButtonComponentRenderer().render(context, component)
-            }
+    private fun calculatePosition(node: ComponentRenderingNode, context: InvGUIRenderContext) {
+        val staticPos = context.currentOffset() + 1
+        val position = node.value.properties().position()
 
-            is ComponentCluster -> {
-                InventoryGroupComponentRenderer().render(context, component)
-            }
+        when(position) {
+            is PropertyPosition.Static -> context.currentOffset() + 1
+            is PropertyPosition.Relative -> context.currentOffset() + (position.slotOffset() ?: 1)
+        }
 
-            is StackInputSlot -> {
+        computedProperties[node.id] = CachedProperties(staticPos)
+        context.setSlotOffset(staticPos)
+    }
 
+    private fun renderChild(context: InvGUIRenderContext, node: ComponentRenderingNode) {
+        when (val component = node.value) {
+            is Button -> InventoryButtonComponentRenderer().render(context, component)
+            is ComponentCluster -> InventoryGroupComponentRenderer().render(context, component)
+            is StackInputSlot -> { }
+        }
+        for (child in runtime.renderingGraph.children(node.id)) {
+            runtime.renderingGraph.getNode(child)?.let {
+                calculatePosition(it, context)
+                renderChild(context, it)
             }
         }
     }
 
-    override fun renderComponent(component: Component, context: InvGUIRenderContext) {
+    override fun update(information: Renderer.UpdateInformation) {
+        val context = InvGUIRenderContext(this)
 
+        for (nodeId in information.nodes()) {
+            runtime.renderingGraph.getNode(nodeId)?.let { node ->
+                computedProperties[runtime.renderingGraph.parent(nodeId)]?.let { cachedProperties ->
+                    context.setSlotOffset(cachedProperties.slot)
 
-    }
-
-    override fun update() {
+                    calculatePosition(node, context)
+                    renderChild(context, node)
+                }
+            }
+        }
 
     }
 
@@ -144,9 +168,9 @@ class InventoryGUIRenderer(val runtime: ViewRuntimeImpl) : Renderer<InvGUIRender
         inventory!!.setItem(i, itemStackConfig.constructItemStack().bukkitRef)
     }
 
-    fun renderStack(position: PropertyPosition, itemStack: ItemStack?) {
+    fun renderStack(position: Int, itemStack: ItemStack?) {
         if (itemStack == null) {
-            setNativeStack(position.slot(), null)
+            setNativeStack(position, null)
             return
         }
         require(itemStack is ItemStackImpl) {
@@ -156,10 +180,10 @@ class InventoryGUIRenderer(val runtime: ViewRuntimeImpl) : Renderer<InvGUIRender
             )
         }
 
-        setNativeStack(position.slot(), itemStack.bukkitRef)
+        setNativeStack(position, itemStack.bukkitRef)
     }
 
-    fun renderStack(position: PropertyPosition, itemStackConfig: ItemStackConfig, itemStackContext: ItemStackContext) {
+    fun renderStack(position: Int, itemStackConfig: ItemStackConfig, itemStackContext: ItemStackContext) {
         require(itemStackConfig is BukkitItemStackConfig) {
             String.format(
                 "Cannot render stack config! Invalid stack config type! Expected '%s' but received '%s'.",
@@ -168,7 +192,7 @@ class InventoryGUIRenderer(val runtime: ViewRuntimeImpl) : Renderer<InvGUIRender
         }
 
         setNativeStack(
-            position.slot(),
+            position,
             itemStackConfig.constructItemStack(
                 null,
                 runtime.wolfyUtils.chat.miniMessage,
@@ -177,7 +201,7 @@ class InventoryGUIRenderer(val runtime: ViewRuntimeImpl) : Renderer<InvGUIRender
         )
     }
 
-    private fun setNativeStack(i: Int, itemStack: org.bukkit.inventory.ItemStack?) {
+    fun setNativeStack(i: Int, itemStack: org.bukkit.inventory.ItemStack?) {
         //checkIfSlotInBounds(i);
         if (itemStack == null) {
             inventory!!.setItem(i, null)
@@ -187,21 +211,8 @@ class InventoryGUIRenderer(val runtime: ViewRuntimeImpl) : Renderer<InvGUIRender
     }
 
 
-    class ComputedProperties(
-        var positioning: Positioning,
-        var slotPosition: Int,
-        var width: Int,
-        var height: Int
-    ) {
-
-        enum class Positioning {
-            STATIC,
-            RELATIVE,
-            ABSOLUTE,
-            FIXED
-        }
-
-
-    }
+    class CachedProperties(
+        var slot: Int
+    )
 
 }
