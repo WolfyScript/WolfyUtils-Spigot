@@ -100,7 +100,7 @@ public abstract class Meta implements Keyed {
 
     @JsonIgnore
     @Override
-    public final NamespacedKey getNamespacedKey() {
+    public final NamespacedKey key() {
         return key;
     }
 
@@ -116,7 +116,7 @@ public abstract class Meta implements Keyed {
             this.type = type;
         }
 
-        public NamespacedKey getNamespacedKey() {
+        public NamespacedKey key() {
             return namespacedKey;
         }
 

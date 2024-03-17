@@ -67,7 +67,7 @@ public class PlayerStorage {
      * @return The previous cached value, if any; otherwise null
      */
     public <T extends CustomPlayerData> T setData(T data) {
-        T prev = (T) CACHED_DATA.put(data.getNamespacedKey(), data);
+        T prev = (T) CACHED_DATA.put(data.key(), data);
         if (prev != null) {
             prev.onUnload();
         }
@@ -76,7 +76,7 @@ public class PlayerStorage {
             var objectMapper = core.getWolfyUtils().getJacksonMapperUtil().getGlobalMapper();
             try {
                 data.onLoad();
-                dataContainer.set(((BukkitNamespacedKey)data.getNamespacedKey()).bukkit(), PersistentDataType.STRING, objectMapper.writeValueAsString(data));
+                dataContainer.set(((BukkitNamespacedKey)data.key()).bukkit(), PersistentDataType.STRING, objectMapper.writeValueAsString(data));
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }

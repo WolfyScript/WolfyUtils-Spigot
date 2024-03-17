@@ -52,7 +52,7 @@ public class CustomItemBlockData extends CustomBlockData {
         this.core = other.core;
         this.chunkStorage = other.chunkStorage;
         this.pos = other.pos;
-        this.item = new BukkitNamespacedKey(other.getNamespacedKey().getNamespace(), other.getNamespacedKey().getKey());
+        this.item = new BukkitNamespacedKey(other.key().getNamespace(), other.key().getKey());
         this.particleAnimationID = null;
     }
 

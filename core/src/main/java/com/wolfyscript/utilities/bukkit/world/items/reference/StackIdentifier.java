@@ -180,10 +180,10 @@ public interface StackIdentifier extends Keyed {
     }
 
     default StackIdentifierParser<?> parser() {
-        return WolfyCoreImpl.getInstance().getRegistries().getStackIdentifierParsers().get(getNamespacedKey());
+        return WolfyCoreImpl.getInstance().getRegistries().getStackIdentifierParsers().get(key());
     }
 
     @Override
-    NamespacedKey getNamespacedKey();
+    NamespacedKey key();
 
 }

@@ -31,7 +31,7 @@ public abstract class CustomItemData implements Keyed, Copyable<CustomItemData> 
 
     @JsonIgnore
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public NamespacedKey key() {
         return id;
     }
 

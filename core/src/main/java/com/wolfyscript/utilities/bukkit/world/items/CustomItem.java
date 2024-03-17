@@ -188,7 +188,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
         super(customItem.wolfyUtils, CustomItem.class);
         this.reference = customItem.reference.copy();
 
-        this.namespacedKey = customItem.getNamespacedKey();
+        this.namespacedKey = customItem.key();
         this.fuelSettings = customItem.fuelSettings.clone();
         this.blockSettings = customItem.blockSettings.copy();
         this.nbtChecks = customItem.nbtChecks;
@@ -330,7 +330,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
 
     @Nullable
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public NamespacedKey key() {
         return namespacedKey;
     }
 
@@ -526,7 +526,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
 
     @Override
     public int hashCode() {
-        return Objects.hash(getNamespacedKey(), replacement, getPermission(), getWeight(), getFuelSettings(), getBlockSettings(), getDurabilityCost(), isConsumed(), blockPlacement, isBlockVanillaEquip(), isBlockVanillaRecipes(), getEquipmentSlots(), stackReference(), getParticleContent(), getMetaSettings());
+        return Objects.hash(key(), replacement, getPermission(), getWeight(), getFuelSettings(), getBlockSettings(), getDurabilityCost(), isConsumed(), blockPlacement, isBlockVanillaEquip(), isBlockVanillaRecipes(), getEquipmentSlots(), stackReference(), getParticleContent(), getMetaSettings());
     }
 
     /**
@@ -829,7 +829,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     }
 
     public CustomItemData addDataIfAbsent(CustomItemData data) {
-        return indexedData.putIfAbsent(data.getNamespacedKey(), data);
+        return indexedData.putIfAbsent(data.key(), data);
     }
 
     public CustomItemData computeDataIfAbsent(NamespacedKey id, Function<NamespacedKey, CustomItemData> mappingFunction) {

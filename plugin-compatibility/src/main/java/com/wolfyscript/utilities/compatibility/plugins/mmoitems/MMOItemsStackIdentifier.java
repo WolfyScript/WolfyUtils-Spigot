@@ -49,7 +49,7 @@ class MMOItemsStackIdentifier implements StackIdentifier, com.wolfyscript.utilit
     }
 
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public NamespacedKey key() {
         return ID;
     }
 
@@ -72,7 +72,7 @@ class MMOItemsStackIdentifier implements StackIdentifier, com.wolfyscript.utilit
         }
 
         @Override
-        public NamespacedKey getNamespacedKey() {
+        public NamespacedKey key() {
             return ID;
         }
 

@@ -67,7 +67,7 @@ public class KeyedJsonConfig<T> extends JsonConfig<T> {
         this.namespacedKey = namespacedKey;
     }
 
-    public NamespacedKey getNamespacedKey() {
+    public NamespacedKey key() {
         return namespacedKey;
     }
 }

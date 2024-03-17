@@ -14,7 +14,7 @@ public interface StackIdentifierParser<T extends StackIdentifier> extends Keyed,
 
     default DisplayConfiguration displayConfig() {
         return new DisplayConfiguration.SimpleDisplayConfig(
-                Component.text(getNamespacedKey().toString()),
+                Component.text(key().toString()),
                 new DisplayConfiguration.MaterialIconSettings(Material.WRITABLE_BOOK)
         );
     }

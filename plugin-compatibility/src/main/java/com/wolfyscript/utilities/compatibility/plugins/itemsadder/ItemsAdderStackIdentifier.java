@@ -49,7 +49,7 @@ class ItemsAdderStackIdentifier implements StackIdentifier, com.wolfyscript.util
     }
 
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public NamespacedKey key() {
         return ID;
     }
 
@@ -70,7 +70,7 @@ class ItemsAdderStackIdentifier implements StackIdentifier, com.wolfyscript.util
         }
 
         @Override
-        public NamespacedKey getNamespacedKey() {
+        public NamespacedKey key() {
             return ID;
         }
 
