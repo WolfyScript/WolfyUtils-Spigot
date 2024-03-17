@@ -10,6 +10,5 @@ class InventoryGroupComponentRenderer : ComponentRenderer<ComponentCluster, InvG
 
     override fun key(): NamespacedKey = BukkitNamespacedKey("wolfyutils", "inventory/group")
 
-    override fun render(context: InvGUIRenderContext, component: ComponentCluster) {
-    }
+    override fun render(context: InvGUIRenderContext, component: ComponentCluster) { }
 }
