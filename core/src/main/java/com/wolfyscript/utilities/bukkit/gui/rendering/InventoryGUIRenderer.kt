@@ -5,13 +5,14 @@ import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit
 import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl
 import com.wolfyscript.utilities.bukkit.adapters.PlayerImpl
 import com.wolfyscript.utilities.bukkit.gui.BukkitInventoryGuiHolder
+import com.wolfyscript.utilities.bukkit.gui.interaction.CachedNodeInteractProperties
 import com.wolfyscript.utilities.bukkit.nms.inventory.InventoryUpdate
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig
 import com.wolfyscript.utilities.gui.*
 import com.wolfyscript.utilities.gui.components.Button
 import com.wolfyscript.utilities.gui.components.ComponentCluster
 import com.wolfyscript.utilities.gui.components.StackInputSlot
-import com.wolfyscript.utilities.gui.rendering.ComponentRenderingNode
+import com.wolfyscript.utilities.gui.model.UpdateInformation
 import com.wolfyscript.utilities.gui.rendering.PropertyPosition
 import com.wolfyscript.utilities.gui.rendering.Renderer
 import com.wolfyscript.utilities.gui.rendering.RenderingNode
@@ -28,14 +29,12 @@ import java.util.*
 class InventoryGUIRenderer(val runtime: ViewRuntimeImpl) : Renderer<InvGUIRenderContext> {
 
     private var inventory: Inventory? = Bukkit.createInventory(null, 27)
-    private val computedProperties: MutableMap<Long, CachedProperties> = mutableMapOf()
-    private var window: Window? = null
+    private val cachedProperties: MutableMap<Long, CachedNodeRenderProperties> = mutableMapOf()
 
     override fun changeWindow(window: Window) {
-        this.window = window
         // No active Window or it is another Window, need to recreate inventory
         val guiHolder: GuiHolder = GuiHolderImpl(window, runtime, null)
-        val holder = BukkitInventoryGuiHolder(guiHolder)
+        val holder = BukkitInventoryGuiHolder(runtime, guiHolder)
         val title: net.kyori.adventure.text.Component = window.title()
 
         inventory = if ((window.wolfyUtils as WolfyUtilsBukkit).core.compatibilityManager.isPaper) {
@@ -61,68 +60,109 @@ class InventoryGUIRenderer(val runtime: ViewRuntimeImpl) : Renderer<InvGUIRender
 
     override fun render() {
         if (inventory == null) return
-        if (window == null) return
+
+        val context = InvGUIRenderContext(this)
+        cachedProperties[0] = CachedNodeRenderProperties(0, mutableSetOf(0))
+        context.setSlotOffset(0)
+
+        renderChildren(0, context)
 
         runtime.viewers.forEach {
             Bukkit.getPlayer(it)?.openInventory(inventory!!)
         }
-
-        val graph = runtime.renderingGraph
-
-        val context = InvGUIRenderContext(this)
-        computedProperties[0] = CachedProperties(0)
-        context.setSlotOffset(0)
-
-        for (child in graph.children(0)) {
-            graph.getNode(child)?.let {
-                calculatePosition(it, context)
-                renderChild(context, it)
-            }
-        }
-
     }
 
-    private fun calculatePosition(node: ComponentRenderingNode, context: InvGUIRenderContext) {
-        val staticPos = context.currentOffset() + 1
-        val position = node.value.properties().position()
-
-        when(position) {
-            is PropertyPosition.Static -> context.currentOffset() + 1
-            is PropertyPosition.Relative -> context.currentOffset() + (position.slotOffset() ?: 1)
+    private fun renderChildren(parent: Long, context: InvGUIRenderContext) {
+        for (child in runtime.renderingGraph.children(parent)) {
+            renderChildOf(child, parent, context)
         }
+    }
 
-        computedProperties[node.id] = CachedProperties(staticPos)
+    private fun renderChildOf(child: Long, parent: Long, context: InvGUIRenderContext) {
+        runtime.renderingGraph.getNode(child)?.let {
+            val position = calculatePosition(it, context)
+
+            // Direct rendering to specific component renderer TODO: Make extensible
+            when (val component = it.component) {
+                is Button -> InventoryButtonComponentRenderer().render(context, component)
+                is ComponentCluster -> InventoryGroupComponentRenderer().render(context, component)
+                is StackInputSlot -> {}
+            }
+            cachedProperties[child] = CachedNodeRenderProperties(position, mutableSetOf(position))
+            // Store the slots affected by this node, so the slots can be easily cleared
+            cachedProperties[parent]?.slots?.add(position)
+
+            renderChildren(it.id, context)
+        }
+    }
+
+    private fun calculatePosition(node: RenderingNode, context: InvGUIRenderContext): Int {
+        val staticPos = node.component.properties().position().slotPositioning()?.slot() ?: (context.currentOffset() + 1)
         context.setSlotOffset(staticPos)
+
+        cachedProperties[node.id] = CachedNodeRenderProperties(staticPos, mutableSetOf(staticPos))
+        return staticPos
     }
 
-    private fun renderChild(context: InvGUIRenderContext, node: ComponentRenderingNode) {
-        when (val component = node.value) {
-            is Button -> InventoryButtonComponentRenderer().render(context, component)
-            is ComponentCluster -> InventoryGroupComponentRenderer().render(context, component)
-            is StackInputSlot -> { }
-        }
-        for (child in runtime.renderingGraph.children(node.id)) {
-            runtime.renderingGraph.getNode(child)?.let {
-                calculatePosition(it, context)
-                renderChild(context, it)
-            }
-        }
-    }
+    override fun update(information: UpdateInformation) {
 
-    override fun update(information: Renderer.UpdateInformation) {
-        val context = InvGUIRenderContext(this)
-
-        for (nodeId in information.nodes()) {
-            runtime.renderingGraph.getNode(nodeId)?.let { node ->
-                computedProperties[runtime.renderingGraph.parent(nodeId)]?.let { cachedProperties ->
-                    context.setSlotOffset(cachedProperties.slot)
-
-                    calculatePosition(node, context)
-                    renderChild(context, node)
+        if (information.updateTitle()) {
+            runtime.viewers.forEach { viewer ->
+                runtime.currentMenu.ifPresent {
+                    updateTitle(viewer, it.title())
                 }
             }
         }
 
+        val context = InvGUIRenderContext(this)
+        for ((sibling, addedNode) in information.added()) {
+            runtime.renderingGraph.getNode(addedNode)?.let { node ->
+                val slotPositioning = if (node.component.properties().position().slotPositioning() == null) {
+                    // Get offset from parent TODO
+                    0
+                } else {
+                    0
+                }
+                context.setSlotOffset(slotPositioning)
+                val parent = runtime.renderingGraph.parent(addedNode) ?: 0
+                renderChildOf(addedNode, parent, context)
+            }
+        }
+
+        for (updated in information.updated()) {
+            runtime.renderingGraph.getNode(updated)?.let { node ->
+                val slotPositioning = if (node.component.properties().position().slotPositioning() == null) {
+                    // Get offset from parent TODO
+                    0
+                } else {
+                    0
+                }
+                context.setSlotOffset(slotPositioning)
+                val parent = runtime.renderingGraph.parent(updated) ?: 0
+                renderChildOf(updated, parent, context)
+            }
+        }
+
+        for (removedNode in information.removed()) {
+            runtime.renderingGraph.getNode(removedNode)?.let {
+
+                // Remove node from cache
+                val removedProperties = cachedProperties.remove(removedNode)
+                removedProperties?.slots?.forEach {
+                    inventory?.clear(it) // clear slots affected by the removed node
+                }
+
+                // Does it have a parent? if so unlink it
+                val parent = runtime.renderingGraph.parent(removedNode)
+                if (parent != null) {
+                    cachedProperties[parent]?.let { parentProperties ->
+                        removedProperties?.slots?.let {
+                            parentProperties.slots.removeAll(it) // Remove unmarked slots from parent
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun getInventoryType(window: Window): Optional<InventoryType> {
@@ -137,19 +177,23 @@ class InventoryGUIRenderer(val runtime: ViewRuntimeImpl) : Renderer<InvGUIRender
         }
     }
 
-    fun updateTitle(player: com.wolfyscript.utilities.platform.adapters.Player, component: net.kyori.adventure.text.Component?) {
-        val bukkitPlayer = (player as PlayerImpl).bukkitRef
-        if (ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 20, 0))) {
-            bukkitPlayer.openInventory.title =
-                net.kyori.adventure.platform.bukkit.BukkitComponentSerializer.legacy().serialize(
-                    component!!
+    private fun updateTitle(
+        player: UUID,
+        component: net.kyori.adventure.text.Component
+    ) {
+        Bukkit.getPlayer(player)?.let { bukkitPlayer ->
+            if (ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 20, 0))) {
+                bukkitPlayer.openInventory.title =
+                    net.kyori.adventure.platform.bukkit.BukkitComponentSerializer.legacy().serialize(
+                        component
+                    )
+            } else {
+                InventoryUpdate.updateInventory(
+                    (runtime.wolfyUtils.core as WolfyCoreImpl).wolfyUtils.plugin,
+                    bukkitPlayer,
+                    component
                 )
-        } else {
-            InventoryUpdate.updateInventory(
-                (runtime.wolfyUtils.core as WolfyCoreImpl).wolfyUtils.plugin,
-                bukkitPlayer,
-                component
-            )
+            }
         }
     }
 
@@ -209,10 +253,5 @@ class InventoryGUIRenderer(val runtime: ViewRuntimeImpl) : Renderer<InvGUIRender
         }
         inventory!!.setItem(i, itemStack)
     }
-
-
-    class CachedProperties(
-        var slot: Int
-    )
 
 }
