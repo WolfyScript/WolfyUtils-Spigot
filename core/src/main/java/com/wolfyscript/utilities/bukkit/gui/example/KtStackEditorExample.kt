@@ -1,13 +1,10 @@
 package com.wolfyscript.utilities.bukkit.gui.example
 
 import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl
-import com.wolfyscript.utilities.bukkit.chat.BukkitChat
-import com.wolfyscript.utilities.bukkit.gui.BukkitInventoryGuiHolder
 import com.wolfyscript.utilities.gui.*
 import com.wolfyscript.utilities.gui.reactivity.Signal
 import com.wolfyscript.utilities.gui.reactivity.createSignal
 import com.wolfyscript.utilities.platform.adapters.ItemStack
-import net.kyori.adventure.text.Component
 import org.bukkit.inventory.meta.ItemMeta
 
 private class StackEditorStore {
@@ -74,13 +71,13 @@ fun register(manager: GuiAPIManager) {
                 value(stackToEdit)
             }
             button("display_name_tab_selector") {
-                interact { _: GuiHolder?, _: InteractionDetails? ->
+                interact { _, _ ->
                     selectedTab.set(Tab.DISPLAY_NAME)
                     InteractionResult.cancel(true)
                 }
             }
             button("lore_tab_selector") {
-                interact { _: GuiHolder?, _: InteractionDetails? ->
+                interact { _, _ ->
                     selectedTab.set(Tab.LORE)
                     InteractionResult.cancel(true)
                 }
@@ -92,8 +89,8 @@ fun register(manager: GuiAPIManager) {
 fun ReactiveRenderBuilder.displayNameTab(stackToEdit: Signal<ItemStack?>): ReactiveRenderBuilder.ReactiveResult {
     return group("display_name_tab") {
         button("set_display_name") {
-            interact { holder, _ ->
-                holder.viewManager.setTextInputCallback { _, _, s, _ ->
+            interact { runtime, _ ->
+                runtime.setTextInputCallback { _, _, s, _ ->
                     stackToEdit.update { stack ->
                         if (stack is ItemStackImpl) {
                             val bukkitStack = stack.bukkitRef!!;

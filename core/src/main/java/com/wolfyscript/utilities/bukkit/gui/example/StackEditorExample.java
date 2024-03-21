@@ -96,11 +96,11 @@ public class StackEditorExample {
     static ReactiveRenderBuilder.ReactiveResult displayNameTab(ReactiveRenderBuilder reactiveBuilder, Signal<ItemStack> stackToEdit) {
         return reactiveBuilder.component("display_name_tab", ComponentClusterBuilder.class, displayNameClusterBuilder -> displayNameClusterBuilder
                 .component("set_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
-                        .interact((holder, details) -> {
-                            BukkitChat chat = (BukkitChat) holder.getViewManager().getWolfyUtils().getChat();
+                        .interact((runtime, details) -> {
+                            BukkitChat chat = (BukkitChat) runtime.getWolfyUtils().getChat();
                             Player player = null;
                             chat.sendMessage(player, Component.text("Click me"));
-                            holder.getViewManager().setTextInputCallback((p, guiViewManager, s, strings) -> {
+                            runtime.setTextInputCallback((p, guiViewManager, s, strings) -> {
                                 stackToEdit.update(stack -> {
                                     if (stack instanceof ItemStackImpl stackImpl) {
                                         var bukkitStack = stackImpl.getBukkitRef();
