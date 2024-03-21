@@ -7,7 +7,7 @@ import com.wolfyscript.utilities.gui.GuiAPIManager;
 import com.wolfyscript.utilities.gui.InteractionResult;
 import com.wolfyscript.utilities.gui.ReactiveRenderBuilder;
 import com.wolfyscript.utilities.gui.components.ButtonBuilder;
-import com.wolfyscript.utilities.gui.components.ComponentClusterBuilder;
+import com.wolfyscript.utilities.gui.components.ComponentGroupBuilder;
 import com.wolfyscript.utilities.gui.components.StackInputSlotBuilder;
 import com.wolfyscript.utilities.gui.reactivity.Signal;
 import com.wolfyscript.utilities.platform.adapters.ItemStack;
@@ -57,7 +57,7 @@ public class StackEditorExample {
                                     return switch (selectedTab.get()) {
                                         case DISPLAY_NAME -> displayNameTab(reactiveBuilder, stackToEdit);
                                         case LORE ->
-                                                reactiveBuilder.component("lore_tab", ComponentClusterBuilder.class, displayNameClusterBuilder -> displayNameClusterBuilder
+                                                reactiveBuilder.component("lore_tab", ComponentGroupBuilder.class, displayNameClusterBuilder -> displayNameClusterBuilder
                                                         .component("edit_lore", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                                                                 .interact((holder, details) -> {
 
@@ -94,7 +94,7 @@ public class StackEditorExample {
     }
 
     static ReactiveRenderBuilder.ReactiveResult displayNameTab(ReactiveRenderBuilder reactiveBuilder, Signal<ItemStack> stackToEdit) {
-        return reactiveBuilder.component("display_name_tab", ComponentClusterBuilder.class, displayNameClusterBuilder -> displayNameClusterBuilder
+        return reactiveBuilder.component("display_name_tab", ComponentGroupBuilder.class, displayNameClusterBuilder -> displayNameClusterBuilder
                 .component("set_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                         .interact((runtime, details) -> {
                             BukkitChat chat = (BukkitChat) runtime.getWolfyUtils().getChat();

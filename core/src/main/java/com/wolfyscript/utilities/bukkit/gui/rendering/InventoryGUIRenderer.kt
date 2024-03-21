@@ -10,7 +10,7 @@ import com.wolfyscript.utilities.bukkit.nms.inventory.InventoryUpdate
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig
 import com.wolfyscript.utilities.gui.*
 import com.wolfyscript.utilities.gui.components.Button
-import com.wolfyscript.utilities.gui.components.ComponentCluster
+import com.wolfyscript.utilities.gui.components.ComponentGroup
 import com.wolfyscript.utilities.gui.components.StackInputSlot
 import com.wolfyscript.utilities.gui.model.UpdateInformation
 import com.wolfyscript.utilities.gui.rendering.PropertyPosition
@@ -85,7 +85,7 @@ class InventoryGUIRenderer(val runtime: ViewRuntimeImpl) : Renderer<InvGUIRender
             // Direct rendering to specific component renderer TODO: Make extensible
             when (val component = it.component) {
                 is Button -> InventoryButtonComponentRenderer().render(context, component)
-                is ComponentCluster -> InventoryGroupComponentRenderer().render(context, component)
+                is ComponentGroup -> InventoryGroupComponentRenderer().render(context, component)
                 is StackInputSlot -> {}
             }
             cachedProperties[child] = CachedNodeRenderProperties(position, mutableSetOf(position))

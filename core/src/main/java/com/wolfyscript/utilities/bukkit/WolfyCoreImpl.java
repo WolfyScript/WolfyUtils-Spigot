@@ -505,12 +505,12 @@ public abstract class WolfyCoreImpl implements WolfyCore {
         var guiComponents = getRegistries().getGuiComponents();
         guiComponents.register(ButtonImpl.class);
         guiComponents.register(StackInputSlotImpl.class);
-        guiComponents.register(ComponentClusterImpl.class);
+        guiComponents.register(ComponentGroupImpl.class);
 
         var guiComponentBuilders = getRegistries().getGuiComponentBuilders();
         guiComponentBuilders.register(ButtonBuilderImpl.class);
         guiComponentBuilders.register(StackInputSlotBuilderImpl.class);
-        guiComponentBuilders.register(ComponentClusterBuilderImpl.class);
+        guiComponentBuilders.register(ComponentGroupBuilderImpl.class);
 
         // Register the Registries to resolve type references in JSON
         KeyedTypeIdResolver.registerTypeRegistry(CustomItemData.class, registries.getCustomItemDataTypeRegistry());
