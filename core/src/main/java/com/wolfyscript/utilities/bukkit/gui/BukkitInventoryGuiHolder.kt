@@ -1,84 +1,90 @@
-package com.wolfyscript.utilities.bukkit.gui;
+package com.wolfyscript.utilities.bukkit.gui
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.gui.*;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.jetbrains.annotations.NotNull;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit
+import com.wolfyscript.utilities.gui.GuiHolder
+import com.wolfyscript.utilities.gui.ViewRuntime
+import com.wolfyscript.utilities.gui.ViewRuntimeImpl
+import com.wolfyscript.utilities.gui.Window
+import org.bukkit.Bukkit
+import org.bukkit.event.inventory.InventoryAction
+import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.inventory.InventoryDragEvent
+import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.InventoryHolder
 
-import java.util.Objects;
+internal class BukkitInventoryGuiHolder(private val runtime: ViewRuntimeImpl, private val guiHolder: GuiHolder) :
+    InventoryHolder {
+    private var activeInventory: Inventory? = null
 
-public class BukkitInventoryGuiHolder implements InventoryHolder {
-
-    private final GuiHolder guiHolder;
-    private Inventory activeInventory;
-
-    public BukkitInventoryGuiHolder(GuiHolder guiHolder) {
-        this.guiHolder = guiHolder;
+    private fun currentWindow(): Window? {
+        return guiHolder.currentWindow
     }
 
-    private Window currentWindow() {
-        return guiHolder.getCurrentWindow();
+    fun guiHolder(): GuiHolder {
+        return guiHolder
     }
 
-    public GuiHolder guiHolder() {
-        return guiHolder;
-    }
-
-    void onClick(InventoryClickEvent event) {
-        if (currentWindow() == null || event.getClickedInventory() == null) return;
-        if (Objects.equals(event.getClickedInventory().getHolder(), this)) {
-            ViewRuntimeImpl guiViewManager = (ViewRuntimeImpl) guiHolder.getViewManager();
-            // TODO: Call Interaction handler here
-        } else if (!event.getAction().equals(InventoryAction.COLLECT_TO_CURSOR)) {
-            event.setCancelled(false);
+    fun onClick(event: InventoryClickEvent) {
+        if (currentWindow() == null || event.clickedInventory == null) return
+        if (event.clickedInventory!!.holder == this) {
+            val result = runtime.interactionHandler.onInteract(ClickInteractionDetailsImpl(event))
+            if (result.isCancelled) {
+                event.isCancelled = true
+            }
+        } else if (event.action != InventoryAction.COLLECT_TO_CURSOR) {
+            event.isCancelled = false
             // TODO: Handle bottom inventory clicks
         }
-        Bukkit.getScheduler().runTask(((WolfyCoreBukkit) guiHolder.getViewManager().getWolfyUtils().getCore()).getPlugin(),
-                () -> {
-//                    guiHolder.getViewManager().unblockedByInteraction();
-                    guiHolder.getViewManager().getCurrentMenu().ifPresent(window -> {
-                        window.open(guiHolder().getViewManager());
-                    });
+        Bukkit.getScheduler().runTask(
+            (runtime.wolfyUtils.core as WolfyCoreBukkit).plugin,
+            Runnable {
+                runtime.reactiveSource.runEffects()
+                runtime.currentMenu.ifPresent {
+
                 }
-        );
+            }
+        )
     }
 
-    void onDrag(InventoryDragEvent event) {
-        if (event.getRawSlots().stream().anyMatch(rawSlot -> !Objects.equals(event.getView().getInventory(rawSlot), activeInventory))) {
-            event.setCancelled(true);
-            return;
+    fun onDrag(event: InventoryDragEvent) {
+        if (event.rawSlots.stream().anyMatch { rawSlot: Int? ->
+                event.view.getInventory(rawSlot!!) != activeInventory
+            }) {
+            event.isCancelled = true
+            return
         }
-        if (currentWindow() == null) return;
-        if (Objects.equals(event.getInventory().getHolder(), this)) {
-            var interactionDetails = new DragInteractionDetailsImpl(event);
-            // TODO: Call Interaction handler here
-
-            Bukkit.getScheduler().runTask(((WolfyCoreBukkit) guiHolder.getViewManager().getWolfyUtils().getCore()).getPlugin(), () -> {});
+        if (currentWindow() == null) return
+        if (event.inventory.holder == this) {
+            val interactionDetails = DragInteractionDetailsImpl(event)
+            val result = runtime.interactionHandler.onInteract(interactionDetails)
+            if (result.isCancelled) {
+                event.isCancelled = true
+            }
+            Bukkit.getScheduler().runTask((runtime.wolfyUtils.core as WolfyCoreBukkit).plugin,
+                Runnable {
+                    runtime.reactiveSource.runEffects()
+                })
         }
     }
 
-    void onClose(InventoryCloseEvent event) {
+    fun onClose(event: InventoryCloseEvent) {
         // TODO: Close Window
-        if (currentWindow() == null) return;
-        if (Objects.equals(event.getInventory().getHolder(), this)) {
-            guiHolder.getViewManager().getCurrentMenu().ifPresent(window -> window.close(guiHolder.getViewManager()));
+        if (currentWindow() == null) return
+        if (event.inventory.holder == this) {
+            guiHolder.viewManager.currentMenu.ifPresent { window: Window ->
+                window.close(
+                    guiHolder.viewManager
+                )
+            }
         }
     }
 
-    public void setActiveInventory(Inventory activeInventory) {
-        this.activeInventory = activeInventory;
+    fun setActiveInventory(activeInventory: Inventory?) {
+        this.activeInventory = activeInventory
     }
 
-    @NotNull
-    @Override
-    public Inventory getInventory() {
-        return activeInventory;
+    override fun getInventory(): Inventory {
+        return activeInventory!!
     }
 }
