@@ -55,8 +55,17 @@ dependencies {
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 publishing {
-    publications.create<MavenPublication>("maven") {
-        from(components["java"])
+    publications {
+        create<MavenPublication>("lib") {
+            from(components.getByName("java"))
+        }
+    }
+    repositories {
+        maven {
+            name = "wolfyRepo"
+            credentials(PasswordCredentials::class)
+            url = uri("https://maven.wolfyscript.com/repository/${if (project.version.toString().endsWith("-SNAPSHOT")) "snapshots" else "releases"}/")
+        }
     }
 }
 
