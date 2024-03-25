@@ -3,9 +3,7 @@ package com.wolfyscript.utilities.bukkit.gui.rendering
 import com.wolfyscript.utilities.bukkit.WolfyCoreImpl
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit
 import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl
-import com.wolfyscript.utilities.bukkit.adapters.PlayerImpl
 import com.wolfyscript.utilities.bukkit.gui.BukkitInventoryGuiHolder
-import com.wolfyscript.utilities.bukkit.gui.interaction.CachedNodeInteractProperties
 import com.wolfyscript.utilities.bukkit.nms.inventory.InventoryUpdate
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig
 import com.wolfyscript.utilities.gui.*
@@ -13,7 +11,6 @@ import com.wolfyscript.utilities.gui.components.Button
 import com.wolfyscript.utilities.gui.components.ComponentGroup
 import com.wolfyscript.utilities.gui.components.StackInputSlot
 import com.wolfyscript.utilities.gui.model.UpdateInformation
-import com.wolfyscript.utilities.gui.rendering.PropertyPosition
 import com.wolfyscript.utilities.gui.rendering.Renderer
 import com.wolfyscript.utilities.gui.rendering.RenderingNode
 import com.wolfyscript.utilities.platform.adapters.ItemStack
@@ -32,7 +29,6 @@ class InventoryGUIRenderer(val runtime: ViewRuntimeImpl) : Renderer<InvGUIRender
     private val cachedProperties: MutableMap<Long, CachedNodeRenderProperties> = mutableMapOf()
 
     override fun changeWindow(window: Window) {
-        // No active Window or it is another Window, need to recreate inventory
         val guiHolder: GuiHolder = GuiHolderImpl(window, runtime, null)
         val holder = BukkitInventoryGuiHolder(runtime, guiHolder)
         val title: net.kyori.adventure.text.Component = window.title()
@@ -115,7 +111,7 @@ class InventoryGUIRenderer(val runtime: ViewRuntimeImpl) : Renderer<InvGUIRender
         }
 
         val context = InvGUIRenderContext(this)
-        for ((sibling, addedNode) in information.added()) {
+        for ((_, addedNode) in information.added()) {
             runtime.renderingGraph.getNode(addedNode)?.let { node ->
                 val slotPositioning = if (node.component.properties().position().slotPositioning() == null) {
                     // Get offset from parent TODO

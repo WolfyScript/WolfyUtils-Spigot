@@ -1,13 +1,15 @@
 package com.wolfyscript.utilities.bukkit.gui.example
 
 import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl
-import com.wolfyscript.utilities.gui.*
+import com.wolfyscript.utilities.gui.GuiAPIManager
+import com.wolfyscript.utilities.gui.InteractionResult
+import com.wolfyscript.utilities.gui.ReactiveRenderBuilder
 import com.wolfyscript.utilities.gui.reactivity.Signal
 import com.wolfyscript.utilities.gui.reactivity.createSignal
 import com.wolfyscript.utilities.platform.adapters.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 
-private class StackEditorStore {
+class StackEditorStore {
     private var stack: ItemStack? = null
 
     fun setStack(stack: ItemStack?) {
@@ -36,13 +38,13 @@ fun register(manager: GuiAPIManager) {
             size(9 * 6)
 
             // Persistent data stores
-            val stackToEdit = createStore({ StackEditorStore() }, { getStack() }, { setStack(it) })
+            val stackToEdit = createSignal { StackEditorStore() }
             // Weak data signals
             val selectedTab = createSignal(Tab.NONE)
 
             reactive {
                 // Reactive parts are only called when a signal used inside this closure is updated.
-                val itemStack = stackToEdit.get()
+                val itemStack = stackToEdit.get()?.getStack()
                 if (itemStack == null || itemStack.item == null || itemStack.item.key == "air") {
                     return@reactive null
                 }
@@ -63,12 +65,15 @@ fun register(manager: GuiAPIManager) {
                     else -> null
                 }
             }
-            // The state of a component is only reconstructed if the slot it is positioned at changes.
-            // Here the slot will always have the same type of component, so the state is created only once.
             slot("stack_slot") {
                 interact { _, _ -> InteractionResult.cancel(false) }
-                onValueChange { v -> stackToEdit.set(v) }
-                value(stackToEdit)
+                onValueChange { v ->
+                    stackToEdit.update {
+                        it.setStack(v)
+                        it
+                    }
+                }
+                value { stackToEdit.get()?.getStack() }
             }
             button("display_name_tab_selector") {
                 interact { _, _ ->
@@ -86,20 +91,20 @@ fun register(manager: GuiAPIManager) {
     }
 }
 
-fun ReactiveRenderBuilder.displayNameTab(stackToEdit: Signal<ItemStack?>): ReactiveRenderBuilder.ReactiveResult {
+fun ReactiveRenderBuilder.displayNameTab(stackToEdit: Signal<StackEditorStore>): ReactiveRenderBuilder.ReactiveResult {
     return group("display_name_tab") {
         button("set_display_name") {
             interact { runtime, _ ->
                 runtime.setTextInputCallback { _, _, s, _ ->
-                    stackToEdit.update { stack ->
+                    stackToEdit.update { store ->
+                        val stack = store?.getStack()
                         if (stack is ItemStackImpl) {
                             val bukkitStack = stack.bukkitRef!!;
                             val meta: ItemMeta = bukkitStack.itemMeta;
                             meta.setDisplayName(s);
                             bukkitStack.setItemMeta(meta);
-                            stackToEdit.set(stack);
                         }
-                        stack
+                        store
                     }
                     true
                 }
@@ -108,14 +113,15 @@ fun ReactiveRenderBuilder.displayNameTab(stackToEdit: Signal<ItemStack?>): React
         }
         button("reset_display_name") {
             interact { _, _ ->
-                stackToEdit.update { stack ->
+                stackToEdit.update { store ->
+                    val stack = store?.getStack()
                     if (stack is ItemStackImpl) {
                         val bukkitStack = stack.bukkitRef!!;
                         val meta: ItemMeta = bukkitStack.itemMeta;
                         meta.setDisplayName(null);
                         bukkitStack.setItemMeta(meta);
                     }
-                    stack
+                    store
                 }
                 InteractionResult.cancel(true)
             }

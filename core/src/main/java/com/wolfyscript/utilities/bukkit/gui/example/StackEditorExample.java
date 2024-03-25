@@ -2,7 +2,6 @@ package com.wolfyscript.utilities.bukkit.gui.example;
 
 import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl;
 import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
-import com.wolfyscript.utilities.bukkit.gui.BukkitInventoryGuiHolder;
 import com.wolfyscript.utilities.gui.GuiAPIManager;
 import com.wolfyscript.utilities.gui.InteractionResult;
 import com.wolfyscript.utilities.gui.ReactiveRenderBuilder;
@@ -43,14 +42,15 @@ public class StackEditorExample {
                         // This is only called upon creation of the state. So this is not called when the signal is updated!
 
                         // Persistent data stores
-                        Signal<ItemStack> stackToEdit = mainMenu.createStore(viewRuntime -> new StackEditorStore(), StackEditorStore::getStack, StackEditorStore::setStack);
+                        Signal<StackEditorStore> stackToEdit = mainMenu.createSignal(StackEditorStore.class, viewRuntime -> new StackEditorStore());
 
                         // Weak data signals
                         Signal<Tab> selectedTab = mainMenu.createSignal(Tab.class, r -> Tab.NONE);
 
                         mainMenu.reactive(reactiveBuilder -> {
                                     // Reactive parts are called everytime the signal used inside this closure is updated.
-                                    ItemStack itemStack = stackToEdit.get();
+                                    StackEditorStore store = stackToEdit.get();
+                                    ItemStack itemStack = store == null ? null : store.getStack();
                                     if (itemStack == null || itemStack.getItem() == null || itemStack.getItem().getKey().equals("air"))
                                         return null;
 
@@ -75,8 +75,11 @@ public class StackEditorExample {
                                 // Here the slot will always have the same type of component, so the state is created only once.
                                 .component("stack_slot", StackInputSlotBuilder.class, inputSlotBuilder -> inputSlotBuilder
                                         .interact((guiHolder, interactionDetails) -> InteractionResult.cancel(false))
-                                        .onValueChange(stackToEdit::set)
-                                        .value(stackToEdit)
+                                        .onValueChange(itemStack -> stackToEdit.update(stackEditorStore -> {
+                                            stackEditorStore.setStack(itemStack);
+                                            return stackEditorStore;
+                                        }))
+                                        .value(() -> stackToEdit.get().getStack())
                                 )
                                 .component("display_name_tab_selector", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                                         .interact((holder, details) -> {
@@ -93,7 +96,7 @@ public class StackEditorExample {
         );
     }
 
-    static ReactiveRenderBuilder.ReactiveResult displayNameTab(ReactiveRenderBuilder reactiveBuilder, Signal<ItemStack> stackToEdit) {
+    static ReactiveRenderBuilder.ReactiveResult displayNameTab(ReactiveRenderBuilder reactiveBuilder, Signal<StackEditorStore> stackToEdit) {
         return reactiveBuilder.component("display_name_tab", ComponentGroupBuilder.class, displayNameClusterBuilder -> displayNameClusterBuilder
                 .component("set_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                         .interact((runtime, details) -> {
@@ -101,15 +104,15 @@ public class StackEditorExample {
                             Player player = null;
                             chat.sendMessage(player, Component.text("Click me"));
                             runtime.setTextInputCallback((p, guiViewManager, s, strings) -> {
-                                stackToEdit.update(stack -> {
+                                stackToEdit.update(store -> {
+                                    var stack = store.getStack();
                                     if (stack instanceof ItemStackImpl stackImpl) {
                                         var bukkitStack = stackImpl.getBukkitRef();
                                         ItemMeta meta = bukkitStack.getItemMeta();
                                         meta.setDisplayName(s);
                                         bukkitStack.setItemMeta(meta);
-                                        stackToEdit.set(stack);
                                     }
-                                    return stack;
+                                    return store;
                                 });
                                 return true;
                             });
@@ -117,14 +120,15 @@ public class StackEditorExample {
                         }))
                 .component("reset_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                         .interact((holder, details) -> {
-                            stackToEdit.update(stack -> {
+                            stackToEdit.update(store -> {
+                                var stack = store.getStack();
                                 if (stack instanceof ItemStackImpl stackImpl) {
                                     var bukkitStack = stackImpl.getBukkitRef();
                                     ItemMeta meta = bukkitStack.getItemMeta();
                                     meta.setDisplayName(null);
                                     bukkitStack.setItemMeta(meta);
                                 }
-                                return stack;
+                                return store;
                             });
                             return InteractionResult.cancel(true);
                         }))
