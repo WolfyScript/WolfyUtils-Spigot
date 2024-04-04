@@ -5,14 +5,15 @@ import com.wolfyscript.utilities.data.DataComponentMap
 import com.wolfyscript.utilities.data.DataKey
 import com.wolfyscript.utilities.data.Keys
 import com.wolfyscript.utilities.gui.functions.ReceiverFunction
+import com.wolfyscript.utilities.platform.adapters.ItemStack
 
-class DataComponentMapImpl internal constructor(private val itemStack: ItemStackImpl) : DataComponentMap {
+class ItemStackDataComponentMap internal constructor(private val itemStack: ItemStackImpl) : DataComponentMap<ItemStack> {
 
-    override fun keySet(): Set<DataKey<*>> {
+    override fun keySet(): Set<DataKey<*, ItemStack>> {
         TODO("Not yet implemented")
     }
 
-    override fun remove(key: ReceiverFunction<Keys, DataKey<*>>): Boolean {
+    override fun remove(key: DataKey<*, ItemStack>): Boolean {
         TODO("Not yet implemented")
     }
 
@@ -20,15 +21,15 @@ class DataComponentMapImpl internal constructor(private val itemStack: ItemStack
         return 0
     }
 
-    override fun <T> get(key: ReceiverFunction<Keys, DataKey<T>>): T? {
+    override fun <T: Any> get(key: ReceiverFunction<Keys, DataKey<T, ItemStack>>): T? {
         TODO("Not yet implemented")
     }
 
-    override fun has(key: ReceiverFunction<Keys, DataKey<*>>): Boolean {
+    override fun has(key: DataKey<*, ItemStack>): Boolean {
         TODO("Not yet implemented")
     }
 
-    override fun <T> set(key: ReceiverFunction<Keys, DataKey<T>>, t: T) {
+    override fun <T: Any> set(key: DataKey<T, ItemStack>, data: T) {
 
     }
 

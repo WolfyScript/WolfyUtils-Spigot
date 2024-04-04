@@ -4,7 +4,7 @@ import com.wolfyscript.utilities.NamespacedKey
 import com.wolfyscript.utilities.WolfyUtils
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit
-import com.wolfyscript.utilities.bukkit.data.DataComponentMapImpl
+import com.wolfyscript.utilities.bukkit.data.ItemStackDataComponentMap
 import com.wolfyscript.utilities.bukkit.world.items.BukkitItemStackConfig
 import com.wolfyscript.utilities.data.DataComponentMap
 import com.wolfyscript.utilities.world.items.ItemStackConfig
@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack
 
 class ItemStackImpl(wolfyUtils: WolfyUtilsBukkit, bukkitRef: ItemStack?) : BukkitRefAdapter<ItemStack?>(bukkitRef), com.wolfyscript.utilities.platform.adapters.ItemStack {
     private val wolfyUtils: WolfyUtils = wolfyUtils
-    private val componentMap: DataComponentMap = DataComponentMapImpl(this)
+    private val componentMap = ItemStackDataComponentMap(this)
 
     override fun getItem(): NamespacedKey {
         if (getBukkitRef() == null) {
@@ -29,7 +29,7 @@ class ItemStackImpl(wolfyUtils: WolfyUtilsBukkit, bukkitRef: ItemStack?) : Bukki
         return BukkitItemStackConfig(wolfyUtils, this)
     }
 
-    override fun data(): DataComponentMap {
+    override fun data(): ItemStackDataComponentMap {
         return componentMap
     }
 }
