@@ -1,17 +1,25 @@
-package com.wolfyscript.utilities.bukkit.world.items.data;
+package com.wolfyscript.utilities.bukkit.world.items.data
 
-import com.wolfyscript.utilities.world.items.data.Unbreakable;
+import com.wolfyscript.utilities.world.items.data.Unbreakable
+import org.bukkit.inventory.ItemFlag
 
-public class UnbreakableImpl implements Unbreakable {
+class UnbreakableImpl(override val showInTooltip: Boolean) : Unbreakable {
 
-    private final boolean showInTooltip;
-
-    public UnbreakableImpl(boolean showInTooltip) {
-        this.showInTooltip = showInTooltip;
+    companion object {
+        internal val ITEM_META_CONVERTER = ItemMetaDataKeyConverter<Unbreakable>({
+            if (isUnbreakable) {
+                val showInTooltip = hasItemFlag(ItemFlag.HIDE_UNBREAKABLE)
+                UnbreakableImpl(showInTooltip)
+            }
+            null
+        }, { data ->
+            isUnbreakable = true
+            if (data.showInTooltip) {
+                addItemFlags(ItemFlag.HIDE_UNBREAKABLE)
+            } else {
+                removeItemFlags(ItemFlag.HIDE_UNBREAKABLE)
+            }
+        })
     }
 
-    @Override
-    public boolean showInTooltip() {
-        return showInTooltip;
-    }
 }

@@ -1,31 +1,42 @@
 package com.wolfyscript.utilities.bukkit.world.items.data
 
-import com.wolfyscript.utilities.data.Mutable
+import com.wolfyscript.utilities.bukkit.world.items.enchanting.EnchantmentImpl
 import com.wolfyscript.utilities.world.items.data.Enchantments
 import com.wolfyscript.utilities.world.items.enchanting.Enchantment
+import org.bukkit.inventory.ItemFlag
 
-class EnchantmentsImpl : Enchantments {
+class EnchantmentsImpl(override val showInTooltip: Boolean, val enchants: MutableMap<Enchantment, Int>) : Enchantments {
 
-
-
-    override fun showInTooltip(): Boolean {
-        TODO("Not yet implemented")
+    companion object {
+        internal val ITEM_META_CONVERTER = ItemMetaDataKeyConverter<Enchantments>(
+            {
+                EnchantmentsImpl(
+                    !hasItemFlag(ItemFlag.HIDE_ENCHANTS),
+                    enchants.mapKeys<org.bukkit.enchantments.Enchantment, Int, Enchantment> {
+                        EnchantmentImpl(it.key)
+                    }.toMutableMap()
+                )
+            },
+            {
+                removeEnchantments()
+                for (entry in (it as EnchantmentsImpl).enchants) {
+                    addEnchant((entry.key as EnchantmentImpl).bukkit, entry.value, true)
+                }
+                if (it.showInTooltip) {
+                    removeItemFlags(ItemFlag.HIDE_ENCHANTS)
+                } else {
+                    addItemFlags(ItemFlag.HIDE_ENCHANTS)
+                }
+            }
+        )
     }
 
-    override fun toMutable(): Mutable<Enchantments.Mutable> {
-        TODO("Not yet implemented")
+    override fun level(enchantment: Enchantment): Int? {
+        return enchants[enchantment]
     }
 
-    override fun levelFor(p0: Enchantment): Int {
-        TODO("Not yet implemented")
-    }
-
-    class MutableImpl : Enchantments.Mutable {
-
-        override fun set(p0: Enchantment?, p1: Int) {
-            TODO("Not yet implemented")
-        }
-
+    override fun set(enchantment: Enchantment, level: Int) {
+        enchants[enchantment] = level
     }
 
 }

@@ -16,12 +16,13 @@ public class PlatformImpl implements Platform {
     private BukkitAudiences adventure;
     private final GuiUtils guiUtils = new GuiUtilsImpl();
     private final Scheduler scheduler = new SchedulerImpl();
-    private final Items items = new ItemsImpl();
+    private final Items items;
     private Audiences audiences;
     private final WolfyCore core;
 
     PlatformImpl(WolfyCore core) {
         this.core = core;
+        this.items = new ItemsImpl(core);
     }
 
     void init() {

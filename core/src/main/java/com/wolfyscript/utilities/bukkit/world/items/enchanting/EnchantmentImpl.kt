@@ -1,29 +1,19 @@
-package com.wolfyscript.utilities.bukkit.world.items.enchanting;
+package com.wolfyscript.utilities.bukkit.world.items.enchanting
 
-import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.world.items.enchanting.Enchantment;
+import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey
+import org.bukkit.enchantments.Enchantment
 
-public class EnchantmentImpl implements Enchantment {
+internal class EnchantmentImpl(val bukkit: Enchantment) : com.wolfyscript.utilities.world.items.enchanting.Enchantment {
 
-    private final org.bukkit.enchantments.Enchantment bukkit;
-
-    public EnchantmentImpl(org.bukkit.enchantments.Enchantment enchantment) {
-        this.bukkit = enchantment;
+    override fun maxLevel(): Int {
+        return bukkit.maxLevel
     }
 
-    @Override
-    public int maxLevel() {
-        return bukkit.getMaxLevel();
+    override fun minLevel(): Int {
+        return bukkit.startLevel
     }
 
-    @Override
-    public int minLevel() {
-        return bukkit.getStartLevel();
-    }
-
-    @Override
-    public NamespacedKey key() {
-        return BukkitNamespacedKey.fromBukkit(bukkit.getKey());
+    override fun key(): BukkitNamespacedKey {
+        return BukkitNamespacedKey.fromBukkit(bukkit.key)
     }
 }
