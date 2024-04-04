@@ -42,7 +42,7 @@ public abstract class CustomPlayerData {
     }
 
     public static void register(Provider<?> provider) {
-        providers.put(provider.getNamespacedKey(), provider);
+        providers.put(provider.key(), provider);
     }
 
     /**
@@ -88,7 +88,7 @@ public abstract class CustomPlayerData {
         /**
          * @return The {@link NamespacedKey} of this Provider. This method and the {@link CustomData#getNamespacedKey()} should always return the same value!
          */
-        public NamespacedKey getNamespacedKey() {
+        public NamespacedKey key() {
             return namespacedKey;
         }
 

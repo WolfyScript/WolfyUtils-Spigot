@@ -71,7 +71,7 @@ public abstract class CustomPlayerData implements Keyed {
 
     @JsonIgnore
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public NamespacedKey key() {
         return id;
     }
 

@@ -44,7 +44,7 @@ class ExecutableBlocksStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public NamespacedKey key() {
         return ID;
     }
 
@@ -69,7 +69,7 @@ class ExecutableBlocksStackIdentifier implements StackIdentifier {
         }
 
         @Override
-        public NamespacedKey getNamespacedKey() {
+        public NamespacedKey key() {
             return ID;
         }
     }

@@ -51,7 +51,7 @@ public class ActionSettings {
     public void setEvents(List<Event<?>> events) {
         indexedEvents = HashMultimap.create();
         for (Event<?> event : events) {
-            indexedEvents.put(event.getNamespacedKey(), event);
+            indexedEvents.put(event.key(), event);
         }
     }
 

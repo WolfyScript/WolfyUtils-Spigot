@@ -135,7 +135,7 @@ public class ParticleEffect implements Keyed {
 
     @JsonIgnore
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public NamespacedKey key() {
         return key;
     }
 

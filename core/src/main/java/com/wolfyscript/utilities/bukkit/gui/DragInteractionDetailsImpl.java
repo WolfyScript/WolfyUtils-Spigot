@@ -1,9 +1,10 @@
 package com.wolfyscript.utilities.bukkit.gui;
 
-import com.wolfyscript.utilities.gui.DragInteractionDetails;
 import com.wolfyscript.utilities.gui.DragType;
 import com.wolfyscript.utilities.gui.InteractionResult;
 import java.util.Set;
+
+import com.wolfyscript.utilities.gui.interaction.DragInteractionDetails;
 import org.bukkit.event.inventory.InventoryDragEvent;
 
 public class DragInteractionDetailsImpl implements DragInteractionDetails {

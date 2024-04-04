@@ -39,7 +39,7 @@ class EcoStackIdentifier implements StackIdentifier, com.wolfyscript.utilities.b
     }
 
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public NamespacedKey key() {
         return ID;
     }
 
@@ -67,7 +67,7 @@ class EcoStackIdentifier implements StackIdentifier, com.wolfyscript.utilities.b
         }
 
         @Override
-        public NamespacedKey getNamespacedKey() {
+        public NamespacedKey key() {
             return ID;
         }
 

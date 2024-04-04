@@ -50,7 +50,7 @@ public class CustomTag<T extends Keyed> implements Keyed {
         return values.contains(value);
     }
 
-    public NamespacedKey getNamespacedKey() {
+    public NamespacedKey key() {
         return namespacedKey;
     }
 

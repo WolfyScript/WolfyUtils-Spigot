@@ -39,7 +39,7 @@ class DenizenStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public NamespacedKey key() {
         return ID;
     }
 
@@ -60,7 +60,7 @@ class DenizenStackIdentifier implements StackIdentifier {
         }
 
         @Override
-        public NamespacedKey getNamespacedKey() {
+        public NamespacedKey key() {
             return ID;
         }
 

@@ -145,7 +145,7 @@ public abstract class QueryNode<VAL> implements Keyed {
 
     @JsonIgnore
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public NamespacedKey key() {
         return type;
     }
 

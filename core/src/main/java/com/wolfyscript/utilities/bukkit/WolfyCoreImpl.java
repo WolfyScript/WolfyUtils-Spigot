@@ -19,7 +19,7 @@ import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManager;
 import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManagerBukkit;
 import com.wolfyscript.utilities.bukkit.config.WUConfig;
 import com.wolfyscript.utilities.bukkit.console.Console;
-import com.wolfyscript.utilities.bukkit.gui.GUIInventoryListener;
+import com.wolfyscript.utilities.bukkit.gui.interaction.GUIInventoryListener;
 import com.wolfyscript.utilities.bukkit.gui.example.TestGUI;
 import com.wolfyscript.utilities.bukkit.json.serialization.ColorSerialization;
 import com.wolfyscript.utilities.bukkit.json.serialization.DustOptionsSerialization;
@@ -147,7 +147,6 @@ import com.wolfyscript.utilities.config.jackson.OptionalValueDeserializer;
 import com.wolfyscript.utilities.config.jackson.OptionalValueSerializer;
 import com.wolfyscript.utilities.config.jackson.JacksonUtil;
 import com.wolfyscript.utilities.gui.components.*;
-import com.wolfyscript.utilities.gui.example.CounterExample;
 import com.wolfyscript.utilities.nbt.NBTTagConfigBoolean;
 import com.wolfyscript.utilities.nbt.NBTTagConfigByte;
 import com.wolfyscript.utilities.nbt.NBTTagConfigByteArray;
@@ -506,12 +505,12 @@ public abstract class WolfyCoreImpl implements WolfyCore {
         var guiComponents = getRegistries().getGuiComponents();
         guiComponents.register(ButtonImpl.class);
         guiComponents.register(StackInputSlotImpl.class);
-        guiComponents.register(ComponentClusterImpl.class);
+        guiComponents.register(ComponentGroupImpl.class);
 
         var guiComponentBuilders = getRegistries().getGuiComponentBuilders();
         guiComponentBuilders.register(ButtonBuilderImpl.class);
         guiComponentBuilders.register(StackInputSlotBuilderImpl.class);
-        guiComponentBuilders.register(ComponentClusterBuilderImpl.class);
+        guiComponentBuilders.register(ComponentGroupBuilderImpl.class);
 
         // Register the Registries to resolve type references in JSON
         KeyedTypeIdResolver.registerTypeRegistry(CustomItemData.class, registries.getCustomItemDataTypeRegistry());

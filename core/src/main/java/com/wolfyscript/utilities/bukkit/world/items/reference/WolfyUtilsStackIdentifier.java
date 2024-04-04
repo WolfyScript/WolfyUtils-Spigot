@@ -61,7 +61,7 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public NamespacedKey key() {
         return ID;
     }
 
@@ -86,7 +86,7 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
         }
 
         @Override
-        public NamespacedKey getNamespacedKey() {
+        public NamespacedKey key() {
             return ID;
         }
 

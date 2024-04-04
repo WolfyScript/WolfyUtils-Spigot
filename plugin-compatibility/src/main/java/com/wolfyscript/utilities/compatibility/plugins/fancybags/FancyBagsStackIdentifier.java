@@ -51,7 +51,7 @@ class FancyBagsStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public NamespacedKey key() {
         return ID;
     }
 
@@ -72,7 +72,7 @@ class FancyBagsStackIdentifier implements StackIdentifier {
         }
 
         @Override
-        public NamespacedKey getNamespacedKey() {
+        public NamespacedKey key() {
             return ID;
         }
     }

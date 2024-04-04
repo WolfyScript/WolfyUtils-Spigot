@@ -48,7 +48,7 @@ class OraxenStackIdentifier implements StackIdentifier, com.wolfyscript.utilitie
     }
 
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public NamespacedKey key() {
         return ID;
     }
 
@@ -69,7 +69,7 @@ class OraxenStackIdentifier implements StackIdentifier, com.wolfyscript.utilitie
         }
 
         @Override
-        public NamespacedKey getNamespacedKey() {
+        public NamespacedKey key() {
             return ID;
         }
 

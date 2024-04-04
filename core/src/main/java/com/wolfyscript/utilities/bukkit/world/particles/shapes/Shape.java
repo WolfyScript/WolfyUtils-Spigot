@@ -61,7 +61,7 @@ public abstract class Shape implements Keyed {
 
     @JsonIgnore
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public NamespacedKey key() {
         return key;
     }
 

@@ -40,7 +40,7 @@ class ExecutableItemsStackIdentifier implements StackIdentifier {
     }
 
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public NamespacedKey key() {
         return ID;
     }
 
@@ -63,7 +63,7 @@ class ExecutableItemsStackIdentifier implements StackIdentifier {
         }
 
         @Override
-        public NamespacedKey getNamespacedKey() {
+        public NamespacedKey key() {
             return ID;
         }
     }

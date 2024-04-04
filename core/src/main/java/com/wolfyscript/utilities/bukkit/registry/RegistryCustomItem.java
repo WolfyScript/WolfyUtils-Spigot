@@ -115,7 +115,7 @@ public class RegistryCustomItem extends AbstractRegistry<Map<NamespacedKey, Cust
      */
     @Override
     public void register(NamespacedKey namespacedKey, CustomItem item) {
-        if (item == null || (item.stackReference().identifier() instanceof WolfyUtilsStackIdentifier wuRef && wuRef.getNamespacedKey().equals(namespacedKey))) {
+        if (item == null || (item.stackReference().identifier() instanceof WolfyUtilsStackIdentifier wuRef && wuRef.key().equals(namespacedKey))) {
             return;
         }
         this.map.put(namespacedKey, item);

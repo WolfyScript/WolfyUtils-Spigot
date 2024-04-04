@@ -44,7 +44,7 @@ class MagicStackIdentifier implements StackIdentifier, com.wolfyscript.utilities
     }
 
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public NamespacedKey key() {
         return ID;
     }
 
@@ -70,7 +70,7 @@ class MagicStackIdentifier implements StackIdentifier, com.wolfyscript.utilities
         }
 
         @Override
-        public NamespacedKey getNamespacedKey() {
+        public NamespacedKey key() {
             return ID;
         }
     }

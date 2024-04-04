@@ -57,7 +57,7 @@ public abstract class Action<T extends Data> implements Keyed {
 
     @JsonIgnore
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public NamespacedKey key() {
         return key;
     }
 

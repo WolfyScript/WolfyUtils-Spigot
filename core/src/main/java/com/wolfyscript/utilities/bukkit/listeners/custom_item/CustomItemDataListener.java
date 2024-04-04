@@ -70,7 +70,7 @@ public class CustomItemDataListener implements Listener {
                 if (customItem != null) {
                     Location blockLoc = event.getBlockPlaced().getLocation();
                     ChunkStorage chunkStorage = core.getPersistentStorage().getOrCreateWorldStorage(blockLoc.getWorld()).getOrCreateChunkStorage(blockLoc);
-                    var customItemData = new CustomItemBlockData(core, chunkStorage, blockLoc.toVector(), customItem.getNamespacedKey());
+                    var customItemData = new CustomItemBlockData(core, chunkStorage, blockLoc.toVector(), customItem.key());
                     event.getStorage().addOrSetData(customItemData);
                     customItemData.onPlace(event);
                 }
@@ -91,7 +91,7 @@ public class CustomItemDataListener implements Listener {
             event.getBlockStorages().forEach(blockStorage -> {
                 Location blockLoc = event.getBlockPlaced().getLocation();
                 ChunkStorage chunkStorage = core.getPersistentStorage().getOrCreateWorldStorage(blockLoc.getWorld()).getOrCreateChunkStorage(blockLoc);
-                var customItemData = new CustomItemBlockData(core, chunkStorage, blockLoc.toVector(), customItem.getNamespacedKey());
+                var customItemData = new CustomItemBlockData(core, chunkStorage, blockLoc.toVector(), customItem.key());
                 blockStorage.addOrSetData(customItemData);
                 customItemData.onPlace(event);
             });

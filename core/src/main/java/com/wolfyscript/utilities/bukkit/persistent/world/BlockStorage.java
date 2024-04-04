@@ -61,8 +61,8 @@ public class BlockStorage {
     public void addOrSetData(CustomBlockData blockData) {
         if (blockData != null) {
             var dataTypeRegistry = core.getRegistries().getCustomBlockData();
-            if (dataTypeRegistry.keySet().contains(blockData.getNamespacedKey())) {
-                data.put(blockData.getNamespacedKey(), blockData);
+            if (dataTypeRegistry.keySet().contains(blockData.key())) {
+                data.put(blockData.key(), blockData);
             }
         }
     }

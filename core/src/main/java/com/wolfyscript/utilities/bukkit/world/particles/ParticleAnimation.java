@@ -193,7 +193,7 @@ public class ParticleAnimation implements Keyed {
     }
 
     @Override
-    public NamespacedKey getNamespacedKey() {
+    public NamespacedKey key() {
         return key;
     }
 

@@ -52,7 +52,7 @@ public class StackReference implements Copyable<StackReference> {
         this.amount = amount;
         this.weight = weight;
         this.core = core;
-        setParser(core.getRegistries().getStackIdentifierParsers().get(identifier.getNamespacedKey()));
+        setParser(core.getRegistries().getStackIdentifierParsers().get(identifier.key()));
         this.stack = item;
         this.identifier = identifier;
     }
@@ -180,7 +180,7 @@ public class StackReference implements Copyable<StackReference> {
      */
     @JsonGetter("parser")
     private NamespacedKey parserId() {
-        return parser.getNamespacedKey();
+        return parser.key();
     }
 
     @Override

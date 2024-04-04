@@ -1,18 +1,15 @@
 package com.wolfyscript.utilities.bukkit.gui.example
 
 import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl
-import com.wolfyscript.utilities.bukkit.chat.BukkitChat
-import com.wolfyscript.utilities.bukkit.gui.BukkitInventoryGuiHolder
-import com.wolfyscript.utilities.gui.*
-import com.wolfyscript.utilities.gui.components.ButtonBuilder
-import com.wolfyscript.utilities.gui.components.ComponentClusterBuilder
-import com.wolfyscript.utilities.gui.components.StackInputSlotBuilder
-import com.wolfyscript.utilities.gui.signal.Signal
+import com.wolfyscript.utilities.gui.GuiAPIManager
+import com.wolfyscript.utilities.gui.InteractionResult
+import com.wolfyscript.utilities.gui.ReactiveRenderBuilder
+import com.wolfyscript.utilities.gui.reactivity.Signal
+import com.wolfyscript.utilities.gui.reactivity.createSignal
 import com.wolfyscript.utilities.platform.adapters.ItemStack
-import net.kyori.adventure.text.Component
 import org.bukkit.inventory.meta.ItemMeta
 
-private class StackEditorStore {
+class StackEditorStore {
     private var stack: ItemStack? = null
 
     fun setStack(stack: ItemStack?) {
@@ -31,24 +28,23 @@ private enum class Tab {
 }
 
 fun register(manager: GuiAPIManager) {
-    manager.registerGuiFromFiles("stack_editor") { _, builder ->
-        builder.window { reactiveSource ->
-            // This is only called upon the initiation. So this is not called when the signal is updated!
+    manager.registerGuiFromFiles("stack_editor") {
+        window {
+            /*
+             This whole construction is only called upon the initiation and creates a reactivity graph
+             from the signals and effects used and only updates the necessary parts at runtime.
+             */
+
             size(9 * 6)
 
             // Persistent data stores
-            val stackToEdit = reactiveSource.createStore(
-                { _ -> StackEditorStore() },
-                StackEditorStore::getStack,
-                StackEditorStore::setStack
-            )
-
+            val stackToEdit = createSignal { StackEditorStore() }
             // Weak data signals
-            val selectedTab = reactiveSource.createSignal(Tab.NONE)
+            val selectedTab = createSignal(Tab.NONE)
 
             reactive {
-                // Reactive parts are called everytime the signal used inside this closure is updated.
-                val itemStack = stackToEdit.get()
+                // Reactive parts are only called when a signal used inside this closure is updated.
+                val itemStack = stackToEdit.get()?.getStack()
                 if (itemStack == null || itemStack.item == null || itemStack.item.key == "air") {
                     return@reactive null
                 }
@@ -57,11 +53,11 @@ fun register(manager: GuiAPIManager) {
                     Tab.DISPLAY_NAME -> displayNameTab(stackToEdit)
 
                     Tab.LORE ->
-                        component("lore_tab", ComponentClusterBuilder::class.java) {
-                            component("edit_lore", ButtonBuilder::class.java) {
+                        group("lore_tab") {
+                            button("edit_lore") {
                                 interact { _, _ -> InteractionResult.cancel(true) }
                             }
-                            component("clear_lore", ButtonBuilder::class.java) {
+                            button("clear_lore") {
                                 interact { _, _ -> InteractionResult.cancel(true) }
                             }
                         }
@@ -69,21 +65,24 @@ fun register(manager: GuiAPIManager) {
                     else -> null
                 }
             }
-            // The state of a component is only reconstructed if the slot it is positioned at changes.
-            // Here the slot will always have the same type of component, so the state is created only once.
-            component<StackInputSlotBuilder>("stack_slot") {
+            slot("stack_slot") {
                 interact { _, _ -> InteractionResult.cancel(false) }
-                onValueChange { v -> stackToEdit.set(v) }
-                value(stackToEdit)
+                onValueChange { v ->
+                    stackToEdit.update {
+                        it.setStack(v)
+                        it
+                    }
+                }
+                value { stackToEdit.get()?.getStack() }
             }
-            component<ButtonBuilder>("display_name_tab_selector") {
-                interact { _: GuiHolder?, _: InteractionDetails? ->
+            button("display_name_tab_selector") {
+                interact { _, _ ->
                     selectedTab.set(Tab.DISPLAY_NAME)
                     InteractionResult.cancel(true)
                 }
             }
-            component<ButtonBuilder>("lore_tab_selector") {
-                interact { _: GuiHolder?, _: InteractionDetails? ->
+            button("lore_tab_selector") {
+                interact { _, _ ->
                     selectedTab.set(Tab.LORE)
                     InteractionResult.cancel(true)
                 }
@@ -92,39 +91,37 @@ fun register(manager: GuiAPIManager) {
     }
 }
 
-fun ReactiveRenderBuilder.displayNameTab(stackToEdit: Signal<ItemStack?>): ReactiveRenderBuilder.ReactiveResult {
-    return component("display_name_tab", ComponentClusterBuilder::class.java) {
-        component("set_display_name", ButtonBuilder::class.java) {
-            interact { holder, _ ->
-                val chat: BukkitChat = holder.viewManager.wolfyUtils.chat as BukkitChat;
-                val player: org.bukkit.entity.Player? = (holder as BukkitInventoryGuiHolder).player();
-                chat.sendMessage(player, Component.text("Click me"));
-                holder.viewManager.setTextInputCallback { _, _, s, _ ->
-                    stackToEdit.update { stack ->
+fun ReactiveRenderBuilder.displayNameTab(stackToEdit: Signal<StackEditorStore>): ReactiveRenderBuilder.ReactiveResult {
+    return group("display_name_tab") {
+        button("set_display_name") {
+            interact { runtime, _ ->
+                runtime.setTextInputCallback { _, _, s, _ ->
+                    stackToEdit.update { store ->
+                        val stack = store?.getStack()
                         if (stack is ItemStackImpl) {
-                            val bukkitStack = stack.bukkitRef;
+                            val bukkitStack = stack.bukkitRef!!;
                             val meta: ItemMeta = bukkitStack.itemMeta;
                             meta.setDisplayName(s);
                             bukkitStack.setItemMeta(meta);
-                            stackToEdit.set(stack);
                         }
-                        stack
+                        store
                     }
                     true
                 }
                 InteractionResult.cancel(true)
             }
         }
-        component("reset_display_name", ButtonBuilder::class.java) {
+        button("reset_display_name") {
             interact { _, _ ->
-                stackToEdit.update { stack ->
+                stackToEdit.update { store ->
+                    val stack = store?.getStack()
                     if (stack is ItemStackImpl) {
-                        val bukkitStack = stack.bukkitRef;
+                        val bukkitStack = stack.bukkitRef!!;
                         val meta: ItemMeta = bukkitStack.itemMeta;
                         meta.setDisplayName(null);
                         bukkitStack.setItemMeta(meta);
                     }
-                    stack
+                    store
                 }
                 InteractionResult.cancel(true)
             }
