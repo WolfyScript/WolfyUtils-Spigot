@@ -19,7 +19,9 @@
 package com.wolfyscript.utilities.bukkit.world.inventory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.WolfyCore;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Optional;
@@ -75,8 +77,8 @@ public enum CreativeModeTab {
     }
 
     public static void init() {
-        WolfyCoreBukkit.getInstance().getWolfyUtils().getLogger().info("Loading Creative Mode Tabs");
-        WolfyCoreBukkit.getInstance().getWolfyUtils().getNmsUtil().getInventoryUtil().initItemCategories();
+        WolfyCore.getInstance().getWolfyUtils().getLogger().info("Loading Creative Mode Tabs");
+        ((WolfyCoreCommon) WolfyCore.getInstance()).getWolfyUtils().getNmsUtil().getInventoryUtil().initItemCategories();
         register = false;
     }
 

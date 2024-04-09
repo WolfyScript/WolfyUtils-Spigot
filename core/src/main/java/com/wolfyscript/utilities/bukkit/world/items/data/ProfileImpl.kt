@@ -1,6 +1,6 @@
 package com.wolfyscript.utilities.bukkit.world.items.data
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon
 import com.wolfyscript.utilities.world.items.data.Profile
 import org.bukkit.Bukkit
 import org.bukkit.inventory.meta.SkullMeta
@@ -13,7 +13,7 @@ class ProfileImpl(override var id: UUID?, override var name: String?, override v
     companion object {
         internal val ITEM_META_CONVERTER = ItemMetaDataKeyConverter<Profile>({
             if (this is SkullMeta) {
-                return@ItemMetaDataKeyConverter if (WolfyCoreBukkit.getInstance().compatibilityManager.isPaper) {
+                return@ItemMetaDataKeyConverter if (WolfyCoreCommon.instance.platform.type.isPaper()) {
                     playerProfile?.let {
                         ProfileImpl(it.uniqueId, it.name, TexturesImpl(it.textures.skin, it.textures.cape))
                     }
@@ -26,7 +26,7 @@ class ProfileImpl(override var id: UUID?, override var name: String?, override v
             null
         }, { profile ->
             if (this is SkullMeta) {
-                if (WolfyCoreBukkit.getInstance().compatibilityManager.isPaper) {
+                if (WolfyCoreCommon.instance.platform.type.isPaper()) {
                     if (playerProfile == null) {
                         playerProfile = Bukkit.createProfile(profile.id, profile.name)
                     }

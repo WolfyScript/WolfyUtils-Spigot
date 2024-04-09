@@ -18,7 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.commands;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import com.wolfyscript.utilities.bukkit.adapters.BukkitWrapper;
 import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
 import java.util.UUID;
@@ -32,9 +32,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class ChatActionCommand extends Command implements PluginIdentifiableCommand {
 
-    private final WolfyCoreImpl core;
+    private final WolfyCoreCommon core;
 
-    public ChatActionCommand(WolfyCoreImpl core) {
+    public ChatActionCommand(WolfyCoreCommon core) {
         super("wua");
         this.core = core;
         setDescription("Used to handle code execution on chat click events.");

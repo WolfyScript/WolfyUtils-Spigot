@@ -2,6 +2,8 @@ package com.wolfyscript.utilities.bukkit.gui.example;
 
 import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl;
 import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
+import com.wolfyscript.utilities.chat.Chat;
+import com.wolfyscript.utilities.data.Keys;
 import com.wolfyscript.utilities.gui.GuiAPIManager;
 import com.wolfyscript.utilities.gui.InteractionResult;
 import com.wolfyscript.utilities.gui.ReactiveRenderBuilder;
@@ -100,17 +102,11 @@ public class StackEditorExample {
         return reactiveBuilder.component("display_name_tab", ComponentGroupBuilder.class, displayNameClusterBuilder -> displayNameClusterBuilder
                 .component("set_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                         .interact((runtime, details) -> {
-                            BukkitChat chat = (BukkitChat) runtime.getWolfyUtils().getChat();
-                            Player player = null;
-                            chat.sendMessage(player, Component.text("Click me"));
-                            runtime.setTextInputCallback((p, guiViewManager, s, strings) -> {
+                            runtime.setTextInputCallback((p, rn, s, strings) -> {
                                 stackToEdit.update(store -> {
                                     var stack = store.getStack();
-                                    if (stack instanceof ItemStackImpl stackImpl) {
-                                        var bukkitStack = stackImpl.getBukkitRef();
-                                        ItemMeta meta = bukkitStack.getItemMeta();
-                                        meta.setDisplayName(s);
-                                        bukkitStack.setItemMeta(meta);
+                                    if (stack != null) {
+                                        stack.data().set(Keys.CUSTOM_NAME, runtime.getWolfyUtils().getChat().getMiniMessage().deserialize(s));
                                     }
                                     return store;
                                 });
@@ -122,11 +118,8 @@ public class StackEditorExample {
                         .interact((holder, details) -> {
                             stackToEdit.update(store -> {
                                 var stack = store.getStack();
-                                if (stack instanceof ItemStackImpl stackImpl) {
-                                    var bukkitStack = stackImpl.getBukkitRef();
-                                    ItemMeta meta = bukkitStack.getItemMeta();
-                                    meta.setDisplayName(null);
-                                    bukkitStack.setItemMeta(meta);
+                                if (stack != null) {
+                                    stack.data().remove(Keys.CUSTOM_NAME);
                                 }
                                 return store;
                             });

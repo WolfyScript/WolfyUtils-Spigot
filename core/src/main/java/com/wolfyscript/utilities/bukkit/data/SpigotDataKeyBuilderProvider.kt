@@ -3,7 +3,7 @@ package com.wolfyscript.utilities.bukkit.data
 import com.wolfyscript.utilities.NamespacedKey
 import com.wolfyscript.utilities.WolfyCore
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon
 import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl
 import com.wolfyscript.utilities.bukkit.world.items.data.*
 import com.wolfyscript.utilities.bukkit.world.items.toBukkit
@@ -199,7 +199,7 @@ class SpigotDataKeyBuilderProvider(private val wolfyCore: WolfyCore) : DataKeyBu
         )
         register<List<ItemStack>>("bundle_contents", {
             if (this is BundleMeta) {
-                return@register items.map { ItemStackImpl(WolfyCoreImpl.getInstance().wolfyUtils, it) }
+                return@register items.map { ItemStackImpl(WolfyCoreCommon.instance.wolfyUtils, it) }
             }
             return@register emptyList()
         }, {

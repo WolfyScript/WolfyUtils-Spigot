@@ -39,7 +39,7 @@ public class LangAPISpigot extends LanguageAPI {
             try {
                 getAPI().getPlugin().saveResource("lang/" + lang + ".json", true);
             } catch (IllegalArgumentException ex) {
-                getAPI().getConsole().getLogger().severe("Couldn't load lang \""+lang+"\"! Language resource doesn't exists!");
+                getAPI().getLogger().severe("Couldn't load lang \""+lang+"\"! Language resource doesn't exists!");
                 return null;
             }
         }
@@ -52,7 +52,7 @@ public class LangAPISpigot extends LanguageAPI {
             registerLanguage(language);
             return language;
         } catch (IOException ex) {
-            getAPI().getConsole().getLogger().log(Level.SEVERE, "Couldn't load language \""+lang+"\"!");
+            getAPI().getLogger().log(Level.SEVERE, "Couldn't load language \""+lang+"\"!");
             ex.printStackTrace();
         }
         return null;
@@ -62,8 +62,8 @@ public class LangAPISpigot extends LanguageAPI {
         try {
             api.getJacksonMapperUtil().getGlobalMapper().writeValue(getLangFile(language.getName()), language);
         } catch (IOException ex) {
-            getAPI().getConsole().getLogger().severe("Couldn't save language \""+language.getName()+"\"!");
-            getAPI().getConsole().getLogger().throwing("LanguageAPI", "saveLangFile", ex);
+            getAPI().getLogger().severe("Couldn't save language \""+language.getName()+"\"!");
+            getAPI().getLogger().throwing("LanguageAPI", "saveLangFile", ex);
         }
 
     }

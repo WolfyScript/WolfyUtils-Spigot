@@ -15,34 +15,24 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+package com.wolfyscript.utilities.bukkit.network.messages
 
-package com.wolfyscript.utilities.bukkit.network.messages;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit
+import com.wolfyscript.utilities.bukkit.nms.api.network.MCByteBuf
+import org.bukkit.entity.Player
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
-import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+class MessageHandler(private val coreBukkit: WolfyCoreCommon) {
 
-public class MessageHandler {
+    private val wolfyUtils = coreBukkit.wolfyUtils
+    private val messageAPI: MessageAPI = wolfyUtils.messageAPI
 
-    private final WolfyCoreImpl coreBukkit;
-    private final WolfyUtilsBukkit wolfyUtils;
-    private final MessageAPI messageAPI;
-
-    public MessageHandler(WolfyCoreImpl coreBukkit) {
-        this.coreBukkit = coreBukkit;
-        this.wolfyUtils = coreBukkit.getWolfyUtils();
-        this.messageAPI = this.wolfyUtils.getMessageAPI();
-        //init(); //Disabled for now to prevent misuse from clients!
-    }
-
-    public void init() {
-        messageAPI.register(Messages.CONNECT_INFO);
-        messageAPI.register(Messages.CONNECT_REQUEST, (player, wolfyUtils1, buf) -> {
+    private fun init() {
+        messageAPI.register(Messages.CONNECT_INFO)
+        messageAPI.register(Messages.CONNECT_REQUEST) { player: Player, wolfyUtils1: WolfyUtilsBukkit?, buf: MCByteBuf? ->
             if (player.hasPermission("wolfyutilities.network.connect")) {
-                coreBukkit.getMessageFactory().sendWolfyUtilsInfo(player);
+                coreBukkit.messageFactory.sendWolfyUtilsInfo(player)
             }
-        });
-
+        }
     }
-
 }

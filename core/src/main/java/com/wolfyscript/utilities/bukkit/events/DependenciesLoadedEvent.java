@@ -39,7 +39,7 @@ public class DependenciesLoadedEvent extends Event {
     }
 
     /**
-     * Gets the core {@link com.wolfyscript.utilities.bukkit.WolfyCoreImpl}
+     * Gets the core {@link com.wolfyscript.utilities.bukkit.WolfyCoreCommon}
      * @return The core of the plugin.
      */
     public WolfyCore getCore() {

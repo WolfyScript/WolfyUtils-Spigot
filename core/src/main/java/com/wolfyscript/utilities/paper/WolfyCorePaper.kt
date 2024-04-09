@@ -1,42 +1,25 @@
-package com.wolfyscript.utilities.paper;
+package com.wolfyscript.utilities.paper
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
-import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManager;
-import com.wolfyscript.utilities.bukkit.compatibility.CompatibilityManagerBukkit;
-import net.kyori.adventure.Adventure;
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.audience.Audiences;
-import net.kyori.adventure.internal.properties.AdventureProperties;
-import net.kyori.adventure.platform.AudienceProvider;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
+import com.wolfyscript.utilities.bukkit.PlatformImpl
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon
+import com.wolfyscript.utilities.platform.Platform
+import com.wolfyscript.utilities.platform.PlatformType
 
-public final class WolfyCorePaper extends WolfyCoreImpl {
+class WolfyCorePaper(bootstrap: WolfyCorePaperBootstrap?) : WolfyCoreCommon(bootstrap!!) {
 
-    private final CompatibilityManager compatibilityManager;
+    override val platform: PlatformImpl = PlatformImpl(this, PlatformType.PAPER)
 
-    /**
-     * Constructor invoked by Spigot when the plugin is loaded.
-     */
-    public WolfyCorePaper(WolfyCorePaperBootstrap bootstrap) {
-        super(bootstrap);
-        this.compatibilityManager = new CompatibilityManagerBukkit(this);
+    override fun load() {
+        super.load()
     }
 
-    /**
-     * Gets an instance of the core plugin.
-     * <strong>Only use this if necessary! First try to get the instance via your {@link com.wolfyscript.utilities.WolfyUtils} instance!</strong>
-     *
-     * @return The instance of the core.
-     */
-    @Deprecated
-    public static WolfyCorePaper getInstance() {
-        return (WolfyCorePaper) WolfyCoreImpl.getInstance();
+    override fun enable() {
+        super.enable()
+        platform.init()
     }
 
-    @Override
-    public CompatibilityManager getCompatibilityManager() {
-        return compatibilityManager;
+    override fun disable() {
+        super.disable()
+        platform.unLoad()
     }
-
 }

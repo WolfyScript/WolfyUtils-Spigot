@@ -18,7 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.commands;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
@@ -28,9 +28,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class GuiExampleCommand extends Command implements PluginIdentifiableCommand {
 
-    private final WolfyCoreImpl core;
+    private final WolfyCoreCommon core;
 
-    public GuiExampleCommand(WolfyCoreImpl core) {
+    public GuiExampleCommand(WolfyCoreCommon core) {
         super("gui_example");
         this.core = core;
         setDescription("Opens the specified example GUI.");

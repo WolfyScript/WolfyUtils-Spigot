@@ -18,7 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.commands;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import com.wolfyscript.utilities.bukkit.nbt.NBTQuery;
 import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
@@ -35,9 +35,9 @@ import org.jetbrains.annotations.NotNull;
 
 public final class QueryDebugCommand extends Command implements PluginIdentifiableCommand {
 
-    private final WolfyCoreImpl core;
+    private final WolfyCoreCommon core;
 
-    public QueryDebugCommand(WolfyCoreImpl core) {
+    public QueryDebugCommand(WolfyCoreCommon core) {
         super("query_item");
         this.core = core;
         setUsage("/query_item");

@@ -141,7 +141,7 @@ public abstract class AbstractItemBuilder<T extends AbstractItemBuilder<?>> {
 
     public T displayName(Component name) {
         var itemMeta = getItemStack().getItemMeta();
-        if (wolfyUtils.getCore().getCompatibilityManager().isPaper()) {
+        if (wolfyUtils.getCore().getPlatform().getType().isPaper()) {
             itemMeta.displayName(name);
         } else {
             itemMeta.setDisplayName(BukkitComponentSerializer.legacy().serialize(name));
@@ -163,7 +163,7 @@ public abstract class AbstractItemBuilder<T extends AbstractItemBuilder<?>> {
 
     public T lore(List<Component> lore) {
         var itemMeta = getItemStack().getItemMeta();
-        if (wolfyUtils.getCore().getCompatibilityManager().isPaper()) {
+        if (wolfyUtils.getCore().getPlatform().getType().isPaper()) {
             itemMeta.lore(lore);
         } else {
             itemMeta.setLore(lore.stream().map(line -> BukkitComponentSerializer.legacy().serialize(line)).toList());

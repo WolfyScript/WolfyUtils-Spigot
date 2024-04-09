@@ -18,7 +18,7 @@
 
 package com.wolfyscript.utilities.compatibility.plugins.oraxen;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.OraxenIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
@@ -27,9 +27,9 @@ import org.bukkit.plugin.Plugin;
 @WUPluginIntegration(pluginName = OraxenIntegration.KEY)
 public class OraxenImpl extends PluginIntegrationAbstract implements OraxenIntegration {
 
-    private final boolean IS_LATEST_API = WolfyCoreImpl.hasClass("io.th0rgal.oraxen.api.OraxenItems");
+    private final boolean IS_LATEST_API = WolfyCoreCommon.hasClass("io.th0rgal.oraxen.api.OraxenItems");
 
-    protected OraxenImpl(WolfyCoreImpl core) {
+    protected OraxenImpl(WolfyCoreCommon core) {
         super(core, OraxenIntegration.KEY);
     }
 

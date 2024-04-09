@@ -3,9 +3,9 @@ package com.wolfyscript.utilities.bukkit.world.items.reference;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.wolfyscript.utilities.Copyable;
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
-import com.wolfyscript.utilities.collection.RandomCollection;
 import com.wolfyscript.utilities.WolfyCore;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
+import com.wolfyscript.utilities.collection.RandomCollection;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -26,7 +26,7 @@ import java.util.function.Consumer;
  */
 public class StackReference implements Copyable<StackReference> {
 
-    private final WolfyCoreImpl core;
+    private final WolfyCoreCommon core;
     private final int amount;
     private final double weight;
     /**
@@ -39,7 +39,7 @@ public class StackReference implements Copyable<StackReference> {
     private StackIdentifier identifier;
     private StackIdentifierParser<?> parser;
 
-    public StackReference(WolfyCoreImpl core, NamespacedKey parser, double weight, int amount, ItemStack item) {
+    public StackReference(WolfyCoreCommon core, NamespacedKey parser, double weight, int amount, ItemStack item) {
         this.amount = amount;
         this.weight = weight;
         this.core = core;
@@ -48,7 +48,7 @@ public class StackReference implements Copyable<StackReference> {
         this.identifier = parseIdentifier();
     }
 
-    public StackReference(WolfyCoreImpl core, @NotNull StackIdentifier identifier, double weight, int amount, ItemStack item) {
+    public StackReference(WolfyCoreCommon core, @NotNull StackIdentifier identifier, double weight, int amount, ItemStack item) {
         this.amount = amount;
         this.weight = weight;
         this.core = core;

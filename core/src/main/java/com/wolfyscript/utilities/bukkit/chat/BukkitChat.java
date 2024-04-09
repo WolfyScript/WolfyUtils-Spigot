@@ -31,43 +31,43 @@ import org.jetbrains.annotations.NotNull;
  * This class implements the non-deprecated features of the Chat API and
  * combines the other deprecated methods by extending the , which contains the deprecated implementations.
  */
-public class BukkitChat extends Chat implements IBukkitChat {
+public class BukkitChat extends Chat {
 
     private static final Pattern ADVENTURE_PLACEHOLDER_PATTERN = Pattern.compile("([!?#]?)([a-z0-9_-]*)");
     private static final Pattern LEGACY_PLACEHOLDER_PATTERN = Pattern.compile("%([^%]+)%");
     private static final Map<UUID, PlayerAction> CLICK_DATA_MAP = new HashMap<>();
 
     private final Map<String, String> convertedLegacyPlaceholders = new HashMap<>();
-    private final BungeeComponentSerializer BUNGEE_SERIALIZER;
 
     public BukkitChat(@NotNull WolfyUtilsBukkit wolfyUtils) {
         super(wolfyUtils);
-        this.BUNGEE_SERIALIZER = BungeeComponentSerializer.get();
     }
-
-    /* * * * * * * * * * * * * * * * * * * * * * * * * * *
-     * New implementations using the Player adapter API. *
-     * !Not checked! TODO: Check & Find better solutions *
-     * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     @Override
     public void sendMessage(com.wolfyscript.utilities.platform.adapters.Player player, Component component) {
-        checkAndExc(player, player1 -> sendMessage(player1, component));
+        wolfyUtils.getCore().getPlatform().getAudiences().player(player.uuid()).sendMessage(component);
     }
 
     @Override
-    public void sendMessage(com.wolfyscript.utilities.platform.adapters.Player player, boolean legacyColor, Component component) {
-        checkAndExc(player, player1 -> sendMessage(player1, legacyColor, component));
+    public void sendMessage(com.wolfyscript.utilities.platform.adapters.Player player, boolean prefix, Component component) {
+        if (prefix) {
+            component = getChatPrefix().append(component);
+        }
+        sendMessage(player, component);
     }
 
     @Override
     public void sendMessages(com.wolfyscript.utilities.platform.adapters.Player player, Component... components) {
-        checkAndExc(player, player1 -> sendMessages(player1, components));
+        for (Component component : components) {
+            sendMessage(player, component);
+        }
     }
 
     @Override
-    public void sendMessages(com.wolfyscript.utilities.platform.adapters.Player player, boolean legacyColor, Component... components) {
-        checkAndExc(player, player1 -> sendMessages(player1, legacyColor, components));
+    public void sendMessages(com.wolfyscript.utilities.platform.adapters.Player player, boolean prefix, Component... components) {
+        for (Component component : components) {
+            sendMessage(player, prefix, component);
+        }
     }
 
     @Override
@@ -85,53 +85,6 @@ public class BukkitChat extends Chat implements IBukkitChat {
         return languageAPI.getComponent(key, tagResolver);
     }
 
-    /**
-     * Used to check if the provided adapter is actually the Bukkit implementation.
-     * If it is the bukkit implementation, then it runs the provided consumer.
-     *
-     * @param playerAdapter The Player adapter to use.
-     * @param consumer The task to run when the bukkit player is available.
-     */
-    private void checkAndExc(com.wolfyscript.utilities.platform.adapters.Player playerAdapter, Consumer<Player> consumer) {
-        if (playerAdapter instanceof PlayerImpl bukkitPlayer) {
-            consumer.accept(bukkitPlayer.getBukkitRef());
-        }
-    }
-
-    @Override
-    public void sendMessage(Player player, Component component) {
-        if (player != null) {
-            sendMessage(player, true, component);
-        }
-    }
-
-    @Override
-    public void sendMessage(Player player, boolean prefix, Component component) {
-        if (player != null) {
-            if (prefix) {
-                component = getChatPrefix().append(Component.text(" ")).append(component);
-            }
-            wolfyUtils.getCore();
-            player.spigot().sendMessage(BUNGEE_SERIALIZER.serialize(component));
-        }
-    }
-
-    @Override
-    public void sendMessages(Player player, Component... components) {
-        if (player != null) {
-            for (Component component : components) {
-                player.spigot().sendMessage(BUNGEE_SERIALIZER.serialize(component));
-            }
-        }
-    }
-
-    @Override
-    public void sendMessages(Player player, boolean prefix, Component... components) {
-        for (Component component : components) {
-            sendMessage(player, prefix, component);
-        }
-    }
-
     private List<? extends TagResolver> getTemplates(Pair<String, String>[] replacements) {
         return Arrays.stream(replacements).map(pair -> Placeholder.parsed(convertOldPlaceholder(pair.getKey()), pair.getValue())).toList();
     }
@@ -145,21 +98,6 @@ public class BukkitChat extends Chat implements IBukkitChat {
         } while (CLICK_DATA_MAP.containsKey(id));
         CLICK_DATA_MAP.put(id, new PlayerAction((WolfyUtilsBukkit) wolfyUtils, player, actionCallback, discard));
         return net.kyori.adventure.text.event.ClickEvent.clickEvent(net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND, "/wua " + id);
-    }
-
-    /**
-     * Creates a ClickEvent, that executes code when clicked.<br>
-     * It will internally link a command with an id to the code to execute.
-     * That internal command can only be executed by the player, which the message was sent to.
-     *
-     * @param player  The player the event belongs to.
-     * @param discard If it should be discarded after clicked. (Any action is removed, when the player disconnects!)
-     * @param action  The action to execute on click.
-     * @return The ClickEvent with the generated command.
-     */
-    @Override
-    public net.kyori.adventure.text.event.ClickEvent executable(Player player, boolean discard, ClickActionCallback action) {
-        return executable(BukkitWrapper.adapt(player), discard, action);
     }
 
     public static void removeClickData(UUID uuid) {
@@ -191,7 +129,7 @@ public class BukkitChat extends Chat implements IBukkitChat {
             //Make sure it matches the mini-message tag pattern.
             Matcher adventureMatcher = ADVENTURE_PLACEHOLDER_PATTERN.matcher(placeholder);
             if (!adventureMatcher.matches()) {
-                //remove invalid characters
+                // remove invalid characters
                 var builder = new StringBuilder();
                 char[] chars = placeholder.toCharArray();
                 boolean passedFirstGroup = false;

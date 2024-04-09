@@ -2,8 +2,7 @@ package com.wolfyscript.utilities.bukkit.world.items.data
 
 import com.wolfyscript.utilities.NamespacedKey
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl
-import com.wolfyscript.utilities.world.items.data.CanBreak
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon
 import com.wolfyscript.utilities.world.items.data.CanPlaceOn
 import org.bukkit.Material
 import org.bukkit.inventory.ItemFlag
@@ -13,13 +12,13 @@ class CanPlaceOnImpl(override val showInTooltip: Boolean, private val blocks: Li
     companion object {
         internal val ITEM_META_CONVERTER = ItemMetaDataKeyConverter<CanPlaceOn>({
             val show = !hasItemFlag(ItemFlag.HIDE_PLACED_ON)
-            return@ItemMetaDataKeyConverter if (WolfyCoreImpl.getInstance().compatibilityManager.isPaper) {
+            return@ItemMetaDataKeyConverter if (WolfyCoreCommon.instance.platform.type.isPaper()) {
                 CanPlaceOnImpl(show, placeableKeys.map { BukkitNamespacedKey(it.namespace, it.key) })
             } else {
                 CanPlaceOnImpl(show, canPlaceOn.map { BukkitNamespacedKey.fromBukkit(it.key) })
             }
         }, { placeOn ->
-            if (WolfyCoreImpl.getInstance().compatibilityManager.isPaper) {
+            if (WolfyCoreCommon.instance.platform.type.isPaper()) {
                 setPlaceableKeys(placeOn.blocks().map { (it as BukkitNamespacedKey).bukkit() })
             } else {
                 /*

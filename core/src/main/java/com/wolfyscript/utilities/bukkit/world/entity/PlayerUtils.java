@@ -18,7 +18,9 @@
 
 package com.wolfyscript.utilities.bukkit.world.entity;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.WolfyCore;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectData;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -38,7 +40,7 @@ public class PlayerUtils {
     }
 
     private static Optional<PlayerParticleEffectData> getParticleData(Player player) {
-        return WolfyCoreBukkit.getInstance().getPersistentStorage().getOrCreatePlayerStorage(player).getData(PlayerParticleEffectData.class);
+        return ((WolfyCoreCommon) WolfyCore.getInstance()).persistentStorage.getOrCreatePlayerStorage(player).getData(PlayerParticleEffectData.class);
     }
 
     @Deprecated

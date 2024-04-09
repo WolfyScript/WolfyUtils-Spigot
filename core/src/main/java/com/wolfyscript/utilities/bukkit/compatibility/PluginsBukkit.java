@@ -26,7 +26,7 @@ import com.google.inject.Injector;
 import com.google.inject.ProvisionException;
 import com.google.inject.name.Names;
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.events.DependenciesLoadedEvent;
 import com.wolfyscript.utilities.WolfyCore;
@@ -52,13 +52,13 @@ import org.jetbrains.annotations.Nullable;
  */
 final class PluginsBukkit implements Plugins, Listener {
 
-    private final WolfyCoreImpl core;
+    private final WolfyCoreCommon core;
     private final Map<String, Map<NamespacedKey, PluginAdapter>> pluginAdapters = new HashMap<>();
     private final Map<String, PluginIntegrationAbstract> pluginIntegrations = new HashMap<>();
     private final Map<String, Class<? extends PluginIntegrationAbstract>> pluginIntegrationClasses = new HashMap<>();
     private boolean doneLoading = false;
 
-    PluginsBukkit(WolfyCoreImpl core) {
+    PluginsBukkit(WolfyCoreCommon core) {
         this.core = core;
     }
 
@@ -108,7 +108,7 @@ final class PluginsBukkit implements Plugins, Listener {
                     Injector injector = Guice.createInjector(binder -> {
                         binder.bindConstant().annotatedWith(Names.named("pluginName")).to(pluginName);
                         binder.bind(WolfyCore.class).toInstance(core);
-                        binder.bind(WolfyCoreImpl.class).toInstance(core);
+                        binder.bind(WolfyCoreCommon.class).toInstance(core);
                     });
                     return injector.getInstance(integrationClass);
                 } catch (ConfigurationException | ProvisionException | CreationException e) {

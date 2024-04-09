@@ -18,7 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.commands;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.adapters.BukkitWrapper;
 import com.wolfyscript.utilities.gui.ViewRuntime;
@@ -37,9 +37,9 @@ import java.util.List;
 
 public final class InputCommand extends Command implements PluginIdentifiableCommand {
 
-    private final WolfyCoreImpl core;
+    private final WolfyCoreCommon core;
 
-    public InputCommand(WolfyCoreImpl core) {
+    public InputCommand(WolfyCoreCommon core) {
         super("wui");
         this.core = core;
         setUsage("/wui <input>");
@@ -65,7 +65,7 @@ public final class InputCommand extends Command implements PluginIdentifiableCom
                     TextInputCallback textInputCallback = pair.getValue().get();
                     String text = String.join(" ", args).trim();
 
-                    Bukkit.getScheduler().runTask(core.getPlugin(), () -> {
+                    Bukkit.getScheduler().runTask(core.plugin, () -> {
                         textInputCallback.run(BukkitWrapper.adapt(player), viewManager, text, args);
                         viewManager.setTextInputCallback(null);
                         viewManager.setTextInputTabCompleteCallback(null);

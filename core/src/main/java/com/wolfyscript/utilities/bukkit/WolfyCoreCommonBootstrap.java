@@ -6,7 +6,6 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
 import org.reflections.scanners.Scanners;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
@@ -20,14 +19,14 @@ import org.reflections.util.ConfigurationBuilder;
  *     <pre><code>WolfyCore core = getServer().getServicesManager().load(WolfyCore.class);</code></pre>
  * </p>
  */
-public abstract class WolfyCoreBootstrap extends JavaPlugin {
+public abstract class WolfyCoreCommonBootstrap extends JavaPlugin {
 
     //Static reference to the instance of this class.
-    private static WolfyCoreBootstrap instance;
+    private static WolfyCoreCommonBootstrap instance;
     private Metrics metrics;
     private final Reflections reflections;
 
-    public WolfyCoreBootstrap() {
+    public WolfyCoreCommonBootstrap() {
         super();
         ServerVersion.setWUVersion(getDescription().getVersion());
         this.reflections = initReflections();
@@ -69,11 +68,11 @@ public abstract class WolfyCoreBootstrap extends JavaPlugin {
      * @return The instance of the core.
      */
     @Deprecated
-    static WolfyCoreBootstrap getInstance() {
+    public static WolfyCoreCommonBootstrap getInstance() {
         return instance;
     }
 
-    public abstract WolfyCoreImpl getCore();
+    public abstract WolfyCoreCommon getCore();
 
     public Reflections getReflections() {
         return reflections;

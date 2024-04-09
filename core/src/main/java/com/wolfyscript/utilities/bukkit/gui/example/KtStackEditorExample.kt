@@ -1,6 +1,7 @@
 package com.wolfyscript.utilities.bukkit.gui.example
 
 import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl
+import com.wolfyscript.utilities.data.Keys
 import com.wolfyscript.utilities.gui.GuiAPIManager
 import com.wolfyscript.utilities.gui.InteractionResult
 import com.wolfyscript.utilities.gui.ReactiveRenderBuilder
@@ -97,13 +98,7 @@ fun ReactiveRenderBuilder.displayNameTab(stackToEdit: Signal<StackEditorStore>):
             interact { runtime, _ ->
                 runtime.setTextInputCallback { _, _, s, _ ->
                     stackToEdit.update { store ->
-                        val stack = store?.getStack()
-                        if (stack is ItemStackImpl) {
-                            val bukkitStack = stack.bukkitRef!!;
-                            val meta: ItemMeta = bukkitStack.itemMeta;
-                            meta.setDisplayName(s);
-                            bukkitStack.setItemMeta(meta);
-                        }
+                        store?.getStack()?.data()?.set(Keys.CUSTOM_NAME, runtime.wolfyUtils.chat.miniMessage.deserialize(s))
                         store
                     }
                     true
@@ -114,13 +109,7 @@ fun ReactiveRenderBuilder.displayNameTab(stackToEdit: Signal<StackEditorStore>):
         button("reset_display_name") {
             interact { _, _ ->
                 stackToEdit.update { store ->
-                    val stack = store?.getStack()
-                    if (stack is ItemStackImpl) {
-                        val bukkitStack = stack.bukkitRef!!;
-                        val meta: ItemMeta = bukkitStack.itemMeta;
-                        meta.setDisplayName(null);
-                        bukkitStack.setItemMeta(meta);
-                    }
+                    store?.getStack()?.data()?.remove(Keys.CUSTOM_NAME)
                     store
                 }
                 InteractionResult.cancel(true)

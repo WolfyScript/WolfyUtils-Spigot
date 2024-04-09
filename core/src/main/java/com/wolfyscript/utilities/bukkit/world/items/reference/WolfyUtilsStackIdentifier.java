@@ -1,8 +1,9 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
 import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.WolfyCore;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -16,7 +17,7 @@ import java.util.Optional;
 
 public class WolfyUtilsStackIdentifier implements StackIdentifier {
 
-    private static final org.bukkit.NamespacedKey CUSTOM_ITEM_KEY = new org.bukkit.NamespacedKey(WolfyCoreImpl.getInstance().getPlugin(), "custom_item");
+    private static final org.bukkit.NamespacedKey CUSTOM_ITEM_KEY = new org.bukkit.NamespacedKey(((WolfyCoreCommon) WolfyCore.getInstance()).plugin, "custom_item");
     public static final NamespacedKey ID = BukkitNamespacedKey.wolfyutilties("wolfyutils");
 
     private final NamespacedKey namespacedKey;
@@ -34,7 +35,7 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
     @Override
     public ItemStack stack(ItemCreateContext context) {
         return customItem().map(customItem -> customItem.create(context.amount())).orElseGet(() -> {
-            WolfyCoreImpl.getInstance().getLogger().warning("Couldn't find CustomItem for " + namespacedKey.toString());
+            WolfyCore.getInstance().getWolfyUtils().getLogger().warning("Couldn't find CustomItem for " + namespacedKey.toString());
             return null;
         });
     }
@@ -45,7 +46,7 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
      * @return The referenced {@link CustomItem} of this identifier
      */
     public Optional<CustomItem> customItem() {
-        return Optional.ofNullable(WolfyCoreImpl.getInstance().getRegistries().getCustomItems().get(namespacedKey));
+        return Optional.ofNullable(((WolfyCoreCommon) WolfyCore.getInstance()).getRegistries().getCustomItems().get(namespacedKey));
     }
 
     @Override

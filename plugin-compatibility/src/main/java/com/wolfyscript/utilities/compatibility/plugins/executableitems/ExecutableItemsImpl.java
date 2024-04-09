@@ -2,11 +2,10 @@ package com.wolfyscript.utilities.compatibility.plugins.executableitems;
 
 import com.google.inject.Inject;
 import com.ssomar.score.api.executableitems.ExecutableItemsAPI;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.ExecutableItemsIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
-import com.wolfyscript.utilities.compatibility.plugins.executableitems.ExecutableItemsStackIdentifier;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
@@ -20,7 +19,7 @@ public class ExecutableItemsImpl extends PluginIntegrationAbstract implements Ex
      * @param core       The WolfyUtilCore.
      */
     @Inject
-    protected ExecutableItemsImpl(WolfyCoreBukkit core) {
+    protected ExecutableItemsImpl(WolfyCoreSpigot core) {
         super(core, ExecutableItemsIntegration.PLUGIN_NAME);
     }
 

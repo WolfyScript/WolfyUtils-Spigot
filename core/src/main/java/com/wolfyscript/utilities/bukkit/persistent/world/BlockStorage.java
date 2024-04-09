@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import com.wolfyscript.utilities.WolfyCore;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ public class BlockStorage {
 
     private final Vector pos;
     private final ChunkStorage chunkStorage;
-    private final WolfyCoreImpl core;
+    private final WolfyCoreCommon core;
     private final PersistentDataContainer persistentContainer;
 
     private final Map<NamespacedKey, CustomBlockData> data = new HashMap<>();

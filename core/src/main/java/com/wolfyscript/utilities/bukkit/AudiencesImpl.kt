@@ -1,31 +1,39 @@
-package com.wolfyscript.utilities.bukkit;
+package com.wolfyscript.utilities.bukkit
 
-import com.wolfyscript.utilities.platform.Audiences;
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import com.wolfyscript.utilities.platform.Audiences
+import net.kyori.adventure.audience.Audience
+import net.kyori.adventure.platform.bukkit.BukkitAudiences
+import java.util.*
 
-import java.util.UUID;
+class AudiencesImpl(private val core: WolfyCoreCommon) : Audiences {
 
-public class AudiencesImpl implements Audiences {
+    private var backingAdventure: BukkitAudiences? = null
+    private val adventure : BukkitAudiences
+        get() {
+            checkNotNull(backingAdventure) { "Tried to access Adventure when the plugin was disabled!" }
+            return backingAdventure!!
+        }
 
-    private final BukkitAudiences audiences;
-
-    public AudiencesImpl(BukkitAudiences audiences) {
-        this.audiences = audiences;
+    fun init() {
+        this.backingAdventure = BukkitAudiences.create(core.plugin)
     }
 
-    @Override
-    public Audience player(UUID uuid) {
-        return audiences.player(uuid);
+    fun unLoad() {
+        if (backingAdventure != null) {
+            backingAdventure!!.close()
+            backingAdventure = null
+        }
     }
 
-    @Override
-    public Audience all() {
-        return audiences.all();
+    override fun player(uuid: UUID): Audience {
+        return adventure.player(uuid)
     }
 
-    @Override
-    public Audience system() {
-        return audiences.console();
+    override fun all(): Audience {
+        return adventure.all()
+    }
+
+    override fun system(): Audience {
+        return adventure.console()
     }
 }

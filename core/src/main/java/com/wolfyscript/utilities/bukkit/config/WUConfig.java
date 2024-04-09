@@ -18,11 +18,11 @@
 
 package com.wolfyscript.utilities.bukkit.config;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBootstrap;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommonBootstrap;
 
 public class WUConfig extends YamlConfiguration {
 
-    public WUConfig(ConfigAPI configAPI, WolfyCoreBootstrap plugin) {
+    public WUConfig(ConfigAPI configAPI, WolfyCoreCommonBootstrap plugin) {
         super(configAPI, plugin.getDataFolder().getPath(), "config", "", "config", false);
     }
 

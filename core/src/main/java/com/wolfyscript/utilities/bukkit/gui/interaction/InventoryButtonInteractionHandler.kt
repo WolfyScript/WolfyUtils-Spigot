@@ -11,7 +11,7 @@ class InventoryButtonInteractionHandler : ComponentInteractionHandler<Button> {
     override fun interact(runtime: ViewRuntime, component: Button, details: InteractionDetails): InteractionResult {
         component.sound().ifPresent { sound ->
             runtime.viewers.forEach {
-                runtime.wolfyUtils.core.platform().adventure().player(it).playSound(sound)
+                runtime.wolfyUtils.core.platform.audiences.player(it).playSound(sound)
             }
         }
         component.interactCallback().interact(runtime, details)

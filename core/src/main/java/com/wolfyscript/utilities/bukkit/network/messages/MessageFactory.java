@@ -18,18 +18,17 @@
 
 package com.wolfyscript.utilities.bukkit.network.messages;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.nms.api.network.MCByteBuf;
 import org.bukkit.entity.Player;
 
 public class MessageFactory {
 
-    private final WolfyCoreImpl plugin;
+    private final WolfyCoreCommon plugin;
     private final WolfyUtilsBukkit wolfyUtils;
 
-    public MessageFactory(WolfyCoreImpl wuPlugin) {
+    public MessageFactory(WolfyCoreCommon wuPlugin) {
         this.plugin = wuPlugin;
         this.wolfyUtils = wuPlugin.getWolfyUtils();
     }

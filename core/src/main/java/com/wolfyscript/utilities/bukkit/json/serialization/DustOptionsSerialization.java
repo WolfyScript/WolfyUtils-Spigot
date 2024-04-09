@@ -20,7 +20,8 @@ package com.wolfyscript.utilities.bukkit.json.serialization;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.WolfyCore;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import com.wolfyscript.utilities.config.jackson.JacksonUtil;
 import org.bukkit.Color;
 import org.bukkit.Particle;
@@ -40,7 +41,7 @@ public class DustOptionsSerialization {
                 Color color = p.getCodec().treeToValue(node.get("color"), Color.class);
                 return new Particle.DustOptions(color, size);
             }
-            WolfyCoreBukkit.getInstance().getWolfyUtils().getConsole().warn("Error Deserializing DustOptions! Invalid DustOptions object!");
+            WolfyCore.getInstance().getWolfyUtils().getLogger().warning("Error Deserializing DustOptions! Invalid DustOptions object!");
             return null;
         });
     }

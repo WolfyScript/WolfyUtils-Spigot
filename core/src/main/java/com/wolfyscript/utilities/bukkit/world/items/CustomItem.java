@@ -34,14 +34,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Streams;
 import com.wolfyscript.utilities.Keyed;
 import com.wolfyscript.utilities.NamespacedKey;
+import com.wolfyscript.utilities.WolfyCore;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.ItemsAdderIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.itemsadder.CustomStack;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.itemsadder.ItemsAdderStackIdentifier;
 import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
-import com.wolfyscript.utilities.bukkit.world.inventory.InventoryUtils;
 import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import com.wolfyscript.utilities.bukkit.world.inventory.item_builder.AbstractItemBuilder;
 import com.wolfyscript.utilities.bukkit.world.inventory.item_builder.ItemBuilder;
@@ -62,7 +63,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import org.bukkit.Bukkit;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -92,7 +93,7 @@ import org.jetbrains.annotations.Nullable;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed {
 
-    public static final org.bukkit.NamespacedKey PERSISTENT_KEY_TAG = new org.bukkit.NamespacedKey(WolfyCoreBukkit.getInstance().getWolfyUtils().getPlugin(), "custom_item");
+    public static final org.bukkit.NamespacedKey PERSISTENT_KEY_TAG = new org.bukkit.NamespacedKey(((WolfyUtilsBukkit) WolfyCore.getInstance().getWolfyUtils()).getPlugin(), "custom_item");
 
     @JsonIgnore
     private final Material type;
@@ -169,7 +170,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @param itemStack the itemstack this CustomItem will be linked to
      */
     public CustomItem(WolfyUtils wolfyUtils, ItemStack itemStack) {
-        this(wolfyUtils, new ActionSettings(wolfyUtils), new StackReference(WolfyCoreBukkit.getInstance(), BukkitStackIdentifier.ID, 1, 1, itemStack));
+        this(wolfyUtils, new ActionSettings(wolfyUtils), new StackReference((WolfyCoreCommon) WolfyCoreSpigot.getInstance(), BukkitStackIdentifier.ID, 1, 1, itemStack));
     }
 
     /**
@@ -269,7 +270,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      */
     public static Optional<CustomItem> wrap(StackReference reference) {
         if (reference == null) return Optional.empty();
-        return Optional.of(new CustomItem(WolfyCoreImpl.getInstance().getWolfyUtils(), null, reference));
+        return Optional.of(new CustomItem(WolfyCoreCommon.getInstance().getWolfyUtils(), null, reference));
     }
 
     /**
@@ -282,7 +283,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      */
     public static CustomItem getReferenceByItemStack(ItemStack itemStack) {
         if (itemStack != null) {
-            WolfyCoreImpl core = WolfyCoreImpl.getInstance();
+            WolfyCoreCommon core = (WolfyCoreCommon) WolfyCoreCommon.getInstance();
             StackReference reference = new StackReference(
                     core,
                     core.getRegistries().getStackIdentifierParsers().parseIdentifier(itemStack),
@@ -309,7 +310,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      */
     @Nullable
     public static CustomItem getByItemStack(ItemStack itemStack) {
-        return WolfyCoreBukkit.getInstance().getRegistries().getCustomItems().getByItemStack(itemStack).orElse(null);
+        return ((WolfyCoreCommon) WolfyCoreSpigot.getInstance()).getRegistries().getCustomItems().getByItemStack(itemStack).orElse(null);
     }
 
     /**
@@ -566,7 +567,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
             var itemMeta = itemStack.getItemMeta();
             var container = itemMeta.getPersistentDataContainer();
             synchronized (container.getClass()) { // The container has a thread-unsafe map usage, so we need to synchronise it
-                container.set(new org.bukkit.NamespacedKey(WolfyCoreImpl.getInstance().getPlugin(), "custom_item"), PersistentDataType.STRING, namespacedKey.toString());
+                container.set(new org.bukkit.NamespacedKey(((WolfyCoreCommon) WolfyCoreCommon.getInstance()).plugin, "custom_item"), PersistentDataType.STRING, namespacedKey.toString());
             }
             itemStack.setItemMeta(itemMeta);
         }
@@ -870,7 +871,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     }
 
     private static NamespacedKey getKeyForData(Class<? extends CustomItemData> type) {
-        return WolfyCoreBukkit.getInstance().getRegistries().getCustomItemDataTypeRegistry().getKey(type);
+        return ((WolfyCoreCommon) WolfyCoreSpigot.getInstance()).getRegistries().getCustomItemDataTypeRegistry().getKey(type);
     }
 
     @JsonGetter
@@ -932,7 +933,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     }
 
     public boolean isBlock() {
-        return type.isBlock() || (reference.identifier() instanceof ItemsAdderStackIdentifier iaRef && WolfyCoreBukkit.getInstance().getCompatibilityManager().getPlugins()
+        return type.isBlock() || (reference.identifier() instanceof ItemsAdderStackIdentifier iaRef && ((WolfyCoreCommon) WolfyCoreSpigot.getInstance()).getCompatibilityManager().getPlugins()
                 .evaluateIfAvailable("ItemsAdder", ItemsAdderIntegration.class, ia -> ia.getStackInstance(iaRef.itemId()).map(CustomStack::isBlock).orElse(false)));
     }
 

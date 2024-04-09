@@ -1,8 +1,6 @@
 package com.wolfyscript.utilities.bukkit.world.items.data
 
-import com.wolfyscript.utilities.WolfyCore
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon
 import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl
 import com.wolfyscript.utilities.platform.adapters.ItemStack
 import com.wolfyscript.utilities.world.items.data.ChargedProjectiles
@@ -15,7 +13,7 @@ class ChargedProjectilesImpl(val projectiles: List<ItemStack>) : ChargedProjecti
             {
                 if (this is CrossbowMeta) {
                     val projectiles = chargedProjectiles.map {
-                        ItemStackImpl(WolfyCoreBukkit.getInstance().wolfyUtils, it)
+                        ItemStackImpl(WolfyCoreCommon.instance.wolfyUtils, it)
                     }
                     return@ItemMetaDataKeyConverter ChargedProjectilesImpl(projectiles)
                 }

@@ -21,11 +21,10 @@ package com.wolfyscript.utilities.compatibility.plugins.eco;
 import com.google.inject.Inject;
 import com.willfp.eco.core.items.CustomItem;
 import com.willfp.eco.core.items.Items;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.EcoIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
-import com.wolfyscript.utilities.compatibility.plugins.eco.EcoStackIdentifier;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -40,7 +39,7 @@ public class EcoIntegrationImpl extends PluginIntegrationAbstract implements Eco
      * @param core       The WolfyUtilCore.
      */
     @Inject
-    protected EcoIntegrationImpl(WolfyCoreBukkit core) {
+    protected EcoIntegrationImpl(WolfyCoreSpigot core) {
         super(core, EcoIntegration.KEY);
     }
 

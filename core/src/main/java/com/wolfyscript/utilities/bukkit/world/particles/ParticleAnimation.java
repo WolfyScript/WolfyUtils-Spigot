@@ -24,7 +24,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wolfyscript.utilities.Keyed;
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.WolfyCore;
+import com.wolfyscript.utilities.platform.scheduler.Task;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import com.wolfyscript.utilities.bukkit.world.entity.PlayerUtils;
 import com.wolfyscript.utilities.bukkit.world.particles.pos.ParticlePos;
 import com.wolfyscript.utilities.bukkit.world.particles.pos.ParticlePosBlock;
@@ -230,7 +232,7 @@ public class ParticleAnimation implements Keyed {
      */
     public class Scheduler implements Runnable {
 
-        private BukkitTask task = null;
+        private Task task = null;
         private UUID uuid = null;
         private final Player receiver;
         private final ParticlePos pos;
@@ -282,7 +284,7 @@ public class ParticleAnimation implements Keyed {
          * @return The UUID of the running animation.
          */
         public UUID start() {
-            this.task = Bukkit.getScheduler().runTaskTimer(WolfyCoreBukkit.getInstance().getWolfyUtils().getPlugin(), this, delay, 1);
+            this.task = WolfyCore.getInstance().getPlatform().getScheduler().syncTimerTask(WolfyCore.getInstance().getWolfyUtils(), this, delay, 1);
             this.uuid = ParticleUtils.addScheduler(this);
             return uuid;
         }
@@ -298,7 +300,7 @@ public class ParticleAnimation implements Keyed {
         }
 
         public boolean isRunning() {
-            return task != null && !task.isCancelled();
+            return task != null; // TODO && //!task.isCancelled();
         }
 
         /**

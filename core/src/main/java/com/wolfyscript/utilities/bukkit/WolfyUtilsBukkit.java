@@ -2,7 +2,6 @@ package com.wolfyscript.utilities.bukkit;
 
 import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
 import com.wolfyscript.utilities.bukkit.config.ConfigAPI;
-import com.wolfyscript.utilities.bukkit.console.Console;
 import com.wolfyscript.utilities.bukkit.language.LangAPISpigot;
 import com.wolfyscript.utilities.bukkit.network.messages.MessageAPI;
 import com.wolfyscript.utilities.bukkit.nms.api.NMSUtil;
@@ -26,15 +25,16 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import org.bukkit.plugin.Plugin;
 
 public class WolfyUtilsBukkit extends WolfyUtils {
 
-    private final WolfyCoreImpl core;
+    private final WolfyCoreCommon core;
     private final Plugin plugin;
     private final BukkitChat chat;
     private final LanguageAPI languageAPI;
-    private final Console console;
     private final Permissions permissions;
     private final BookUtil bookUtil;
     private final MessageAPI messageAPI;
@@ -46,12 +46,11 @@ public class WolfyUtilsBukkit extends WolfyUtils {
     private final ConfigAPI configAPI;
     private final GuiAPIManagerImpl guiAPIManager;
 
-    WolfyUtilsBukkit(WolfyCoreImpl core, Plugin plugin) {
+    WolfyUtilsBukkit(WolfyCoreCommon core, Plugin plugin) {
         this.core = core;
         this.plugin = plugin;
         this.languageAPI = new LangAPISpigot(this);
         this.chat = new BukkitChat(this);
-        this.console = new Console(this);
         this.permissions = new Permissions(this);
         this.bookUtil = new BookUtil(this);
         this.messageAPI = new MessageAPI(this);
@@ -68,8 +67,8 @@ public class WolfyUtilsBukkit extends WolfyUtils {
     }
 
     @Override
-    public WolfyCoreBukkit getCore() {
-        return (WolfyCoreBukkit) core;
+    public WolfyCoreSpigot getCore() {
+        return (WolfyCoreSpigot) core;
     }
 
     public BukkitRegistries getRegistries() {
@@ -121,14 +120,6 @@ public class WolfyUtilsBukkit extends WolfyUtils {
      */
     public ConfigAPI getConfigAPI() {
         return configAPI;
-    }
-
-    /**
-     * @return The {@link Console} instance.
-     * @see Console More information about the Console Util.
-     */
-    public Console getConsole() {
-        return console;
     }
 
     /**

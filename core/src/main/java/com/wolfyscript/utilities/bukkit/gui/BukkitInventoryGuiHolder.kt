@@ -1,11 +1,8 @@
 package com.wolfyscript.utilities.bukkit.gui
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit
 import com.wolfyscript.utilities.gui.GuiHolder
-import com.wolfyscript.utilities.gui.ViewRuntime
 import com.wolfyscript.utilities.gui.ViewRuntimeImpl
 import com.wolfyscript.utilities.gui.Window
-import org.bukkit.Bukkit
 import org.bukkit.event.inventory.InventoryAction
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
@@ -36,15 +33,12 @@ internal class BukkitInventoryGuiHolder(private val runtime: ViewRuntimeImpl, pr
             event.isCancelled = false
             // TODO: Handle bottom inventory clicks
         }
-        Bukkit.getScheduler().runTask(
-            (runtime.wolfyUtils.core as WolfyCoreBukkit).plugin,
-            Runnable {
-                runtime.reactiveSource.runEffects()
-                runtime.currentMenu.ifPresent {
+        runtime.wolfyUtils.core.platform.scheduler.syncTask(runtime.wolfyUtils) {
+            runtime.reactiveSource.runEffects()
+            runtime.currentMenu.ifPresent {
 
-                }
             }
-        )
+        }
     }
 
     fun onDrag(event: InventoryDragEvent) {
@@ -61,10 +55,9 @@ internal class BukkitInventoryGuiHolder(private val runtime: ViewRuntimeImpl, pr
             if (result.isCancelled) {
                 event.isCancelled = true
             }
-            Bukkit.getScheduler().runTask((runtime.wolfyUtils.core as WolfyCoreBukkit).plugin,
-                Runnable {
-                    runtime.reactiveSource.runEffects()
-                })
+            runtime.wolfyUtils.core.platform.scheduler.syncTask(runtime.wolfyUtils) {
+                runtime.reactiveSource.runEffects()
+            }
         }
     }
 

@@ -19,12 +19,8 @@
 package com.wolfyscript.utilities.compatibility.plugins.itemsadder;
 
 import com.google.inject.Inject;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.ItemsAdderIntegration;
-import com.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomBlockWrapper;
-import com.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomItemListener;
-import com.wolfyscript.utilities.compatibility.plugins.itemsadder.CustomStackWrapper;
-import com.wolfyscript.utilities.compatibility.plugins.itemsadder.ItemsAdderStackIdentifier;
 import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
 import java.util.Optional;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
@@ -43,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
 public class ItemsAdderImpl extends PluginIntegrationAbstract implements ItemsAdderIntegration, Listener {
 
     @Inject
-    protected ItemsAdderImpl(WolfyCoreBukkit core) {
+    protected ItemsAdderImpl(WolfyCoreSpigot core) {
         super(core, ItemsAdderIntegration.KEY);
     }
 

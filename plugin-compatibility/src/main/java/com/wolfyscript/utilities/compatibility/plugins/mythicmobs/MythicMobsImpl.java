@@ -19,7 +19,7 @@
 package com.wolfyscript.utilities.compatibility.plugins.mythicmobs;
 
 import com.google.inject.Inject;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.MythicMobsIntegration;
 import io.lumine.xikage.mythicmobs.MythicMobs;
 import io.lumine.xikage.mythicmobs.adapters.bukkit.BukkitAdapter;
@@ -33,7 +33,7 @@ import org.bukkit.plugin.Plugin;
 public class MythicMobsImpl extends PluginIntegrationAbstract implements MythicMobsIntegration {
 
     @Inject
-    protected MythicMobsImpl(WolfyCoreBukkit core) {
+    protected MythicMobsImpl(WolfyCoreSpigot core) {
         super(core, MythicMobsIntegration.KEY);
     }
 

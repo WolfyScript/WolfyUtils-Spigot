@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,11 +31,11 @@ public class PlayerStorage {
 
     private static final org.bukkit.NamespacedKey DATA_KEY = new org.bukkit.NamespacedKey("wolfyutils", "data");
 
-    private final WolfyCoreImpl core;
+    private final WolfyCoreCommon core;
     private final UUID playerUUID;
     private final Map<NamespacedKey, CustomPlayerData> CACHED_DATA = new HashMap<>();
 
-    public PlayerStorage(WolfyCoreImpl core, UUID playerUUID) {
+    public PlayerStorage(WolfyCoreCommon core, UUID playerUUID) {
         this.core = core;
         this.playerUUID = playerUUID;
     }
@@ -125,7 +125,7 @@ public class PlayerStorage {
                     if (jsonData != null && !jsonData.equals("null") && !jsonData.isBlank()) {
                         try {
                             return objectMapper.reader(new InjectableValues.Std()
-                                            .addValue(WolfyCoreBukkit.class, core)
+                                            .addValue(WolfyCoreSpigot.class, core)
                                             .addValue(UUID.class, playerUUID)
                                     )
                                     .forType(CustomPlayerData.class)

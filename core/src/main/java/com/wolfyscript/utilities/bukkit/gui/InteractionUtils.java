@@ -22,9 +22,8 @@
 
 package com.wolfyscript.utilities.bukkit.gui;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.WolfyCore;
 import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.ItemStack;
 
@@ -149,7 +148,7 @@ public class InteractionUtils {
         stack.setAmount(amount.apply(stack));
         // This is required to keep sync between the external stack apply method and inventory. Otherwise, the stacks would be different instances!
         // And one tick later, so the event does not need to be cancelled.
-        Bukkit.getScheduler().runTask(WolfyCoreBukkit.getInstance().getPlugin(), () -> clickEvent.setCurrentItem(stack));
+        WolfyCore.getInstance().getPlatform().getScheduler().syncTask(WolfyCore.getInstance().getWolfyUtils(), () -> clickEvent.setCurrentItem(stack));
         return stack;
     }
 

@@ -1,7 +1,7 @@
 package com.wolfyscript.utilities.compatibility.plugins.fancybags;
 
 import com.google.inject.Inject;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import org.bukkit.plugin.Plugin;
@@ -17,7 +17,7 @@ public class FancyBagsImpl extends PluginIntegrationAbstract {
      * @param core       The WolfyUtilCore.
      */
     @Inject
-    protected FancyBagsImpl(WolfyCoreBukkit core) {
+    protected FancyBagsImpl(WolfyCoreSpigot core) {
         super(core, KEY);
     }
 

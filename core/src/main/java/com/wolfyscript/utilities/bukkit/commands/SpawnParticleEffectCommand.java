@@ -19,7 +19,7 @@
 package com.wolfyscript.utilities.bukkit.commands;
 
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,10 +41,10 @@ import org.jetbrains.annotations.NotNull;
 public final class SpawnParticleEffectCommand extends Command implements PluginIdentifiableCommand {
 
     private final List<String> COMMANDS = Arrays.asList("spawn", "stop");
-    private final WolfyCoreImpl core;
+    private final WolfyCoreCommon core;
     private final BukkitChat chat;
 
-    public SpawnParticleEffectCommand(WolfyCoreImpl core) {
+    public SpawnParticleEffectCommand(WolfyCoreCommon core) {
         super("particle_effect");
         this.core = core;
         this.chat = core.getChat();
