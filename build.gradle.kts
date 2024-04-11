@@ -2,9 +2,9 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id("com.wolfyscript.wolfyutils.spigot.java-conventions")
-    id("com.github.johnrengelman.shadow") version ("8.1.1")
-    id("com.wolfyscript.devtools.docker.run") version ("2.0-SNAPSHOT")
-    id("com.wolfyscript.devtools.docker.minecraft_servers") version ("2.0-SNAPSHOT")
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.wolfyscript.devtools.docker.run") version "2.0-SNAPSHOT"
+    id("com.wolfyscript.devtools.docker.minecraft_servers") version "2.0-SNAPSHOT"
 }
 
 description = "wolfyutils-spigot"
@@ -126,4 +126,23 @@ tasks.named<ShadowJar>("shadowJar") {
 
 tasks.named("test") {
     dependsOn.add(tasks.named("shadowJar"))
+}
+
+artifactory {
+
+    publish {
+        contextUrl = "https://artifacts.wolfyscript.com/artifactory"
+        repository {
+            repoKey = "gradle-dev-local"
+            username = project.properties["wolfyRepoPublishUsername"].toString()
+            password = project.properties["wolfyRepoPublishToken"].toString()
+        }
+        defaults {
+            publications("lib")
+            setPublishArtifacts(true)
+            setPublishPom(true)
+            isPublishBuildInfo = false
+        }
+    }
+
 }
