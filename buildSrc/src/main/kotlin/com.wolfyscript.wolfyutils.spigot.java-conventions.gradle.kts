@@ -1,17 +1,19 @@
 plugins {
     `java-library`
     `maven-publish`
+    id("com.jfrog.artifactory")
 }
 
 repositories {
     mavenLocal()
     mavenCentral()
-    maven {
-        url = uri("https://maven.enginehub.org/repo/")
+
+    maven{
+        url = uri("https://artifacts.wolfyscript.com/artifactory/gradle-dev-local")
     }
 
     maven {
-        url = uri("https://maven.wolfyscript.com/repository/public/")
+        url = uri("https://maven.enginehub.org/repo/")
     }
 
     maven {
@@ -58,13 +60,7 @@ publishing {
     publications {
         create<MavenPublication>("lib") {
             from(components.getByName("java"))
-        }
-    }
-    repositories {
-        maven {
-            name = "wolfyRepo"
-            credentials(PasswordCredentials::class)
-            url = uri("https://maven.wolfyscript.com/repository/${if (project.version.toString().endsWith("-SNAPSHOT")) "snapshots" else "releases"}/")
+            artifact(file("$rootDir/gradle.properties"))
         }
     }
 }
