@@ -1,34 +1,23 @@
 plugins {
     `java-library`
     `maven-publish`
+    id("com.jfrog.artifactory")
 }
 
 repositories {
     mavenLocal()
     mavenCentral()
-    maven {
-        url = uri("https://maven.enginehub.org/repo/")
-    }
 
-    maven {
-        url = uri("https://maven.wolfyscript.com/repository/public/")
-    }
+    maven(url = "https://artifacts.wolfyscript.com/artifactory/gradle-dev")
 
-    maven {
-        url = uri("https://repo.maven.apache.org/maven2/")
-    }
-
-    maven {
-        url = uri("https://jitpack.io")
-    }
-
-    maven {
-        url = uri("https://repo.citizensnpcs.co")
-    }
-
-    maven {
-        url = uri("https://nexus.phoenixdevt.fr/repository/maven-public/")
-    }
+    maven(url = "https://repo.codemc.io/repository/maven-public/")
+    maven(url = "https://maven.enginehub.org/repo/")
+    maven(url = "https://repo.maven.apache.org/maven2/")
+    maven(url = "https://jitpack.io")
+    maven(url = "https://repo.citizensnpcs.co")
+    maven(url = "https://nexus.phoenixdevt.fr/repository/maven-public/")
+    maven(url = "https://repo.extendedclip.com/content/repositories/placeholderapi/")
+    maven(url = "https://libraries.minecraft.net/")
 }
 
 java {
@@ -59,8 +48,11 @@ dependencies {
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 publishing {
-    publications.create<MavenPublication>("maven") {
-        from(components["java"])
+    publications {
+        create<MavenPublication>("lib") {
+            from(components.getByName("java"))
+            artifact(file("$rootDir/gradle.properties"))
+        }
     }
 }
 
