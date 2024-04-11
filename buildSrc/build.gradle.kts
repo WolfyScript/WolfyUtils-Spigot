@@ -9,6 +9,10 @@ repositories {
     mavenCentral()
 }
 
+dependencies {
+    implementation("org.jfrog.buildinfo:build-info-extractor-gradle:5.2.0")
+}
+
 gradlePlugin {
 
 }
