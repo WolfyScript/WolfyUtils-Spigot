@@ -22,7 +22,8 @@ import java.util.regex.Pattern
 class BukkitChat(override val wolfyUtils: WolfyUtils) : Chat {
 
     override var chatPrefix: Component = Component.text("[" + wolfyUtils.name + "]")
-    override val miniMessage: MiniMessage = MiniMessage.builder().tags(TagResolver.standard()) /*.debug(System.out::println)*/.build()
+    override val miniMessage: MiniMessage =
+        MiniMessage.builder().tags(TagResolver.standard()) /*.debug(System.out::println)*/.build()
 
     private val translations: Translations = wolfyUtils.translations
 
@@ -31,11 +32,14 @@ class BukkitChat(override val wolfyUtils: WolfyUtils) : Chat {
     }
 
     override fun sendMessage(player: Player, prefix: Boolean, component: Component) {
-        var component = component
-        if (prefix) {
-            component = chatPrefix.append(component)
-        }
-        sendMessage(player, component)
+        sendMessage(
+            player,
+            if (prefix) {
+                chatPrefix.append(component)
+            } else {
+                component
+            }
+        )
     }
 
     override fun sendMessages(player: Player, vararg components: Component) {

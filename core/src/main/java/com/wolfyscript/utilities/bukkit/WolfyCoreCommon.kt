@@ -72,6 +72,17 @@ import java.util.logging.Logger
  */
 abstract class WolfyCoreCommon(@JvmField val plugin: WolfyCoreCommonBootstrap) : WolfyCore() {
 
+    private val pluginWolfyUtilsInstances: MutableMap<String, WolfyUtilsBukkit> = HashMap()
+    val wolfyUtilsInstanceList: List<WolfyUtilsBukkit>
+        /**
+         * Returns an unmodifiable List of all available [WolfyUtilsBukkit] instances.
+         *
+         * @return A list containing all the created API instances.
+         */
+        get() = java.util.List.copyOf(pluginWolfyUtilsInstances.values)
+
+    private val jsonMapperModules: MutableList<SimpleModule> = ArrayList()
+
     /**
      * Gets the [Reflections] instance of the plugins' package.
      *
@@ -80,18 +91,15 @@ abstract class WolfyCoreCommon(@JvmField val plugin: WolfyCoreCommonBootstrap) :
     final override val wolfyUtils: WolfyUtilsBukkit = getOrCreate(plugin)
 
     init {
-        wolfyUtils.chat.chatPrefix = Component
-            .text("[", NamedTextColor.GRAY)
-            .append(Component.text("WU", NamedTextColor.AQUA))
-            .append(Component.text("] ", NamedTextColor.DARK_GRAY))
+        wolfyUtils.chat.chatPrefix = Component.text("[", NamedTextColor.GRAY).append(Component.text("WU", NamedTextColor.AQUA)).append(Component.text("] ", NamedTextColor.DARK_GRAY))
     }
 
     private var config: WUConfig? = null
+
     val messageHandler: MessageHandler = MessageHandler(this)
 
     @JvmField
     val messageFactory: MessageFactory = MessageFactory(this)
-
     /**
      * The [CompatibilityManagerBukkit], that manages the plugins compatibility features.
      *
@@ -101,8 +109,6 @@ abstract class WolfyCoreCommon(@JvmField val plugin: WolfyCoreCommonBootstrap) :
 
     @JvmField
     val persistentStorage: PersistentStorage = PersistentStorage(this)
-    private val jsonMapperModules: MutableList<SimpleModule> = ArrayList()
-    private val wolfyUtilsInstances: MutableMap<String, WolfyUtilsBukkit> = HashMap()
 
     /**
      * Gets the [BukkitRegistries] object, that contains all info about available registries.
@@ -125,7 +131,7 @@ abstract class WolfyCoreCommon(@JvmField val plugin: WolfyCoreCommonBootstrap) :
      * @return The WolfyUtilities instance for the plugin.
      */
     fun getOrCreate(plugin: Plugin): WolfyUtilsBukkit {
-        return wolfyUtilsInstances.computeIfAbsent(plugin.name) { s: String? -> WolfyUtilsBukkit(this, plugin) }
+        return pluginWolfyUtilsInstances.computeIfAbsent(plugin.name) { WolfyUtilsBukkit(this, plugin) }
     }
 
     /**
@@ -135,16 +141,8 @@ abstract class WolfyCoreCommon(@JvmField val plugin: WolfyCoreCommonBootstrap) :
      * @return True in case the API is available; false otherwise.
      */
     fun has(plugin: Plugin): Boolean {
-        return wolfyUtilsInstances.containsKey(plugin.name)
+        return pluginWolfyUtilsInstances.containsKey(plugin.name)
     }
-
-    val aPIList: List<WolfyUtilsBukkit>
-        /**
-         * Returns an unmodifiable List of all available [WolfyUtilsBukkit] instances.
-         *
-         * @return A list containing all the created API instances.
-         */
-        get() = java.util.List.copyOf(wolfyUtilsInstances.values)
 
     open fun load() {
         val injector = Guice.createInjector(Stage.DEVELOPMENT, Module { binder: Binder ->

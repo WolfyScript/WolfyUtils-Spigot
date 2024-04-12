@@ -55,7 +55,7 @@ public final class InputCommand extends Command implements PluginIdentifiableCom
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
         if (!(sender instanceof Player player)) return true;
-        core.getAPIList().parallelStream()
+        core.getWolfyUtilsInstanceList().parallelStream()
                 .map(WolfyUtils::getGuiManager)
                 .flatMap(guiAPIManager -> guiAPIManager.getViewManagersFor(player.getUniqueId()))
                 .map(viewManager -> new Pair<>(viewManager, viewManager.textInputCallback()))
@@ -79,7 +79,7 @@ public final class InputCommand extends Command implements PluginIdentifiableCom
     @Override
     public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) throws IllegalArgumentException {
         if (sender instanceof Player player) {
-            return core.getAPIList().parallelStream()
+            return core.getWolfyUtilsInstanceList().parallelStream()
                     .map(WolfyUtils::getGuiManager)
                     .flatMap(guiAPIManager -> guiAPIManager.getViewManagersFor(player.getUniqueId()))
                     .map(viewManager -> new Pair<>(viewManager, viewManager.textInputTabCompleteCallback()))
