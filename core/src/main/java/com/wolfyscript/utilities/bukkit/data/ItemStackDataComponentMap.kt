@@ -3,10 +3,7 @@ package com.wolfyscript.utilities.bukkit.data
 import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl
 import com.wolfyscript.utilities.data.DataComponentMap
 import com.wolfyscript.utilities.data.DataKey
-import com.wolfyscript.utilities.data.Keys
-import com.wolfyscript.utilities.gui.functions.ReceiverFunction
 import com.wolfyscript.utilities.platform.adapters.ItemStack
-import org.bukkit.map.MapPalette
 
 class ItemStackDataComponentMap internal constructor(private val itemStack: ItemStackImpl) : DataComponentMap<ItemStack> {
 

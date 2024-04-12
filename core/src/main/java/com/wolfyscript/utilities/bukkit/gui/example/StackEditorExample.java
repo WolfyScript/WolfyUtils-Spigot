@@ -1,9 +1,6 @@
 package com.wolfyscript.utilities.bukkit.gui.example;
 
-import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl;
-import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
-import com.wolfyscript.utilities.chat.Chat;
-import com.wolfyscript.utilities.data.Keys;
+import com.wolfyscript.utilities.data.ItemStackDataKeys;
 import com.wolfyscript.utilities.gui.GuiAPIManager;
 import com.wolfyscript.utilities.gui.InteractionResult;
 import com.wolfyscript.utilities.gui.ReactiveRenderBuilder;
@@ -12,9 +9,6 @@ import com.wolfyscript.utilities.gui.components.ComponentGroupBuilder;
 import com.wolfyscript.utilities.gui.components.StackInputSlotBuilder;
 import com.wolfyscript.utilities.gui.reactivity.Signal;
 import com.wolfyscript.utilities.platform.adapters.ItemStack;
-import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class StackEditorExample {
 
@@ -106,7 +100,7 @@ public class StackEditorExample {
                                 stackToEdit.update(store -> {
                                     var stack = store.getStack();
                                     if (stack != null) {
-                                        stack.data().set(Keys.CUSTOM_NAME, runtime.getWolfyUtils().getChat().getMiniMessage().deserialize(s));
+                                        stack.data().set(ItemStackDataKeys.CUSTOM_NAME, runtime.getWolfyUtils().getChat().getMiniMessage().deserialize(s));
                                     }
                                     return store;
                                 });
@@ -119,7 +113,7 @@ public class StackEditorExample {
                             stackToEdit.update(store -> {
                                 var stack = store.getStack();
                                 if (stack != null) {
-                                    stack.data().remove(Keys.CUSTOM_NAME);
+                                    stack.data().remove(ItemStackDataKeys.CUSTOM_NAME);
                                 }
                                 return store;
                             });

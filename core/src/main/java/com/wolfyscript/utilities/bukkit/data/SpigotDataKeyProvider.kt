@@ -9,8 +9,7 @@ import com.wolfyscript.utilities.bukkit.world.items.data.*
 import com.wolfyscript.utilities.bukkit.world.items.toBukkit
 import com.wolfyscript.utilities.bukkit.world.items.toWrapper
 import com.wolfyscript.utilities.data.DataKey
-import com.wolfyscript.utilities.data.DataKeyBuilderProvider
-import com.wolfyscript.utilities.data.ItemStackDataKey
+import com.wolfyscript.utilities.data.DataKeyProvider
 import com.wolfyscript.utilities.gui.functions.ReceiverBiConsumer
 import com.wolfyscript.utilities.gui.functions.ReceiverFunction
 import com.wolfyscript.utilities.platform.adapters.ItemStack
@@ -27,9 +26,9 @@ import org.bukkit.block.Lockable
 import org.bukkit.inventory.meta.*
 import kotlin.reflect.KClass
 
-class SpigotDataKeyBuilderProvider(private val wolfyCore: WolfyCore) : DataKeyBuilderProvider {
+class SpigotDataKeyProvider(private val wolfyCore: WolfyCore) : DataKeyProvider {
 
-    private val map: MutableMap<NamespacedKey, DataKey.Builder<*, ItemStack>> = mutableMapOf()
+    private val map: MutableMap<NamespacedKey, DataKey<*, ItemStack>> = mutableMapOf()
 
     init {
         register("damage", {
@@ -229,18 +228,18 @@ class SpigotDataKeyBuilderProvider(private val wolfyCore: WolfyCore) : DataKeyBu
         fetcher: ReceiverFunction<ItemMeta, T?>,
         applier: ReceiverBiConsumer<ItemMeta, T>
     ) {
-        map[key] = ItemStackDataKey.builder<T>(key)
-            .reader {
+        map[key] = DataKey(T::class, key,
+            fetcher = {
                 if (this is ItemStackImpl) {
-                    return@reader bukkitRef?.itemMeta?.let { meta ->
+                    return@DataKey bukkitRef?.itemMeta?.let { meta ->
                         with(fetcher) {
                             meta.apply()
                         }
                     }
                 }
                 null
-            }
-            .writer { data ->
+            },
+            applier = { data ->
                 if (this is ItemStackImpl) {
                     val meta = bukkitRef?.itemMeta
                     if (meta != null) {
@@ -251,22 +250,24 @@ class SpigotDataKeyBuilderProvider(private val wolfyCore: WolfyCore) : DataKeyBu
                     }
                 }
                 this
-            }
+            })
     }
 
-    override fun <T : Any> getKeyBuilder(
+    override fun <T : Any> getDataKey(
         type: KClass<T>,
         key: NamespacedKey
-    ): DataKey.Builder<T, ItemStack> {
+    ): DataKey<T, ItemStack> {
         val builder = map[key]
         if (builder != null) {
-            if (builder.valueType != type) {
-                throw IllegalArgumentException("Cannot create Builder $key! Invalid value type: Registered Builder contains value of type ${builder.valueType}, but requested value type was $type")
+            if (builder.type != type) {
+                throw IllegalArgumentException("Cannot create Builder $key! Invalid value type: Registered Builder contains value of type ${builder.type}, but requested value type was $type")
             }
             @Suppress("UNCHECKED_CAST") // We checked that the key and type is the same, so we can cast it here
-            return builder as DataKey.Builder<T, ItemStack>
+            return builder as DataKey<T, ItemStack>
         }
-        throw IllegalArgumentException("Cannot create Builder $key! Builder was not registered!")
+
+        wolfyCore.wolfyUtils.logger.warning("Cannot create Builder $key! Builder was not registered! Falling back to empty DataKey!")
+        return DataKey(type, key, fetcher = { null }, applier = { this })
     }
 
 }
