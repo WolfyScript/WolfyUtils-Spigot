@@ -1,6 +1,6 @@
 name: WolfyUtilities
 version: '${version}'
-main: com.wolfyscript.utilities.bukkit.WolfyCoreSpigotBootstrap
+main: com.wolfyscript.utilities.spigot.WolfyCoreSpigotBootstrap
 api-version: 1.16
 authors: [ WolfyScript ]
 load: STARTUP
