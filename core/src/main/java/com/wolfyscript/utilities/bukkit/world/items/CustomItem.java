@@ -895,7 +895,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
                 ParticleLocation loc = ParticleLocation.valueOf(entry.getKey());
                 JsonNode value = entry.getValue();
                 if (value.isObject() && value.has("effect")) {
-                    var animation = wolfyUtils.getRegistries().getParticleAnimations().get(JacksonUtil.getObjectMapper().convertValue(value.get("effect"), BukkitNamespacedKey.class));
+                    var animation = ((BukkitRegistries) wolfyUtils.getRegistries()).getParticleAnimations().get(JacksonUtil.getObjectMapper().convertValue(value.get("effect"), BukkitNamespacedKey.class));
                     if (animation != null) {
                         loc.applyOldPlayerAnimation(playerSettings, animation);
                     }

@@ -48,9 +48,9 @@ public class GuiExampleCommand extends Command implements PluginIdentifiableComm
         if (args.length > 0) {
             // counter
             // ... tbd
-            core.getWolfyUtils().getGUIManager().createViewAndOpen(args[0], player.getUniqueId());
+            core.getWolfyUtils().getGuiManager().createViewAndOpen(args[0], player.getUniqueId());
         } else {
-            core.getWolfyUtils().getGUIManager().createViewAndOpen("example_counter", player.getUniqueId());
+            core.getWolfyUtils().getGuiManager().createViewAndOpen("example_counter", player.getUniqueId());
         }
         return true;
     }

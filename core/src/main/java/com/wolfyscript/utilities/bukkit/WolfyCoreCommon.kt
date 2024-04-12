@@ -377,7 +377,9 @@ abstract class WolfyCoreCommon(@JvmField val plugin: WolfyCoreCommonBootstrap) :
         wolfyUtils.initialize()
         wolfyUtils.logger.info("Minecraft version: " + ServerVersion.getVersion().version)
         wolfyUtils.logger.info("WolfyUtils version: " + ServerVersion.getWUVersion().version)
-        wolfyUtils.logger.info("Environment: " + WolfyUtils.getENVIRONMENT())
+        if (WolfyUtils.isDevEnv) {
+            wolfyUtils.logger.info("> Dev-Environment <")
+        }
         this.config = WUConfig(wolfyUtils.configAPI, plugin)
         compatibilityManager.init()
 

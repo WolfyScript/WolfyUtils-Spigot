@@ -18,8 +18,8 @@
 
 package com.wolfyscript.utilities.bukkit.commands;
 
+import com.wolfyscript.utilities.WolfyUtils;
 import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
-import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.adapters.BukkitWrapper;
 import com.wolfyscript.utilities.gui.ViewRuntime;
 import com.wolfyscript.utilities.gui.callback.TextInputCallback;
@@ -56,7 +56,7 @@ public final class InputCommand extends Command implements PluginIdentifiableCom
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
         if (!(sender instanceof Player player)) return true;
         core.getAPIList().parallelStream()
-                .map(WolfyUtilsBukkit::getGUIManager)
+                .map(WolfyUtils::getGuiManager)
                 .flatMap(guiAPIManager -> guiAPIManager.getViewManagersFor(player.getUniqueId()))
                 .map(viewManager -> new Pair<>(viewManager, viewManager.textInputCallback()))
                 .filter(pair -> pair.getValue().isPresent())
@@ -80,7 +80,7 @@ public final class InputCommand extends Command implements PluginIdentifiableCom
     public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) throws IllegalArgumentException {
         if (sender instanceof Player player) {
             return core.getAPIList().parallelStream()
-                    .map(WolfyUtilsBukkit::getGUIManager)
+                    .map(WolfyUtils::getGuiManager)
                     .flatMap(guiAPIManager -> guiAPIManager.getViewManagersFor(player.getUniqueId()))
                     .map(viewManager -> new Pair<>(viewManager, viewManager.textInputTabCompleteCallback()))
                     .filter(pair -> pair.getValue().isPresent())

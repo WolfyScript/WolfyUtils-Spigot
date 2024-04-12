@@ -13,7 +13,7 @@ public class TestGUI {
     }
 
     public void initWithConfig() {
-        GuiAPIManager manager = core.getWolfyUtils().getGUIManager();
+        GuiAPIManager manager = core.getWolfyUtils().getGuiManager();
         CounterExampleKotlinKt.registerExampleCounter(manager);
         KtStackEditorExampleKt.register(manager);
     }
