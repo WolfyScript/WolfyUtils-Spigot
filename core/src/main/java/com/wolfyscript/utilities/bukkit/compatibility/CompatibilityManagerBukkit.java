@@ -18,7 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.compatibility;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import com.wolfyscript.utilities.bukkit.nms.ServerProperties;
 import com.wolfyscript.utilities.versioning.MinecraftVersion;
 import com.wolfyscript.utilities.versioning.ServerVersion;
@@ -29,15 +29,13 @@ import java.util.Properties;
 public final class CompatibilityManagerBukkit implements CompatibilityManager {
 
     private static final Map<String, Boolean> classes = new HashMap<>();
-    private final WolfyCoreImpl core;
+    private final WolfyCoreCommon core;
     private final PluginsBukkit pluginsBukkit;
     private boolean has1_20Features = false;
-    private final boolean isPaper;
 
-    public CompatibilityManagerBukkit(WolfyCoreImpl core) {
+    public CompatibilityManagerBukkit(WolfyCoreCommon core) {
         this.core = core;
         this.pluginsBukkit = new PluginsBukkit(core);
-        this.isPaper = hasClass("com.destroystokyo.paper.utils.PaperPluginLogger");
     }
 
     public void init() {
@@ -62,11 +60,6 @@ public final class CompatibilityManagerBukkit implements CompatibilityManager {
 
     public Plugins getPlugins() {
         return pluginsBukkit;
-    }
-
-    @Override
-    public boolean isPaper() {
-        return isPaper;
     }
 
     /**

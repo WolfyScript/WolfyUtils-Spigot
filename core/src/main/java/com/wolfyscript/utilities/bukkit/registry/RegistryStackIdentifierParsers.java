@@ -3,7 +3,7 @@ package com.wolfyscript.utilities.bukkit.registry;
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import com.wolfyscript.utilities.bukkit.world.items.reference.BukkitStackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
@@ -59,7 +59,7 @@ public class RegistryStackIdentifierParsers extends RegistrySimple<StackIdentifi
      * @return
      */
     public StackReference parseFrom(ItemStack stack) {
-        return new StackReference((WolfyCoreImpl) registries.getCore(), parseIdentifier(stack), 1, stack.getAmount(), stack);
+        return new StackReference((WolfyCoreCommon) registries.getCore(), parseIdentifier(stack), 1, stack.getAmount(), stack);
     }
 
     private void reIndexParsers() {

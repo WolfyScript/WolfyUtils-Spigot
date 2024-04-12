@@ -18,7 +18,8 @@
 
 package com.wolfyscript.utilities.bukkit.commands;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
+import com.wolfyscript.utilities.bukkit.adapters.BukkitWrapper;
 import com.wolfyscript.utilities.versioning.ServerVersion;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -32,9 +33,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class InfoCommand extends Command implements PluginIdentifiableCommand {
 
-    private final WolfyCoreImpl core;
+    private final WolfyCoreCommon core;
 
-    public InfoCommand(WolfyCoreImpl core) {
+    public InfoCommand(WolfyCoreCommon core) {
         super("wolfyutils");
         this.core = core;
         setDescription("Displays info about the plugin version, etc.");
@@ -48,8 +49,9 @@ public class InfoCommand extends Command implements PluginIdentifiableCommand {
 
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
-        if (!(sender instanceof Player player)) return true;
-        core.getWolfyUtils().getChat().sendMessages((Player) sender, true,
+        if (!(sender instanceof Player bukkitPlayer)) return true;
+        var player = BukkitWrapper.adapt(bukkitPlayer);
+        core.getChat().sendMessages(player, true,
                 Component.text("——————— ", NamedTextColor.GRAY).append(Component.text("WolfyUtilities", NamedTextColor.AQUA, TextDecoration.BOLD)).append(Component.text(" ———————")),
                 Component.empty(),
                 Component.text("Author: ", NamedTextColor.GRAY).append(Component.text(String.join(", ", core.getWolfyUtils().getPlugin().getDescription().getAuthors()), null, TextDecoration.BOLD)),

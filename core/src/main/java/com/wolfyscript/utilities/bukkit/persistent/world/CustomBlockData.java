@@ -25,7 +25,7 @@ import com.wolfyscript.utilities.config.jackson.KeyedTypeResolver;
  * The String content is then deserialized to that type using Jackson.<br>
  * There are injectable values that can be used in the constructor to get access to the Core, ChunkStorage, Position, etc.<br>
  * <ul>
- *     <li>{@link com.wolfyscript.utilities.bukkit.WolfyCoreImpl}</li>
+ *     <li>{@link com.wolfyscript.utilities.bukkit.WolfyCoreCommon}</li>
  *     <li>{@link ChunkStorage}</li>
  *     <li>{@link org.bukkit.util.Vector}</li>
  * </ul>

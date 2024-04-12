@@ -19,7 +19,7 @@
 package com.wolfyscript.utilities.bukkit.registry;
 
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
 import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
@@ -96,7 +96,7 @@ public class BukkitRegistries extends Registries {
 
     private final TypeRegistry<QueryNode<?>> nbtQueryNodes;
 
-    public BukkitRegistries(WolfyCoreImpl core) {
+    public BukkitRegistries(WolfyCoreCommon core) {
         super(core);
 
         customItems = new RegistryCustomItem(this);

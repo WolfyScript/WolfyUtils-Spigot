@@ -26,8 +26,6 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import com.wolfyscript.utilities.Keyed;
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.WolfyUtils;
 import com.wolfyscript.utilities.config.jackson.KeyedTypeIdResolver;
 import com.wolfyscript.utilities.config.jackson.KeyedTypeResolver;

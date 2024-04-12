@@ -2,18 +2,15 @@ package com.wolfyscript.utilities.bukkit;
 
 import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
 import com.wolfyscript.utilities.bukkit.config.ConfigAPI;
-import com.wolfyscript.utilities.bukkit.console.Console;
-import com.wolfyscript.utilities.bukkit.language.LangAPISpigot;
+import com.wolfyscript.utilities.bukkit.language.TranslationsSpigot;
 import com.wolfyscript.utilities.bukkit.network.messages.MessageAPI;
 import com.wolfyscript.utilities.bukkit.nms.api.NMSUtil;
-import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import com.wolfyscript.utilities.bukkit.world.items.BookUtil;
 import com.wolfyscript.utilities.bukkit.world.items.Items;
 import com.wolfyscript.utilities.Identifiers;
 import com.wolfyscript.utilities.WolfyUtils;
 import com.wolfyscript.utilities.gui.GuiAPIManager;
 import com.wolfyscript.utilities.gui.GuiAPIManagerImpl;
-import com.wolfyscript.utilities.language.LanguageAPI;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,15 +23,18 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+
+import com.wolfyscript.utilities.language.Translations;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 public class WolfyUtilsBukkit extends WolfyUtils {
 
-    private final WolfyCoreImpl core;
+    private final WolfyCoreCommon core;
     private final Plugin plugin;
     private final BukkitChat chat;
-    private final LanguageAPI languageAPI;
-    private final Console console;
+    private final Translations translations;
     private final Permissions permissions;
     private final BookUtil bookUtil;
     private final MessageAPI messageAPI;
@@ -46,12 +46,11 @@ public class WolfyUtilsBukkit extends WolfyUtils {
     private final ConfigAPI configAPI;
     private final GuiAPIManagerImpl guiAPIManager;
 
-    WolfyUtilsBukkit(WolfyCoreImpl core, Plugin plugin) {
+    WolfyUtilsBukkit(WolfyCoreCommon core, Plugin plugin) {
         this.core = core;
         this.plugin = plugin;
-        this.languageAPI = new LangAPISpigot(this);
+        this.translations = new TranslationsSpigot(this);
         this.chat = new BukkitChat(this);
-        this.console = new Console(this);
         this.permissions = new Permissions(this);
         this.bookUtil = new BookUtil(this);
         this.messageAPI = new MessageAPI(this);
@@ -68,12 +67,8 @@ public class WolfyUtilsBukkit extends WolfyUtils {
     }
 
     @Override
-    public WolfyCoreBukkit getCore() {
-        return (WolfyCoreBukkit) core;
-    }
-
-    public BukkitRegistries getRegistries() {
-        return core.getRegistries();
+    public WolfyCoreSpigot getCore() {
+        return (WolfyCoreSpigot) core;
     }
 
     @Override
@@ -91,13 +86,10 @@ public class WolfyUtilsBukkit extends WolfyUtils {
         return plugin.getLogger();
     }
 
-    /**
-     * @return The {@link LanguageAPI} instance.
-     * @see LanguageAPI More information about the Language API
-     */
+    @NotNull
     @Override
-    public LanguageAPI getLanguageAPI() {
-        return languageAPI;
+    public Translations getTranslations() {
+        return translations;
     }
 
     @Override
@@ -110,8 +102,9 @@ public class WolfyUtilsBukkit extends WolfyUtils {
         return identifiers;
     }
 
+    @NotNull
     @Override
-    public GuiAPIManager getGUIManager() {
+    public GuiAPIManager getGuiManager() {
         return guiAPIManager;
     }
 
@@ -121,14 +114,6 @@ public class WolfyUtilsBukkit extends WolfyUtils {
      */
     public ConfigAPI getConfigAPI() {
         return configAPI;
-    }
-
-    /**
-     * @return The {@link Console} instance.
-     * @see Console More information about the Console Util.
-     */
-    public Console getConsole() {
-        return console;
     }
 
     /**

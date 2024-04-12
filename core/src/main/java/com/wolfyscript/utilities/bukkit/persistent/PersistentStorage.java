@@ -1,7 +1,7 @@
 package com.wolfyscript.utilities.bukkit.persistent;
 
 import com.google.common.base.Preconditions;
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.WorldStorage;
 import java.util.HashMap;
@@ -22,9 +22,9 @@ public class PersistentStorage {
 
     private final Map<UUID, WorldStorage> WORLD_STORAGE = new HashMap<>();
     private final Map<UUID, PlayerStorage> PLAYER_STORAGE = new HashMap<>();
-    private final WolfyCoreImpl core;
+    private final WolfyCoreCommon core;
 
-    public PersistentStorage(WolfyCoreImpl core) {
+    public PersistentStorage(WolfyCoreCommon core) {
         this.core = core;
     }
 
@@ -50,7 +50,7 @@ public class PersistentStorage {
         return PLAYER_STORAGE.computeIfAbsent(player.getUniqueId(), uuid -> new PlayerStorage(core, uuid));
     }
 
-    public WolfyCoreImpl getCore() {
+    public WolfyCoreCommon getCore() {
         return core;
     }
 }

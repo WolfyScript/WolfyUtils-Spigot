@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.bukkit.registry.BukkitRegistries;
 import com.wolfyscript.utilities.bukkit.world.particles.ParticleAnimation;
 import com.wolfyscript.utilities.bukkit.world.particles.ParticleLocation;
 import com.wolfyscript.utilities.WolfyUtils;
@@ -189,7 +189,7 @@ public class ParticleContent {
         }
 
         public void setAnimation(NamespacedKey animation) {
-            this.animation = Objects.requireNonNull(((WolfyUtilsBukkit) wolfyUtils).getRegistries().getParticleAnimations().get(animation), "Animation \"" + animation + "\" not found!");
+            this.animation = Objects.requireNonNull(((BukkitRegistries) wolfyUtils.getRegistries()).getParticleAnimations().get(animation), "Animation \"" + animation + "\" not found!");
         }
 
         /**

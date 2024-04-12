@@ -18,7 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.commands;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,6 +34,7 @@ import com.wolfyscript.utilities.bukkit.world.particles.animators.AnimatorCircle
 import com.wolfyscript.utilities.bukkit.world.particles.animators.AnimatorSphere;
 import com.wolfyscript.utilities.bukkit.world.particles.timer.TimerLinear;
 import com.wolfyscript.utilities.bukkit.world.particles.timer.TimerPi;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -50,10 +51,10 @@ import org.jetbrains.annotations.NotNull;
 public final class SpawnParticleAnimationCommand extends Command implements PluginIdentifiableCommand {
 
     private final List<String> COMMANDS = Arrays.asList("spawn", "stop");
-    private final WolfyCoreImpl core;
+    private final WolfyCoreCommon core;
     private final BukkitChat chat;
 
-    public SpawnParticleAnimationCommand(WolfyCoreImpl core) {
+    public SpawnParticleAnimationCommand(WolfyCoreCommon core) {
         super("particle_animation");
         this.core = core;
         this.chat = core.getChat();
@@ -70,6 +71,7 @@ public final class SpawnParticleAnimationCommand extends Command implements Plug
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
         if (sender instanceof Player player) {
+            Audience audience = core.getPlatform().getAudiences().player(player.getUniqueId());
             if (args.length > 0) {
                 if (args[0].equalsIgnoreCase("spawn")) {
                     if (core.getWolfyUtils().getPermissions().hasPermission(player, "wolfyutilities.command.particle_animation.spawn")) {
@@ -99,9 +101,9 @@ public final class SpawnParticleAnimationCommand extends Command implements Plug
                             try {
                                 UUID uuid = UUID.fromString(args[1]);
                                 ParticleUtils.stopAnimation(uuid);
-                                chat.sendMessage(player, Component.text("Stopped effect with uuid ", NamedTextColor.YELLOW).append(Component.text(args[1], NamedTextColor.GOLD)).append(Component.text("if it was active!")));
+                                audience.sendMessage(Component.text("Stopped effect with uuid ", NamedTextColor.YELLOW).append(Component.text(args[1], NamedTextColor.GOLD)).append(Component.text("if it was active!")));
                             } catch (IllegalArgumentException ex) {
-                                chat.sendMessage(player, Component.text("Invalid UUID ", NamedTextColor.RED).append(Component.text(args[1], NamedTextColor.DARK_RED)));
+                                audience.sendMessage(Component.text("Invalid UUID ", NamedTextColor.RED).append(Component.text(args[1], NamedTextColor.DARK_RED)));
                             }
                         }
                     }

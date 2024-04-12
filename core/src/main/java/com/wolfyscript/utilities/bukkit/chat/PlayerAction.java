@@ -18,7 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.chat;
 
-import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.WolfyUtils;
 import java.util.UUID;
 
 import com.wolfyscript.utilities.platform.adapters.Player;
@@ -31,11 +31,11 @@ import net.kyori.adventure.audience.Audience;
 public class PlayerAction {
 
     private UUID uuid;
-    private WolfyUtilsBukkit api;
+    private WolfyUtils api;
     private ClickActionCallback clickAction;
     private final boolean discard;
 
-    PlayerAction(WolfyUtilsBukkit api, Player player, ClickActionCallback action, boolean discard) {
+    PlayerAction(WolfyUtils api, Player player, ClickActionCallback action, boolean discard) {
         this.uuid = player.uuid();
         this.api = api;
         this.clickAction = action;
@@ -56,11 +56,11 @@ public class PlayerAction {
         this.uuid = uuid;
     }
 
-    public WolfyUtilsBukkit getApi() {
+    public WolfyUtils getApi() {
         return api;
     }
 
-    public void setApi(WolfyUtilsBukkit api) {
+    public void setApi(WolfyUtils api) {
         this.api = api;
     }
 

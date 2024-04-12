@@ -21,7 +21,8 @@ package com.wolfyscript.utilities.bukkit.json.serialization;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.WolfyCore;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import com.wolfyscript.utilities.config.jackson.JacksonUtil;
 import org.bukkit.util.Vector;
 
@@ -35,13 +36,13 @@ public class VectorSerialization {
             gen.writeNumber(value.getZ());
             gen.writeEndArray();
         }, (p, deserializationContext) -> {
-            var api = WolfyCoreBukkit.getInstance().getWolfyUtils();
+            var api = WolfyCore.getInstance().getWolfyUtils();
             JsonNode node = p.readValueAsTree();
             if (node.isArray()) {
                 var arrayNode = (ArrayNode) node;
                 return new Vector(arrayNode.get(0).asDouble(0), arrayNode.get(1).asDouble(0), arrayNode.get(2).asDouble(0));
             }
-            api.getConsole().warn("Error Deserializing Vector! Invalid Vector object!");
+            api.getLogger().warning("Error Deserializing Vector! Invalid Vector object!");
             return null;
         });
     }

@@ -1,13 +1,12 @@
 package com.wolfyscript.utilities.bukkit.gui.example
 
-import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl
+import com.wolfyscript.utilities.data.ItemStackDataKeys
 import com.wolfyscript.utilities.gui.GuiAPIManager
 import com.wolfyscript.utilities.gui.InteractionResult
 import com.wolfyscript.utilities.gui.ReactiveRenderBuilder
 import com.wolfyscript.utilities.gui.reactivity.Signal
 import com.wolfyscript.utilities.gui.reactivity.createSignal
 import com.wolfyscript.utilities.platform.adapters.ItemStack
-import org.bukkit.inventory.meta.ItemMeta
 
 class StackEditorStore {
     private var stack: ItemStack? = null
@@ -97,13 +96,7 @@ fun ReactiveRenderBuilder.displayNameTab(stackToEdit: Signal<StackEditorStore>):
             interact { runtime, _ ->
                 runtime.setTextInputCallback { _, _, s, _ ->
                     stackToEdit.update { store ->
-                        val stack = store?.getStack()
-                        if (stack is ItemStackImpl) {
-                            val bukkitStack = stack.bukkitRef!!;
-                            val meta: ItemMeta = bukkitStack.itemMeta;
-                            meta.setDisplayName(s);
-                            bukkitStack.setItemMeta(meta);
-                        }
+                        store?.getStack()?.data()?.set(ItemStackDataKeys.CUSTOM_NAME, runtime.wolfyUtils.chat.miniMessage.deserialize(s))
                         store
                     }
                     true
@@ -114,13 +107,7 @@ fun ReactiveRenderBuilder.displayNameTab(stackToEdit: Signal<StackEditorStore>):
         button("reset_display_name") {
             interact { _, _ ->
                 stackToEdit.update { store ->
-                    val stack = store?.getStack()
-                    if (stack is ItemStackImpl) {
-                        val bukkitStack = stack.bukkitRef!!;
-                        val meta: ItemMeta = bukkitStack.itemMeta;
-                        meta.setDisplayName(null);
-                        bukkitStack.setItemMeta(meta);
-                    }
+                    store?.getStack()?.data()?.remove(ItemStackDataKeys.CUSTOM_NAME)
                     store
                 }
                 InteractionResult.cancel(true)

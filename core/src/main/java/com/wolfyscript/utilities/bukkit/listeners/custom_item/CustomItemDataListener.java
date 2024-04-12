@@ -1,7 +1,6 @@
 package com.wolfyscript.utilities.bukkit.listeners.custom_item;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import com.wolfyscript.utilities.bukkit.events.CustomItemPlaceEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageBreakEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageDropItemsEvent;
@@ -22,9 +21,9 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 
 public class CustomItemDataListener implements Listener {
 
-    private final WolfyCoreImpl core;
+    private final WolfyCoreCommon core;
 
-    public CustomItemDataListener(WolfyCoreImpl core) {
+    public CustomItemDataListener(WolfyCoreCommon core) {
         this.core = core;
     }
 
@@ -69,7 +68,7 @@ public class CustomItemDataListener implements Listener {
             if (!event1.isCancelled()) {
                 if (customItem != null) {
                     Location blockLoc = event.getBlockPlaced().getLocation();
-                    ChunkStorage chunkStorage = core.getPersistentStorage().getOrCreateWorldStorage(blockLoc.getWorld()).getOrCreateChunkStorage(blockLoc);
+                    ChunkStorage chunkStorage = core.persistentStorage.getOrCreateWorldStorage(blockLoc.getWorld()).getOrCreateChunkStorage(blockLoc);
                     var customItemData = new CustomItemBlockData(core, chunkStorage, blockLoc.toVector(), customItem.key());
                     event.getStorage().addOrSetData(customItemData);
                     customItemData.onPlace(event);
@@ -90,7 +89,7 @@ public class CustomItemDataListener implements Listener {
             }
             event.getBlockStorages().forEach(blockStorage -> {
                 Location blockLoc = event.getBlockPlaced().getLocation();
-                ChunkStorage chunkStorage = core.getPersistentStorage().getOrCreateWorldStorage(blockLoc.getWorld()).getOrCreateChunkStorage(blockLoc);
+                ChunkStorage chunkStorage = core.persistentStorage.getOrCreateWorldStorage(blockLoc.getWorld()).getOrCreateChunkStorage(blockLoc);
                 var customItemData = new CustomItemBlockData(core, chunkStorage, blockLoc.toVector(), customItem.key());
                 blockStorage.addOrSetData(customItemData);
                 customItemData.onPlace(event);

@@ -8,5 +8,4 @@ public interface CompatibilityManager {
 
     Plugins getPlugins();
 
-    boolean isPaper();
 }

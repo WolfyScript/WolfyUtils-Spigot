@@ -19,11 +19,8 @@
 package com.wolfyscript.utilities.compatibility.plugins.placeholderapi.value_providers;
 
 import com.google.inject.Inject;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import com.wolfyscript.utilities.bukkit.compatibility.plugins.PlaceholderAPIIntegration;
-import com.wolfyscript.utilities.compatibility.plugins.placeholderapi.value_providers.ValueProviderFloatPAPI;
-import com.wolfyscript.utilities.compatibility.plugins.placeholderapi.value_providers.ValueProviderIntegerPAPI;
-import com.wolfyscript.utilities.compatibility.plugins.placeholderapi.value_providers.ValueProviderStringPAPI;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.events.ExpansionsLoadedEvent;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
@@ -49,7 +46,7 @@ public class PlaceholderAPIImpl extends PluginIntegrationAbstract implements Pla
      * @param core       The WolfyUtilCore.
      */
     @Inject
-    protected PlaceholderAPIImpl(WolfyCoreBukkit core) {
+    protected PlaceholderAPIImpl(WolfyCoreSpigot core) {
         super(core, PlaceholderAPIIntegration.KEY);
     }
 

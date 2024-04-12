@@ -19,7 +19,7 @@
 package com.wolfyscript.utilities.compatibility.plugins.mmoitems;
 
 import com.google.inject.Inject;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import org.bukkit.plugin.Plugin;
@@ -30,7 +30,7 @@ public class MMOItemsImpl extends PluginIntegrationAbstract {
     static final String PLUGIN_NAME = "MMOItems";
 
     @Inject
-    protected MMOItemsImpl(WolfyCoreBukkit core) {
+    protected MMOItemsImpl(WolfyCoreSpigot core) {
         super(core, PLUGIN_NAME);
     }
 

@@ -18,8 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.listeners.custom_item;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import com.wolfyscript.utilities.bukkit.world.inventory.item_builder.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -30,9 +29,9 @@ import org.bukkit.event.player.PlayerItemMendEvent;
 
 public class CustomDurabilityListener implements Listener {
 
-    private final WolfyCoreImpl core;
+    private final WolfyCoreCommon core;
 
-    public CustomDurabilityListener(WolfyCoreImpl plugin) {
+    public CustomDurabilityListener(WolfyCoreCommon plugin) {
         this.core = plugin;
     }
 

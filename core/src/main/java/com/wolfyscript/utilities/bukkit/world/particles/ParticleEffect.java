@@ -18,28 +18,21 @@
 
 package com.wolfyscript.utilities.bukkit.world.particles;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
 import com.wolfyscript.utilities.Keyed;
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.WolfyCore;
 import com.wolfyscript.utilities.bukkit.world.particles.animators.Animator;
 import com.wolfyscript.utilities.bukkit.world.particles.animators.AnimatorBasic;
 import com.wolfyscript.utilities.bukkit.world.particles.pos.ParticlePos;
 import com.wolfyscript.utilities.bukkit.world.particles.pos.ParticlePosLocation;
 import com.wolfyscript.utilities.bukkit.world.particles.timer.Timer;
 import com.wolfyscript.utilities.bukkit.world.particles.timer.TimerLinear;
-import com.wolfyscript.utilities.config.jackson.OptionalKeyReference;
 import com.wolfyscript.utilities.config.jackson.JacksonUtil;
-import java.util.List;
-import java.util.Objects;
+import com.wolfyscript.utilities.config.jackson.OptionalKeyReference;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -50,6 +43,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * ParticleEffects contain the data to draw particles using a specified animation and timer.<br>
@@ -66,8 +62,6 @@ import org.jetbrains.annotations.Nullable;
  *     The {@link Animator} is linked to the timer and uses it's state to draw the particles (like a shape) dependent on it.<br>
  *     It is what actually spawns the particles and makes use of the set data.
  * </p>
- *
- *
  */
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @OptionalKeyReference(field = "key")
@@ -317,15 +311,16 @@ public class ParticleEffect implements Keyed {
 
         @Override
         public void run() {
-            Bukkit.getScheduler().runTaskTimer(WolfyCoreBukkit.getInstance().getWolfyUtils().getPlugin(), task -> {
-                if (!task.isCancelled()) {
-                    animator.draw(runner, ParticleEffect.this, origin.getLocation(), player);
-                    if (runner.shouldStop()) {
-                        task.cancel();
-                    }
-                }
-            }, 0, 1);
-
+            WolfyCore.getInstance().getPlatform().getScheduler().task(WolfyCore.getInstance().getWolfyUtils())
+                    .delay(0)
+                    .interval(1)
+                    .execute(task -> {
+                        animator.draw(runner, ParticleEffect.this, origin.getLocation(), player);
+                        if (runner.shouldStop()) {
+                            task.cancel();
+                        }
+                    })
+                    .build();
         }
     }
 }

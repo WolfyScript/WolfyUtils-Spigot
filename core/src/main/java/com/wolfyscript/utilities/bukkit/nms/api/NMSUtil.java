@@ -80,7 +80,7 @@ public abstract class NMSUtil {
             if (adapter != null) {
                 version = adapter.getPackageName();
             }
-            wolfyUtilities.getConsole().getLogger().info("NMS Version: " + version);
+            wolfyUtilities.getLogger().info("NMS Version: " + version);
             String className = NMSUtil.class.getPackage().getName() + '.' + version + ".NMSEntry";
             Class<?> nmsUtilsType = Class.forName(className);
             if (NMSUtil.class.isAssignableFrom(nmsUtilsType)) {

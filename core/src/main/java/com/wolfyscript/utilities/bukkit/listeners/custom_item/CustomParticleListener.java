@@ -18,8 +18,7 @@
 
 package com.wolfyscript.utilities.bukkit.listeners.custom_item;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectData;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerStorage;
 import com.wolfyscript.utilities.bukkit.world.entity.PlayerUtils;
@@ -36,15 +35,15 @@ import org.bukkit.inventory.EquipmentSlot;
 
 public class CustomParticleListener implements Listener {
 
-    private final WolfyCoreImpl core;
+    private final WolfyCoreCommon core;
 
-    public CustomParticleListener(WolfyCoreImpl core) {
+    public CustomParticleListener(WolfyCoreCommon core) {
         this.core = core;
     }
 
     @EventHandler
     private void onPlayerJoin(PlayerJoinEvent event) {
-        PlayerStorage playerStorage = core.getPersistentStorage().getOrCreatePlayerStorage(event.getPlayer());
+        PlayerStorage playerStorage = core.persistentStorage.getOrCreatePlayerStorage(event.getPlayer());
         playerStorage.computeIfAbsent(PlayerParticleEffectData.class, type -> new PlayerParticleEffectData());
     }
 

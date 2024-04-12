@@ -19,7 +19,9 @@
 package com.wolfyscript.utilities.bukkit.world.particles;
 
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.WolfyCore;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -35,28 +37,28 @@ public class ParticleUtils {
     private static final Map<UUID, ParticleAnimation.Scheduler> activeAnimations = new LinkedHashMap<>();
 
     public static void spawnAnimationOnBlock(NamespacedKey nameSpacedKey, Block block) {
-        ParticleAnimation animation = WolfyCoreBukkit.getInstance().getRegistries().getParticleAnimations().get(nameSpacedKey);
+        ParticleAnimation animation = ((WolfyCoreCommon) WolfyCore.getInstance()).getRegistries().getParticleAnimations().get(nameSpacedKey);
         if (animation != null) {
             animation.spawn(block);
         }
     }
 
     public static void spawnAnimationOnLocation(NamespacedKey nameSpacedKey, Location location) {
-        ParticleAnimation animation = WolfyCoreBukkit.getInstance().getRegistries().getParticleAnimations().get(nameSpacedKey);
+        ParticleAnimation animation = ((WolfyCoreCommon) WolfyCore.getInstance()).getRegistries().getParticleAnimations().get(nameSpacedKey);
         if (animation != null) {
             animation.spawn(location);
         }
     }
 
     public static void spawnAnimationOnEntity(NamespacedKey nameSpacedKey, Entity entity) {
-        ParticleAnimation animation = WolfyCoreBukkit.getInstance().getRegistries().getParticleAnimations().get(nameSpacedKey);
+        ParticleAnimation animation = ((WolfyCoreCommon) WolfyCore.getInstance()).getRegistries().getParticleAnimations().get(nameSpacedKey);
         if (animation != null) {
             animation.spawn(entity);
         }
     }
 
     public static void spawnAnimationOnPlayer(NamespacedKey nameSpacedKey, Player player, EquipmentSlot equipmentSlot) {
-        ParticleAnimation animation = WolfyCoreBukkit.getInstance().getRegistries().getParticleAnimations().get(nameSpacedKey);
+        ParticleAnimation animation = ((WolfyCoreCommon) WolfyCore.getInstance()).getRegistries().getParticleAnimations().get(nameSpacedKey);
         if (animation != null) {
             animation.spawn(player, equipmentSlot);
         }

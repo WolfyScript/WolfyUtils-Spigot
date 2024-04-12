@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wolfyscript.utilities.NamespacedKey;
 import com.wolfyscript.utilities.bukkit.BukkitNamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import com.wolfyscript.utilities.bukkit.events.CustomItemBreakEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageBreakEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStoragePlaceEvent;
@@ -62,7 +62,7 @@ public class CustomItemBlockData extends CustomBlockData {
 
     @JsonIgnore
     public Optional<CustomItem> getCustomItem() {
-        return Optional.ofNullable(((WolfyCoreBukkit) core).getRegistries().getCustomItems().get(getItem()));
+        return Optional.ofNullable(((WolfyCoreSpigot) core).getRegistries().getCustomItems().get(getItem()));
     }
 
     @JsonIgnore

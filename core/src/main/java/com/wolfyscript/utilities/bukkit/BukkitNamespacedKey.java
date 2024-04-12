@@ -56,6 +56,7 @@ public class BukkitNamespacedKey implements NamespacedKey, Comparable<BukkitName
     private static final Pattern VALID_NAMESPACE = Pattern.compile("[a-z0-9._-]+");
     @JsonIgnore
     private static final Pattern VALID_KEY = Pattern.compile("[a-z0-9/._-]+");
+    private org.bukkit.NamespacedKey wrapped = null;
     private final String namespace;
     private final Key key;
 
@@ -144,6 +145,7 @@ public class BukkitNamespacedKey implements NamespacedKey, Comparable<BukkitName
      * @return The Bukkit NamespacedKey.
      */
     public org.bukkit.NamespacedKey bukkit() {
+        if (wrapped != null) return wrapped;
         return new org.bukkit.NamespacedKey(this.namespace, this.getKey());
     }
 
@@ -154,7 +156,9 @@ public class BukkitNamespacedKey implements NamespacedKey, Comparable<BukkitName
      * @return A new NamespacedKey with the same namespace and key as the Bukkit representation.
      */
     public static BukkitNamespacedKey fromBukkit(org.bukkit.NamespacedKey namespacedKey) {
-        return new BukkitNamespacedKey(namespacedKey.getNamespace(), namespacedKey.getKey());
+        var convertedKey = new BukkitNamespacedKey(namespacedKey.getNamespace(), namespacedKey.getKey());
+        convertedKey.wrapped = namespacedKey;
+        return convertedKey;
     }
 
     public static BukkitNamespacedKey wolfyutilties(String key) {

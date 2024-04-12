@@ -18,7 +18,9 @@
 
 package com.wolfyscript.utilities.bukkit.world.inventory;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.WolfyCore;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import com.wolfyscript.utilities.bukkit.world.inventory.item_builder.ItemBuilder;
 import com.wolfyscript.utilities.bukkit.world.items.ArmorType;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
@@ -93,15 +95,15 @@ public class ItemUtils {
     Prepare and configure the ItemStack for the GUI!
      */
     public static ItemStack createItem(ItemStack itemStack, String displayName, String... lore) {
-        return WolfyCoreBukkit.getInstance().getWolfyUtils().getItems().createItem(itemStack, displayName, lore);
+        return ((WolfyCoreCommon) WolfyCore.getInstance()).getWolfyUtils().getItems().createItem(itemStack, displayName, lore);
     }
 
     public static ItemStack createItem(ItemStack itemStack, Component displayName, List<Component> lore) {
-        return WolfyCoreBukkit.getInstance().getWolfyUtils().getItems().createItem(itemStack, displayName, lore);
+        return ((WolfyCoreCommon) WolfyCore.getInstance()).getWolfyUtils().getItems().createItem(itemStack, displayName, lore);
     }
 
     public static ItemStack applyNameAndLore(ItemStack itemStack, Component displayName, List<Component> lore) {
-        var itemBuilder = new ItemBuilder(WolfyCoreBukkit.getInstance().getWolfyUtils(), itemStack);
+        var itemBuilder = new ItemBuilder(WolfyCoreSpigot.getInstance().getWolfyUtils(), itemStack);
         var itemMeta = itemBuilder.getItemMeta();
         if (itemMeta != null) {
             itemBuilder.displayName(displayName);

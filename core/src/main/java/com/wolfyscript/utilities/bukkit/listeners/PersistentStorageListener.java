@@ -1,7 +1,6 @@
 package com.wolfyscript.utilities.bukkit.listeners;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageBreakEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageDropItemsEvent;
 import com.wolfyscript.utilities.bukkit.events.persistent.BlockStorageMultiPlaceEvent;
@@ -56,12 +55,12 @@ public class PersistentStorageListener implements Listener {
 
     public static final String PREVIOUS_BROKEN_STORE = "previous_store";
 
-    private final WolfyCoreImpl core;
+    private final WolfyCoreCommon core;
     private final PersistentStorage persistentStorage;
 
-    public PersistentStorageListener(WolfyCoreImpl core) {
+    public PersistentStorageListener(WolfyCoreCommon core) {
         this.core = core;
-        this.persistentStorage = core.getPersistentStorage();
+        this.persistentStorage = core.persistentStorage;
     }
 
     @EventHandler

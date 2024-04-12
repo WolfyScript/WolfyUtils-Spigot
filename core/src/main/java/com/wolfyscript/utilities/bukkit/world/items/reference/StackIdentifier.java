@@ -2,7 +2,8 @@ package com.wolfyscript.utilities.bukkit.world.items.reference;
 
 import com.wolfyscript.utilities.Keyed;
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
+import com.wolfyscript.utilities.WolfyCore;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import com.wolfyscript.utilities.bukkit.world.inventory.ItemUtils;
 import com.wolfyscript.utilities.bukkit.world.items.CustomItem;
 import org.bukkit.Location;
@@ -180,7 +181,7 @@ public interface StackIdentifier extends Keyed {
     }
 
     default StackIdentifierParser<?> parser() {
-        return WolfyCoreImpl.getInstance().getRegistries().getStackIdentifierParsers().get(key());
+        return ((WolfyCoreCommon) WolfyCore.getInstance()).getRegistries().getStackIdentifierParsers().get(key());
     }
 
     @Override

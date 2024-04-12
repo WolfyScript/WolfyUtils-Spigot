@@ -18,8 +18,8 @@
 
 package com.wolfyscript.utilities.bukkit.commands;
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl;
-import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
+import com.wolfyscript.utilities.WolfyUtils;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
 import com.wolfyscript.utilities.bukkit.adapters.BukkitWrapper;
 import com.wolfyscript.utilities.gui.ViewRuntime;
 import com.wolfyscript.utilities.gui.callback.TextInputCallback;
@@ -37,9 +37,9 @@ import java.util.List;
 
 public final class InputCommand extends Command implements PluginIdentifiableCommand {
 
-    private final WolfyCoreImpl core;
+    private final WolfyCoreCommon core;
 
-    public InputCommand(WolfyCoreImpl core) {
+    public InputCommand(WolfyCoreCommon core) {
         super("wui");
         this.core = core;
         setUsage("/wui <input>");
@@ -55,8 +55,8 @@ public final class InputCommand extends Command implements PluginIdentifiableCom
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
         if (!(sender instanceof Player player)) return true;
-        core.getAPIList().parallelStream()
-                .map(WolfyUtilsBukkit::getGUIManager)
+        core.getWolfyUtilsInstanceList().parallelStream()
+                .map(WolfyUtils::getGuiManager)
                 .flatMap(guiAPIManager -> guiAPIManager.getViewManagersFor(player.getUniqueId()))
                 .map(viewManager -> new Pair<>(viewManager, viewManager.textInputCallback()))
                 .filter(pair -> pair.getValue().isPresent())
@@ -65,7 +65,7 @@ public final class InputCommand extends Command implements PluginIdentifiableCom
                     TextInputCallback textInputCallback = pair.getValue().get();
                     String text = String.join(" ", args).trim();
 
-                    Bukkit.getScheduler().runTask(core.getPlugin(), () -> {
+                    Bukkit.getScheduler().runTask(core.plugin, () -> {
                         textInputCallback.run(BukkitWrapper.adapt(player), viewManager, text, args);
                         viewManager.setTextInputCallback(null);
                         viewManager.setTextInputTabCompleteCallback(null);
@@ -79,8 +79,8 @@ public final class InputCommand extends Command implements PluginIdentifiableCom
     @Override
     public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) throws IllegalArgumentException {
         if (sender instanceof Player player) {
-            return core.getAPIList().parallelStream()
-                    .map(WolfyUtilsBukkit::getGUIManager)
+            return core.getWolfyUtilsInstanceList().parallelStream()
+                    .map(WolfyUtils::getGuiManager)
                     .flatMap(guiAPIManager -> guiAPIManager.getViewManagersFor(player.getUniqueId()))
                     .map(viewManager -> new Pair<>(viewManager, viewManager.textInputTabCompleteCallback()))
                     .filter(pair -> pair.getValue().isPresent())

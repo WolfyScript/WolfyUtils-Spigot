@@ -3,43 +3,34 @@ package com.wolfyscript.utilities.bukkit.language;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.wolfyscript.utilities.WolfyUtils;
-import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
 import com.wolfyscript.utilities.bukkit.chat.ChatColor;
-import com.wolfyscript.utilities.language.LanguageAPI;
 import com.wolfyscript.utilities.language.Language;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
+
+import com.wolfyscript.utilities.language.Translations;
 import org.jetbrains.annotations.NotNull;
 
-public class LangAPISpigot extends LanguageAPI {
+public class TranslationsSpigot extends Translations {
 
-    private static final Pattern LEGACY_PLACEHOLDER_PATTERN = Pattern.compile("%([^%]+)%");
-
-    public LangAPISpigot(WolfyUtils api) {
+    public TranslationsSpigot(WolfyUtils api) {
         super(api);
-    }
-
-    private WolfyUtilsBukkit getAPI() {
-        return (WolfyUtilsBukkit) api;
     }
 
     public Language loadLangFile(String lang) {
         var file = getLangFile(lang);
         if (!file.exists()) {
             try {
-                getAPI().getPlugin().saveResource("lang/" + lang + ".json", true);
+                api.exportResource("lang/" + lang + ".json", file, true);
             } catch (IllegalArgumentException ex) {
-                getAPI().getConsole().getLogger().severe("Couldn't load lang \""+lang+"\"! Language resource doesn't exists!");
+                api.getLogger().severe("Couldn't load lang \""+lang+"\"! Language resource doesn't exists!");
                 return null;
             }
         }
@@ -52,7 +43,7 @@ public class LangAPISpigot extends LanguageAPI {
             registerLanguage(language);
             return language;
         } catch (IOException ex) {
-            getAPI().getConsole().getLogger().log(Level.SEVERE, "Couldn't load language \""+lang+"\"!");
+            api.getLogger().log(Level.SEVERE, "Couldn't load language \""+lang+"\"!");
             ex.printStackTrace();
         }
         return null;
@@ -62,8 +53,8 @@ public class LangAPISpigot extends LanguageAPI {
         try {
             api.getJacksonMapperUtil().getGlobalMapper().writeValue(getLangFile(language.getName()), language);
         } catch (IOException ex) {
-            getAPI().getConsole().getLogger().severe("Couldn't save language \""+language.getName()+"\"!");
-            getAPI().getConsole().getLogger().throwing("LanguageAPI", "saveLangFile", ex);
+            api.getLogger().severe("Couldn't save language \""+language.getName()+"\"!");
+            api.getLogger().throwing("LanguageAPI", "saveLangFile", ex);
         }
 
     }
@@ -111,21 +102,6 @@ public class LangAPISpigot extends LanguageAPI {
     @Override
     public String convertLegacyToMiniMessage(String legacyText) {
         String rawLegacy = ChatColor.convert(legacyText);
-        Matcher matcher = LEGACY_PLACEHOLDER_PATTERN.matcher(rawLegacy);
-        Map<String, String> foundPlaceholders = new HashMap<>();
-        while (matcher.find()) {
-            //find the old placeholder.
-            foundPlaceholders.put(matcher.group(), "<" + api.getChat().convertOldPlaceholder(matcher.group(1)) + ">");
-        }
-        if (rawLegacy.contains("§")) {
-            rawLegacy = api.getChat().getMiniMessage().serialize(BukkitComponentSerializer.legacy().deserialize(rawLegacy));
-        }
-        //Replace the old placeholders with the new tags after the color conversion, so these tags are not escaped!
-        if (!foundPlaceholders.isEmpty()) {
-            for (Map.Entry<String, String> entry : foundPlaceholders.entrySet()) {
-                rawLegacy = rawLegacy.replace(entry.getKey(), entry.getValue());
-            }
-        }
         return rawLegacy;
     }
 

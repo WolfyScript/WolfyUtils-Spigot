@@ -4,10 +4,8 @@ import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wolfyscript.utilities.platform.adapters.ItemStack;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.WolfyUtils;
 import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit;
-import com.wolfyscript.utilities.bukkit.adapters.BukkitWrapper;
 import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl;
 import com.wolfyscript.utilities.world.items.ItemStackConfig;
 import com.wolfyscript.utilities.nbt.NBTTagConfig;
@@ -77,14 +75,14 @@ public class BukkitItemStackConfig extends ItemStackConfig {
     @JsonCreator
     public BukkitItemStackConfig(@JacksonInject WolfyUtils wolfyUtils, @JsonProperty("itemId") String itemId) {
         super(wolfyUtils, itemId);
-        this.usePaperDisplayOptions = ((WolfyCoreBukkit) wolfyUtils.getCore()).getCompatibilityManager().isPaper() && ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 18, 2));
+        this.usePaperDisplayOptions = wolfyUtils.getCore().getPlatform().getType().isPaper() && ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 18, 2));
     }
 
     public BukkitItemStackConfig(WolfyUtils wolfyUtils, ItemStack wrappedStack) {
         super(wolfyUtils, ((ItemStackImpl) wrappedStack).getBukkitRef().getType().getKey().toString());
         org.bukkit.inventory.ItemStack stack = ((ItemStackImpl) wrappedStack).getBukkitRef();
 
-        this.usePaperDisplayOptions = ((WolfyCoreBukkit) wolfyUtils.getCore()).getCompatibilityManager().isPaper() && ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 18, 2));
+        this.usePaperDisplayOptions = wolfyUtils.getCore().getPlatform().getType().isPaper() && ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 18, 2));
 
         // Read from ItemStack
         this.amount = new ValueProviderIntegerConst(wolfyUtils, stack.getAmount());

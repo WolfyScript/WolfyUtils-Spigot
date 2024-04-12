@@ -1,7 +1,6 @@
 package com.wolfyscript.utilities.bukkit.gui.example;
 
-import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl;
-import com.wolfyscript.utilities.bukkit.chat.BukkitChat;
+import com.wolfyscript.utilities.data.ItemStackDataKeys;
 import com.wolfyscript.utilities.gui.GuiAPIManager;
 import com.wolfyscript.utilities.gui.InteractionResult;
 import com.wolfyscript.utilities.gui.ReactiveRenderBuilder;
@@ -10,9 +9,6 @@ import com.wolfyscript.utilities.gui.components.ComponentGroupBuilder;
 import com.wolfyscript.utilities.gui.components.StackInputSlotBuilder;
 import com.wolfyscript.utilities.gui.reactivity.Signal;
 import com.wolfyscript.utilities.platform.adapters.ItemStack;
-import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class StackEditorExample {
 
@@ -100,17 +96,11 @@ public class StackEditorExample {
         return reactiveBuilder.component("display_name_tab", ComponentGroupBuilder.class, displayNameClusterBuilder -> displayNameClusterBuilder
                 .component("set_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                         .interact((runtime, details) -> {
-                            BukkitChat chat = (BukkitChat) runtime.getWolfyUtils().getChat();
-                            Player player = null;
-                            chat.sendMessage(player, Component.text("Click me"));
-                            runtime.setTextInputCallback((p, guiViewManager, s, strings) -> {
+                            runtime.setTextInputCallback((p, rn, s, strings) -> {
                                 stackToEdit.update(store -> {
                                     var stack = store.getStack();
-                                    if (stack instanceof ItemStackImpl stackImpl) {
-                                        var bukkitStack = stackImpl.getBukkitRef();
-                                        ItemMeta meta = bukkitStack.getItemMeta();
-                                        meta.setDisplayName(s);
-                                        bukkitStack.setItemMeta(meta);
+                                    if (stack != null) {
+                                        stack.data().set(ItemStackDataKeys.CUSTOM_NAME, runtime.getWolfyUtils().getChat().getMiniMessage().deserialize(s));
                                     }
                                     return store;
                                 });
@@ -122,11 +112,8 @@ public class StackEditorExample {
                         .interact((holder, details) -> {
                             stackToEdit.update(store -> {
                                 var stack = store.getStack();
-                                if (stack instanceof ItemStackImpl stackImpl) {
-                                    var bukkitStack = stackImpl.getBukkitRef();
-                                    ItemMeta meta = bukkitStack.getItemMeta();
-                                    meta.setDisplayName(null);
-                                    bukkitStack.setItemMeta(meta);
+                                if (stack != null) {
+                                    stack.data().remove(ItemStackDataKeys.CUSTOM_NAME);
                                 }
                                 return store;
                             });

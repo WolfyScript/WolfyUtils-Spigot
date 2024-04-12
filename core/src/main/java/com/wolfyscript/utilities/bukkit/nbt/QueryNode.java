@@ -37,7 +37,8 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.wolfyscript.utilities.Keyed;
 import com.wolfyscript.utilities.NamespacedKey;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import com.wolfyscript.utilities.WolfyUtils;
 import com.wolfyscript.utilities.eval.context.EvalContext;
 import com.wolfyscript.utilities.config.jackson.KeyedTypeIdResolver;
@@ -154,7 +155,7 @@ public abstract class QueryNode<VAL> implements Keyed {
         injectVars.addValue("key", key);
         injectVars.addValue("parent_path", parentPath);
         try {
-            QueryNode<?> queryNode = WolfyCoreBukkit.getInstance().getWolfyUtils().getJacksonMapperUtil().getGlobalMapper().reader(injectVars).readValue(node, QueryNode.class);
+            QueryNode<?> queryNode = WolfyCoreSpigot.getInstance().getWolfyUtils().getJacksonMapperUtil().getGlobalMapper().reader(injectVars).readValue(node, QueryNode.class);
             return Optional.ofNullable(queryNode);
         } catch (IOException e) {
             e.printStackTrace();
@@ -177,7 +178,7 @@ public abstract class QueryNode<VAL> implements Keyed {
             }
             var token = jsonParser.currentToken();
             JsonNode node = null;
-            var regNBTQueries = WolfyCoreBukkit.getInstance().getRegistries().getNbtQueryNodes();
+            var regNBTQueries = ((WolfyCoreCommon) WolfyCoreSpigot.getInstance()).getRegistries().getNbtQueryNodes();
             NamespacedKey type = switch (token) {
                 case VALUE_STRING -> {
                     node = jsonParser.readValueAsTree();

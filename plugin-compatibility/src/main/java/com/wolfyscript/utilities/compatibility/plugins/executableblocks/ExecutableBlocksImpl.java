@@ -1,7 +1,7 @@
 package com.wolfyscript.utilities.compatibility.plugins.executableblocks;
 
 import com.ssomar.executableblocks.executableblocks.ExecutableBlocksManager;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import com.wolfyscript.utilities.bukkit.annotations.WUPluginIntegration;
 import com.wolfyscript.utilities.bukkit.compatibility.PluginIntegrationAbstract;
 import java.util.List;
@@ -22,7 +22,7 @@ public class ExecutableBlocksImpl extends PluginIntegrationAbstract implements E
      *
      * @param pluginName The name of the associated plugin.
      */
-    protected ExecutableBlocksImpl(WolfyCoreBukkit core, String pluginName) {
+    protected ExecutableBlocksImpl(WolfyCoreSpigot core, String pluginName) {
         super(core, pluginName);
     }
 

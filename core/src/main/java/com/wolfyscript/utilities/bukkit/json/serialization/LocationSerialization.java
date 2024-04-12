@@ -20,7 +20,8 @@ package com.wolfyscript.utilities.bukkit.json.serialization;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.WolfyCore;
+import com.wolfyscript.utilities.spigot.WolfyCoreSpigot;
 import com.wolfyscript.utilities.config.jackson.JacksonUtil;
 import java.util.UUID;
 import org.bukkit.Bukkit;
@@ -43,7 +44,7 @@ public class LocationSerialization {
             gen.writeEndObject();
         }, (p, d) -> {
             JsonNode node = p.readValueAsTree();
-            var api = WolfyCoreBukkit.getInstance().getWolfyUtils();
+            var api = WolfyCore.getInstance().getWolfyUtils();
             if (node.isObject()) {
                 var uuid = UUID.fromString(node.get("world").asText());
                 var world = Bukkit.getWorld(uuid);
@@ -57,13 +58,13 @@ public class LocationSerialization {
                         float pitch = jsonNode.get(4).floatValue();
                         return new Location(world, x, y, z, yaw, pitch);
                     }
-                    api.getConsole().warn("Error Deserializing Location! Invalid Position: expected array size 5 got " + jsonNode.size());
+                    api.getLogger().warning("Error Deserializing Location! Invalid Position: expected array size 5 got " + jsonNode.size());
                     return null;
                 }
-                api.getConsole().warn("Error Deserializing Location! Missing World with uid " + uuid);
+                api.getLogger().warning("Error Deserializing Location! Missing World with uid " + uuid);
                 return null;
             }
-            api.getConsole().warn("Error Deserializing Location! Invalid Location object!");
+            api.getLogger().warning("Error Deserializing Location! Invalid Location object!");
             return null;
         });
     }

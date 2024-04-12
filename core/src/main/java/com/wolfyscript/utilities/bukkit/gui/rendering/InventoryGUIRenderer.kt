@@ -1,7 +1,6 @@
 package com.wolfyscript.utilities.bukkit.gui.rendering
 
-import com.wolfyscript.utilities.bukkit.WolfyCoreImpl
-import com.wolfyscript.utilities.bukkit.WolfyUtilsBukkit
+import com.wolfyscript.utilities.bukkit.WolfyCoreCommon
 import com.wolfyscript.utilities.bukkit.adapters.ItemStackImpl
 import com.wolfyscript.utilities.bukkit.gui.BukkitInventoryGuiHolder
 import com.wolfyscript.utilities.bukkit.nms.inventory.InventoryUpdate
@@ -33,7 +32,7 @@ class InventoryGUIRenderer(val runtime: ViewRuntimeImpl) : Renderer<InvGUIRender
         val holder = BukkitInventoryGuiHolder(runtime, guiHolder)
         val title: net.kyori.adventure.text.Component = window.title()
 
-        inventory = if ((window.wolfyUtils as WolfyUtilsBukkit).core.compatibilityManager.isPaper) {
+        inventory = if (window.wolfyUtils.core.platform.type.isPaper()) {
             // Paper has direct Adventure support, so use it for better titles!
             getInventoryType(window).map { inventoryType: InventoryType? ->
                 Bukkit.createInventory(holder, inventoryType!!, title)
@@ -185,7 +184,7 @@ class InventoryGUIRenderer(val runtime: ViewRuntimeImpl) : Renderer<InvGUIRender
                     )
             } else {
                 InventoryUpdate.updateInventory(
-                    (runtime.wolfyUtils.core as WolfyCoreImpl).wolfyUtils.plugin,
+                    (runtime.wolfyUtils.core as WolfyCoreCommon).wolfyUtils.plugin,
                     bukkitPlayer,
                     component
                 )
