@@ -382,7 +382,7 @@ abstract class WolfyCoreCommon(@JvmField val plugin: WolfyCoreCommonBootstrap) :
         compatibilityManager.init()
 
         //Load Language
-        wolfyUtils.languageAPI.loadLangFile("en_US")
+        wolfyUtils.translations.loadLangFile("en_US")
 
         registerListeners()
         registerCommands()

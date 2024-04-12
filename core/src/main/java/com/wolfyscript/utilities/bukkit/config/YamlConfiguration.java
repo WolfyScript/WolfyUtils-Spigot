@@ -246,20 +246,20 @@ public class YamlConfiguration extends org.bukkit.configuration.file.YamlConfigu
                 ItemMeta itemMeta = itemStack.getItemMeta();
                 if (itemMeta.hasDisplayName()) {
                     String displayName = itemMeta.getDisplayName();
-                    if (replaceKeys && api.getLanguageAPI().getActiveLanguage() != null) {
-                        displayName = api.getLanguageAPI().replaceKeys(displayName);
+                    if (replaceKeys && api.getTranslations().getActiveLanguage() != null) {
+                        displayName = api.getTranslations().replaceKeys(displayName);
                     }
                     itemMeta.setDisplayName(ChatColor.convert(displayName));
                 }
                 if (itemMeta.hasLore()) {
                     List<String> newLore = new ArrayList<>();
                     for (String row : itemMeta.getLore()) {
-                        if (replaceKeys && api.getLanguageAPI().getActiveLanguage() != null) {
+                        if (replaceKeys && api.getTranslations().getActiveLanguage() != null) {
                             if (row.startsWith("[WU]")) {
                                 row = row.substring("[WU]".length());
-                                row = api.getLanguageAPI().replaceKeys(row);
+                                row = api.getTranslations().replaceKeys(row);
                             } else if (row.startsWith("[WU!]")) {
-                                List<String> rows = api.getLanguageAPI().replaceKey(row.substring("[WU!]".length()));
+                                List<String> rows = api.getTranslations().replaceKey(row.substring("[WU!]".length()));
                                 for (String newRow : rows) {
                                     newLore.add(ChatColor.convert(newRow));
                                 }
