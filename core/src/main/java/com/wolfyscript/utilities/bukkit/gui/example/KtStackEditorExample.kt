@@ -3,7 +3,8 @@ package com.wolfyscript.utilities.bukkit.gui.example
 import com.wolfyscript.utilities.data.ItemStackDataKeys
 import com.wolfyscript.utilities.gui.GuiAPIManager
 import com.wolfyscript.utilities.gui.InteractionResult
-import com.wolfyscript.utilities.gui.ReactiveRenderBuilder
+import com.wolfyscript.utilities.gui.components.ComponentGroupBuilder
+import com.wolfyscript.utilities.gui.components.match
 import com.wolfyscript.utilities.gui.reactivity.Signal
 import com.wolfyscript.utilities.gui.reactivity.createSignal
 import com.wolfyscript.utilities.platform.adapters.ItemStack
@@ -41,17 +42,16 @@ fun register(manager: GuiAPIManager) {
             // Weak data signals
             val selectedTab = createSignal(Tab.NONE)
 
-            reactive {
-                // Reactive parts are only called when a signal used inside this closure is updated.
-                val itemStack = stackToEdit.get()?.getStack()
-                if (itemStack == null || itemStack.item == null || itemStack.item.key == "air") {
-                    return@reactive null
-                }
-
-                when (selectedTab.get()) {
-                    Tab.DISPLAY_NAME -> displayNameTab(stackToEdit)
-
-                    Tab.LORE ->
+            whenever {
+                val stack = stackToEdit.get()?.getStack()
+                stack == null || stack.item == null || stack.item.key == "air"
+            } then {
+                // Empty component! Perhaps add a note that the item is missing!
+            } orElse {
+                // Whenever the stack is available we can show the selected tab
+                match({ selectedTab.get() }) {
+                    case({ equals(Tab.DISPLAY_NAME) }) { displayNameTab(stackToEdit) }
+                    case({ equals(Tab.LORE) }) {
                         group("lore_tab") {
                             button("edit_lore") {
                                 interact { _, _ -> InteractionResult.cancel(true) }
@@ -60,8 +60,7 @@ fun register(manager: GuiAPIManager) {
                                 interact { _, _ -> InteractionResult.cancel(true) }
                             }
                         }
-
-                    else -> null
+                    }
                 }
             }
             slot("stack_slot") {
@@ -90,13 +89,14 @@ fun register(manager: GuiAPIManager) {
     }
 }
 
-fun ReactiveRenderBuilder.displayNameTab(stackToEdit: Signal<StackEditorStore>): ReactiveRenderBuilder.ReactiveResult {
-    return group("display_name_tab") {
+fun ComponentGroupBuilder.displayNameTab(stackToEdit: Signal<StackEditorStore>) {
+    group("display_name_tab") {
         button("set_display_name") {
             interact { runtime, _ ->
                 runtime.setTextInputCallback { _, _, s, _ ->
                     stackToEdit.update { store ->
-                        store?.getStack()?.data()?.set(ItemStackDataKeys.CUSTOM_NAME, runtime.wolfyUtils.chat.miniMessage.deserialize(s))
+                        store?.getStack()?.data()
+                            ?.set(ItemStackDataKeys.CUSTOM_NAME, runtime.wolfyUtils.chat.miniMessage.deserialize(s))
                         store
                     }
                     true

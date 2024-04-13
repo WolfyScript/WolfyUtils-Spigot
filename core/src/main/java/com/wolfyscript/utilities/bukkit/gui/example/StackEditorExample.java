@@ -3,7 +3,6 @@ package com.wolfyscript.utilities.bukkit.gui.example;
 import com.wolfyscript.utilities.data.ItemStackDataKeys;
 import com.wolfyscript.utilities.gui.GuiAPIManager;
 import com.wolfyscript.utilities.gui.InteractionResult;
-import com.wolfyscript.utilities.gui.ReactiveRenderBuilder;
 import com.wolfyscript.utilities.gui.components.ButtonBuilder;
 import com.wolfyscript.utilities.gui.components.ComponentGroupBuilder;
 import com.wolfyscript.utilities.gui.components.StackInputSlotBuilder;
@@ -43,40 +42,38 @@ public class StackEditorExample {
                         // Weak data signals
                         Signal<Tab> selectedTab = mainMenu.createSignal(Tab.class, r -> Tab.NONE);
 
-                        mainMenu.reactive(reactiveBuilder -> {
-                                    // Reactive parts are called everytime the signal used inside this closure is updated.
-                                    StackEditorStore store = stackToEdit.get();
-                                    ItemStack itemStack = store == null ? null : store.getStack();
-                                    if (itemStack == null || itemStack.getItem() == null || itemStack.getItem().getKey().equals("air"))
-                                        return null;
+                        mainMenu.whenever(() -> {
+                            StackEditorStore store = stackToEdit.get();
+                            ItemStack itemStack = store == null ? null : store.getStack();
+                            return itemStack == null || itemStack.getItem() == null || itemStack.getItem().getKey().equals("air");
+                        }).then(group -> {
+                            // Empty component! Perhaps add a note that the item is missing!
+                        }).orElse(tabGroup ->
+                                // Whenever the stack is available we can show the selected tab
+                                tabGroup.match(Tab.class, selectedTab::get, cases -> {
+                                    cases.select(value -> value.equals(Tab.DISPLAY_NAME), group -> displayNameTab(group, stackToEdit));
+                                    cases.select(value -> value.equals(Tab.LORE), group -> group
+                                            .component("lore_tab", ComponentGroupBuilder.class, loreTab -> loreTab
+                                                    .component("edit_lore", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                                                            .interact((holder, details) -> {
 
-                                    return switch (selectedTab.get()) {
-                                        case DISPLAY_NAME -> displayNameTab(reactiveBuilder, stackToEdit);
-                                        case LORE ->
-                                                reactiveBuilder.component("lore_tab", ComponentGroupBuilder.class, displayNameClusterBuilder -> displayNameClusterBuilder
-                                                        .component("edit_lore", ButtonBuilder.class, buttonBuilder -> buttonBuilder
-                                                                .interact((holder, details) -> {
+                                                                return InteractionResult.cancel(true);
+                                                            }))
+                                                    .component("clear_lore", ButtonBuilder.class, buttonBuilder -> buttonBuilder
+                                                            .interact((holder, details) -> {
 
-                                                                    return InteractionResult.cancel(true);
-                                                                }))
-                                                        .component("clear_lore", ButtonBuilder.class, buttonBuilder -> buttonBuilder
-                                                                .interact((holder, details) -> {
-
-                                                                    return InteractionResult.cancel(true);
-                                                                })));
-                                        default -> null; // No tab selected!
-                                    };
-                                })
-                                // The state of a component is only reconstructed if the slot it is positioned at changes.
-                                // Here the slot will always have the same type of component, so the state is created only once.
-                                .component("stack_slot", StackInputSlotBuilder.class, inputSlotBuilder -> inputSlotBuilder
+                                                                return InteractionResult.cancel(true);
+                                                            }))));
+                                }));
+                        // The state of a component is only reconstructed if the slot it is positioned at changes.
+                        // Here the slot will always have the same type of component, so the state is created only once.
+                        mainMenu.component("stack_slot", StackInputSlotBuilder.class, inputSlotBuilder -> inputSlotBuilder
                                         .interact((guiHolder, interactionDetails) -> InteractionResult.cancel(false))
                                         .onValueChange(itemStack -> stackToEdit.update(stackEditorStore -> {
                                             stackEditorStore.setStack(itemStack);
                                             return stackEditorStore;
                                         }))
-                                        .value(() -> stackToEdit.get().getStack())
-                                )
+                                        .value(() -> stackToEdit.get().getStack()))
                                 .component("display_name_tab_selector", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                                         .interact((holder, details) -> {
                                             selectedTab.set(Tab.DISPLAY_NAME);
@@ -92,8 +89,8 @@ public class StackEditorExample {
         );
     }
 
-    static ReactiveRenderBuilder.ReactiveResult displayNameTab(ReactiveRenderBuilder reactiveBuilder, Signal<StackEditorStore> stackToEdit) {
-        return reactiveBuilder.component("display_name_tab", ComponentGroupBuilder.class, displayNameClusterBuilder -> displayNameClusterBuilder
+    static void displayNameTab(ComponentGroupBuilder reactiveBuilder, Signal<StackEditorStore> stackToEdit) {
+        reactiveBuilder.component("display_name_tab", ComponentGroupBuilder.class, displayNameClusterBuilder -> displayNameClusterBuilder
                 .component("set_display_name", ButtonBuilder.class, buttonBuilder -> buttonBuilder
                         .interact((runtime, details) -> {
                             runtime.setTextInputCallback((p, rn, s, strings) -> {
