@@ -4,12 +4,12 @@ import com.wolfyscript.utilities.gui.InteractionResult
 import com.wolfyscript.utilities.gui.ViewRuntimeImpl
 import com.wolfyscript.utilities.gui.Window
 import com.wolfyscript.utilities.gui.components.Button
+import com.wolfyscript.utilities.gui.components.StackInputSlot
 import com.wolfyscript.utilities.gui.interaction.ClickInteractionDetails
 import com.wolfyscript.utilities.gui.interaction.DragInteractionDetails
 import com.wolfyscript.utilities.gui.interaction.InteractionDetails
 import com.wolfyscript.utilities.gui.interaction.InteractionHandler
 import com.wolfyscript.utilities.gui.model.UpdateInformation
-import com.wolfyscript.utilities.gui.rendering.PropertyPosition
 import com.wolfyscript.utilities.gui.rendering.RenderingNode
 
 class InventoryGUIInteractionHandler(private val runtime: ViewRuntimeImpl) : InteractionHandler {
@@ -57,12 +57,15 @@ class InventoryGUIInteractionHandler(private val runtime: ViewRuntimeImpl) : Int
             is ClickInteractionDetails -> {
                 val node = slotNodes[details.slot]?.let { runtime.renderingGraph.getNode(it) }
                 if (node != null) {
-                    when (val component = node.component) {
+                    return when (val component = node.component) {
+                        is StackInputSlot -> {
+                            InventoryStackSlotInteractionHandler().interact(runtime, component, details)
+                        }
                         is Button -> {
                             InventoryButtonInteractionHandler().interact(runtime, component, details)
                         }
+                        else -> InteractionResult.cancel(true)
                     }
-                    return InteractionResult.cancel(true)
                 }
             }
 
