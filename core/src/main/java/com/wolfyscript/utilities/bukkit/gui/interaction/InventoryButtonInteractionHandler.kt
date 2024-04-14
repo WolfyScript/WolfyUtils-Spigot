@@ -15,7 +15,7 @@ class InventoryButtonInteractionHandler : ComponentInteractionHandler<Button> {
             }
         }
         component.interactCallback().interact(runtime, details)
-        return InteractionResult.def()
+        return InteractionResult.cancel(true)
     }
 
 }
