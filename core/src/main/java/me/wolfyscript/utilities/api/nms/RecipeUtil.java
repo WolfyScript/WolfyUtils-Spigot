@@ -27,7 +27,6 @@ import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
-import java.util.function.BiFunction;
 
 public abstract class RecipeUtil extends UtilComponent {
 
@@ -44,10 +43,12 @@ public abstract class RecipeUtil extends UtilComponent {
      */
     public abstract @NotNull Iterator<Recipe> recipeIterator(RecipeType recipeType);
 
+    @Deprecated(since = "4.17", forRemoval = true)
     public void setCurrentRecipe(Inventory inventory, NamespacedKey recipeId) {
         NMSInventoryUtils.setCurrentRecipe(inventory, recipeId);
     }
 
+    @Deprecated(since = "4.17", forRemoval = true)
     public void setCurrentRecipe(InventoryView view, NamespacedKey recipeId) {
         NMSInventoryUtils.setCurrentRecipe(view.getTopInventory(), recipeId);
     }
