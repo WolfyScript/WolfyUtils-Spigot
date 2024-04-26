@@ -18,7 +18,13 @@
 
 package me.wolfyscript.utilities.api.nms;
 
+import com.wolfyscript.utilities.paper.WolfyCorePaper;
+import de.tr7zw.changeme.nbtapi.NBT;
+import org.bukkit.inventory.ItemStack;
+
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 @Deprecated(since = "4.16.2.0")
 public abstract class ItemUtil extends UtilComponent {
@@ -35,7 +41,9 @@ public abstract class ItemUtil extends UtilComponent {
      * @param itemStack the item to convert
      * @return the Json string representation of the item in NMS style.
      */
-    public abstract String getItemStackJson(org.bukkit.inventory.ItemStack itemStack);
+    public String getItemStackJson(ItemStack itemStack) {
+        return NBT.itemStackToNBT(itemStack).toString();
+    }
 
     /**
      * Converts the NMS Json Sting to an {@link org.bukkit.inventory.ItemStack}.
@@ -43,11 +51,27 @@ public abstract class ItemUtil extends UtilComponent {
      * @param json the NMS json to convert
      * @return the ItemStack representation of the Json String
      */
-    public abstract org.bukkit.inventory.ItemStack getJsonItemStack(String json);
+    public org.bukkit.inventory.ItemStack getJsonItemStack(String json) {
+        return NBT.itemStackFromNBT(NBT.parseNBT(json));
+    }
 
-    public abstract String getItemStackBase64(org.bukkit.inventory.ItemStack itemStack) throws IOException;
+    public String getItemStackBase64(org.bukkit.inventory.ItemStack itemStack) throws IOException{
+        if (itemStack == null) return "null";
+        if (getNmsUtil().getWolfyUtilities().getCore() instanceof WolfyCorePaper) {
+            byte[] bytes = itemStack.serializeAsBytes();
+            return Base64.getEncoder().encodeToString(bytes);
+        }
+        byte[] bytes = getItemStackJson(itemStack).getBytes(StandardCharsets.UTF_8);
+        return Base64.getEncoder().encodeToString(bytes);
+    }
 
-    public abstract org.bukkit.inventory.ItemStack getBase64ItemStack(String data) throws IOException;
+    public org.bukkit.inventory.ItemStack getBase64ItemStack(String data) throws IOException {
+        return getBase64ItemStack(Base64.getDecoder().decode(data));
+    }
 
-    public abstract org.bukkit.inventory.ItemStack getBase64ItemStack(byte[] bytes) throws IOException;
+    public org.bukkit.inventory.ItemStack getBase64ItemStack(byte[] bytes) throws IOException {
+        if (bytes == null || bytes.length == 0) return null;
+        var json = new String(bytes);
+        return getJsonItemStack(json);
+    }
 }
