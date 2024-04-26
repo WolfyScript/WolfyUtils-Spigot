@@ -72,6 +72,12 @@ minecraftServers {
             extraEnv.put("BUILD_FROM_SOURCE", "true") // 1.20.3 not available as download yet
             ports.set(setOf(debugPortMapping, "25568:25565"))
         }
+        register("spigot_1_20_5") {
+            version.set("1.20.5")
+            type.set("SPIGOT")
+            extraEnv.put("BUILD_FROM_SOURCE", "true") // 1.20.3 not available as download yet
+            ports.set(setOf(debugPortMapping, "25569:25565"))
+        }
         // Paper test servers
         register("paper_1_20") {
             version.set("1.20.4")
