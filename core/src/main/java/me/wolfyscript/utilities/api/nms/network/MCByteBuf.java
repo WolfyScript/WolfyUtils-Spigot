@@ -63,6 +63,7 @@ import java.util.function.IntFunction;
  *     ...
  * </pre>
  */
+@Deprecated(since = "4.17", forRemoval = true)
 public interface MCByteBuf {
 
     static int getVarIntSize(int i) {
@@ -176,6 +177,7 @@ public interface MCByteBuf {
      * @param itemStack The ItemStack to write to the buffer.
      * @return The instance of this {@link MCByteBuf} for chaining.
      */
+    @Deprecated(forRemoval = true)
     MCByteBuf writeItemStack(ItemStack itemStack);
 
     /**
@@ -184,6 +186,7 @@ public interface MCByteBuf {
      *
      * @return The Bukkit {@link ItemStack}.
      */
+    @Deprecated(forRemoval = true)
     ItemStack readItemStack();
 
     String readUtf(int i);
