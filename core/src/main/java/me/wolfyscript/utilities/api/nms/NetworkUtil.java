@@ -20,15 +20,21 @@ package me.wolfyscript.utilities.api.nms;
 
 import io.netty.buffer.ByteBuf;
 import me.wolfyscript.utilities.api.nms.network.MCByteBuf;
+import org.apache.commons.lang3.NotImplementedException;
 
+@Deprecated(since = "4.17", forRemoval = true)
 public abstract class NetworkUtil extends UtilComponent {
 
     protected NetworkUtil(NMSUtil nmsUtil) {
         super(nmsUtil);
     }
 
-    public abstract MCByteBuf buffer(ByteBuf byteBuf);
+    public MCByteBuf buffer(ByteBuf byteBuf) {
+        throw new NotImplementedException("No longer supported in 1.20.5+");
+    }
 
-    public abstract MCByteBuf buffer();
+    public MCByteBuf buffer() {
+        throw new NotImplementedException("No longer supported in 1.20.5+");
+    }
 
 }
