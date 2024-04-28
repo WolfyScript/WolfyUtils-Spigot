@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id("com.wolfyscript.wolfyutils.spigot.java-conventions")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.github.goooler.shadow") version "8.1.7"
     id("com.wolfyscript.devtools.docker.run") version "2.0-SNAPSHOT"
     id("com.wolfyscript.devtools.docker.minecraft_servers") version "2.0-SNAPSHOT"
 }
@@ -28,6 +28,10 @@ dependencies {
     testImplementation(testLibs.junit.jupiter)
     testImplementation(testLibs.mockito)
     testImplementation(testLibs.mockbukkit)
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 tasks.named<ProcessResources>("processResources") {
