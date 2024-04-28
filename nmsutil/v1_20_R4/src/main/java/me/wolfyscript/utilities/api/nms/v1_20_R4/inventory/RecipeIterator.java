@@ -18,7 +18,6 @@
 
 package me.wolfyscript.utilities.api.nms.v1_20_R4.inventory;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import me.wolfyscript.utilities.api.nms.inventory.RecipeType;
@@ -30,27 +29,23 @@ public class RecipeIterator implements Iterator<org.bukkit.inventory.Recipe> {
     private final Iterator<? extends RecipeHolder<?>> recipes;
 
     public RecipeIterator(RecipeType recipeType) {
-        net.minecraft.world.item.crafting.RecipeType<?> recipesReg = getRecipes(recipeType);
-        if (recipesReg != null) {
-            this.recipes = MinecraftServer.getServer().getRecipeManager().getAllRecipesFor(recipesReg).iterator();
-        } else {
-            this.recipes = Collections.emptyIterator();
-        }
+        this.recipes = getRecipesFor(recipeType).iterator();
     }
 
     public RecipeIterator(List<RecipeHolder<?>> recipeList) {
         this.recipes = recipeList.iterator();
     }
 
-    private net.minecraft.world.item.crafting.RecipeType<?> getRecipes(RecipeType type) {
+    private List<? extends RecipeHolder<?>> getRecipesFor(RecipeType type) {
+        var recipeManager = MinecraftServer.getServer().getRecipeManager();
         return switch (type) {
-            case CRAFTING -> net.minecraft.world.item.crafting.RecipeType.CRAFTING;
-            case SMELTING -> net.minecraft.world.item.crafting.RecipeType.SMELTING;
-            case BLASTING -> net.minecraft.world.item.crafting.RecipeType.BLASTING;
-            case SMOKING -> net.minecraft.world.item.crafting.RecipeType.SMOKING;
-            case CAMPFIRE_COOKING -> net.minecraft.world.item.crafting.RecipeType.CAMPFIRE_COOKING;
-            case STONECUTTING -> net.minecraft.world.item.crafting.RecipeType.STONECUTTING;
-            case SMITHING -> net.minecraft.world.item.crafting.RecipeType.SMITHING;
+            case CRAFTING -> recipeManager.getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING);
+            case SMELTING -> recipeManager.getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.SMELTING);
+            case BLASTING -> recipeManager.getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.BLASTING);
+            case SMOKING -> recipeManager.getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.SMOKING);
+            case CAMPFIRE_COOKING -> recipeManager.getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.CAMPFIRE_COOKING);
+            case STONECUTTING -> recipeManager.getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.STONECUTTING);
+            case SMITHING -> recipeManager.getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.SMITHING);
         };
     }
 
