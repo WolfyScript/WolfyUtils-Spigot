@@ -34,11 +34,6 @@ subprojects.forEach {
 
 tasks {
     named<ShadowJar>("shadowJar") {
-        subprojects.forEach { project ->
-            project.tasks.findByName("remap")?.let {
-                dependsOn(it)
-            }
-        }
 
         archiveClassifier.set("")
 
