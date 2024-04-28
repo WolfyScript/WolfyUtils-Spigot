@@ -14,7 +14,7 @@ ext.set("buildToolsJar", "${System.getProperty("user.home")}${File.separator}min
 
 dependencies {
     subprojects.forEach {
-        api(it)
+        implementation(project(path = it.path, configuration = "reobf")) // We need to use the reobf sources to shade the obfuscated classes
     }
 
     compileOnly("com.google.inject:guice:5.1.0")
@@ -34,8 +34,12 @@ subprojects.forEach {
 
 tasks {
     named<ShadowJar>("shadowJar") {
-
         archiveClassifier.set("")
+
+        // Need to run this shadowJar after the subprojects have been obfuscated
+        subprojects.forEach { subProject ->
+            dependsOn(subProject.tasks.build)
+        }
 
         dependencies {
             subprojects.forEach {
