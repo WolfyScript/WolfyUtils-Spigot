@@ -1,3 +1,5 @@
+import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
+
 plugins {
     `java-library`
     `maven-publish`
@@ -37,6 +39,9 @@ publishing {
 }
 
 tasks {
+    withType<ArtifactoryTask> {
+        skip = true
+    }
     jar {
         enabled = true
     }
@@ -49,9 +54,5 @@ tasks {
     compileJava {
         options.release.set(17)
     }
-    reobfJar {
-        // This is an example of how you might change the output location for reobfJar. It's recommended not to do this
-        // for a variety of reasons, however it's asked frequently enough that an example of how to do it is included here.
-//        outputJar = layout.buildDirectory.file("libs/PaperweightTestPlugin-${project.version}.jar")
-    }
+    reobfJar {}
 }

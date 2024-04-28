@@ -25,13 +25,6 @@ dependencies {
     compileOnly("net.kyori:adventure-text-minimessage:4.14.0")
 }
 
-subprojects.forEach {
-    // Do not publish all the version specific subprojects!
-    it.tasks.withType<ArtifactoryTask> {
-        skip = true
-    }
-}
-
 tasks {
     named<ShadowJar>("shadowJar") {
         archiveClassifier.set("")
