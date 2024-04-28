@@ -12,7 +12,6 @@ sequenceOf(
     "core",
     "plugin-compatibility",
     "nmsutil",
-    "nmsutil:v1_17_R1",
     "nmsutil:v1_17_R1_P1",
     "nmsutil:v1_18_R1",
     "nmsutil:v1_18_R1_P1",
