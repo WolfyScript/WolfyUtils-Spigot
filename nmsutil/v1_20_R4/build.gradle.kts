@@ -1,39 +1,21 @@
-import com.wolfyscript.devtools.buildtools.BuildToolsInstallTask
-
-description = "v1_20_R3"
-private val mcVersion = "1.20.5"
+description = "v1_20_R4"
 
 plugins {
-    id("com.wolfyscript.wolfyutils.spigot.java-conventions")
-    id("io.github.patrick.remapper") version "1.4.0"
-    id("com.wolfyscript.devtools.buildtools") version ("2.0-SNAPSHOT")
+    id("wolfyutils.spigot.nms")
 }
 
 dependencies {
-    compileOnly(group = "org.spigotmc", name = "spigot", version = "1.20.5-R0.1-SNAPSHOT", classifier = "remapped-mojang")
-    compileOnly(project(":core"))
+    paperweight.paperDevBundle("1.20.5-R0.1-SNAPSHOT")
 }
 
-buildTools {
-    parent?.ext?.let {
-        buildToolsDir.set(file(it.get("buildToolsDir").toString()))
-        buildToolsJar.set(file(it.get("buildToolsJar").toString()))
-    }
-    minecraftVersion.set(mcVersion)
+java {
+    // Configure the java toolchain. This allows gradle to auto-provision JDK 17 on systems that only have JDK 8 installed for example.
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 tasks {
-    remap {
-        version.set(mcVersion)
-        dependsOn("jar")
-    }
-    jar {
-        finalizedBy("remap")
+    compileJava {
+        options.release.set(21)
     }
 }
 
-tasks.named<BuildToolsInstallTask>("prepareNMS") {
-    javaLauncher.set(javaToolchains.launcherFor {
-        languageVersion.set(JavaLanguageVersion.of(22))
-    })
-}
