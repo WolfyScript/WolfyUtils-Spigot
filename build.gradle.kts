@@ -42,6 +42,7 @@ tasks.named<ProcessResources>("processResources") {
 val debugPort: String = "5006"
 
 minecraftDockerRun {
+//    clean.set(false)
     val customEnv = env.get().toMutableMap()
     customEnv["MEMORY"] = "2G"
     customEnv["JVM_OPTS"] = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:${debugPort}"
@@ -57,29 +58,34 @@ minecraftServers {
     servers {
         register("spigot_1_17") {
             version.set("1.17.1")
+            imageVersion.set("java17")
             type.set("SPIGOT")
             ports.set(setOf(debugPortMapping, "25565:25565"))
         }
         register("spigot_1_18") {
             version.set("1.18.2")
+            imageVersion.set("java17")
             type.set("SPIGOT")
             ports.set(setOf(debugPortMapping, "25566:25565"))
         }
         register("spigot_1_19") {
             version.set("1.19.4")
+            imageVersion.set("java17")
             type.set("SPIGOT")
             ports.set(setOf(debugPortMapping, "25567:25565"))
         }
         register("spigot_1_20") {
             version.set("1.20.4")
+            imageVersion.set("java17")
             type.set("SPIGOT")
-            extraEnv.put("BUILD_FROM_SOURCE", "true") // 1.20.3 not available as download yet
             ports.set(setOf(debugPortMapping, "25568:25565"))
         }
         register("spigot_1_20_5") {
             version.set("1.20.5")
             type.set("SPIGOT")
-            extraEnv.put("BUILD_FROM_SOURCE", "true") // 1.20.3 not available as download yet
+            imageVersion.set("java21-graalvm")
+
+            extraEnv.put("BUILD_FROM_SOURCE", "true")
             ports.set(setOf(debugPortMapping, "25569:25565"))
         }
         // Paper test servers
