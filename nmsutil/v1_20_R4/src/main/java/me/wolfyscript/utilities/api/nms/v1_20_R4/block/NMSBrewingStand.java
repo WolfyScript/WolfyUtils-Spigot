@@ -20,9 +20,9 @@ package me.wolfyscript.utilities.api.nms.v1_20_R4.block;
 
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import org.bukkit.block.BrewingStand;
-import org.bukkit.craftbukkit.v1_20_R4.CraftWorld;
-import org.bukkit.craftbukkit.v1_20_R4.block.CraftBlock;
-import org.bukkit.craftbukkit.v1_20_R4.block.CraftBrewingStand;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.block.CraftBlock;
+import org.bukkit.craftbukkit.block.CraftBrewingStand;
 
 import java.util.Objects;
 
