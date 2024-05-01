@@ -161,7 +161,7 @@ public abstract class APIReference {
      */
     public final StackReference convertToStackReference() {
         StackIdentifier identifier = convert();
-        return new StackReference(WolfyUtilCore.getInstance(), identifier, weight, amount, identifier.stack(ItemCreateContext.empty(amount)));
+        return new StackReference(WolfyUtilCore.getInstance(), amount, weight, identifier, identifier.stack(ItemCreateContext.empty(amount)));
     }
 
     /**
