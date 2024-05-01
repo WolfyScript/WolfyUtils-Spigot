@@ -39,6 +39,7 @@ import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
 import com.wolfyscript.utilities.bukkit.persistent.player.PlayerParticleEffectData;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import com.wolfyscript.utilities.bukkit.world.items.reference.BukkitStackIdentifier;
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.WolfyUtilsStackIdentifier;
 import com.wolfyscript.utilities.common.WolfyCore;
 import com.wolfyscript.utilities.bukkit.commands.ChatActionCommand;
@@ -383,6 +384,7 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
         nbtQueryNodes.register(QueryNodeListCompound.TYPE, QueryNodeListCompound.class);
 
         // Register the Registries to resolve type references in JSON
+        KeyedTypeIdResolver.registerTypeRegistry(StackIdentifier.class, registries.getStackIdentifierTypeRegistry());
         KeyedTypeIdResolver.registerTypeRegistry(CustomItemData.class, registries.getCustomItemDataTypeRegistry());
         KeyedTypeIdResolver.registerTypeRegistry(Meta.class, nbtChecks);
         KeyedTypeIdResolver.registerTypeRegistry(Animator.class, particleAnimators);
