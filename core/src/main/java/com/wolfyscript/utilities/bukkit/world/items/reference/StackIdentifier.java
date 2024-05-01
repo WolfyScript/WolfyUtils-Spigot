@@ -1,9 +1,6 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
@@ -234,7 +231,8 @@ public interface StackIdentifier extends Keyed {
         return WolfyUtilCore.getInstance().getRegistries().getStackIdentifierParsers().get(getNamespacedKey());
     }
 
-    @JsonGetter("key")
+    @JsonProperty("key")
+    @JsonIgnore // Required to not include it twice in the config
     @Override
     NamespacedKey getNamespacedKey();
 
