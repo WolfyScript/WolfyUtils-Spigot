@@ -269,6 +269,10 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
         // Create Global WUCore Mapper and apply modules
         api.getJacksonMapperUtil().setGlobalMapper(applyWolfyUtilsJsonMapperModules(new HoconMapper()));
 
+        var stackIdentifiers = getRegistries().getStackIdentifierTypeRegistry();
+        stackIdentifiers.register(BukkitStackIdentifier.class);
+        stackIdentifiers.register(WolfyUtilsStackIdentifier.class);
+
         // Initialise all the Registers
         getLogger().info("Register JSON Operators");
         var operators = getRegistries().getOperators();
