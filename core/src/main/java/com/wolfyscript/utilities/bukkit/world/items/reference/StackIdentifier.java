@@ -1,5 +1,11 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
+import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
@@ -7,6 +13,8 @@ import me.wolfyscript.utilities.api.inventory.custom_items.references.VanillaRef
 import me.wolfyscript.utilities.util.Keyed;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
+import me.wolfyscript.utilities.util.json.jackson.KeyedTypeIdResolver;
+import me.wolfyscript.utilities.util.json.jackson.KeyedTypeResolver;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,6 +27,11 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+@JsonTypeResolver(KeyedTypeResolver.class)
+@JsonTypeIdResolver(KeyedTypeIdResolver.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, property = "key")
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@JsonPropertyOrder(value = {"key"})
 public interface StackIdentifier extends Keyed {
 
     /**
@@ -221,6 +234,7 @@ public interface StackIdentifier extends Keyed {
         return WolfyUtilCore.getInstance().getRegistries().getStackIdentifierParsers().get(getNamespacedKey());
     }
 
+    @JsonGetter("key")
     @Override
     NamespacedKey getNamespacedKey();
 
