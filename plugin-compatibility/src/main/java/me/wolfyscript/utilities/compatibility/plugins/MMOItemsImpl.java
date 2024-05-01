@@ -39,6 +39,7 @@ public class MMOItemsImpl extends PluginIntegrationAbstract {
     public void init(Plugin plugin) {
         core.registerAPIReference(new MMOItemsRefImpl.Parser());
         core.getRegistries().getStackIdentifierParsers().register(new MMOItemsStackIdentifier.Parser());
+        core.getRegistries().getStackIdentifierTypeRegistry().register(MMOItemsStackIdentifier.class);
     }
 
     @Override

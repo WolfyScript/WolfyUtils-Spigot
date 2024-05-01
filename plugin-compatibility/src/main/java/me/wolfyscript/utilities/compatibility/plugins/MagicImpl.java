@@ -44,6 +44,7 @@ public class MagicImpl extends PluginIntegrationAbstract implements Listener {
     public void init(Plugin plugin) {
         core.registerAPIReference(new MagicRefImpl.Parser());
         core.getRegistries().getStackIdentifierParsers().register(new MagicStackIdentifier.Parser(Bukkit.getPluginManager().getPlugin("Magic") instanceof MagicAPI magicAPI ? magicAPI : null));
+        core.getRegistries().getStackIdentifierTypeRegistry().register(MagicStackIdentifier.class);
         Bukkit.getPluginManager().registerEvents(this, core);
     }
 

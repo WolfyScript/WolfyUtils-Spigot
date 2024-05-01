@@ -14,7 +14,7 @@ public class LegacyStackReference extends StackReference {
     private final JsonNode data;
 
     public LegacyStackReference(WolfyUtilCore core, NamespacedKey parserKey, double weight, int amount, JsonNode data) {
-        super(core, parserKey, weight, amount, null);
+        super(core, amount, weight, parserKey, null);
         this.data = data;
     }
 
@@ -31,11 +31,11 @@ public class LegacyStackReference extends StackReference {
     }
 
     @Override
-    protected StackIdentifier parseIdentifier() {
+    protected StackIdentifier getOrParseIdentifier() {
         if (identifier != null) return identifier;
         if (parser() instanceof LegacyParser<?> legacyParser) {
             return legacyParser.from(data).orElse(null);
         }
-        return super.parseIdentifier();
+        return super.getOrParseIdentifier();
     }
 }

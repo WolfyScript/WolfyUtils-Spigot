@@ -47,6 +47,7 @@ public class EcoIntegrationImpl extends PluginIntegrationAbstract implements Eco
     public void init(Plugin plugin) {
         core.registerAPIReference(new EcoRefImpl.Parser());
         core.getRegistries().getStackIdentifierParsers().register(new EcoStackIdentifier.Parser());
+        core.getRegistries().getStackIdentifierTypeRegistry().register(EcoStackIdentifier.class);
     }
 
     @Override

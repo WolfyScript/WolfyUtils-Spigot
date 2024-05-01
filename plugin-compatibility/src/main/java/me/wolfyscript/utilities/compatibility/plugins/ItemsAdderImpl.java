@@ -44,6 +44,7 @@ public class ItemsAdderImpl extends PluginIntegrationAbstract implements ItemsAd
     public void init(Plugin plugin) {
         core.registerAPIReference(new ItemsAdderRefImpl.Parser());
         core.getRegistries().getStackIdentifierParsers().register(new ItemsAdderStackIdentifier.Parser());
+        core.getRegistries().getStackIdentifierTypeRegistry().register(ItemsAdderStackIdentifier.class);
         Bukkit.getPluginManager().registerEvents(this, core);
         Bukkit.getPluginManager().registerEvents(new CustomItemListener(this), core);
     }

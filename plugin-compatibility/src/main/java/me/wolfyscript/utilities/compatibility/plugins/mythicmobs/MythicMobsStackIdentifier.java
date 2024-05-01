@@ -1,6 +1,7 @@
 package me.wolfyscript.utilities.compatibility.plugins.mythicmobs;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
@@ -18,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Objects;
 import java.util.Optional;
 
+@KeyedStaticId(key = "mythicmobs")
 public class MythicMobsStackIdentifier implements StackIdentifier {
 
     protected static final String ITEM_KEY = "MYTHIC_TYPE";

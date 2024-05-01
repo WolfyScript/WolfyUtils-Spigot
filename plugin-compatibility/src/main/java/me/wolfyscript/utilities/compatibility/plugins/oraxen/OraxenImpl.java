@@ -43,6 +43,7 @@ public class OraxenImpl extends PluginIntegrationAbstract implements OraxenInteg
             core.registerAPIReference(new OraxenRefImpl.Parser());
         }
         core.getRegistries().getStackIdentifierParsers().register(new OraxenStackIdentifier.Parser());
+        core.getRegistries().getStackIdentifierTypeRegistry().register(OraxenStackIdentifier.class);
     }
 
     public boolean isLatestAPI() {
