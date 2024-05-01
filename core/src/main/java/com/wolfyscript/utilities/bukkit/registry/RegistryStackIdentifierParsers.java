@@ -58,7 +58,7 @@ public class RegistryStackIdentifierParsers extends RegistrySimple<StackIdentifi
      */
     public Optional<StackReference> parseFrom(ItemStack stack) {
         if (stack == null) return Optional.empty();
-        return Optional.of(new StackReference(registries.getCore(), parseIdentifier(stack), 1, stack.getAmount(), stack));
+        return Optional.of(new StackReference(registries.getCore(), stack.getAmount(), 1d, parseIdentifier(stack), stack));
     }
 
     private void reIndexParsers() {
