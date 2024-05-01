@@ -41,8 +41,6 @@ dependencies {
     testImplementation("com.wolfyscript.wolfyutils:wolfyutilities:${apiVersion}")
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_17
-
 publishing {
     publications {
         create<MavenPublication>("lib") {
@@ -52,8 +50,9 @@ publishing {
     }
 }
 
-tasks.withType<JavaCompile>() {
+tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
+    options.release.set(17)
 }
 
 tasks.withType<Javadoc>() {

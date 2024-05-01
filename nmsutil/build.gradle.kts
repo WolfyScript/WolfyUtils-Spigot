@@ -14,7 +14,7 @@ ext.set("buildToolsJar", "${System.getProperty("user.home")}${File.separator}min
 
 dependencies {
     subprojects.forEach {
-        api(it)
+        implementation(project(path = it.path, configuration = "reobf")) // We need to use the reobf sources to shade the obfuscated classes
     }
 
     compileOnly("com.google.inject:guice:5.1.0")
@@ -25,22 +25,14 @@ dependencies {
     compileOnly("net.kyori:adventure-text-minimessage:4.14.0")
 }
 
-subprojects.forEach {
-    // Do not publish all the version specific subprojects!
-    it.tasks.withType<ArtifactoryTask> {
-        skip = true
-    }
-}
-
 tasks {
     named<ShadowJar>("shadowJar") {
-        subprojects.forEach { project ->
-            project.tasks.findByName("remap")?.let {
-                dependsOn(it)
-            }
-        }
-
         archiveClassifier.set("")
+
+        // Need to run this shadowJar after the subprojects have been obfuscated
+        subprojects.forEach { subProject ->
+            dependsOn(subProject.tasks.build)
+        }
 
         dependencies {
             subprojects.forEach {

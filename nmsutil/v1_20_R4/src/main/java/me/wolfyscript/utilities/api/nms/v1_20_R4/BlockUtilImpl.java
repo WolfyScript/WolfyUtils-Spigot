@@ -16,25 +16,21 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.api.nms;
+package me.wolfyscript.utilities.api.nms.v1_20_R4;
 
-import io.netty.buffer.ByteBuf;
-import me.wolfyscript.utilities.api.nms.network.MCByteBuf;
-import org.apache.commons.lang3.NotImplementedException;
+import me.wolfyscript.utilities.api.nms.BlockUtil;
+import me.wolfyscript.utilities.api.nms.NMSUtil;
+import me.wolfyscript.utilities.api.nms.v1_20_R4.block.NMSBrewingStand;
+import org.bukkit.block.BrewingStand;
 
-@Deprecated(since = "4.17", forRemoval = true)
-public abstract class NetworkUtil extends UtilComponent {
+public class BlockUtilImpl extends BlockUtil {
 
-    protected NetworkUtil(NMSUtil nmsUtil) {
+    BlockUtilImpl(NMSUtil nmsUtil) {
         super(nmsUtil);
     }
 
-    public MCByteBuf buffer(ByteBuf byteBuf) {
-        throw new NotImplementedException("No longer supported in 1.20.5+");
+    @Override
+    public NMSBrewingStand getNmsBrewingStand(BrewingStand brewingStand) {
+        return new NMSBrewingStand(brewingStand);
     }
-
-    public MCByteBuf buffer() {
-        throw new NotImplementedException("No longer supported in 1.20.5+");
-    }
-
 }

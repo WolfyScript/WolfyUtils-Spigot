@@ -19,8 +19,9 @@
 package me.wolfyscript.utilities.api.nms;
 
 import me.wolfyscript.utilities.api.nms.nbt.NBTItem;
+import org.apache.commons.lang.NotImplementedException;
 
-@Deprecated(since = "4.16.2.0")
+@Deprecated(since = "4.16.2.0", forRemoval = true)
 public abstract class NBTUtil extends UtilComponent {
 
     protected NBTTag nbtTag;
@@ -35,7 +36,7 @@ public abstract class NBTUtil extends UtilComponent {
      * @return The instance of the NBTTag builder.
      */
     public NBTTag getTag() {
-        return nbtTag;
+        throw new NotImplementedException("This API is no longer available in 1.20.5+");
     }
 
     /**
@@ -45,8 +46,12 @@ public abstract class NBTUtil extends UtilComponent {
      * @param bukkitItemStack The bukkit ItemStack
      * @return The instance of the NBTItem interface containing an API for NBT Tags
      */
-    public abstract NBTItem getItem(org.bukkit.inventory.ItemStack bukkitItemStack);
+    public NBTItem getItem(org.bukkit.inventory.ItemStack bukkitItemStack) {
+        throw new NotImplementedException("This API is no longer available in 1.20.5+. Use the Item-NBT-API by tr7zw instead!");
+    }
 
-    public abstract NBTItem getDirectItem(org.bukkit.inventory.ItemStack bukkitItemStack);
+    public NBTItem getDirectItem(org.bukkit.inventory.ItemStack bukkitItemStack) {
+        throw new NotImplementedException("This API is no longer available in 1.20.5+. Use the Item-NBT-API by tr7zw instead!");
+    }
 
 }

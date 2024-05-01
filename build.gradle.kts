@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id("com.wolfyscript.wolfyutils.spigot.java-conventions")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.github.goooler.shadow") version "8.1.7"
     id("com.wolfyscript.devtools.docker.run") version "2.0-SNAPSHOT"
     id("com.wolfyscript.devtools.docker.minecraft_servers") version "2.0-SNAPSHOT"
 }
@@ -30,6 +30,10 @@ dependencies {
     testImplementation(testLibs.mockbukkit)
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
+
 tasks.named<ProcessResources>("processResources") {
     expand(project.properties)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
@@ -38,6 +42,7 @@ tasks.named<ProcessResources>("processResources") {
 val debugPort: String = "5006"
 
 minecraftDockerRun {
+//    clean.set(false)
     val customEnv = env.get().toMutableMap()
     customEnv["MEMORY"] = "2G"
     customEnv["JVM_OPTS"] = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:${debugPort}"
@@ -53,24 +58,35 @@ minecraftServers {
     servers {
         register("spigot_1_17") {
             version.set("1.17.1")
+            imageVersion.set("java17")
             type.set("SPIGOT")
             ports.set(setOf(debugPortMapping, "25565:25565"))
         }
         register("spigot_1_18") {
             version.set("1.18.2")
+            imageVersion.set("java17")
             type.set("SPIGOT")
             ports.set(setOf(debugPortMapping, "25566:25565"))
         }
         register("spigot_1_19") {
             version.set("1.19.4")
+            imageVersion.set("java17")
             type.set("SPIGOT")
             ports.set(setOf(debugPortMapping, "25567:25565"))
         }
         register("spigot_1_20") {
             version.set("1.20.4")
+            imageVersion.set("java17")
             type.set("SPIGOT")
-            extraEnv.put("BUILD_FROM_SOURCE", "true") // 1.20.3 not available as download yet
             ports.set(setOf(debugPortMapping, "25568:25565"))
+        }
+        register("spigot_1_20_5") {
+            version.set("1.20.5")
+            type.set("SPIGOT")
+            imageVersion.set("java21-graalvm")
+
+            extraEnv.put("BUILD_FROM_SOURCE", "true")
+            ports.set(setOf(debugPortMapping, "25569:25565"))
         }
         // Paper test servers
         register("paper_1_20") {

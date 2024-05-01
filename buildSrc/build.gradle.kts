@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     implementation("org.jfrog.buildinfo:build-info-extractor-gradle:5.2.0")
+    implementation(group = "io.papermc.paperweight", name = "paperweight-userdev", version = "1.6.2")
 }
 
 gradlePlugin {
