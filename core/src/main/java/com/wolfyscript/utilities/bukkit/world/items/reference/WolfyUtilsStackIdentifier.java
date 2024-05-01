@@ -1,5 +1,6 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
+import com.wolfyscript.utilities.KeyedStaticId;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
@@ -14,6 +15,7 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.Objects;
 import java.util.Optional;
 
+@KeyedStaticId(key = "wolfyutils")
 public class WolfyUtilsStackIdentifier implements StackIdentifier {
 
     private static final org.bukkit.NamespacedKey CUSTOM_ITEM_KEY = new org.bukkit.NamespacedKey(WolfyUtilities.getWUPlugin(), "custom_item");
