@@ -33,8 +33,6 @@ import java.util.function.Function;
  * Acts as a wrapper for {@link StackIdentifier}, that links to an external ItemStack (like other Plugins).
  * This keeps track of the original ItemStack, as a fallback, and the parser used to get the wrapped {@link StackIdentifier}.
  * Additionally, it stores the amount, and other extra settings.
- * <br>
- * This is usually stored in JSON (HOCON) files, while the {@link StackIdentifier} is not.
  */
 @JsonDeserialize(using = StackReference.Deserializer.class)
 public class StackReference implements Copyable<StackReference> {
@@ -211,16 +209,6 @@ public class StackReference implements Copyable<StackReference> {
     @JsonGetter("amount")
     public int amount() {
         return amount;
-    }
-
-    /**
-     * Gets the id of the current parser
-     *
-     * @return The id of the current parser
-     */
-    @JsonGetter("parser")
-    private NamespacedKey parserId() {
-        return parserKey;
     }
 
     @Override
