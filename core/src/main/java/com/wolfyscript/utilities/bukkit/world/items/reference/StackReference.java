@@ -1,6 +1,7 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -44,47 +45,65 @@ public class StackReference implements Copyable<StackReference> {
     /**
      * Used to store the original stack
      */
+    @JsonIgnore
     protected ItemStack stack;
     /**
      * Used to store the previous parser result
      */
     protected StackIdentifier identifier;
+
     private NamespacedKey parserKey;
     private StackIdentifierParser<?> parser;
 
     public static StackReference of(ItemStack itemStack) {
-        return new StackReference(WolfyUtilCore.getInstance(), new BukkitStackIdentifier(itemStack), 1, itemStack.getAmount(), itemStack);
+        return new StackReference(WolfyUtilCore.getInstance(), itemStack.getAmount(), 1, new BukkitStackIdentifier(itemStack), itemStack);
     }
 
-    public StackReference(WolfyUtilCore core, NamespacedKey parserKey, double weight, int amount, ItemStack item) {
-        this.amount = amount;
-        this.weight = weight;
-        this.core = core;
-        setParserKey(parserKey);
-        this.stack = item;
-        this.identifier = parseIdentifier();
+    /**
+     * @deprecated use {@link StackReference#StackReference(WolfyUtilCore, int, double, StackIdentifier, ItemStack)} instead!
+     */
+    @Deprecated
+    public StackReference(@NotNull WolfyUtilCore core, @NotNull StackIdentifier identifier, double weight, int amount, @Nullable ItemStack itemStack) {
+        this(core, amount, weight, identifier, itemStack);
     }
 
-    public StackReference(WolfyUtilCore core, @NotNull StackIdentifier identifier, double weight, int amount, ItemStack item) {
+    public StackReference(@NotNull WolfyUtilCore core, int amount, double weight, @NotNull StackIdentifier identifier, @Nullable ItemStack itemStack) {
+        this.core = core;
         this.amount = amount;
         this.weight = weight;
-        this.core = core;
-        setParserKey(identifier.getNamespacedKey());
-        this.stack = item;
         this.identifier = identifier;
+        this.parser = identifier.parser();
+        this.parserKey = parser.getNamespacedKey();
+        this.stack = itemStack == null ? referencedStack() : itemStack;
+    }
+
+    public StackReference(@NotNull WolfyUtilCore core, int amount, double weight, @NotNull NamespacedKey parserKey, @Nullable ItemStack item) {
+        this.amount = amount;
+        this.weight = weight;
+        this.core = core;
+        this.parserKey = parserKey;
+        this.identifier = getOrParseIdentifier();
+        this.stack = item == null ? referencedStack() : item;
     }
 
     private StackReference(StackReference stackReference) {
         this.weight = stackReference.weight;
         this.amount = stackReference.amount;
         this.core = stackReference.core;
-        setParserKey(stackReference.parserKey);
+        this.parserKey = stackReference.parserKey;
         this.stack = stackReference.stack;
-        this.identifier = parseIdentifier();
+        this.identifier = getOrParseIdentifier();
     }
 
-    private void setParserKey(NamespacedKey parserKey) {
-        this.parserKey = parserKey;
+    /**
+     * Swaps the current parser with the specified parser and parses the original stack to get the new StackIdentifier.
+     *
+     * @param parser The new parser to use to get the StackIdentifier
+     */
+    public void swapParser(StackIdentifierParser<?> parser) {
+        this.parserKey = parser.getNamespacedKey();
+        this.identifier = null; // Reset cached identifier, so it gets parsed again
+        this.identifier = getOrParseIdentifier();
     }
 
     /**
@@ -92,7 +111,8 @@ public class StackReference implements Copyable<StackReference> {
      *
      * @return The parsed Identifier, or null if not available.
      */
-    protected StackIdentifier parseIdentifier() {
+    @JsonGetter("identifier")
+    protected StackIdentifier getOrParseIdentifier() {
         if (identifier == null) {
             if (parser() == null) return null;
             identifier = parser.from(stack).orElse(null);
@@ -101,12 +121,24 @@ public class StackReference implements Copyable<StackReference> {
     }
 
     /**
+     * Gets the currently used {@link StackIdentifierParser}
+     *
+     * @return The current {@link StackIdentifierParser}
+     */
+    public StackIdentifierParser<?> parser() {
+        if (parser == null || !parser.getNamespacedKey().equals(parserKey)) {
+            parser = core.getRegistries().getStackIdentifierParsers().get(parserKey);
+        }
+        return parser; // Parser is still cached and wasn't changed
+    }
+
+    /**
      * Gets the currently wrapped StackIdentifier, parsed by the current {@link StackIdentifierParser}
      *
      * @return The currently wrapped StackIdentifier
      */
     public Optional<StackIdentifier> identifier() {
-        return Optional.ofNullable(parseIdentifier());
+        return Optional.ofNullable(getOrParseIdentifier());
     }
 
     public boolean matches(ItemStack other) {
@@ -156,7 +188,6 @@ public class StackReference implements Copyable<StackReference> {
      * @see #identifier() Get the StackIdentifier pointing to the external stack
      * @see #referencedStack() Get the externally referenced ItemStack
      */
-    @JsonGetter("stack")
     public ItemStack originalStack() {
         return stack;
     }
@@ -180,29 +211,6 @@ public class StackReference implements Copyable<StackReference> {
     @JsonGetter("amount")
     public int amount() {
         return amount;
-    }
-
-    /**
-     * Gets the currently used {@link StackIdentifierParser}
-     *
-     * @return The current {@link StackIdentifierParser}
-     */
-    public StackIdentifierParser<?> parser() {
-        if (parser == null || !parser.getNamespacedKey().equals(parserKey)) {
-            parser = core.getRegistries().getStackIdentifierParsers().get(parserKey);
-        }
-        return parser;
-    }
-
-    /**
-     * Swaps the current parser with the specified parser and parses the original stack to get the new StackIdentifier.
-     *
-     * @param parser The new parser to use to get the StackIdentifier
-     */
-    public void swapParser(StackIdentifierParser<?> parser) {
-        setParserKey(parser.getNamespacedKey());
-        this.identifier = null;
-        this.identifier = parseIdentifier();
     }
 
     /**
@@ -348,15 +356,28 @@ public class StackReference implements Copyable<StackReference> {
 
         @Override
         public StackReference convert(JsonNode root, DeserializationContext ctxt) throws IOException {
-            if (root.has("parser")) {
-                // New ItemReference used! No conversion required!
-                double weight = root.get("amount").asDouble(1);
-                return new StackReference(core,
-                        ctxt.readTreeAsValue(root.get("parser"), NamespacedKey.class),
-                        weight <= 0 ? 1 : weight, // make sure weight is greater than 0, so it never disappears unintentionally (e.g. in Recipe results)!
-                        root.get("amount").asInt(1),
-                        ctxt.readTreeAsValue(root.get("stack"), ItemStack.class)
-                );
+            var hasIdentifier = root.has("identifier");
+            if (hasIdentifier || root.has("parser")) {
+                double weight = root.get("weight").asDouble(1);
+                weight = weight <= 0 ? 1 : weight; // make sure weight is greater than 0, so it never disappears unintentionally (e.g. in Recipe results)!
+                int amount = root.get("amount").asInt(1);
+
+                // New stack references format saves the identifier directly
+                // But can still optionally contain the original stack
+                ItemStack originalStack = null;
+                if (root.has("stack")) {
+                    originalStack = ctxt.readTreeAsValue(root.get("stack"), ItemStack.class);
+                }
+
+                if (hasIdentifier) {
+                    // Identifier is defined, use defined identifier
+                    var identifier = ctxt.readTreeAsValue(root.get("identifier"), StackIdentifier.class);
+                    return new StackReference(core, amount, weight, identifier, originalStack);
+                }
+
+                // Parser is defined, parse form original stack
+                var parserKey = ctxt.readTreeAsValue(root.get("parser"), NamespacedKey.class);
+                return new StackReference(core, amount, weight, parserKey, originalStack);
             }
 
             // Legacy API Reference! Need to convert!
