@@ -1,5 +1,8 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wolfyscript.utilities.KeyedStaticId;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import net.kyori.adventure.text.Component;
@@ -18,10 +21,12 @@ public class BukkitStackIdentifier implements StackIdentifier {
 
     private final ItemStack stack;
 
-    public BukkitStackIdentifier(ItemStack stack) {
+    @JsonCreator
+    public BukkitStackIdentifier(@JsonProperty("stack") ItemStack stack) {
         this.stack = stack;
     }
 
+    @JsonGetter("stack")
     public ItemStack stack() {
         return stack;
     }
