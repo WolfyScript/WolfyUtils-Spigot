@@ -1,6 +1,9 @@
 package me.wolfyscript.utilities.compatibility.plugins.denizen;
 
 import com.denizenscript.denizen.scripts.containers.core.ItemScriptHelper;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
@@ -26,9 +29,20 @@ public class DenizenStackIdentifier implements StackIdentifier {
     private final ItemStack displayItem;
     private final String itemScript;
 
-    public DenizenStackIdentifier(ItemStack displayItem, String itemScript) {
+    @JsonCreator
+    public DenizenStackIdentifier(@JsonProperty("displayItem") ItemStack displayItem, @JsonProperty("script") String itemScript) {
         this.displayItem = displayItem;
         this.itemScript = itemScript;
+    }
+
+    @JsonGetter("displayItem")
+    public ItemStack getDisplayItem() {
+        return displayItem;
+    }
+
+    @JsonGetter("script")
+    public String getItemScript() {
+        return itemScript;
     }
 
     @Override
