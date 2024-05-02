@@ -1,7 +1,11 @@
 package me.wolfyscript.utilities.compatibility.plugins.eco;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.willfp.eco.core.items.Items;
+import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
@@ -17,14 +21,21 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Objects;
 import java.util.Optional;
 
+@KeyedStaticId(key = "eco")
 public class EcoStackIdentifier implements StackIdentifier {
 
     public static final NamespacedKey ID = NamespacedKey.wolfyutilties("eco");
 
     private final org.bukkit.NamespacedKey itemKey;
 
-    public EcoStackIdentifier(org.bukkit.NamespacedKey itemKey) {
+    @JsonCreator
+    public EcoStackIdentifier(@JsonProperty("key") org.bukkit.NamespacedKey itemKey) {
         this.itemKey = itemKey;
+    }
+
+    @JsonGetter("key")
+    public org.bukkit.NamespacedKey getItemKey() {
+        return itemKey;
     }
 
     @Override

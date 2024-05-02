@@ -32,6 +32,7 @@ public class ExecutableItemsImpl extends PluginIntegrationAbstract implements Ex
     public void init(Plugin plugin) {
         core.registerAPIReference(new ExecutableItemsRef.Parser(ExecutableItemsAPI.getExecutableItemsManager()));
         core.getRegistries().getStackIdentifierParsers().register(new ExecutableItemsStackIdentifier.Parser(ExecutableItemsAPI.getExecutableItemsManager()));
+        core.getRegistries().getStackIdentifierTypeRegistry().register(ExecutableItemsStackIdentifier.class);
     }
 
     @Override

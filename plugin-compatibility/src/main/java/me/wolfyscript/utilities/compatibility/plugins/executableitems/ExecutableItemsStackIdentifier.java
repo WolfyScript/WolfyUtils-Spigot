@@ -1,7 +1,13 @@
 package me.wolfyscript.utilities.compatibility.plugins.executableitems;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.ssomar.score.api.executableitems.ExecutableItemsAPI;
 import com.ssomar.score.api.executableitems.config.ExecutableItemsManagerInterface;
+import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
@@ -13,12 +19,20 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
 
+@KeyedStaticId(key = "executableitems")
 public class ExecutableItemsStackIdentifier implements StackIdentifier {
 
     public static final NamespacedKey ID = NamespacedKey.wolfyutilties("executableitems");
 
+    @JsonIgnore
     private final ExecutableItemsManagerInterface manager;
     private final String id;
+
+    @JsonCreator
+    public ExecutableItemsStackIdentifier(@JsonProperty("id") String id) {
+        this.manager = ExecutableItemsAPI.getExecutableItemsManager();
+        this.id = id;
+    }
 
     public ExecutableItemsStackIdentifier(ExecutableItemsManagerInterface manager, String id) {
         this.id = id;
@@ -28,6 +42,11 @@ public class ExecutableItemsStackIdentifier implements StackIdentifier {
     private ExecutableItemsStackIdentifier(ExecutableItemsStackIdentifier other) {
         this.id = other.id;
         this.manager = other.manager;
+    }
+
+    @JsonGetter("id")
+    public String getId() {
+        return id;
     }
 
     @Override

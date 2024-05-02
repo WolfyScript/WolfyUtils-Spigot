@@ -24,7 +24,7 @@ import com.wolfyscript.utilities.bukkit.nbt.QueryNode;
 import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
 import com.wolfyscript.utilities.bukkit.persistent.world.CustomBlockData;
 import com.wolfyscript.utilities.bukkit.registry.RegistryStackIdentifierParsers;
-import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
+import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomData;
@@ -96,6 +96,7 @@ public class Registries {
     private final TypeRegistry<CustomBlockData> customBlockData;
     private final TypeRegistry<CustomPlayerData> customPlayerData;
     private final TypeRegistry<CustomItemData> customItemDataTypeRegistry;
+    private final TypeRegistry<StackIdentifier> stackIdentifierTypeRegistry;
 
     private final TypeRegistry<ValueProvider<?>> valueProviders;
     private final TypeRegistry<Operator> operators;
@@ -122,6 +123,9 @@ public class Registries {
         customItemDataTypeRegistry = new UniqueTypeRegistrySimple<>(ITEM_CUSTOM_DATA, this);
         customItemActions = new UniqueTypeRegistrySimple<>(ITEM_ACTION_TYPES, this);
         customItemEvents = new UniqueTypeRegistrySimple<>(ITEM_EVENT_TYPES, this);
+
+        stackIdentifierTypeRegistry = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "stack_identifier/types"), this);
+
         valueProviders = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "value_providers"), this);
         operators = new UniqueTypeRegistrySimple<>(new NamespacedKey(core, "operators"), this);
 
@@ -286,5 +290,9 @@ public class Registries {
 
     public RegistryStackIdentifierParsers getStackIdentifierParsers() {
         return stackIdentifierParsers;
+    }
+
+    public TypeRegistry<StackIdentifier> getStackIdentifierTypeRegistry() {
+        return stackIdentifierTypeRegistry;
     }
 }

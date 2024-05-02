@@ -228,7 +228,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
      * @param itemStack the itemstack this CustomItem will be linked to
      */
     public CustomItem(ItemStack itemStack) {
-        this(new StackReference(WolfyUtilCore.getInstance(), BukkitStackIdentifier.ID, 1, 1, itemStack));
+        this(new StackReference(WolfyUtilCore.getInstance(), 1, 1, BukkitStackIdentifier.ID, itemStack));
     }
 
     /**
@@ -358,12 +358,12 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
         if (itemStack != null) {
             WolfyUtilCore core = WolfyUtilCore.getInstance();
             StackReference reference = new StackReference(
-                    core,
-                    core.getRegistries().getStackIdentifierParsers().parseIdentifier(itemStack),
-                    1d,
+                                core,
                     itemStack.getAmount(),
-                    itemStack
-            );
+                                1d,
+                    core.getRegistries().getStackIdentifierParsers().parseIdentifier(itemStack),
+                                itemStack
+                        );
             return new CustomItem(reference);
         }
         return null;
@@ -1533,7 +1533,7 @@ public class CustomItem extends AbstractItemBuilder<CustomItem> implements Keyed
     @Deprecated
     public StackReference convertToReference() {
         if (hasNamespacedKey()) {
-            return new StackReference(WolfyUtilCore.getInstance(), new WolfyUtilsStackIdentifier(getNamespacedKey()), getWeight(), getAmount(), getItemStack());
+            return new StackReference(WolfyUtilCore.getInstance(), getAmount(), getWeight(), new WolfyUtilsStackIdentifier(getNamespacedKey()), getItemStack());
         }
         return reference;
     }

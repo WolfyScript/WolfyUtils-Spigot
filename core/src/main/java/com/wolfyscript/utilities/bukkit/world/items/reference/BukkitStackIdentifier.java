@@ -1,5 +1,9 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wolfyscript.utilities.KeyedStaticId;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -10,16 +14,19 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Objects;
 import java.util.Optional;
 
+@KeyedStaticId(key = "bukkit")
 public class BukkitStackIdentifier implements StackIdentifier {
 
     public static final NamespacedKey ID = NamespacedKey.wolfyutilties("bukkit");
 
     private final ItemStack stack;
 
-    public BukkitStackIdentifier(ItemStack stack) {
+    @JsonCreator
+    public BukkitStackIdentifier(@JsonProperty("stack") ItemStack stack) {
         this.stack = stack;
     }
 
+    @JsonGetter("stack")
     public ItemStack stack() {
         return stack;
     }

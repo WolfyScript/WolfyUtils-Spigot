@@ -1,6 +1,10 @@
 package me.wolfyscript.utilities.compatibility.plugins.itemsadder;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
@@ -17,16 +21,19 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Objects;
 import java.util.Optional;
 
+@KeyedStaticId(key = "itemsadder")
 public class ItemsAdderStackIdentifier implements StackIdentifier {
 
     public static final NamespacedKey ID = NamespacedKey.wolfyutilties("itemsadder");
 
     private final String itemId;
 
-    public ItemsAdderStackIdentifier(String itemId) {
+    @JsonCreator
+    public ItemsAdderStackIdentifier(@JsonProperty("id") String itemId) {
         this.itemId = itemId;
     }
 
+    @JsonGetter("id")
     public String itemId() {
         return itemId;
     }

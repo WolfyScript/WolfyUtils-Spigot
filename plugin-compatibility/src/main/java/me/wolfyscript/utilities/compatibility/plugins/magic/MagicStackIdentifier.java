@@ -1,8 +1,13 @@
 package me.wolfyscript.utilities.compatibility.plugins.magic;
 
 import com.elmakers.mine.bukkit.api.magic.MagicAPI;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
+import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
@@ -15,14 +20,17 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Objects;
 import java.util.Optional;
 
+@KeyedStaticId(key = "magic")
 public class MagicStackIdentifier implements StackIdentifier {
 
     public static final NamespacedKey ID = NamespacedKey.wolfyutilties("magic");
 
     private final String itemKey;
+    @JsonIgnore
     private final MagicAPI magicAPI;
 
-    public MagicStackIdentifier(String itemKey) {
+    @JsonCreator
+    public MagicStackIdentifier(@JsonProperty("itemKey") String itemKey) {
         this(Bukkit.getPluginManager().getPlugin("Magic") instanceof MagicAPI api ? api : null, itemKey);
     }
 
@@ -30,6 +38,11 @@ public class MagicStackIdentifier implements StackIdentifier {
         Preconditions.checkNotNull(magicAPI, "No MagicAPI specified when creating a MagicStackIdentifier");
         this.magicAPI = magicAPI;
         this.itemKey = itemKey;
+    }
+
+    @JsonGetter("itemKey")
+    public String getItemKey() {
+        return itemKey;
     }
 
     @Override

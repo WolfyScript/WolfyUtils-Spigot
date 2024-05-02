@@ -47,6 +47,7 @@ public class MythicMobsImpl extends PluginIntegrationAbstract implements MythicM
             core.registerAPIReference(new MythicMobsRefImpl.Parser());
         }
         core.getRegistries().getStackIdentifierParsers().register(new MythicMobsStackIdentifier.Parser());
+        core.getRegistries().getStackIdentifierTypeRegistry().register(MythicMobsStackIdentifier.class);
     }
 
     @Override

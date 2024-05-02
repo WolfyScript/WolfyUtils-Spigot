@@ -1,11 +1,16 @@
 package me.wolfyscript.utilities.compatibility.plugins.mmoitems;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import io.lumine.mythic.lib.api.item.NBTItem;
+import me.wolfyscript.utilities.compatibility.plugins.mythicmobs.MythicMobsStackIdentifier;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import net.Indyuce.mmoitems.MMOItems;
@@ -20,6 +25,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Objects;
 import java.util.Optional;
 
+@KeyedStaticId(key = "mmoitems")
 public class MMOItemsStackIdentifier implements StackIdentifier {
 
     public static final NamespacedKey ID = NamespacedKey.wolfyutilties("mmoitems");
@@ -27,9 +33,25 @@ public class MMOItemsStackIdentifier implements StackIdentifier {
     private final Type itemType;
     private final String itemName;
 
-    public MMOItemsStackIdentifier(Type itemType, String itemName) {
+    public MMOItemsStackIdentifier(@JsonProperty("type") Type itemType, @JsonProperty("name") String itemName) {
         this.itemType = itemType;
         this.itemName = itemName;
+    }
+
+    @JsonCreator
+    MMOItemsStackIdentifier(@JsonProperty("type") String itemType, @JsonProperty("name") String itemName) {
+        this.itemType = MMOItems.plugin.getTypes().get(itemType);
+        this.itemName = itemName;
+    }
+
+    @JsonGetter("name")
+    public String getItemName() {
+        return itemName;
+    }
+
+    @JsonGetter("type")
+    public Type getItemType() {
+        return itemType;
     }
 
     @Override
