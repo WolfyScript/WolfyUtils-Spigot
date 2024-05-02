@@ -1,8 +1,12 @@
 package me.wolfyscript.utilities.compatibility.plugins.executableblocks;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.ssomar.executableblocks.executableblocks.ExecutableBlocksManager;
 import com.wolfyscript.utilities.KeyedStaticId;
+import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
@@ -24,6 +28,13 @@ public class ExecutableBlocksStackIdentifier implements StackIdentifier {
     private final ExecutableBlocksManager manager;
     private final String id;
 
+    @JsonCreator
+    public ExecutableBlocksStackIdentifier(@JsonProperty("id") String id) {
+        this.integration = WolfyCoreBukkit.getInstance().getCompatibilityManager().getPlugins().getIntegration("ExecutableBlocks", ExecutableBlocksIntegration.class);
+        this.manager = ExecutableBlocksManager.getInstance();
+        this.id = id;
+    }
+
     public ExecutableBlocksStackIdentifier(ExecutableBlocksIntegration integration, ExecutableBlocksManager manager, String id) {
         this.id = id;
         this.manager = manager;
@@ -34,6 +45,11 @@ public class ExecutableBlocksStackIdentifier implements StackIdentifier {
         this.id = other.id;
         this.manager = other.manager;
         this.integration = other.integration;
+    }
+
+    @JsonGetter("id")
+    public String getId() {
+        return id;
     }
 
     @Override

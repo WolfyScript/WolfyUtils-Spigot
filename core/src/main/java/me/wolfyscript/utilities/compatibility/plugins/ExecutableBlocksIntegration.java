@@ -3,10 +3,12 @@ package me.wolfyscript.utilities.compatibility.plugins;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+
+import me.wolfyscript.utilities.compatibility.PluginIntegration;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 
-public interface ExecutableBlocksIntegration {
+public interface ExecutableBlocksIntegration extends PluginIntegration {
 
     String PLUGIN_NAME = "ExecutableBlocks";
     NamespacedKey BLOCK_ID = new NamespacedKey(PLUGIN_NAME.toLowerCase(Locale.ROOT), "eb-id");
