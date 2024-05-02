@@ -1,5 +1,8 @@
 package me.wolfyscript.utilities.compatibility.plugins.oraxen;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
@@ -25,10 +28,12 @@ public class OraxenStackIdentifier implements StackIdentifier {
 
     private final String itemID;
 
-    public OraxenStackIdentifier(String itemID) {
+    @JsonCreator
+    public OraxenStackIdentifier(@JsonProperty("item") String itemID) {
         this.itemID = itemID;
     }
 
+    @JsonGetter("item")
     public String itemId() {
         return itemID;
     }
