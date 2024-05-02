@@ -1,5 +1,8 @@
 package com.wolfyscript.utilities.bukkit.world.items.reference;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wolfyscript.utilities.KeyedStaticId;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
@@ -21,14 +24,16 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
     private static final org.bukkit.NamespacedKey CUSTOM_ITEM_KEY = new org.bukkit.NamespacedKey(WolfyUtilities.getWUPlugin(), "custom_item");
     public static final NamespacedKey ID = NamespacedKey.wolfyutilties("wolfyutils");
 
-    private final NamespacedKey namespacedKey;
+    private final NamespacedKey itemKey;
 
-    public WolfyUtilsStackIdentifier(NamespacedKey namespacedKey) {
-        this.namespacedKey = namespacedKey;
+    @JsonCreator
+    public WolfyUtilsStackIdentifier(@JsonProperty("item") NamespacedKey itemKey) {
+        this.itemKey = itemKey;
     }
 
+    @JsonGetter("item")
     public NamespacedKey itemKey() {
-        return namespacedKey;
+        return itemKey;
     }
 
     /**
@@ -40,7 +45,7 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
     @Override
     public ItemStack stack(ItemCreateContext context) {
         return customItem().map(customItem -> customItem.create(context.amount())).orElseGet(() -> {
-            WolfyUtilities.getWUCore().getConsole().warn("Couldn't find CustomItem for " + namespacedKey.toString());
+            WolfyUtilities.getWUCore().getConsole().warn("Couldn't find CustomItem for " + itemKey.toString());
             return null;
         });
     }
@@ -51,7 +56,7 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
      * @return The referenced {@link CustomItem} of this identifier
      */
     public Optional<CustomItem> customItem() {
-        return Optional.ofNullable(WolfyUtilCore.getInstance().getRegistries().getCustomItems().get(namespacedKey));
+        return Optional.ofNullable(WolfyUtilCore.getInstance().getRegistries().getCustomItems().get(itemKey));
     }
 
     @Override
@@ -61,7 +66,7 @@ public class WolfyUtilsStackIdentifier implements StackIdentifier {
         if (itemMeta == null) return false;
         var container = itemMeta.getPersistentDataContainer();
         if (container.has(CUSTOM_ITEM_KEY, PersistentDataType.STRING)) {
-            return Objects.equals(this.namespacedKey, NamespacedKey.of(container.get(CUSTOM_ITEM_KEY, PersistentDataType.STRING)));
+            return Objects.equals(this.itemKey, NamespacedKey.of(container.get(CUSTOM_ITEM_KEY, PersistentDataType.STRING)));
         }
         return false;
     }
