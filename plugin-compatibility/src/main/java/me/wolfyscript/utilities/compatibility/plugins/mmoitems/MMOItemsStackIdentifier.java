@@ -88,7 +88,7 @@ public class MMOItemsStackIdentifier implements StackIdentifier {
 
         @Override
         public int priority() {
-            return 0;
+            return 1000;
         }
 
         @Override
