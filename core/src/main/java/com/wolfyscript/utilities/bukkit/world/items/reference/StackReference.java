@@ -72,7 +72,7 @@ public class StackReference implements Copyable<StackReference> {
         this.identifier = identifier;
         this.parser = identifier.parser();
         this.parserKey = parser.getNamespacedKey();
-        this.stack = itemStack == null ? referencedStack() : itemStack;
+        this.stack = itemStack;
     }
 
     public StackReference(@NotNull WolfyUtilCore core, int amount, double weight, @NotNull NamespacedKey parserKey, @Nullable ItemStack item) {
@@ -80,8 +80,8 @@ public class StackReference implements Copyable<StackReference> {
         this.weight = weight;
         this.core = core;
         this.parserKey = parserKey;
+        this.stack = item; // Set item before parsing it
         this.identifier = getOrParseIdentifier();
-        this.stack = item == null ? referencedStack() : item;
     }
 
     private StackReference(StackReference stackReference) {
@@ -360,6 +360,9 @@ public class StackReference implements Copyable<StackReference> {
                 if (hasIdentifier) {
                     // Identifier is defined, use defined identifier
                     var identifier = ctxt.readTreeAsValue(root.get("identifier"), StackIdentifier.class);
+                    if (originalStack == null) {
+                        originalStack = identifier.stack(ItemCreateContext.empty(1));
+                    }
                     return new StackReference(core, amount, weight, identifier, originalStack);
                 }
 
