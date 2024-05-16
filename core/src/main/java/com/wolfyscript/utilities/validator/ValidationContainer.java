@@ -26,6 +26,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ *
+ * @param <T>
+ * @deprecated Use {@link com.wolfyscript.utilities.verification.VerifierContainer} instead!
+ */
+@Deprecated(forRemoval = true)
 public interface ValidationContainer<T> {
     ValidationContainer<T> revalidate();
 

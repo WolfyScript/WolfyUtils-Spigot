@@ -24,6 +24,12 @@ package com.wolfyscript.utilities.validator;
 
 import me.wolfyscript.utilities.util.Keyed;
 
+/**
+ *
+ * @param <T_VALUE>
+ * @deprecated Use {@link com.wolfyscript.utilities.verification.Verifier} instead!
+ */
+@Deprecated(forRemoval = true)
 public interface Validator<T_VALUE> extends Keyed {
     ValidationContainer<T_VALUE> validate(T_VALUE value);
 

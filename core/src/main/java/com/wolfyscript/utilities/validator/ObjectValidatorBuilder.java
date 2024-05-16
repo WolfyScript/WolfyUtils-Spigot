@@ -22,6 +22,12 @@
 
 package com.wolfyscript.utilities.validator;
 
+/**
+ *
+ * @param <T>
+ * @deprecated Use {@link com.wolfyscript.utilities.verification.ObjectVerifierBuilder} instead!
+ */
+@Deprecated(forRemoval = true)
 public interface ObjectValidatorBuilder<T> extends ValidatorBuilder<T> {
 
 
