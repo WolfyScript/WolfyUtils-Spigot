@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.wolfyscript.utilities.json.jackson.MissingImplementationException;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.registry.IRegistry;
 import me.wolfyscript.utilities.registry.Registry;
@@ -95,21 +96,25 @@ public class KeyedTypeIdResolver extends TypeIdResolverBase {
     @Nullable
     protected Class<?> getTypeClass(NamespacedKey key) {
         if (key != null) {
-            Class<?> rawClass = superType.getRawClass();
+            Class<?> rawBaseClass = superType.getRawClass();
             //If it is specified, use the custom base type instead.
-            KeyedBaseType baseTypeAnnot = rawClass.getDeclaredAnnotation(KeyedBaseType.class);
+            KeyedBaseType baseTypeAnnot = rawBaseClass.getDeclaredAnnotation(KeyedBaseType.class);
             if (baseTypeAnnot != null) {
-                rawClass = baseTypeAnnot.baseType();
+                rawBaseClass = baseTypeAnnot.baseType();
             }
             //Get the registry of the required base type
-            var registry = TYPE_REGISTRIES.get(rawClass);
+            var registry = TYPE_REGISTRIES.get(rawBaseClass);
             if (registry != null) {
                 var object = registry.get(key);
+                final Class<?> implClazz;
                 if (object instanceof Class<?> classObj) {
-                    return classObj;
+                    implClazz = classObj;
                 } else if(object instanceof Keyed) {
-                    return object.getClass();
+                    implClazz = object.getClass();
+                } else {
+                    throw new MissingImplementationException("Could not find implementation for " + key + " of type " + rawBaseClass.getName());
                 }
+                return implClazz;
             }
         }
         return null;
