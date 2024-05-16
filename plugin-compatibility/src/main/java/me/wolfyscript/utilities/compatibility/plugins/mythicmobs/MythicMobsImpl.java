@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.compatibility.plugins;
+package me.wolfyscript.utilities.compatibility.plugins.mythicmobs;
 
 import io.lumine.xikage.mythicmobs.MythicMobs;
 import io.lumine.xikage.mythicmobs.adapters.bukkit.BukkitAdapter;
@@ -26,9 +26,7 @@ import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
-import me.wolfyscript.utilities.compatibility.plugins.mythicmobs.MythicMobs5RefImpl;
-import me.wolfyscript.utilities.compatibility.plugins.mythicmobs.MythicMobsRefImpl;
-import me.wolfyscript.utilities.compatibility.plugins.mythicmobs.MythicMobsStackIdentifier;
+import me.wolfyscript.utilities.compatibility.plugins.MythicMobsIntegration;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 

@@ -1,10 +1,8 @@
-package me.wolfyscript.utilities.compatibility.plugins;
+package me.wolfyscript.utilities.compatibility.plugins.fancybags;
 
 import me.wolfyscript.utilities.annotations.WUPluginIntegration;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
-import me.wolfyscript.utilities.compatibility.plugins.fancybags.FancyBagsItemsRef;
-import me.wolfyscript.utilities.compatibility.plugins.fancybags.FancyBagsStackIdentifier;
 import org.bukkit.plugin.Plugin;
 
 @WUPluginIntegration(pluginName = FancyBagsImpl.KEY)

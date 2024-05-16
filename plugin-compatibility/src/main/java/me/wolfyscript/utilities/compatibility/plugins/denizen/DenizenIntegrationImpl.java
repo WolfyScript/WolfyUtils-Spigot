@@ -1,11 +1,9 @@
-package me.wolfyscript.utilities.compatibility.plugins;
+package me.wolfyscript.utilities.compatibility.plugins.denizen;
 
 import me.wolfyscript.utilities.annotations.WUPluginIntegration;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
-import me.wolfyscript.utilities.compatibility.plugins.denizen.DenizenRefImpl;
-import me.wolfyscript.utilities.compatibility.plugins.denizen.DenizenStackIdentifier;
 import org.bukkit.plugin.Plugin;
 
 @WUPluginIntegration(pluginName = DenizenIntegrationImpl.PLUGIN_NAME)

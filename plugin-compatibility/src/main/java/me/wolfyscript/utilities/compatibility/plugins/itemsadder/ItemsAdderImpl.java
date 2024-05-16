@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.compatibility.plugins;
+package me.wolfyscript.utilities.compatibility.plugins.itemsadder;
 
 import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
 import java.util.Optional;
@@ -24,7 +24,7 @@ import me.wolfyscript.utilities.annotations.WUPluginIntegration;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
-import me.wolfyscript.utilities.compatibility.plugins.itemsadder.*;
+import me.wolfyscript.utilities.compatibility.plugins.ItemsAdderIntegration;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;

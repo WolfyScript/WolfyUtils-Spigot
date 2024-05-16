@@ -16,39 +16,52 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.compatibility.plugins;
+package me.wolfyscript.utilities.compatibility.plugins.magic;
 
+import com.elmakers.mine.bukkit.api.event.LoadEvent;
+import com.elmakers.mine.bukkit.api.magic.MagicAPI;
 import me.wolfyscript.utilities.annotations.WUPluginIntegration;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
-import me.wolfyscript.utilities.compatibility.plugins.mmoitems.MMOItemsRefImpl;
-import me.wolfyscript.utilities.compatibility.plugins.mmoitems.MMOItemsStackIdentifier;
+import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
-@WUPluginIntegration(pluginName = MMOItemsImpl.PLUGIN_NAME)
-public class MMOItemsImpl extends PluginIntegrationAbstract {
+@WUPluginIntegration(pluginName = MagicImpl.PLUGIN_NAME)
+public class MagicImpl extends PluginIntegrationAbstract implements Listener {
 
-    static final String PLUGIN_NAME = "MMOItems";
+    static final String PLUGIN_NAME = "Magic";
 
-    protected MMOItemsImpl(WolfyUtilCore core) {
+    protected MagicImpl(WolfyUtilCore core) {
         super(core, PLUGIN_NAME);
     }
 
     @Override
     public void init(Plugin plugin) {
-        core.registerAPIReference(new MMOItemsRefImpl.Parser());
-        core.getRegistries().getStackIdentifierParsers().register(new MMOItemsStackIdentifier.Parser());
-        core.getRegistries().getStackIdentifierTypeRegistry().register(MMOItemsStackIdentifier.class);
+        core.registerAPIReference(new MagicRefImpl.Parser());
+        core.getRegistries().getStackIdentifierParsers().register(new MagicStackIdentifier.Parser(Bukkit.getPluginManager().getPlugin("Magic") instanceof MagicAPI magicAPI ? magicAPI : null));
+        core.getRegistries().getStackIdentifierTypeRegistry().register(MagicStackIdentifier.class);
+        Bukkit.getPluginManager().registerEvents(this, core);
     }
 
     @Override
     public boolean hasAsyncLoading() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAPIReferenceIncluded(APIReference reference) {
-        return reference instanceof MMOItemsRefImpl;
+        return reference instanceof MagicRefImpl;
+    }
+
+    @EventHandler
+    public void onComplete(LoadEvent event) {
+        if (event.getController() != null) { //Makes sure to only mark as done when Magic will actually be enabled!
+            markAsDoneLoading();
+        } else {
+            ignore();
+        }
     }
 }
