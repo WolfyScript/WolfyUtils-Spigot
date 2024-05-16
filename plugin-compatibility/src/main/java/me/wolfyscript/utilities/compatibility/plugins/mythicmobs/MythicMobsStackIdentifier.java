@@ -6,12 +6,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.wolfyscript.utilities.KeyedStaticId;
+import com.wolfyscript.utilities.bukkit.dependency.PluginIntegrationDependencyResolverSettings;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.lumine.mythic.bukkit.MythicBukkit;
+import me.wolfyscript.utilities.compatibility.plugins.MythicMobsIntegration;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import net.kyori.adventure.text.Component;
@@ -24,6 +26,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @KeyedStaticId(key = "mythicmobs")
+@PluginIntegrationDependencyResolverSettings(pluginName = MythicMobsIntegration.KEY, integration = MythicMobsIntegration.class)
 public class MythicMobsStackIdentifier implements StackIdentifier {
 
     protected static final String ITEM_KEY = "MYTHIC_TYPE";

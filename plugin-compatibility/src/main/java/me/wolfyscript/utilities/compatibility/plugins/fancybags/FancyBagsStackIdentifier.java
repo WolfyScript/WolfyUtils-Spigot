@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.wolfyscript.utilities.KeyedStaticId;
+import com.wolfyscript.utilities.bukkit.dependency.PluginIntegrationDependencyResolverSettings;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
@@ -22,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Optional;
 
 @KeyedStaticId(key = "fancybags")
+@PluginIntegrationDependencyResolverSettings(pluginName = FancyBagsImpl.KEY, integration = FancyBagsImpl.class)
 public class FancyBagsStackIdentifier implements StackIdentifier {
 
     private static final String ID_TAG = "BackpackID";

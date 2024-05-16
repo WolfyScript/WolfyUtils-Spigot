@@ -5,11 +5,13 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.wolfyscript.utilities.KeyedStaticId;
+import com.wolfyscript.utilities.bukkit.dependency.PluginIntegrationDependencyResolverSettings;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import io.th0rgal.oraxen.api.OraxenItems;
+import me.wolfyscript.utilities.compatibility.plugins.OraxenIntegration;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import net.kyori.adventure.text.Component;
@@ -22,6 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @KeyedStaticId(key = "oraxen")
+@PluginIntegrationDependencyResolverSettings(pluginName = OraxenIntegration.KEY, integration = OraxenIntegration.class)
 public class OraxenStackIdentifier implements StackIdentifier {
 
     public static final NamespacedKey ID = NamespacedKey.wolfyutilties("oraxen");

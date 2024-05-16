@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.ssomar.executableblocks.executableblocks.ExecutableBlocksManager;
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.dependency.PluginIntegrationDependencyResolverSettings;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
@@ -20,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Optional;
 
 @KeyedStaticId(key = "executableblocks")
+@PluginIntegrationDependencyResolverSettings(pluginName = ExecutableBlocksIntegration.PLUGIN_NAME, integration = ExecutableBlocksIntegration.class)
 public class ExecutableBlocksStackIdentifier implements StackIdentifier {
 
     public static final NamespacedKey ID = NamespacedKey.wolfyutilties("executableblocks");
