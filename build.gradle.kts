@@ -80,8 +80,8 @@ minecraftServers {
             type.set("SPIGOT")
             ports.set(setOf(debugPortMapping, "25568:25565"))
         }
-        register("spigot_1_20_5") {
-            version.set("1.20.5")
+        register("spigot_1_20_6") {
+            version.set("1.20.6")
             type.set("SPIGOT")
             imageVersion.set("java21-graalvm")
 
