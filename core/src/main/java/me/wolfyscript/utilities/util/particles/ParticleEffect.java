@@ -50,6 +50,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -92,12 +93,16 @@ public class ParticleEffect implements Keyed {
     private Animator animator;
 
     @JsonCreator
-    public ParticleEffect(@JsonProperty("particle") Particle particle) {
+    public ParticleEffect(@JsonProperty("particle") String particle) {
+        this(Particle.valueOf(ParticleDataFixer.convertWhenNecessary(particle).toUpperCase(Locale.ROOT)));
+    }
+
+    public ParticleEffect(Particle particle) {
         this.name = "";
         this.description = List.of();
         this.icon = Material.FIREWORK_STAR;
         this.particle = particle;
-        this.dataType = particle.getDataType();
+        this.dataType = this.particle.getDataType();
     }
 
     public ParticleEffect(Particle particle, int count, Vector offset, double extra, Object data, Timer timer, Animator animator) {
@@ -160,8 +165,14 @@ public class ParticleEffect implements Keyed {
         return this.icon;
     }
 
+    @JsonIgnore
     public Particle getParticle() {
         return particle;
+    }
+
+    @JsonGetter("particle")
+    private String getParticleKey() {
+        return particle.getKey().toString();
     }
 
     public void setData(Object data) {
