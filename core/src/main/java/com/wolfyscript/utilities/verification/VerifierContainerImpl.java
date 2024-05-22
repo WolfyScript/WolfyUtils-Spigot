@@ -23,6 +23,7 @@
 package com.wolfyscript.utilities.verification;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 class VerifierContainerImpl<T> implements VerifierContainer<T> {
 
@@ -38,6 +39,11 @@ class VerifierContainerImpl<T> implements VerifierContainer<T> {
         this.faults = new HashSet<>();
         this.verifier = verifier;
         this.children = List.of();
+    }
+
+    @Override
+    public String getName() {
+        return verifier.getNameFor(this);
     }
 
     @Override
@@ -86,29 +92,27 @@ class VerifierContainerImpl<T> implements VerifierContainer<T> {
 
     @Override
     public String toString() {
-        return toString(0, "", new StringBuilder());
+        StringBuilder sb = new StringBuilder();
+        printToOut(0, "", string -> sb.append(string).append('\n'));
+        return sb.toString();
     }
 
-    private String toString(int level, String prefix, StringBuilder out) {
-        out.append(verifier.getNameFor(this)).append("\n");
-        for (String fault : faults()) {
-            out.append(prefix).append("| ").append(fault).append('\n');
+    @Override
+    public void printToOut(int level, boolean printName, String prefix, Consumer<String> out) {
+        if (printName) {
+            out.accept(prefix.substring(0, Math.max(0, prefix.length() - 3)) + getName());
         }
 
-        for (int i = 0; i < children.size(); i++) {
-            VerifierContainerImpl<?> child = (VerifierContainerImpl<?>) children.get(i);
-            if (child.type() == ResultType.VALID) continue;
-            out.append(prefix).append("|").append('\n');
-            out.append(prefix);
-            if (i + 1 == children.size()) {
-                out.append("\\-- ");
-                child.toString(level + 1, prefix + "    ", out);
-            } else {
-                out.append("+-- ");
-                child.toString(level + 1, prefix + "|   ", out);
+        for (String fault : faults()) {
+            out.accept(prefix + "! " + fault);
+        }
+
+        for (VerifierContainer<?> verifierContainer : children) {
+            if (verifierContainer instanceof VerifierContainerImpl<?> child) {
+                if (child.type() == ResultType.VALID) continue;
+                child.printToOut(level + 1, prefix + "   ", out);
             }
         }
-        return out.toString();
     }
 
     public class UpdateStepImpl implements UpdateStep<T> {

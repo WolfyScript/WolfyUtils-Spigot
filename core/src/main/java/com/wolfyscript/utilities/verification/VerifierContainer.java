@@ -25,12 +25,15 @@ package com.wolfyscript.utilities.verification;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public interface VerifierContainer<T> {
 
     List<VerifierContainer<?>> children();
 
     boolean optional();
+
+    String getName();
 
     Optional<T> value();
 
@@ -39,6 +42,12 @@ public interface VerifierContainer<T> {
     Collection<String> faults();
 
     UpdateStep<T> update();
+
+    default void printToOut(int level, String prefix, Consumer<String> out) {
+        printToOut(level, true, prefix, out);
+    }
+
+    void printToOut(int level, boolean printName, String prefix, Consumer<String> out);
 
     interface UpdateStep<T> {
 
