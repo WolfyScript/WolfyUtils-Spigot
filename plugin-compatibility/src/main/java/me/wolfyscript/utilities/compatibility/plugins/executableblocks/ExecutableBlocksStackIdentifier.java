@@ -7,11 +7,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.ssomar.executableblocks.executableblocks.ExecutableBlocksManager;
 import com.wolfyscript.utilities.KeyedStaticId;
 import com.wolfyscript.utilities.bukkit.WolfyCoreBukkit;
+import com.wolfyscript.utilities.bukkit.dependency.PluginIntegrationDependencyResolver;
 import com.wolfyscript.utilities.bukkit.dependency.PluginIntegrationDependencyResolverSettings;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
+import com.wolfyscript.utilities.dependency.DependencyResolverSettings;
 import me.wolfyscript.utilities.compatibility.plugins.ExecutableBlocksIntegration;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
@@ -21,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Optional;
 
 @KeyedStaticId(key = "executableblocks")
+@DependencyResolverSettings(PluginIntegrationDependencyResolver.class)
 @PluginIntegrationDependencyResolverSettings(pluginName = ExecutableBlocksIntegration.PLUGIN_NAME, integration = ExecutableBlocksIntegration.class)
 public class ExecutableBlocksStackIdentifier implements StackIdentifier {
 

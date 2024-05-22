@@ -8,11 +8,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.ssomar.score.api.executableitems.ExecutableItemsAPI;
 import com.ssomar.score.api.executableitems.config.ExecutableItemsManagerInterface;
 import com.wolfyscript.utilities.KeyedStaticId;
+import com.wolfyscript.utilities.bukkit.dependency.PluginIntegrationDependencyResolver;
 import com.wolfyscript.utilities.bukkit.dependency.PluginIntegrationDependencyResolverSettings;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
+import com.wolfyscript.utilities.dependency.DependencyResolverSettings;
 import me.wolfyscript.utilities.compatibility.plugins.ExecutableBlocksIntegration;
 import me.wolfyscript.utilities.compatibility.plugins.ExecutableItemsIntegration;
 import me.wolfyscript.utilities.util.NamespacedKey;
@@ -23,6 +25,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Optional;
 
 @KeyedStaticId(key = "executableitems")
+@DependencyResolverSettings(PluginIntegrationDependencyResolver.class)
 @PluginIntegrationDependencyResolverSettings(pluginName = ExecutableBlocksIntegration.PLUGIN_NAME, integration = ExecutableItemsIntegration.class)
 public class ExecutableItemsStackIdentifier implements StackIdentifier {
 
