@@ -30,95 +30,74 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-class VerifierBuilderImpl<T> implements VerifierBuilder<T> {
+abstract class VerifierBuilderImpl<T, B extends VerifierBuilder<T, B, R>, R extends Verifier<T>> implements VerifierBuilder<T, B, R> {
 
     protected final NamespacedKey key;
-    protected final VerifierBuilder<?> parentBuilder;
+    protected final VerifierBuilder<?, ?, ?> parentBuilder;
     protected Function<VerifierContainer<T>, VerifierContainer.UpdateStep<T>> validationFunction;
     protected final List<VerifierEntry<T, ?>> childValidators = new ArrayList<>();
     protected boolean required = true;
     protected int requiresOptionals = 0;
     protected Function<VerifierContainer<T>, String> nameConstructorFunction = container -> container.value().map(value -> value.getClass().getSimpleName()).orElse("Unnamed");
 
-    public VerifierBuilderImpl(NamespacedKey key, VerifierBuilder<?> parent) {
+    public VerifierBuilderImpl(NamespacedKey key, VerifierBuilder<?, ?, ?> parent) {
         this.key = key;
         this.parentBuilder = parent;
     }
 
+    protected abstract B self();
+
     @Override
-    public VerifierBuilder<T> validate(Function<VerifierContainer<T>, VerifierContainer.UpdateStep<T>> validateFunction) {
+    public B validate(Function<VerifierContainer<T>, VerifierContainer.UpdateStep<T>> validateFunction) {
         this.validationFunction = validateFunction;
-        return this;
+        return self();
     }
 
     @Override
-    public VerifierBuilder<T> optional() {
+    public B optional() {
         this.required = false;
-        return this;
+        return self();
     }
 
     @Override
-    public VerifierBuilder<T> name(Function<VerifierContainer<T>, String> nameConstructor) {
+    public B name(Function<VerifierContainer<T>, String> nameConstructor) {
         this.nameConstructorFunction = nameConstructor;
-        return this;
+        return self();
     }
 
     @Override
-    public VerifierBuilder<T> require(int count) {
+    public B require(int count) {
         this.requiresOptionals = count;
-        return this;
+        return self();
     }
 
     @Override
-    public <C> VerifierBuilder<T> object(Function<T, C> getter, Verifier<C> verifier) {
+    public <C> B object(Function<T, C> getter, ObjectVerifier<C> verifier) {
         return object(getter, verifier, cVerifierBuilder -> {});
     }
 
     @Override
-    public <C> VerifierBuilder<T> object(Function<T, C> getter, Verifier<C> verifier, Consumer<VerifierBuilder<C>> override) {
-        if (!(verifier instanceof ObjectVerifierImpl<C> objectVerifier)) throw new IllegalArgumentException("Validator must be an object validator!");
-        var builderComplete = new ObjectVerifierBuilderImpl<>(null, this, objectVerifier);
+    public <C> B object(Function<T, C> getter, ObjectVerifier<C> verifier, Consumer<ObjectVerifierBuilder<C>> override) {
+        var builderComplete = new ObjectVerifierBuilderImpl<>(null, this, verifier);
         override.accept(builderComplete);
         childValidators.add(new VerifierEntry<>(builderComplete.build(), getter));
-        return this;
+        return self();
     }
 
     @Override
-    public <C> VerifierBuilder<T> object(Function<T, C> getter, Consumer<VerifierBuilder<C>> childBuilder) {
+    public <C> B object(Function<T, C> getter, Consumer<ObjectVerifierBuilder<C>> childBuilder) {
         var builderComplete = new ObjectVerifierBuilderImpl<C>(null, this);
         childBuilder.accept(builderComplete);
         childValidators.add(new VerifierEntry<>(builderComplete.build(), getter));
-        return this;
+        return self();
     }
 
     @Override
-    public <C> VerifierBuilder<T> collection(Function<T, Collection<C>> getter, Consumer<CollectionVerifierBuilder<C>> childBuilder) {
+    public <C> B collection(Function<T, Collection<C>> getter, Consumer<CollectionVerifierBuilder<C>> childBuilder) {
         var builderComplete = new CollectionVerifierBuilderImpl<C>(null, this);
         childBuilder.accept(builderComplete);
         childValidators.add(new VerifierEntry<>(builderComplete.build(), getter));
-        return this;
-    }
-
-    @Override
-    public Verifier<T> build() {
-        return new ObjectVerifierImpl<>(key, required, requiresOptionals, nameConstructorFunction, validationFunction, List.copyOf(childValidators));
-    }
-
-    static abstract class InitStepImpl<T, B extends VerifierBuilder<T>> implements InitStep<T, B> {
-
-        protected final VerifierBuilder<?> parent;
-        protected final B originalBuilder;
-
-        InitStepImpl(VerifierBuilder<?> parent, B builder) {
-            this.parent = parent;
-            this.originalBuilder = builder;
-        }
-
-        @Override
-        public B def() {
-            return originalBuilder;
-        }
-
+        return self();
     }
 
 }

@@ -24,18 +24,31 @@ package com.wolfyscript.utilities.verification;
 
 import me.wolfyscript.utilities.util.NamespacedKey;
 
-class ObjectVerifierBuilderImpl<T> extends VerifierBuilderImpl<T> implements ObjectVerifierBuilder<T> {
+import java.util.List;
 
-    public ObjectVerifierBuilderImpl(NamespacedKey key, VerifierBuilder<?> parent) {
+class ObjectVerifierBuilderImpl<T> extends VerifierBuilderImpl<T, ObjectVerifierBuilder<T>, ObjectVerifier<T>> implements ObjectVerifierBuilder<T> {
+
+    public ObjectVerifierBuilderImpl(NamespacedKey key, VerifierBuilder<?, ?, ?> parent) {
         super(key, parent);
     }
 
-    public ObjectVerifierBuilderImpl(NamespacedKey key, VerifierBuilder<?> parent, ObjectVerifierImpl<T> other) {
+    @Override
+    protected ObjectVerifierBuilder<T> self() {
+        return this;
+    }
+
+    public ObjectVerifierBuilderImpl(NamespacedKey key, VerifierBuilder<?, ?, ?> parent, ObjectVerifier<T> other) {
         this(key, parent);
-        this.validationFunction = other.resultFunction;
-        this.childValidators.addAll(other.childValidators);
-        this.required = other.required;
-        this.requiresOptionals = other.requiredOptional;
-        this.nameConstructorFunction = other.nameConstructorFunction;
+        if (!(other instanceof ObjectVerifierImpl<T> otherImpl)) { return; }
+        this.validationFunction = otherImpl.resultFunction;
+        this.childValidators.addAll(otherImpl.childValidators);
+        this.required = otherImpl.required;
+        this.requiresOptionals = otherImpl.requiredOptional;
+        this.nameConstructorFunction = otherImpl.nameConstructorFunction;
+    }
+
+    @Override
+    public ObjectVerifier<T> build() {
+        return new ObjectVerifierImpl<>(key, required, requiresOptionals, nameConstructorFunction, validationFunction, List.copyOf(childValidators));
     }
 }

@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public interface VerifierBuilder<T> {
+public interface VerifierBuilder<T, B extends VerifierBuilder<T, B, R>, R extends Verifier<T>> {
 
     /**
      * Initiates the builder for object validation
@@ -40,10 +40,8 @@ public interface VerifierBuilder<T> {
         return new ObjectVerifierBuilderImpl<>(key, null);
     }
 
-
-    static <T> ObjectVerifierBuilder<T> object(NamespacedKey key, Verifier<T> extend) {
-        if (!(extend instanceof ObjectVerifierImpl<T> objectVerifier)) throw new IllegalArgumentException("Validator must be an object validator!");
-        return new ObjectVerifierBuilderImpl<>(key, null, objectVerifier);
+    static <T> ObjectVerifierBuilder<T> object(NamespacedKey key, ObjectVerifier<T> extend) {
+        return new ObjectVerifierBuilderImpl<>(key, null, extend);
     }
 
     /**
@@ -56,9 +54,8 @@ public interface VerifierBuilder<T> {
         return new CollectionVerifierBuilderImpl<>(key, null);
     }
 
-    static <T> CollectionVerifierBuilder<T> collection(NamespacedKey key, Verifier<T> extend) {
-
-        return new CollectionVerifierBuilderImpl<>(key, null);
+    static <T> CollectionVerifierBuilder<T> collection(NamespacedKey key, CollectionVerifier<T> extend) {
+        return new CollectionVerifierBuilderImpl<>(key, null, extend);
     }
 
     /**
@@ -67,17 +64,17 @@ public interface VerifierBuilder<T> {
      * @param validateFunction The validation function
      * @return This builder instance for chaining
      */
-    VerifierBuilder<T> validate(Function<VerifierContainer<T>, VerifierContainer.UpdateStep<T>> validateFunction);
+    B validate(Function<VerifierContainer<T>, VerifierContainer.UpdateStep<T>> validateFunction);
 
-    VerifierBuilder<T> name(Function<VerifierContainer<T>, String> nameConstructor);
+    B name(Function<VerifierContainer<T>, String> nameConstructor);
 
-    default VerifierBuilder<T> name(String name) {
+    default B name(String name) {
         return name(tVerifierContainer -> name);
     }
 
-    VerifierBuilder<T> optional();
+    B optional();
 
-    VerifierBuilder<T> require(int count);
+    B require(int count);
 
     /**
      * Adds a nested child object validation to this validator.
@@ -88,13 +85,13 @@ public interface VerifierBuilder<T> {
      * @param <C>          The child value type
      * @return This builder instance for chaining
      */
-    <C> VerifierBuilder<T> object(Function<T, C> getter, Consumer<VerifierBuilder<C>> childBuilder);
+    <C> B object(Function<T, C> getter, Consumer<ObjectVerifierBuilder<C>> childBuilder);
 
-    default <C> VerifierBuilder<T> object(Function<T, C> getter, Verifier<C> verifier) {
+    default <C> B object(Function<T, C> getter, ObjectVerifier<C> verifier) {
         return object(getter, verifier, cVerifierBuilder -> {});
     }
 
-    <C> VerifierBuilder<T> object(Function<T, C> getter, Verifier<C> verifier, Consumer<VerifierBuilder<C>> override);
+    <C> B object(Function<T, C> getter, ObjectVerifier<C> verifier, Consumer<ObjectVerifierBuilder<C>> override);
 
     /**
      * Adds a nested child collection validator. The getter provides a way to compute the collection from the current value.
@@ -104,35 +101,8 @@ public interface VerifierBuilder<T> {
      * @param <C>          The type of the collection elements
      * @return This builder for chaining
      */
-    <C> VerifierBuilder<T> collection(Function<T, Collection<C>> getter, Consumer<CollectionVerifierBuilder<C>> childBuilder);
+    <C> B collection(Function<T, Collection<C>> getter, Consumer<CollectionVerifierBuilder<C>> childBuilder);
 
-    Verifier<T> build();
-
-    /**
-     * Initiates the builder to use with default settings, or use existing validators.
-     *
-     * @param <T> The type of the value
-     * @param <B> The type of the builder
-     */
-    interface InitStep<T, B extends VerifierBuilder<T>> {
-
-        /**
-         * Uses the default builder as is without any extensions or manipulations.
-         *
-         * @return The default builder as is
-         */
-        B def();
-
-        /**
-         * Uses an existing validator together with the validator build using this builder.
-         * Basically allowing to extend the existing validator with more child validators, etc.<br>
-         * Extending it is not required, it can simply be used to reuse validators for child objects, etc.
-         *
-         * @param verifier The existing validator that handles the super type of the type handled by this builder
-         * @return A builder based on the specified validator
-         */
-        B use(Verifier<T> verifier);
-
-    }
+    R build();
 
 }

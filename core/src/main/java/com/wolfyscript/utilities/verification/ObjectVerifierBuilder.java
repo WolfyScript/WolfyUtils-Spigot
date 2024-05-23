@@ -22,7 +22,7 @@
 
 package com.wolfyscript.utilities.verification;
 
-public interface ObjectVerifierBuilder<T> extends VerifierBuilder<T> {
+public interface ObjectVerifierBuilder<T> extends VerifierBuilder<T, ObjectVerifierBuilder<T>, ObjectVerifier<T>> {
 
 
 

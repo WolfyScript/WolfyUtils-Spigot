@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-class CollectionVerifierImpl<T_VALUE> implements Verifier<Collection<T_VALUE>> {
+class CollectionVerifierImpl<T_VALUE> implements CollectionVerifier<T_VALUE> {
 
     private final NamespacedKey key;
     final boolean required;
@@ -46,6 +46,11 @@ class CollectionVerifierImpl<T_VALUE> implements Verifier<Collection<T_VALUE>> {
         this.resultFunction = resultFunction;
         this.elementVerifier = elementVerifier;
         this.nameConstructorFunction = nameConstructorFunction;
+    }
+
+    @Override
+    public Verifier<T_VALUE> getElementVerifier() {
+        return elementVerifier;
     }
 
     @Override

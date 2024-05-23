@@ -24,15 +24,8 @@ package com.wolfyscript.utilities.verification;
 
 import java.util.Collection;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
-public interface CollectionVerifierBuilder<T> extends VerifierBuilder<Collection<T>> {
-
-    @Override
-    CollectionVerifierBuilder<T> validate(Function<VerifierContainer<Collection<T>>, VerifierContainer.UpdateStep<Collection<T>>> validateFunction);
-
-    @Override
-    CollectionVerifierBuilder<T> name(Function<VerifierContainer<Collection<T>>, String> nameConstructor);
+public interface CollectionVerifierBuilder<T> extends VerifierBuilder<Collection<T>, CollectionVerifierBuilder<T>, CollectionVerifier<T>> {
 
     /**
      * Specifies the validator that is used to validate each element in the collection.
@@ -40,7 +33,7 @@ public interface CollectionVerifierBuilder<T> extends VerifierBuilder<Collection
      * @param childBuilder The element validator builder
      * @return This build instance for chaining
      */
-    CollectionVerifierBuilder<T> forEach(Consumer<VerifierBuilder<T>> childBuilder);
+    CollectionVerifierBuilder<T> forEach(Consumer<VerifierBuilder<T, ?, ?>> childBuilder);
 
     CollectionVerifierBuilder<T> forEach(Verifier<T> existing);
 }

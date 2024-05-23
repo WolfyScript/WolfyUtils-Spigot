@@ -28,7 +28,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.function.Function;
 
-class ObjectVerifierImpl<T_VALUE> implements Verifier<T_VALUE> {
+class ObjectVerifierImpl<T_VALUE> implements ObjectVerifier<T_VALUE> {
 
     private final NamespacedKey key;
     final boolean required;
