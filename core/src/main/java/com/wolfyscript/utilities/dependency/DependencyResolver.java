@@ -8,10 +8,36 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Resolves the dependencies of a given type-value pair.
+ * Usually used in conjunction with {@link DependencyResolverSettings}
+ * @see DependencyResolverSettings
+ */
 public interface DependencyResolver {
 
+    /**
+     * Resolves the dependencies for the specified type and value.
+     * This creates a collection of all the dependencies this type and value depend on.
+     *
+     * @param value The value for which to get the dependencies
+     * @param type  The type for which to get the dependencies
+     * @return A collection of all dependencies of the given type & value
+     */
     Collection<Dependency> resolve(Object value, Class<?> type);
 
+    /**
+     * Resolves the dependencies for the given type and value, plus all fields that may propagate their dependencies.
+     * <p>
+     *     When the class of a field is annotated with {@link DependencyResolverSettings} then its dependencies are always included, otherwise they are ignored.<br>
+     *     To include the dependencies even when not directly available, annotate the field with {@link DependencySource},
+     *     this way this method will crawl the class & value of that field and look for further fields (recursive).
+     * </p>
+     *
+     * @param value The value to resolve
+     * @param type  The type to resolve
+     * @return A set of dependencies that this type and all included children depend on
+     * @param <T> The type of the value
+     */
     static <T> Set<Dependency> resolveDependenciesFor(T value, Class<? extends T> type) {
         final Set<Dependency> dependencies = new HashSet<>();
 
