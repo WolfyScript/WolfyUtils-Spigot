@@ -34,11 +34,11 @@ abstract class VerifierBuilderImpl<T, B extends VerifierBuilder<T, B, R>, R exte
 
     protected final NamespacedKey key;
     protected final VerifierBuilder<?, ?, ?> parentBuilder;
-    protected Function<VerifierContainer<T>, VerifierContainer.UpdateStep<T>> validationFunction;
+    protected Consumer<VerificationResult.Builder<T>> validationFunction;
     protected final List<VerifierEntry<T, ?>> childValidators = new ArrayList<>();
     protected boolean required = true;
     protected int requiresOptionals = 0;
-    protected Function<VerifierContainer<T>, String> nameConstructorFunction = container -> container.value().map(value -> value.getClass().getSimpleName()).orElse("Unnamed");
+    protected Function<VerificationResult<T>, String> nameConstructorFunction = container -> container.value().map(value -> value.getClass().getSimpleName()).orElse("Unnamed");
 
     public VerifierBuilderImpl(NamespacedKey key, VerifierBuilder<?, ?, ?> parent) {
         this.key = key;
@@ -48,7 +48,7 @@ abstract class VerifierBuilderImpl<T, B extends VerifierBuilder<T, B, R>, R exte
     protected abstract B self();
 
     @Override
-    public B validate(Function<VerifierContainer<T>, VerifierContainer.UpdateStep<T>> validateFunction) {
+    public B validate(Consumer<VerificationResult.Builder<T>> validateFunction) {
         this.validationFunction = validateFunction;
         return self();
     }
@@ -60,7 +60,7 @@ abstract class VerifierBuilderImpl<T, B extends VerifierBuilder<T, B, R>, R exte
     }
 
     @Override
-    public B name(Function<VerifierContainer<T>, String> nameConstructor) {
+    public B name(Function<VerificationResult<T>, String> nameConstructor) {
         this.nameConstructorFunction = nameConstructor;
         return self();
     }

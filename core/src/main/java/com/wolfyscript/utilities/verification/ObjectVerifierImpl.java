@@ -26,6 +26,7 @@ import me.wolfyscript.utilities.util.NamespacedKey;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 class ObjectVerifierImpl<T_VALUE> implements ObjectVerifier<T_VALUE> {
@@ -33,11 +34,11 @@ class ObjectVerifierImpl<T_VALUE> implements ObjectVerifier<T_VALUE> {
     private final NamespacedKey key;
     final boolean required;
     final int requiredOptional;
-    protected final Function<VerifierContainer<T_VALUE>, VerifierContainer.UpdateStep<T_VALUE>> resultFunction;
+    protected final Consumer<VerificationResult.Builder<T_VALUE>> resultFunction;
     protected final List<VerifierEntry<T_VALUE, ?>> childValidators;
-    protected Function<VerifierContainer<T_VALUE>, String> nameConstructorFunction;
+    protected Function<VerificationResult<T_VALUE>, String> nameConstructorFunction;
 
-    public ObjectVerifierImpl(NamespacedKey key, boolean required, int requiredOptional, Function<VerifierContainer<T_VALUE>, String> nameConstructorFunction, Function<VerifierContainer<T_VALUE>, VerifierContainer.UpdateStep<T_VALUE>> resultFunction, List<VerifierEntry<T_VALUE, ?>> childValidators) {
+    public ObjectVerifierImpl(NamespacedKey key, boolean required, int requiredOptional, Function<VerificationResult<T_VALUE>, String> nameConstructorFunction, Consumer<VerificationResult.Builder<T_VALUE>> resultFunction, List<VerifierEntry<T_VALUE, ?>> childValidators) {
         this.key = key;
         this.required = required;
         this.requiredOptional = requiredOptional;
@@ -52,39 +53,39 @@ class ObjectVerifierImpl<T_VALUE> implements ObjectVerifier<T_VALUE> {
     }
 
     @Override
-    public String getNameFor(VerifierContainer<T_VALUE> container) {
+    public String getNameFor(VerificationResult<T_VALUE> container) {
         return nameConstructorFunction.apply(container);
     }
 
     @Override
-    public VerifierContainerImpl<T_VALUE> validate(T_VALUE value) {
-        VerifierContainerImpl<T_VALUE> container = new VerifierContainerImpl<>(value, this);
+    public VerificationResult<T_VALUE> validate(T_VALUE value) {
+        var container = new VerificationResultImpl.BuilderImpl<>(this, value);
 
-        VerifierContainer.ResultType requiredType = container.type();
-        EnumMap<VerifierContainer.ResultType, Integer> optionalCounts = new EnumMap<>(VerifierContainer.ResultType.class);
+        VerificationResult.ResultType requiredType = VerificationResult.ResultType.UNKNOWN;
+        EnumMap<VerificationResult.ResultType, Integer> optionalCounts = new EnumMap<>(VerificationResult.ResultType.class);
 
         for (VerifierEntry<T_VALUE, ?> entry : childValidators) {
-            VerifierContainer<?> result = entry.applyNestedValidator(value);
-            container.update().children(List.of(result));
+            VerificationResult<?> result = entry.applyNestedValidator(value);
+            container.children(List.of(result));
             if (entry.verifier().optional()) {
                 optionalCounts.merge(result.type(), 1, Integer::sum);
                 continue;
             }
             requiredType = requiredType.and(result.type());
         }
-        VerifierContainer.ResultType optionalType = VerifierContainer.ResultType.INVALID;
-        if (optionalCounts.getOrDefault(VerifierContainer.ResultType.VALID, 0) >= requiredOptional) {
-            optionalType = VerifierContainer.ResultType.VALID;
+        if (optionalCounts.getOrDefault(VerificationResult.ResultType.VALID, 0) >= requiredOptional) {
+            requiredType = requiredType.and(VerificationResult.ResultType.VALID);
+        } else {
+            requiredType = requiredType.and(VerificationResult.ResultType.INVALID);
         }
-        requiredType = requiredType.and(optionalType);
 
-        container.update().type(requiredType);
+        container.type(requiredType);
 
         if (resultFunction != null) {
-            resultFunction.apply(container);
+            resultFunction.accept(container);
         }
 
-        return container;
+        return container.complete();
     }
 
     @Override

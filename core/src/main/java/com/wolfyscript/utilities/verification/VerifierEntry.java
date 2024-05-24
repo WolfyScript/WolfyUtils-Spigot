@@ -26,7 +26,7 @@ import java.util.function.Function;
 
 public record VerifierEntry<S, T>(Verifier<T> verifier, Function<S, T> valueGetter) {
 
-    public VerifierContainer<T> applyNestedValidator(S source) {
+    public VerificationResult<T> applyNestedValidator(S source) {
         return verifier().validate(valueGetter().apply(source));
     }
 

@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 class CollectionVerifierImpl<T_VALUE> implements CollectionVerifier<T_VALUE> {
@@ -35,11 +36,11 @@ class CollectionVerifierImpl<T_VALUE> implements CollectionVerifier<T_VALUE> {
     private final NamespacedKey key;
     final boolean required;
     final int requiredOptional;
-    protected final Function<VerifierContainer<Collection<T_VALUE>>, VerifierContainer.UpdateStep<Collection<T_VALUE>>> resultFunction;
+    protected final Consumer<VerificationResult.Builder<Collection<T_VALUE>>> resultFunction;
     protected final Verifier<T_VALUE> elementVerifier;
-    protected Function<VerifierContainer<Collection<T_VALUE>>, String> nameConstructorFunction;
+    protected Function<VerificationResult<Collection<T_VALUE>>, String> nameConstructorFunction;
 
-    public CollectionVerifierImpl(NamespacedKey key, boolean required, int requiredOptional, Function<VerifierContainer<Collection<T_VALUE>>, String> nameConstructorFunction, Function<VerifierContainer<Collection<T_VALUE>>, VerifierContainer.UpdateStep<Collection<T_VALUE>>> resultFunction, Verifier<T_VALUE> elementVerifier) {
+    public CollectionVerifierImpl(NamespacedKey key, boolean required, int requiredOptional, Function<VerificationResult<Collection<T_VALUE>>, String> nameConstructorFunction, Consumer<VerificationResult.Builder<Collection<T_VALUE>>> resultFunction, Verifier<T_VALUE> elementVerifier) {
         this.key = key;
         this.required = required;
         this.requiredOptional = requiredOptional;
@@ -59,47 +60,47 @@ class CollectionVerifierImpl<T_VALUE> implements CollectionVerifier<T_VALUE> {
     }
 
     @Override
-    public String getNameFor(VerifierContainer<Collection<T_VALUE>> container) {
+    public String getNameFor(VerificationResult<Collection<T_VALUE>> container) {
         return nameConstructorFunction.apply(container);
     }
 
     @Override
-    public VerifierContainerImpl<Collection<T_VALUE>> validate(Collection<T_VALUE> values) {
-        VerifierContainerImpl<Collection<T_VALUE>> container = new VerifierContainerImpl<>(values, this);
+    public VerificationResult<Collection<T_VALUE>> validate(Collection<T_VALUE> values) {
+        var container = new VerificationResultImpl.BuilderImpl<>(this, values);
 
-        VerifierContainer.ResultType resultType;
+        VerificationResult.ResultType resultType;
         if (elementVerifier.optional()) {
-            Map<VerifierContainer.ResultType, Integer> counts = new EnumMap<>(VerifierContainer.ResultType.class);
+            Map<VerificationResult.ResultType, Integer> counts = new EnumMap<>(VerificationResult.ResultType.class);
             for (T_VALUE value : values) {
-                VerifierContainer<T_VALUE> result = elementVerifier.validate(value);
-                container.update().children(List.of(result));
+                VerificationResult<T_VALUE> result = elementVerifier.validate(value);
+                container.children(List.of(result));
                 counts.merge(result.type(), 1, Integer::sum);
             }
 
-            if (counts.getOrDefault(VerifierContainer.ResultType.VALID, 0) >= requiredOptional) {
-                resultType = VerifierContainer.ResultType.VALID;
+            if (counts.getOrDefault(VerificationResult.ResultType.VALID, 0) >= requiredOptional) {
+                resultType = VerificationResult.ResultType.VALID;
             } else {
-                resultType = VerifierContainer.ResultType.INVALID;
+                resultType = VerificationResult.ResultType.INVALID;
             }
         } else {
             resultType = values.stream()
                     .map(value -> {
-                        VerifierContainer<T_VALUE> result = elementVerifier.validate(value);
-                        container.update().children(List.of(result));
+                        VerificationResult<T_VALUE> result = elementVerifier.validate(value);
+                        container.children(List.of(result));
                         return result.type();
                     })
                     .distinct()
-                    .reduce(VerifierContainer.ResultType::and)
-                    .orElse(VerifierContainer.ResultType.INVALID);
+                    .reduce(VerificationResult.ResultType::and)
+                    .orElse(VerificationResult.ResultType.INVALID);
         }
 
-        container.update().type(resultType);
+        container.type(resultType);
 
         if (resultFunction != null) {
-            resultFunction.apply(container);
+            resultFunction.accept(container);
         }
 
-        return container;
+        return container.complete();
     }
 
     @Override

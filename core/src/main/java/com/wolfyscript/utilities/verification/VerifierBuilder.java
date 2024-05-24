@@ -64,9 +64,9 @@ public interface VerifierBuilder<T, B extends VerifierBuilder<T, B, R>, R extend
      * @param validateFunction The validation function
      * @return This builder instance for chaining
      */
-    B validate(Function<VerifierContainer<T>, VerifierContainer.UpdateStep<T>> validateFunction);
+    B validate(Consumer<VerificationResult.Builder<T>> validateFunction);
 
-    B name(Function<VerifierContainer<T>, String> nameConstructor);
+    B name(Function<VerificationResult<T>, String> nameConstructor);
 
     default B name(String name) {
         return name(tVerifierContainer -> name);

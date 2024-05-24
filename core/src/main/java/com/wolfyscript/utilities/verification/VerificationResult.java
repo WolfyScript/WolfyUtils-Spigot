@@ -27,9 +27,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public interface VerifierContainer<T> {
+public interface VerificationResult<T> {
 
-    List<VerifierContainer<?>> children();
+    List<VerificationResult<?>> children();
 
     boolean optional();
 
@@ -41,29 +41,31 @@ public interface VerifierContainer<T> {
 
     Collection<String> faults();
 
-    UpdateStep<T> update();
-
     default void printToOut(int level, String prefix, Consumer<String> out) {
         printToOut(level, true, prefix, out);
     }
 
     void printToOut(int level, boolean printName, String prefix, Consumer<String> out);
 
-    interface UpdateStep<T> {
+    interface Builder<T> {
 
-        VerifierContainer<T> owner();
+        Optional<T> currentValue();
 
-        UpdateStep<T> fault(String message);
+        ResultType currentType();
 
-        UpdateStep<T> clearFaults();
+        Builder<T> fault(String message);
 
-        UpdateStep<T> valid();
+        Builder<T> clearFaults();
 
-        UpdateStep<T> invalid();
+        Builder<T> valid();
 
-        UpdateStep<T> type(ResultType type);
+        Builder<T> invalid();
 
-        UpdateStep<T> children(List<VerifierContainer<?>> children);
+        Builder<T> type(ResultType type);
+
+        Builder<T> children(List<VerificationResult<?>> children);
+
+        VerificationResult<T> complete();
 
     }
 

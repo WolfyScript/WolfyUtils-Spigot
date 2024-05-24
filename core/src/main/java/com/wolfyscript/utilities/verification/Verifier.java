@@ -26,9 +26,9 @@ import me.wolfyscript.utilities.util.Keyed;
 
 public interface Verifier<T_VALUE> extends Keyed {
 
-    VerifierContainer<T_VALUE> validate(T_VALUE value);
+    VerificationResult<T_VALUE> validate(T_VALUE value);
 
     boolean optional();
 
-    String getNameFor(VerifierContainer<T_VALUE> container);
+    String getNameFor(VerificationResult<T_VALUE> container);
 }

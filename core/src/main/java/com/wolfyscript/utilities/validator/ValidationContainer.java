@@ -22,6 +22,8 @@
 
 package com.wolfyscript.utilities.validator;
 
+import com.wolfyscript.utilities.verification.VerificationResult;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +31,7 @@ import java.util.Optional;
 /**
  *
  * @param <T>
- * @deprecated Use {@link com.wolfyscript.utilities.verification.VerifierContainer} instead!
+ * @deprecated Use {@link VerificationResult} instead!
  */
 @Deprecated(forRemoval = true)
 public interface ValidationContainer<T> {
