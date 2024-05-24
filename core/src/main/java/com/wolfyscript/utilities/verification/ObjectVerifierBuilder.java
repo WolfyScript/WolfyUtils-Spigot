@@ -20,15 +20,9 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.validator;
+package com.wolfyscript.utilities.verification;
 
-/**
- *
- * @param <T>
- * @deprecated Use {@link com.wolfyscript.utilities.verification.ObjectVerifierBuilder} instead!
- */
-@Deprecated(forRemoval = true)
-public interface ObjectValidatorBuilder<T> extends ValidatorBuilder<T> {
+public interface ObjectVerifierBuilder<T> extends VerifierBuilder<T, ObjectVerifierBuilder<T>, ObjectVerifier<T>> {
 
 
 

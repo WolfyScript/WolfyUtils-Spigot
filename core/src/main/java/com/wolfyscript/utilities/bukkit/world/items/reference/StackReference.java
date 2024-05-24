@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.deser.std.StdNodeBasedDeserializer;
 import com.google.common.collect.Streams;
 import com.wolfyscript.utilities.Copyable;
+import com.wolfyscript.utilities.dependency.DependencySource;
+import com.wolfyscript.utilities.json.jackson.MissingImplementationException;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
@@ -48,6 +50,7 @@ public class StackReference implements Copyable<StackReference> {
     /**
      * Used to store the previous parser result
      */
+    @DependencySource
     protected StackIdentifier identifier;
 
     private NamespacedKey parserKey;
@@ -63,6 +66,11 @@ public class StackReference implements Copyable<StackReference> {
     @Deprecated
     public StackReference(@NotNull WolfyUtilCore core, @NotNull StackIdentifier identifier, double weight, int amount, @Nullable ItemStack itemStack) {
         this(core, amount, weight, identifier, itemStack);
+    }
+
+    @Deprecated
+    public StackReference(@NotNull WolfyUtilCore core, @NotNull NamespacedKey parserKey, int amount, double weight, @Nullable ItemStack item) {
+        this(core, amount, weight, parserKey, item);
     }
 
     public StackReference(@NotNull WolfyUtilCore core, int amount, double weight, @NotNull StackIdentifier identifier, @Nullable ItemStack itemStack) {
@@ -112,8 +120,7 @@ public class StackReference implements Copyable<StackReference> {
     @JsonGetter("identifier")
     protected StackIdentifier getOrParseIdentifier() {
         if (identifier == null) {
-            if (parser() == null) return null;
-            identifier = parser.from(stack).orElse(null);
+            identifier = parser().from(stack).orElse(null);
         }
         return identifier;
     }
@@ -123,9 +130,12 @@ public class StackReference implements Copyable<StackReference> {
      *
      * @return The current {@link StackIdentifierParser}
      */
-    public StackIdentifierParser<?> parser() {
+    public @NotNull StackIdentifierParser<?> parser() {
         if (parser == null || !parser.getNamespacedKey().equals(parserKey)) {
             parser = core.getRegistries().getStackIdentifierParsers().get(parserKey);
+        }
+        if (parser == null) {
+            throw new MissingImplementationException("Could not find stack identifier parser " + parserKey);
         }
         return parser; // Parser is still cached and wasn't changed
     }

@@ -11,7 +11,6 @@ import me.chickenstyle.backpack.Backpack;
 import me.chickenstyle.backpack.Utils;
 import me.chickenstyle.backpack.configs.CustomBackpacks;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
-import me.wolfyscript.utilities.compatibility.plugins.FancyBagsImpl;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;

@@ -1,12 +1,11 @@
-package me.wolfyscript.utilities.compatibility.plugins;
+package me.wolfyscript.utilities.compatibility.plugins.executableitems;
 
 import com.ssomar.score.api.executableitems.ExecutableItemsAPI;
 import me.wolfyscript.utilities.annotations.WUPluginIntegration;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
-import me.wolfyscript.utilities.compatibility.plugins.executableitems.ExecutableItemsRef;
-import me.wolfyscript.utilities.compatibility.plugins.executableitems.ExecutableItemsStackIdentifier;
+import me.wolfyscript.utilities.compatibility.plugins.ExecutableItemsIntegration;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;

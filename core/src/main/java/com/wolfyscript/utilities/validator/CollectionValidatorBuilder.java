@@ -25,6 +25,12 @@ package com.wolfyscript.utilities.validator;
 import java.util.Collection;
 import java.util.function.Function;
 
+/**
+ *
+ * @param <T>
+ * @deprecated Use {@link com.wolfyscript.utilities.verification.CollectionVerifierBuilder} instead!
+ */
+@Deprecated(forRemoval = true)
 public interface CollectionValidatorBuilder<T> extends ValidatorBuilder<Collection<T>> {
 
     @Override

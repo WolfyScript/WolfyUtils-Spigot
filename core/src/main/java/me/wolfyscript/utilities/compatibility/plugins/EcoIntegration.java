@@ -18,11 +18,12 @@
 
 package me.wolfyscript.utilities.compatibility.plugins;
 
+import me.wolfyscript.utilities.compatibility.PluginIntegration;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public interface EcoIntegration {
+public interface EcoIntegration extends PluginIntegration {
 
     /**
      * The name of the plugin, that this integration belongs to.

@@ -27,6 +27,12 @@ import me.wolfyscript.utilities.util.NamespacedKey;
 import java.util.Collection;
 import java.util.function.Function;
 
+/**
+ *
+ * @param <T>
+ * @deprecated Use {@link com.wolfyscript.utilities.verification.VerifierBuilder} instead!
+ */
+@Deprecated(forRemoval = true)
 public interface ValidatorBuilder<T> {
 
     /**

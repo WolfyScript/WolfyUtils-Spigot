@@ -6,10 +6,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.willfp.eco.core.items.Items;
 import com.wolfyscript.utilities.KeyedStaticId;
+import com.wolfyscript.utilities.bukkit.dependency.PluginIntegrationDependencyResolver;
+import com.wolfyscript.utilities.bukkit.dependency.PluginIntegrationDependencyResolverSettings;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
+import com.wolfyscript.utilities.dependency.DependencyResolverSettings;
+import me.wolfyscript.utilities.compatibility.plugins.EcoIntegration;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import net.kyori.adventure.text.Component;
@@ -22,6 +26,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 @KeyedStaticId(key = "eco")
+@DependencyResolverSettings(PluginIntegrationDependencyResolver.class)
+@PluginIntegrationDependencyResolverSettings(pluginName = EcoIntegration.KEY, integration = EcoIntegration.class)
 public class EcoStackIdentifier implements StackIdentifier {
 
     public static final NamespacedKey ID = NamespacedKey.wolfyutilties("eco");

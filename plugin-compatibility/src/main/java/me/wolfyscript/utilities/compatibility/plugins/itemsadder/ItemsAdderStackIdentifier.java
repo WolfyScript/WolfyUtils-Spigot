@@ -5,10 +5,13 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.wolfyscript.utilities.KeyedStaticId;
+import com.wolfyscript.utilities.bukkit.dependency.PluginIntegrationDependencyResolver;
+import com.wolfyscript.utilities.bukkit.dependency.PluginIntegrationDependencyResolverSettings;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
+import com.wolfyscript.utilities.dependency.DependencyResolverSettings;
 import dev.lone.itemsadder.api.CustomStack;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
@@ -22,6 +25,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 @KeyedStaticId(key = "itemsadder")
+@DependencyResolverSettings(PluginIntegrationDependencyResolver.class)
+@PluginIntegrationDependencyResolverSettings(pluginName = ItemsAdderImpl.KEY, integration = ItemsAdderImpl.class)
 public class ItemsAdderStackIdentifier implements StackIdentifier {
 
     public static final NamespacedKey ID = NamespacedKey.wolfyutilties("itemsadder");

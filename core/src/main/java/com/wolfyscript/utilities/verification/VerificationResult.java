@@ -20,26 +20,20 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.validator;
-
-import com.wolfyscript.utilities.verification.VerificationResult;
+package com.wolfyscript.utilities.verification;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
-/**
- *
- * @param <T>
- * @deprecated Use {@link VerificationResult} instead!
- */
-@Deprecated(forRemoval = true)
-public interface ValidationContainer<T> {
-    ValidationContainer<T> revalidate();
+public interface VerificationResult<T> {
 
-    List<ValidationContainer<?>> children();
+    List<VerificationResult<?>> children();
 
     boolean optional();
+
+    String getName();
 
     Optional<T> value();
 
@@ -47,47 +41,48 @@ public interface ValidationContainer<T> {
 
     Collection<String> faults();
 
-    UpdateStep<T> update();
+    default void printToOut(int level, String prefix, Consumer<String> out) {
+        printToOut(level, true, prefix, out);
+    }
 
-    interface UpdateStep<T> {
+    void printToOut(int level, boolean printName, String prefix, Consumer<String> out);
 
-        ValidationContainer<T> owner();
+    interface Builder<T> {
 
-        UpdateStep<T> copyFrom(UpdateStep<?> other);
+        Optional<T> currentValue();
 
-        UpdateStep<T> fault(String message);
+        ResultType currentType();
 
-        UpdateStep<T> clearFaults();
+        Builder<T> fault(String message);
 
-        UpdateStep<T> type(ResultType type);
+        Builder<T> clearFaults();
 
-        UpdateStep<T> children(List<ValidationContainer<?>> children);
+        Builder<T> valid();
+
+        Builder<T> invalid();
+
+        Builder<T> type(ResultType type);
+
+        Builder<T> children(List<VerificationResult<?>> children);
+
+        VerificationResult<T> complete();
 
     }
 
     enum ResultType {
 
+        UNKNOWN,
         VALID,
-        INVALID,
-        PENDING;
+        INVALID;
 
-        public ResultType combine(ResultType newValidation) {
-            if (newValidation == null) return this;
-            if (newValidation == INVALID) return INVALID;
-            return switch (this) {
-                case INVALID, PENDING -> this;
-                case VALID -> newValidation;
-            };
+        public ResultType and(ResultType other) {
+            if (this == UNKNOWN) return other;
+            return this == VALID ? other : this;
         }
 
-        public ResultType combine2(ResultType newValidation) {
-            if (newValidation == INVALID) return INVALID;
-            return switch (this) {
-                case INVALID -> this;
-                case PENDING, VALID -> newValidation;
-            };
+        public boolean isValid() {
+            return this == VALID;
         }
-
 
     }
 }

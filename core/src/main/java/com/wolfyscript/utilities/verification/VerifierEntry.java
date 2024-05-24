@@ -20,16 +20,20 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.wolfyscript.utilities.validator;
+package com.wolfyscript.utilities.verification;
 
-/**
- *
- * @param <T>
- * @deprecated Use {@link com.wolfyscript.utilities.verification.ObjectVerifierBuilder} instead!
- */
-@Deprecated(forRemoval = true)
-public interface ObjectValidatorBuilder<T> extends ValidatorBuilder<T> {
+import java.util.function.Function;
 
+public record VerifierEntry<S, T>(Verifier<T> verifier, Function<S, T> valueGetter) {
 
+    public VerificationResult<T> applyNestedValidator(S source) {
+        return verifier().validate(valueGetter().apply(source));
+    }
 
+    @Override
+    public String toString() {
+        return "ValidatorEntry{" +
+                "validator=" + verifier +
+                '}';
+    }
 }

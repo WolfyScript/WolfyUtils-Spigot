@@ -5,10 +5,13 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.wolfyscript.utilities.KeyedStaticId;
+import com.wolfyscript.utilities.bukkit.dependency.PluginIntegrationDependencyResolver;
+import com.wolfyscript.utilities.bukkit.dependency.PluginIntegrationDependencyResolverSettings;
 import com.wolfyscript.utilities.bukkit.world.items.reference.ItemCreateContext;
 import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
+import com.wolfyscript.utilities.dependency.DependencyResolverSettings;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import de.tr7zw.changeme.nbtapi.NBTType;
 import me.chickenstyle.backpack.Backpack;
@@ -22,6 +25,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Optional;
 
 @KeyedStaticId(key = "fancybags")
+@DependencyResolverSettings(PluginIntegrationDependencyResolver.class)
+@PluginIntegrationDependencyResolverSettings(pluginName = FancyBagsImpl.KEY, integration = FancyBagsImpl.class)
 public class FancyBagsStackIdentifier implements StackIdentifier {
 
     private static final String ID_TAG = "BackpackID";

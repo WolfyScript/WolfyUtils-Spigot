@@ -1,8 +1,10 @@
 package me.wolfyscript.utilities.compatibility.plugins;
 
+import me.wolfyscript.utilities.compatibility.PluginIntegration;
+
 import java.util.List;
 
-public interface ExecutableItemsIntegration {
+public interface ExecutableItemsIntegration extends PluginIntegration {
 
     String PLUGIN_NAME = "ExecutableItems";
 
