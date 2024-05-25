@@ -15,7 +15,6 @@ import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import com.wolfyscript.utilities.dependency.DependencyResolverSettings;
-import me.wolfyscript.utilities.compatibility.plugins.ExecutableBlocksIntegration;
 import me.wolfyscript.utilities.compatibility.plugins.ExecutableItemsIntegration;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
@@ -26,7 +25,7 @@ import java.util.Optional;
 
 @KeyedStaticId(key = "executableitems")
 @DependencyResolverSettings(PluginIntegrationDependencyResolver.class)
-@PluginIntegrationDependencyResolverSettings(pluginName = ExecutableBlocksIntegration.PLUGIN_NAME, integration = ExecutableItemsIntegration.class)
+@PluginIntegrationDependencyResolverSettings(pluginName = ExecutableItemsIntegration.PLUGIN_NAME, integration = ExecutableItemsIntegration.class)
 public class ExecutableItemsStackIdentifier implements StackIdentifier {
 
     public static final NamespacedKey ID = NamespacedKey.wolfyutilties("executableitems");
