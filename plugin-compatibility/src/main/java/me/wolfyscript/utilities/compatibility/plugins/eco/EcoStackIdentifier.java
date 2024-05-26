@@ -84,7 +84,7 @@ public class EcoStackIdentifier implements StackIdentifier {
         public Optional<EcoStackIdentifier> from(ItemStack itemStack) {
             if (Items.isCustomItem(itemStack)) {
                 var customStack = Items.getCustomItem(itemStack);
-                if (customStack != null) {
+                if (customStack != null && !customStack.getKey().getKey().startsWith("wrapped_")) { // Ignore wrapped items as those may be linked to another plugin?! like ItemsAdder
                     return Optional.of(new EcoStackIdentifier(customStack.getKey()));
                 }
             }
