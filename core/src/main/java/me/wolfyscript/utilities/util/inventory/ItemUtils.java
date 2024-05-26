@@ -22,6 +22,8 @@ import me.wolfyscript.utilities.api.inventory.custom_items.ArmorType;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.util.chat.ChatColor;
 import me.wolfyscript.utilities.util.inventory.item_builder.ItemBuilder;
+import me.wolfyscript.utilities.util.version.MinecraftVersion;
+import me.wolfyscript.utilities.util.version.ServerVersion;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -103,9 +105,17 @@ public class ItemUtils {
                     itemBuilder.addLoreLine(ChatColor.convert(s));
                 }
             }
-            itemBuilder.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_POTION_EFFECTS);
+            itemBuilder.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, getAdditionalHideFlags());
         }
         return itemBuilder.create();
+    }
+
+    public static ItemFlag getAdditionalHideFlags() {
+        if (ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 20, 5))) {
+            return ItemFlag.valueOf("HIDE_ADDITIONAL_TOOLTIP");
+        } else {
+            return ItemFlag.HIDE_POTION_EFFECTS;
+        }
     }
 
     public static ItemStack createItem(ItemStack itemStack, Component displayName, List<Component> lore) {
@@ -114,7 +124,7 @@ public class ItemUtils {
         if (itemMeta != null) {
             itemBuilder.setDisplayName(BukkitComponentSerializer.legacy().serialize(displayName));
             itemBuilder.setLore(lore.stream().map(line -> BukkitComponentSerializer.legacy().serialize(line)).toList());
-            itemBuilder.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_POTION_EFFECTS);
+            itemBuilder.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, getAdditionalHideFlags());
         }
         return itemBuilder.create();
     }
