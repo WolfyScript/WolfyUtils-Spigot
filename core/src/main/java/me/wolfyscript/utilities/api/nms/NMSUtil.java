@@ -37,10 +37,17 @@ public abstract class NMSUtil {
     static {
         registerAdapter(new VersionAdapter("v1_17_R1"));
         registerAdapter(new VersionAdapter("v1_18_R1"));
+
+        registerAdapter(new MinecraftToNMSRevision("v1_20_R1", "1.20.0", "1.20.1"));
+        registerAdapter(new MinecraftToNMSRevision("v1_20_R2", "1.20.2"));
+        registerAdapter(new MinecraftToNMSRevision("v1_20_R3", "1.20.3", "1.20.4"));
+        registerAdapter(new MinecraftToNMSRevision("v1_20_R4", "1.20.5", "1.20.6"));
     }
 
-    public static void registerAdapter(VersionAdapter adapter) {
-        versionAdapters.putIfAbsent(adapter.version, adapter);
+    private static void registerAdapter(VersionHandler adapter) {
+        for (String minecraftVersion : adapter.getMinecraftVersions()) {
+            versionAdapters.put(minecraftVersion, adapter);
+        }
     }
 
     private final WolfyUtilities wolfyUtilities;
@@ -78,9 +85,16 @@ public abstract class NMSUtil {
         if(ServerVersion.isIsJUnitTest()) {
             return null;
         }
-        String version = Reflection.getVersion();
+        String version = Reflection.getVersion().orElse(null);
         try {
-            var adapter = versionAdapters.get(version);
+            final VersionHandler adapter;
+            if (version == null) {
+                // Using mojang mappings
+                adapter = versionAdapters.get(ServerVersion.getVersion().getVersion());
+            } else {
+                // Use Spigot mappings
+                adapter = versionAdapters.get(version);
+            }
             if (adapter != null) {
                 version = adapter.getPackageName();
             }
@@ -146,11 +160,39 @@ public abstract class NMSUtil {
             }
             return version;
         }
+
+        @Override
+        public String[] getMinecraftVersions() {
+            return new String[]{version};
+        }
+    }
+
+    private static class MinecraftToNMSRevision implements VersionHandler {
+
+        private final String[] mcVersions;
+        private final String nmsRevision;
+
+        private MinecraftToNMSRevision(String nmsRevision, String... mcVersions) {
+            this.mcVersions = mcVersions;
+            this.nmsRevision = nmsRevision;
+        }
+
+        @Override
+        public String getPackageName() {
+            return nmsRevision;
+        }
+
+        @Override
+        public String[] getMinecraftVersions() {
+            return mcVersions;
+        }
     }
 
     private interface VersionHandler {
 
         String getPackageName();
+
+        String[] getMinecraftVersions();
 
     }
 
