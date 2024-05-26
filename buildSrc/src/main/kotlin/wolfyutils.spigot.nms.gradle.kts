@@ -38,6 +38,8 @@ publishing {
     }
 }
 
+paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.REOBF_PRODUCTION
+
 tasks {
     withType<ArtifactoryTask> {
         skip = true

@@ -28,20 +28,33 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Reflection {
 
     /**
      * The server version string to location NMS & OBC classes
      */
-    private static final String VERSION = getVersion();
+    public static final boolean MOJANG_MAPPED;
+    private static final String VERSION;
     private static final String NMS;
-    private static final String CRAFTBUKKIT = "org.bukkit.craftbukkit." + VERSION + ".";
+    private static final String NMS_PKG = "net.minecraft";
+    private static final String CRAFTBUKKIT;
+    private static final String CRAFTBUKKIT_PKG = "org.bukkit.craftbukkit";
+
+    static {
+        VERSION = getVersion().orElse(null);
+        if (VERSION == null) {
+            CRAFTBUKKIT = CRAFTBUKKIT_PKG + ".";
+            NMS = NMS_PKG + ".";
+            MOJANG_MAPPED = true;
+        } else {
+            CRAFTBUKKIT = CRAFTBUKKIT_PKG + "." + VERSION + ".";
+            NMS = NMS_PKG + "." + VERSION + ".";
+            MOJANG_MAPPED = false;
+        }
+    }
+
     /**
      * Cache of NMS classes that we've searched for
      */
@@ -62,14 +75,6 @@ public class Reflection {
     private static final Map<Class<?>, Map<String, Field>> loadedDeclaredFields = new HashMap<>();
     private static final Map<Class<?>, Map<Class<?>, Field>> foundFields = new HashMap<>();
 
-    static {
-        if (ServerVersion.isAfterOrEq(MinecraftVersions.v1_17)) {
-            NMS = "net.minecraft.";
-        } else {
-            NMS = "net.minecraft.server." + VERSION + ".";
-        }
-    }
-
     private Reflection() {}
 
     /**
@@ -77,16 +82,17 @@ public class Reflection {
      *
      * @return The CraftBukkit version.
      */
-    public static String getVersion() {
+    public static Optional<String> getVersion() {
         if(VERSION != null){
-            return VERSION;
+            return Optional.of(VERSION);
         }
-        return Bukkit.getServer().getClass().getPackage().getName().substring(23);
-    }
-
-    @Deprecated
-    public static int getVersionNumber() {
-        return Integer.parseInt(getVersion().replace("_", "").replace("v", "").replaceAll("R[0-9]", ""));
+        String[] packages = Bukkit.getServer().getClass().getPackage().getName().split("\\.");
+        if (packages.length == 4) {
+            // server is spigot mapped
+            return Optional.of(packages[3]);
+        }
+        // server is mojang mapped
+        return Optional.empty();
     }
 
     /**

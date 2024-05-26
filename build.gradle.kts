@@ -83,16 +83,15 @@ minecraftServers {
         register("spigot_1_20_6") {
             version.set("1.20.6")
             type.set("SPIGOT")
-            imageVersion.set("java21-graalvm")
-
-            extraEnv.put("BUILD_FROM_SOURCE", "true")
+            imageVersion.set("java21")
             ports.set(setOf(debugPortMapping, "25569:25565"))
         }
         // Paper test servers
         register("paper_1_20") {
-            version.set("1.20.4")
+            version.set("1.20.6")
             type.set("PAPER")
-            ports.set(setOf(debugPortMapping, "25569:25565"))
+            imageVersion.set("java21")
+            ports.set(setOf("5007:5007", "25569:25565"))
         }
         register("paper_1_19") {
             version.set("1.19.4")
@@ -106,6 +105,11 @@ tasks.named<ShadowJar>("shadowJar") {
     dependsOn(project(":nmsutil").tasks.named("shadowJar"))
     dependsOn(project(":core").tasks.named("shadowJar"))
     mustRunAfter("jar")
+    mergeServiceFiles()
+
+    manifest {
+        attributes(Pair("paperweight-mappings-namespace", "spigot"))
+    }
 
     archiveClassifier.set("")
 
@@ -143,6 +147,7 @@ tasks.named<ShadowJar>("shadowJar") {
 tasks.named("test") {
     dependsOn.add(tasks.named("shadowJar"))
 }
+
 
 artifactory {
 
