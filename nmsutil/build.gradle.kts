@@ -1,5 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
 
 plugins {
     id("com.wolfyscript.wolfyutils.spigot.java-conventions")
@@ -27,6 +26,7 @@ dependencies {
 
 tasks {
     named<ShadowJar>("shadowJar") {
+        mergeServiceFiles()
         archiveClassifier.set("")
 
         // Need to run this shadowJar after the subprojects have been obfuscated
