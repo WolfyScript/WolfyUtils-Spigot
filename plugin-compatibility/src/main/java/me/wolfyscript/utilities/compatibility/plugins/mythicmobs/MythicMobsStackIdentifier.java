@@ -87,7 +87,7 @@ public class MythicMobsStackIdentifier implements StackIdentifier {
 
         @Override
         public int priority() {
-            return 900;
+            return 1600;
         }
 
         @Override

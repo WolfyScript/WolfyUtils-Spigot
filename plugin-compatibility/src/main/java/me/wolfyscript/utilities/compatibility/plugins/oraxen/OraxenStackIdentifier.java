@@ -80,7 +80,7 @@ public class OraxenStackIdentifier implements StackIdentifier {
 
         @Override
         public int priority() {
-            return 0;
+            return 1900;
         }
 
         @Override

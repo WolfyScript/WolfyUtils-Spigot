@@ -85,7 +85,7 @@ public class MagicStackIdentifier implements StackIdentifier {
 
         @Override
         public int priority() {
-            return 0;
+            return 600;
         }
 
         @Override

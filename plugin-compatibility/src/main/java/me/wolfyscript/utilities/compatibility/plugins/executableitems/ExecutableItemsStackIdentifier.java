@@ -89,7 +89,7 @@ public class ExecutableItemsStackIdentifier implements StackIdentifier {
 
         @Override
         public int priority() {
-            return 0;
+            return 1800;
         }
 
         @Override

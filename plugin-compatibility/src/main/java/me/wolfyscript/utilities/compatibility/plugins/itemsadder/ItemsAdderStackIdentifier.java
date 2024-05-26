@@ -77,7 +77,7 @@ public class ItemsAdderStackIdentifier implements StackIdentifier {
 
         @Override
         public int priority() {
-            return 0;
+            return 1500;
         }
 
         @Override

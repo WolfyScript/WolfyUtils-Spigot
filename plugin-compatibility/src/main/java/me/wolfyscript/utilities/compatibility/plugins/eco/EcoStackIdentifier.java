@@ -77,7 +77,7 @@ public class EcoStackIdentifier implements StackIdentifier {
 
         @Override
         public int priority() {
-            return 0;
+            return 100;
         }
 
         @Override
