@@ -35,11 +35,11 @@ public class EcoStackIdentifier implements StackIdentifier {
     private final org.bukkit.NamespacedKey itemKey;
 
     @JsonCreator
-    public EcoStackIdentifier(@JsonProperty("key") org.bukkit.NamespacedKey itemKey) {
+    public EcoStackIdentifier(@JsonProperty("itemKey") org.bukkit.NamespacedKey itemKey) {
         this.itemKey = itemKey;
     }
 
-    @JsonGetter("key")
+    @JsonGetter("itemKey")
     public org.bukkit.NamespacedKey getItemKey() {
         return itemKey;
     }
