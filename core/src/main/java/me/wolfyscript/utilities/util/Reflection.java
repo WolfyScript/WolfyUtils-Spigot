@@ -37,8 +37,8 @@ public class Reflection {
      */
     public static final boolean MOJANG_MAPPED;
     private static final String VERSION;
-    private static final String NMS;
     private static final String NMS_PKG = "net.minecraft";
+    private static final String NMS = NMS_PKG + "."; // The mojang package is used since 1.17
     private static final String CRAFTBUKKIT;
     private static final String CRAFTBUKKIT_PKG = "org.bukkit.craftbukkit";
 
@@ -46,11 +46,9 @@ public class Reflection {
         VERSION = getVersion().orElse(null);
         if (VERSION == null) {
             CRAFTBUKKIT = CRAFTBUKKIT_PKG + ".";
-            NMS = NMS_PKG + ".";
             MOJANG_MAPPED = true;
         } else {
             CRAFTBUKKIT = CRAFTBUKKIT_PKG + "." + VERSION + ".";
-            NMS = NMS_PKG + "." + VERSION + ".";
             MOJANG_MAPPED = false;
         }
     }
@@ -141,7 +139,7 @@ public class Reflection {
     }
 
     public static Class<?> getNMS(String mojangPkg, String className) {
-        return getNMS((ServerVersion.isAfterOrEq(MinecraftVersions.v1_17) ? mojangPkg + "." : "") + className);
+        return getNMS(mojangPkg + "." + className);
     }
 
     public static Class<?> getNMS(String mojangPkg, NMSMapping mapping) {
