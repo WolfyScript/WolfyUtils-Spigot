@@ -2,6 +2,7 @@ package me.wolfyscript.utilities.compatibility.plugins.mmoitems;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.wolfyscript.utilities.KeyedStaticId;
@@ -37,14 +38,14 @@ public class MMOItemsStackIdentifier implements StackIdentifier {
     private final Type itemType;
     private final String itemName;
 
-    public MMOItemsStackIdentifier(@JsonProperty("type") Type itemType, @JsonProperty("name") String itemName) {
+    public MMOItemsStackIdentifier(Type itemType, String itemName) {
         this.itemType = itemType;
         this.itemName = itemName;
     }
 
     @JsonCreator
-    MMOItemsStackIdentifier(@JsonProperty("type") String itemType, @JsonProperty("name") String itemName) {
-        this.itemType = MMOItems.plugin.getTypes().get(itemType);
+    MMOItemsStackIdentifier(@JsonProperty("type") String itemTypeId, @JsonProperty("name") String itemName) {
+        this.itemType = MMOItems.plugin.getTypes().get(itemTypeId);
         this.itemName = itemName;
     }
 
@@ -53,9 +54,14 @@ public class MMOItemsStackIdentifier implements StackIdentifier {
         return itemName;
     }
 
-    @JsonGetter("type")
+    @JsonIgnore
     public Type getItemType() {
         return itemType;
+    }
+
+    @JsonGetter("type")
+    private String getTypeId() {
+        return itemType.getId();
     }
 
     @Override
