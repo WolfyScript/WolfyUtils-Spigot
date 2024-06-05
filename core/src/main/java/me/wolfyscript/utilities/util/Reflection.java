@@ -18,6 +18,7 @@
 
 package me.wolfyscript.utilities.util;
 
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.util.version.MinecraftVersion;
 import me.wolfyscript.utilities.util.version.MinecraftVersions;
 import me.wolfyscript.utilities.util.version.ServerVersion;
@@ -29,6 +30,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.logging.Level;
 
 public class Reflection {
 
@@ -37,8 +39,7 @@ public class Reflection {
      */
     public static final boolean MOJANG_MAPPED;
     private static final String VERSION;
-    private static final String NMS_PKG = "net.minecraft";
-    private static final String NMS = NMS_PKG + "."; // The mojang package is used since 1.17
+    private static final String NMS_PKG = "net.minecraft."; // The mojang package is used since 1.17
     private static final String CRAFTBUKKIT;
     private static final String CRAFTBUKKIT_PKG = "org.bukkit.craftbukkit";
 
@@ -78,7 +79,7 @@ public class Reflection {
     /**
      * Gets the version from the version dependent CraftBukkit package. e.g. v1_17_R1
      *
-     * @return The CraftBukkit version.
+     * @return The CraftBukkit version; empty when mojang mappings are used
      */
     public static Optional<String> getVersion() {
         if(VERSION != null){
@@ -108,7 +109,7 @@ public class Reflection {
         try {
             clazz = Class.forName(clazzName);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            WolfyUtilCore.getInstance().getLogger().log(Level.SEVERE, "Could not get OBC Class!", e);
             loadedOBCClasses.put(obcClassName, null);
             return null;
         }
@@ -126,12 +127,12 @@ public class Reflection {
         if (loadedNMSClasses.containsKey(nmsClassName)) {
             return loadedNMSClasses.get(nmsClassName);
         }
-        String clazzName = NMS + nmsClassName;
+        String clazzName = NMS_PKG + nmsClassName;
         Class<?> clazz;
         try {
             clazz = Class.forName(clazzName);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            WolfyUtilCore.getInstance().getLogger().log(Level.SEVERE, "Could not get NMS Class!", e);
             return loadedNMSClasses.put(nmsClassName, null);
         }
         loadedNMSClasses.put(nmsClassName, clazz);
@@ -230,7 +231,7 @@ public class Reflection {
             return method;
         } catch (Exception e) {
             if (!silent) {
-                e.printStackTrace();
+                WolfyUtilCore.getInstance().getLogger().log(Level.SEVERE, "Could not find or invoke Method!", e);
             }
             methods.put(methodName, null);
             loadedMethods.put(clazz, methods);
@@ -272,7 +273,7 @@ public class Reflection {
             return method;
         } catch (Exception e) {
             if (!silent) {
-                e.printStackTrace();
+                WolfyUtilCore.getInstance().getLogger().log(Level.SEVERE, "Could not find or invoke Method!", e);
             }
             methods.put(methodName, null);
             loadedDeclaredMethods.put(clazz, methods);
@@ -299,7 +300,7 @@ public class Reflection {
             loadedFields.put(clazz, fields);
             return field;
         } catch (Exception e) {
-            e.printStackTrace();
+            WolfyUtilCore.getInstance().getLogger().log(Level.SEVERE, "Could not find or access field!", e);
             fields.put(fieldName, null);
             loadedFields.put(clazz, fields);
             return null;
@@ -325,7 +326,7 @@ public class Reflection {
             loadedDeclaredFields.put(clazz, fields);
             return field;
         } catch (Exception e) {
-            e.printStackTrace();
+            WolfyUtilCore.getInstance().getLogger().log(Level.SEVERE, "Could not find or access field!", e);
             fields.put(fieldName, null);
             loadedDeclaredFields.put(clazz, fields);
             return null;
@@ -357,7 +358,7 @@ public class Reflection {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            WolfyUtilCore.getInstance().getLogger().log(Level.SEVERE, "Could not find or access field!", e);
         } finally {
             fields.put(type, null);
             foundFields.put(clazz, fields);
