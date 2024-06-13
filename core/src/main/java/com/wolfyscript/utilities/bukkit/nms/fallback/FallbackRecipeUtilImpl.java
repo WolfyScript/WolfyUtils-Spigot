@@ -21,16 +21,37 @@ package com.wolfyscript.utilities.bukkit.nms.fallback;
 import me.wolfyscript.utilities.api.nms.NMSUtil;
 import me.wolfyscript.utilities.api.nms.inventory.RecipeType;
 import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.version.ServerVersion;
-import org.apache.commons.lang3.NotImplementedException;
+import me.wolfyscript.utilities.util.Reflection;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 
+import static me.wolfyscript.utilities.util.Reflection.NMSMapping.of;
+
 public class FallbackRecipeUtilImpl extends me.wolfyscript.utilities.api.nms.RecipeUtil {
+
+    static Class<?> MINECRAFT_SERVER_CLASS = Reflection.getNMS("server.MinecraftServer");
+    static Class<?> RECIPE_HOLDER = Reflection.getNMS("world.item.crafting.RecipeHolder");
+    static Class<?> RECIPE_MANAGER = Reflection.getNMS("world.item.crafting", of("CraftingManager").mojang("RecipeManager"));
+    static Class<?> RECIPE_TYPE = Reflection.getNMS("world.item.crafting", of("Recipes").mojang("RecipeType"));
+    static Class<?> BUILT_IN_REGISTRIES = Reflection.getNMS("core.registries.BuiltInRegistries");
+    static Class<?> REGISTRY = Reflection.getNMS("core", of("IRegistry").mojang("Registry"));
+    static Class<?> RESOURCE_LOCATION = Reflection.getNMS("resources", of("MinecraftKey").mojang("ResourceLocation"));
+
+    static Method GET_SERVER = Reflection.getDeclaredMethod(false, MINECRAFT_SERVER_CLASS, "getServer");
+    static Method GET_RECIPE_MANAGER = Reflection.getDeclaredMethod(false, MINECRAFT_SERVER_CLASS, of("aJ").mojang("getRecipeManager").get());
+    static Method GET_ALL_RECIPES_FOR = Reflection.getDeclaredMethod(false, RECIPE_MANAGER, of("a").mojang("getAllRecipesFor").get(), RECIPE_TYPE);
+    static Method TO_BUKKIT_RECIPE = Reflection.getDeclaredMethod(false, RECIPE_HOLDER, "toBukkitRecipe");
+    static Method GET_RECIPE_TYPE_FROM_REGISTRY = Reflection.getDeclaredMethod(false, REGISTRY, of("a").mojang("get").get(), RESOURCE_LOCATION);
+
+    static Field RECIPE_TYPE_REGISTRY = Reflection.getDeclaredField(BUILT_IN_REGISTRIES, of("q").mojang("RECIPE_TYPE").get());
+
+    static Method RESOURCE_LOCATION_CREATOR = Reflection.getDeclaredMethod(false, RESOURCE_LOCATION, of("a").mojang("of").get(), String.class, Character.TYPE);
 
     protected FallbackRecipeUtilImpl(NMSUtil nmsUtil) {
         super(nmsUtil);
@@ -38,7 +59,7 @@ public class FallbackRecipeUtilImpl extends me.wolfyscript.utilities.api.nms.Rec
 
     @Override
     public @NotNull Iterator<Recipe> recipeIterator(RecipeType recipeType) {
-        throw new NotImplementedException("RecipeUtil is not yet implement for " + ServerVersion.getVersion());
+        return new RecipeIterator(recipeType);
     }
 
     @Override

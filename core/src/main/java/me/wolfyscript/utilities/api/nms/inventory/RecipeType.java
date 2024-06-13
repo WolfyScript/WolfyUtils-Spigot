@@ -20,12 +20,21 @@ package me.wolfyscript.utilities.api.nms.inventory;
 
 public enum RecipeType {
 
-    CRAFTING,
-    SMELTING,
-    BLASTING,
-    SMOKING,
-    CAMPFIRE_COOKING,
-    STONECUTTING,
-    SMITHING
+    CRAFTING("crafting"),
+    SMELTING("smelting"),
+    BLASTING("blasting"),
+    SMOKING("smoking"),
+    CAMPFIRE_COOKING("campfire_cooking"),
+    STONECUTTING("stonecutting"),
+    SMITHING("smithing");
 
+    private final String id;
+
+    RecipeType(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
 }

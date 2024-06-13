@@ -139,6 +139,10 @@ public class Reflection {
         return clazz;
     }
 
+    public static Class<?> getNMS(NMSMapping mapping) {
+        return getNMS(mapping.get());
+    }
+
     public static Class<?> getNMS(String mojangPkg, String className) {
         return getNMS(mojangPkg + "." + className);
     }
@@ -370,14 +374,20 @@ public class Reflection {
 
         private final MinecraftVersion version;
         private final String mapping;
+        private String mojangMapping;
 
         private NMSMapping(MinecraftVersion version, String mapping) {
             this.version = version;
             this.mapping = mapping;
+            this.mojangMapping = mapping;
         }
 
         public static NMSMapping of(MinecraftVersion version, String mapping) {
             return new NMSMapping(version, mapping);
+        }
+
+        public static NMSMapping of(String mapping) {
+            return new NMSMapping(ServerVersion.getVersion(), mapping);
         }
 
         public NMSMapping or(NMSMapping nmsMapping) {
@@ -388,8 +398,13 @@ public class Reflection {
             return ServerVersion.getVersion().isAfterOrEq(version) ? this.mapping : mapping;
         }
 
+        public NMSMapping mojang(String mojangMapping) {
+            this.mojangMapping = mojangMapping;
+            return this;
+        }
+
         public String get() {
-            return mapping;
+            return MOJANG_MAPPED ? mojangMapping : mapping;
         }
 
     }
