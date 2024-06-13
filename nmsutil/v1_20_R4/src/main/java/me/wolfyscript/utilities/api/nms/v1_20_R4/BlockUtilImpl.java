@@ -23,6 +23,7 @@ import me.wolfyscript.utilities.api.nms.NMSUtil;
 import me.wolfyscript.utilities.api.nms.v1_20_R4.block.NMSBrewingStand;
 import org.bukkit.block.BrewingStand;
 
+@Deprecated(forRemoval = true, since = "4.17")
 public class BlockUtilImpl extends BlockUtil {
 
     BlockUtilImpl(NMSUtil nmsUtil) {
@@ -30,6 +31,7 @@ public class BlockUtilImpl extends BlockUtil {
     }
 
     @Override
+    @Deprecated(forRemoval = true, since = "4.17")
     public NMSBrewingStand getNmsBrewingStand(BrewingStand brewingStand) {
         return new NMSBrewingStand(brewingStand);
     }

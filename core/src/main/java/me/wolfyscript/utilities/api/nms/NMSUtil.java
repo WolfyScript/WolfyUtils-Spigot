@@ -107,7 +107,7 @@ public abstract class NMSUtil {
                 return ((NMSUtil) constructor.newInstance(wolfyUtilities));
             }
         } catch (ReflectiveOperationException ex) {
-            ex.printStackTrace();
+            // failed to find NMS implementation
         }
         //Unsupported version
         wolfyUtilities.getCore().getLogger().warning("Did not detect NMS implementation for server version (" + version + ")! Using Fallback! This might cause issue if plugins use the NMS Utils!");
@@ -118,26 +118,32 @@ public abstract class NMSUtil {
         return wolfyUtilities;
     }
 
+    @Deprecated(forRemoval = true, since = "4.17")
     public BlockUtil getBlockUtil() {
         return blockUtil;
     }
 
+    @Deprecated(forRemoval = true, since = "4.17")
     public ItemUtil getItemUtil() {
         return itemUtil;
     }
 
+    @Deprecated(forRemoval = true, since = "4.17")
     public InventoryUtil getInventoryUtil() {
         return inventoryUtil;
     }
 
+    @Deprecated(forRemoval = true, since = "4.17")
     public NBTUtil getNBTUtil() {
         return nbtUtil;
     }
 
+    @Deprecated(forRemoval = true, since = "4.17")
     public RecipeUtil getRecipeUtil() {
         return recipeUtil;
     }
 
+    @Deprecated(forRemoval = true, since = "4.17")
     public NetworkUtil getNetworkUtil() {
         return networkUtil;
     }

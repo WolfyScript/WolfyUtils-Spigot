@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
+@Deprecated(forRemoval = true, since = "4.17")
 public abstract class RecipeUtil extends UtilComponent {
 
     protected RecipeUtil(NMSUtil nmsUtil) {
@@ -44,12 +45,8 @@ public abstract class RecipeUtil extends UtilComponent {
     public abstract @NotNull Iterator<Recipe> recipeIterator(RecipeType recipeType);
 
     @Deprecated(since = "4.17", forRemoval = true)
-    public void setCurrentRecipe(Inventory inventory, NamespacedKey recipeId) {
-        NMSInventoryUtils.setCurrentRecipe(inventory, recipeId);
-    }
+    public void setCurrentRecipe(Inventory inventory, NamespacedKey recipeId) { }
 
     @Deprecated(since = "4.17", forRemoval = true)
-    public void setCurrentRecipe(InventoryView view, NamespacedKey recipeId) {
-        NMSInventoryUtils.setCurrentRecipe(view.getTopInventory(), recipeId);
-    }
+    public void setCurrentRecipe(InventoryView view, NamespacedKey recipeId) { }
 }

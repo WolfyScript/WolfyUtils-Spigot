@@ -32,10 +32,6 @@ public class RecipeIterator implements Iterator<org.bukkit.inventory.Recipe> {
         this.recipes = getRecipesFor(recipeType).iterator();
     }
 
-    public RecipeIterator(List<RecipeHolder<?>> recipeList) {
-        this.recipes = recipeList.iterator();
-    }
-
     private List<? extends RecipeHolder<?>> getRecipesFor(RecipeType type) {
         var recipeManager = MinecraftServer.getServer().getRecipeManager();
         return switch (type) {

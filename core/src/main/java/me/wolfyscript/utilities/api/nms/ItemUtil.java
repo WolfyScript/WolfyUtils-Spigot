@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-@Deprecated(since = "4.16.2.0")
+@Deprecated(forRemoval = true, since = "4.17")
 public abstract class ItemUtil extends UtilComponent {
 
     protected ItemUtil(NMSUtil nmsUtil) {

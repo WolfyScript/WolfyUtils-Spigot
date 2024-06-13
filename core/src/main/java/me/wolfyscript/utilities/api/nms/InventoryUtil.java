@@ -18,12 +18,6 @@
 
 package me.wolfyscript.utilities.api.nms;
 
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import javassist.CannotCompileException;
-import javassist.ClassPool;
-import javassist.NotFoundException;
 import me.wolfyscript.utilities.api.inventory.gui.GuiHandler;
 import me.wolfyscript.utilities.api.inventory.gui.GuiWindow;
 import me.wolfyscript.utilities.api.inventory.gui.cache.CustomCache;
@@ -33,8 +27,8 @@ import me.wolfyscript.utilities.util.inventory.CreativeModeTab;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 
+@Deprecated(forRemoval = true, since = "4.17")
 public abstract class InventoryUtil extends UtilComponent {
 
     protected InventoryUtil(NMSUtil nmsUtil) {

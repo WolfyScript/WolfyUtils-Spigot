@@ -18,11 +18,13 @@
 
 package me.wolfyscript.utilities.api.nms.block;
 
+@Deprecated(forRemoval = true, since = "4.17")
 public interface NMSBrewingStand {
 
     /**
      * @return The actual FuelLevel from the TileEntity
      */
+    @Deprecated(forRemoval = true, since = "4.17")
     int getFuelLevel();
 
     /**
@@ -31,11 +33,13 @@ public interface NMSBrewingStand {
      *
      * @param fuelLevel The fuel level
      */
+    @Deprecated(forRemoval = true, since = "4.17")
     void setFuelLevel(int fuelLevel);
 
     /**
      * @return The actual Brewing time from the TileEntity
      */
+    @Deprecated(forRemoval = true, since = "4.17")
     int getBrewingTime();
 
     /**
@@ -44,5 +48,6 @@ public interface NMSBrewingStand {
      *
      * @param brewTime The Brewing time in ticks
      */
+    @Deprecated(forRemoval = true, since = "4.17")
     void setBrewingTime(int brewTime);
 }

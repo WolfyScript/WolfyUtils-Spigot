@@ -21,6 +21,7 @@ package me.wolfyscript.utilities.api.nms;
 import me.wolfyscript.utilities.api.nms.block.NMSBrewingStand;
 import org.bukkit.block.BrewingStand;
 
+@Deprecated(forRemoval = true, since = "4.17")
 public abstract class BlockUtil extends UtilComponent {
 
     protected BlockUtil(NMSUtil nmsUtil) {
@@ -33,6 +34,7 @@ public abstract class BlockUtil extends UtilComponent {
      * @param brewingStand The Bukkit BrewingStand Block
      * @return The NMSBrewingStand API
      */
+    @Deprecated(forRemoval = true, since = "4.17")
     public abstract NMSBrewingStand getNmsBrewingStand(BrewingStand brewingStand);
 
 }

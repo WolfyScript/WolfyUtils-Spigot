@@ -26,27 +26,32 @@ import org.bukkit.craftbukkit.block.CraftBrewingStand;
 
 import java.util.Objects;
 
+@Deprecated(forRemoval = true, since = "4.17")
 public class NMSBrewingStand extends CraftBrewingStand implements me.wolfyscript.utilities.api.nms.block.NMSBrewingStand {
 
     public NMSBrewingStand(BrewingStand brewingStand) {
         super(brewingStand.getWorld(), (BrewingStandBlockEntity) Objects.requireNonNull(((CraftWorld) brewingStand.getWorld()).getHandle().getBlockEntity(((CraftBlock) brewingStand.getBlock()).getPosition())));
     }
 
+    @Deprecated(forRemoval = true, since = "4.17")
     @Override
     public int getFuelLevel() {
         return getTileEntity().fuel;
     }
 
+    @Deprecated(forRemoval = true, since = "4.17")
     @Override
     public void setFuelLevel(int level) {
         getTileEntity().fuel = level;
     }
 
+    @Deprecated(forRemoval = true, since = "4.17")
     @Override
     public int getBrewingTime() {
         return getTileEntity().brewTime;
     }
 
+    @Deprecated(forRemoval = true, since = "4.17")
     @Override
     public void setBrewingTime(int brewTime) {
         getTileEntity().brewTime = brewTime;

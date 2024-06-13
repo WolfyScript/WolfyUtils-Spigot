@@ -16,25 +16,34 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.wolfyscript.utilities.api.nms.v1_20_R4;
+package com.wolfyscript.utilities.bukkit.nms.fallback;
 
-import java.util.Iterator;
 import me.wolfyscript.utilities.api.nms.NMSUtil;
 import me.wolfyscript.utilities.api.nms.inventory.RecipeType;
-import me.wolfyscript.utilities.api.nms.v1_20_R4.inventory.RecipeIterator;
+import me.wolfyscript.utilities.util.NamespacedKey;
+import me.wolfyscript.utilities.util.version.ServerVersion;
+import org.apache.commons.lang3.NotImplementedException;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 
-@Deprecated(forRemoval = true, since = "4.17")
-public class RecipeUtilImpl extends me.wolfyscript.utilities.api.nms.RecipeUtil {
+import java.util.Iterator;
 
-    protected RecipeUtilImpl(NMSUtil nmsUtil) {
+public class FallbackRecipeUtilImpl extends me.wolfyscript.utilities.api.nms.RecipeUtil {
+
+    protected FallbackRecipeUtilImpl(NMSUtil nmsUtil) {
         super(nmsUtil);
     }
 
     @Override
     public @NotNull Iterator<Recipe> recipeIterator(RecipeType recipeType) {
-        return new RecipeIterator(recipeType);
+        throw new NotImplementedException("RecipeUtil is not yet implement for " + ServerVersion.getVersion());
     }
 
+    @Override
+    public void setCurrentRecipe(InventoryView view, NamespacedKey namespacedKey) { }
+
+    @Override
+    public void setCurrentRecipe(Inventory inventory, NamespacedKey namespacedKey) { }
 }
