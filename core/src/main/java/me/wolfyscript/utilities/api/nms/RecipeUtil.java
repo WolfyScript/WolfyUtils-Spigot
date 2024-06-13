@@ -42,6 +42,7 @@ public abstract class RecipeUtil extends UtilComponent {
      * @param recipeType The recipe type to get the iterator for.
      * @return The iterator of the recipe type.
      */
+    @Deprecated(since = "4.17", forRemoval = true)
     public abstract @NotNull Iterator<Recipe> recipeIterator(RecipeType recipeType);
 
     @Deprecated(since = "4.17", forRemoval = true)
