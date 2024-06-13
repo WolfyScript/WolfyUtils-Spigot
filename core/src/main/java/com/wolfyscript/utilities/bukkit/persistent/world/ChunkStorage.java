@@ -88,6 +88,10 @@ public class ChunkStorage {
         return worldStorage.getWorld().map(world -> world.getChunkAt(coords.getX(), coords.getY()));
     }
 
+    public Vec2i getCoords() {
+        return coords;
+    }
+
     /**
      * Gets the PersistentDataContainer of the Chunk this Storage belongs to.<br>
      * <b>This may load the chunk if it isn't already!</b>

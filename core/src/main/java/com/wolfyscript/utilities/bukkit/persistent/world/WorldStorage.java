@@ -85,7 +85,7 @@ public class WorldStorage {
     }
 
     public void unloadChunk(ChunkStorage chunkStorage) {
-        chunkStorage.getChunk().ifPresent(chunk -> CHUNK_DATA.remove(new Vec2i(chunk.getX(), chunk.getZ())));
+        CHUNK_DATA.remove(chunkStorage.getCoords());
     }
 
     /**
