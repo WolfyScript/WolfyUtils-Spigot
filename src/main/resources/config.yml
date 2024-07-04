@@ -1,5 +1,15 @@
-api_references:
-  mmoitems: true
-  oraxen: true
-  mythicmobs: true
-  itemsadder: true
+stack_identifiers:
+  priorities:
+    "wolfyutilities:mmoitems": 2000
+    "wolfyutilities:oraxen": 1900
+    "wolfyutilities:executableitems": 1800
+    "wolfyutilities:executableblocks": 1700
+    "wolfyutilities:mythicmobs": 1600
+    "wolfyutilities:itemsadder": 1500
+    "wolfyutilities:magic": 600
+    "wolfyutilities:eco": 100
+    "wolfyutilities:fancybags": 0
+    "wolfyutilities:denizen": 0
+    "wolfyutilities:wolfyutils": 0
+    # Make sure the bukkit identifier has the lowest priority at all times! This will otherwise overwrite everything
+    "wolfyutilities:bukkit": -4096
