@@ -10,10 +10,7 @@ import me.wolfyscript.utilities.registry.RegistrySimple;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public class RegistryStackIdentifierParsers extends RegistrySimple<StackIdentifierParser<?>> {
 
@@ -21,7 +18,7 @@ public class RegistryStackIdentifierParsers extends RegistrySimple<StackIdentifi
     private final Registries registries;
 
     public RegistryStackIdentifierParsers(Registries registries) {
-        super(new NamespacedKey(registries.getCore(), "stack_identifier/parsers"), registries, (Class<StackIdentifierParser<?>>)(Object) StackIdentifierParser.class);
+        super(new NamespacedKey(registries.getCore(), "stack_identifier/parsers"), registries, (Class<StackIdentifierParser<?>>) (Object) StackIdentifierParser.class);
         this.registries = registries;
     }
 
@@ -51,8 +48,6 @@ public class RegistryStackIdentifierParsers extends RegistrySimple<StackIdentifi
     }
 
     /**
-     *
-     *
      * @param stack
      * @return
      */
@@ -62,6 +57,12 @@ public class RegistryStackIdentifierParsers extends RegistrySimple<StackIdentifi
     }
 
     private void reIndexParsers() {
-        priorityIndexedParsers = map.values().stream().sorted(Comparator.naturalOrder()).filter(Objects::nonNull).toList();
+        Map<NamespacedKey, Integer> customPriorities = registries.getCore().getConfig().getIdentifierParserPriorities();
+
+        priorityIndexedParsers = map.values().stream().filter(Objects::nonNull).sorted((parser, otherParser) -> {
+            int parserPriority = customPriorities.getOrDefault(parser.getNamespacedKey(), parser.priority());
+            int otherPriority = customPriorities.getOrDefault(otherParser.getNamespacedKey(), otherParser.priority());
+            return Integer.compare(otherPriority, parserPriority);
+        }).toList();
     }
 }
