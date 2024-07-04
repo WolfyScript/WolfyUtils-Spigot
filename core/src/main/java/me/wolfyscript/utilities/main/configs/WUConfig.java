@@ -22,6 +22,13 @@ import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.config.ConfigAPI;
 import me.wolfyscript.utilities.api.config.YamlConfiguration;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
+import me.wolfyscript.utilities.util.NamespacedKey;
+import org.bukkit.configuration.ConfigurationSection;
+
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class WUConfig extends YamlConfiguration {
 
@@ -31,6 +38,24 @@ public class WUConfig extends YamlConfiguration {
 
     public boolean isAPIReferenceEnabled(APIReference.Parser<?> parser) {
         return getBoolean("api_references." + parser.getId(), true);
+    }
+
+    public Map<NamespacedKey, Integer> getIdentifierParserPriorities() {
+        ConfigurationSection section = getConfigurationSection("stack_identifiers.priorities");
+        if (section == null) return Map.of();
+
+        Set<String> keys = section.getKeys(false);
+        if (keys.isEmpty()) return Map.of();
+
+        return keys.stream().map(key -> {
+            int priority = section.getInt(key, 0);
+            NamespacedKey namespacedKey = NamespacedKey.of(key);
+            if (namespacedKey == null) {
+                plugin.getLogger().warning("Cannot load priority for stack identifier \" " + key + "\"! Invalid key format (<namespace>:<name>)!");
+                return null;
+            }
+            return Map.entry(namespacedKey, priority);
+        }).filter(Objects::nonNull).collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
 }
