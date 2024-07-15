@@ -153,6 +153,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
 import org.reflections.util.ConfigurationBuilder;
@@ -212,6 +213,7 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
         this.messageFactory = new MessageFactory(this);
         this.persistentStorage = new PersistentStorage(this);
         this.functionalRecipeGenerator = FunctionalRecipeGenerator.create(this);
+        this.config = new WUConfig(api.getConfigAPI(), this);
 
         // Data that needs to be registered
         getLogger().info("Register Default StackIdentifiers");
@@ -410,7 +412,6 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
         console.info("Minecraft version: " + ServerVersion.getVersion().getVersion());
         console.info("WolfyUtils version: " + ServerVersion.getWUVersion().getVersion());
         console.info("Environment: " + WolfyUtilities.getENVIRONMENT());
-        this.config = new WUConfig(api.getConfigAPI(), this);
         compatibilityManager.init();
 
         // Register ReferenceParser
@@ -589,6 +590,12 @@ public abstract class WolfyUtilCore extends JavaPlugin implements WolfyCore {
         if (parser instanceof VanillaRef.Parser || parser instanceof WolfyUtilitiesRef.Parser || config.isAPIReferenceEnabled(parser)) {
             CustomItem.registerAPIReferenceParser(parser);
         }
+    }
+
+    @NotNull
+    @Override
+    public WUConfig getConfig() {
+        return config;
     }
 
     public MessageHandler getMessageHandler() {
