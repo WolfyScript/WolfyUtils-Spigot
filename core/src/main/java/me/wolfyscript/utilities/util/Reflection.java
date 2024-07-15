@@ -74,7 +74,8 @@ public class Reflection {
     private static final Map<Class<?>, Map<String, Field>> loadedDeclaredFields = new HashMap<>();
     private static final Map<Class<?>, Map<Class<?>, Field>> foundFields = new HashMap<>();
 
-    private Reflection() {}
+    private Reflection() {
+    }
 
     /**
      * Gets the version from the version dependent CraftBukkit package. e.g. v1_17_R1
@@ -82,7 +83,7 @@ public class Reflection {
      * @return The CraftBukkit version; empty when mojang mappings are used
      */
     public static Optional<String> getVersion() {
-        if(VERSION != null){
+        if (VERSION != null) {
             return Optional.of(VERSION);
         }
         String[] packages = Bukkit.getServer().getClass().getPackage().getName().split("\\.");
@@ -117,6 +118,27 @@ public class Reflection {
         return clazz;
     }
 
+    public static Class<?> getNMSUnsafe(String nmsClassName) throws ClassNotFoundException {
+        if (loadedNMSClasses.containsKey(nmsClassName)) {
+            return loadedNMSClasses.get(nmsClassName);
+        }
+        Class<?> clazz = Class.forName(NMS_PKG + nmsClassName);
+        loadedNMSClasses.put(nmsClassName, clazz);
+        return clazz;
+    }
+
+    public static Class<?> getNMSUnsafe(NMSMapping mapping) throws ClassNotFoundException {
+        return getNMSUnsafe(mapping.get());
+    }
+
+    public static Class<?> getNMSUnsafe(String mojangPkg, String className) throws ClassNotFoundException {
+        return getNMSUnsafe(mojangPkg + "." + className);
+    }
+
+    public static Class<?> getNMSUnsafe(String mojangPkg, NMSMapping mapping) throws ClassNotFoundException {
+        return getNMSUnsafe(mojangPkg, mapping.get());
+    }
+
     /**
      * Get an NMS Class
      *
@@ -127,16 +149,12 @@ public class Reflection {
         if (loadedNMSClasses.containsKey(nmsClassName)) {
             return loadedNMSClasses.get(nmsClassName);
         }
-        String clazzName = NMS_PKG + nmsClassName;
-        Class<?> clazz;
         try {
-            clazz = Class.forName(clazzName);
+            return getNMSUnsafe(nmsClassName);
         } catch (ClassNotFoundException e) {
             WolfyUtilCore.getInstance().getLogger().log(Level.SEVERE, "Could not get NMS Class!", e);
             return loadedNMSClasses.put(nmsClassName, null);
         }
-        loadedNMSClasses.put(nmsClassName, clazz);
-        return clazz;
     }
 
     public static Class<?> getNMS(NMSMapping mapping) {
@@ -210,6 +228,25 @@ public class Reflection {
      * @param params     Any parameters that the method has
      * @return The method with appropriate parameters
      */
+    public static Method getMethodUnsafe(@NotNull Class<?> clazz, String methodName, Class<?>... params) throws NoSuchMethodException {
+        Map<String, Method> methods = loadedMethods.computeIfAbsent(clazz, aClass -> new HashMap<>());
+        if (methods.containsKey(methodName)) {
+            return methods.get(methodName);
+        }
+        Method method = clazz.getMethod(methodName, params);
+        methods.put(methodName, method);
+        loadedMethods.put(clazz, methods);
+        return method;
+    }
+
+    /**
+     * Get a method from a class that has the specific parameters
+     *
+     * @param clazz      The class we are searching
+     * @param methodName The name of the method
+     * @param params     Any parameters that the method has
+     * @return The method with appropriate parameters
+     */
     public static Method getMethod(@NotNull Class<?> clazz, String methodName, Class<?>... params) {
         return getMethod(false, clazz, methodName, params);
     }
@@ -223,24 +260,39 @@ public class Reflection {
      * @return The method with appropriate parameters
      */
     public static Method getMethod(boolean silent, @NotNull Class<?> clazz, String methodName, Class<?>... params) {
-        loadedMethods.computeIfAbsent(clazz, aClass -> new HashMap<>());
-        Map<String, Method> methods = loadedMethods.get(clazz);
-        if (methods.containsKey(methodName)) {
-            return methods.get(methodName);
-        }
         try {
-            Method method = clazz.getMethod(methodName, params);
-            methods.put(methodName, method);
-            loadedMethods.put(clazz, methods);
-            return method;
+            return getMethodUnsafe(clazz, methodName, params);
         } catch (Exception e) {
+            Map<String, Method> methods = loadedMethods.get(clazz);
             if (!silent) {
                 WolfyUtilCore.getInstance().getLogger().log(Level.SEVERE, "Could not find or invoke Method!", e);
             }
             methods.put(methodName, null);
+            if (methods.containsKey(methodName)) {
+                return methods.get(methodName);
+            }
             loadedMethods.put(clazz, methods);
             return null;
         }
+    }
+
+    /**
+     * Get a declared method from a class that has the specific parameters
+     *
+     * @param clazz      The class we are searching
+     * @param methodName The name of the method
+     * @param params     Any parameters that the method has
+     * @return The method with appropriate parameters
+     */
+    public static Method getDeclaredMethodUnsafe(@NotNull Class<?> clazz, String methodName, Class<?>... params) throws NoSuchMethodException {
+        Map<String, Method> methods = loadedDeclaredMethods.computeIfAbsent(clazz, aClass -> new HashMap<>());
+        if (methods.containsKey(methodName)) {
+            return methods.get(methodName);
+        }
+        Method method = clazz.getDeclaredMethod(methodName, params);
+        methods.put(methodName, method);
+        loadedDeclaredMethods.put(clazz, methods);
+        return method;
     }
 
     /**
@@ -292,18 +344,50 @@ public class Reflection {
      * @param fieldName The name of the field
      * @return The field object
      */
-    public static Field getField(@NotNull Class<?> clazz, String fieldName) {
-        loadedFields.computeIfAbsent(clazz, aClass -> new HashMap<>());
-        Map<String, Field> fields = loadedFields.get(clazz);
+    public static Field getFieldUnsafe(@NotNull Class<?> clazz, String fieldName) throws NoSuchFieldException {
+        Map<String, Field> fields = loadedFields.computeIfAbsent(clazz, aClass -> new HashMap<>());
         if (fields.containsKey(fieldName)) {
             return fields.get(fieldName);
         }
+        Field field = clazz.getField(fieldName);
+        fields.put(fieldName, field);
+        loadedFields.put(clazz, fields);
+        return field;
+    }
+
+    /**
+     * Get a declared field with a particular name from a class
+     *
+     * @param clazz     The class
+     * @param fieldName The name of the field
+     * @return The field object
+     */
+    public static Field getDeclaredFieldUnsafe(@NotNull Class<?> clazz, String fieldName) throws NoSuchFieldException {
+        Map<String, Field> fields = loadedDeclaredFields.computeIfAbsent(clazz, aClass -> new HashMap<>());
+        if (fields.containsKey(fieldName)) {
+            return fields.get(fieldName);
+        }
+        Field field = clazz.getDeclaredField(fieldName);
+        fields.put(fieldName, field);
+        loadedDeclaredFields.put(clazz, fields);
+        return field;
+    }
+
+    /**
+     * Get a field with a particular name from a class
+     *
+     * @param clazz     The class
+     * @param fieldName The name of the field
+     * @return The field object
+     */
+    public static Field getField(@NotNull Class<?> clazz, String fieldName) {
         try {
-            Field field = clazz.getField(fieldName);
-            fields.put(fieldName, field);
-            loadedFields.put(clazz, fields);
-            return field;
+            return getFieldUnsafe(clazz, fieldName);
         } catch (Exception e) {
+            Map<String, Field> fields = loadedFields.get(clazz);
+            if (fields.containsKey(fieldName)) {
+                return fields.get(fieldName);
+            }
             WolfyUtilCore.getInstance().getLogger().log(Level.SEVERE, "Could not find or access field!", e);
             fields.put(fieldName, null);
             loadedFields.put(clazz, fields);
@@ -319,17 +403,13 @@ public class Reflection {
      * @return The field object
      */
     public static Field getDeclaredField(@NotNull Class<?> clazz, String fieldName) {
-        loadedDeclaredFields.computeIfAbsent(clazz, aClass -> new HashMap<>());
-        Map<String, Field> fields = loadedDeclaredFields.get(clazz);
-        if (fields.containsKey(fieldName)) {
-            return fields.get(fieldName);
-        }
         try {
-            Field field = clazz.getDeclaredField(fieldName);
-            fields.put(fieldName, field);
-            loadedDeclaredFields.put(clazz, fields);
-            return field;
+            return getDeclaredFieldUnsafe(clazz, fieldName);
         } catch (Exception e) {
+            Map<String, Field> fields = loadedDeclaredFields.get(clazz);
+            if (fields.containsKey(fieldName)) {
+                return fields.get(fieldName);
+            }
             WolfyUtilCore.getInstance().getLogger().log(Level.SEVERE, "Could not find or access field!", e);
             fields.put(fieldName, null);
             loadedDeclaredFields.put(clazz, fields);
@@ -354,8 +434,8 @@ public class Reflection {
             List<Field> allFields = new ArrayList<>();
             allFields.addAll(Arrays.asList(clazz.getFields()));
             allFields.addAll(Arrays.asList(clazz.getDeclaredFields()));
-            for(Field f : allFields){
-                if(type.equals(f.getType())){
+            for (Field f : allFields) {
+                if (type.equals(f.getType())) {
                     fields.put(type, f);
                     foundFields.put(clazz, fields);
                     return f;
