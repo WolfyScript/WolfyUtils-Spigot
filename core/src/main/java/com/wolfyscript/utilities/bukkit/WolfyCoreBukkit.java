@@ -48,6 +48,8 @@ public final class WolfyCoreBukkit extends WolfyUtilCore {
     @Override
     public void onEnable() {
        super.onEnable();
+
+       this.adventure = BukkitAudiences.create(this);
     }
 
     @Override
