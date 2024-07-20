@@ -22,7 +22,6 @@ dependencies {
     api(libs.adventure.minimessage)
     api(libs.adventure.platform.bukkit)
     api(libs.nbtapi.api)
-    api(libs.nbtapi.data)
 
     testImplementation(project(":core"))
     testImplementation(testLibs.junit.jupiter)
