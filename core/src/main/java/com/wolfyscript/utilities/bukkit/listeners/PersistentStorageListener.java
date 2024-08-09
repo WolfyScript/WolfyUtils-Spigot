@@ -9,20 +9,10 @@ import com.wolfyscript.utilities.bukkit.persistent.player.PlayerStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.ChunkStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.WorldStorage;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.entity.Entity;
@@ -30,18 +20,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockBurnEvent;
-import org.bukkit.event.block.BlockDropItemEvent;
-import org.bukkit.event.block.BlockExplodeEvent;
-import org.bukkit.event.block.BlockFadeEvent;
-import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockMultiPlaceEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPistonExtendEvent;
-import org.bukkit.event.block.BlockPistonRetractEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.LeavesDecayEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerLoadEvent;
@@ -50,6 +29,8 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+
+import java.util.*;
 
 public class PersistentStorageListener implements Listener {
 
@@ -231,41 +212,30 @@ public class PersistentStorageListener implements Listener {
     }
 
     private boolean handleExplodedBlockStorages(WorldStorage worldStorage, List<Block> blocks) {
-        boolean cancel = blocks.stream().anyMatch(block -> worldStorage.removeBlock(block.getLocation()).isPresent());
-        if (cancel) {
-            // Only use the custom behaviour if a block storage was included in the explosion
-            Iterator<Block> blockIterator = blocks.iterator();
-            while (blockIterator.hasNext()) {
-                Block block = blockIterator.next();
-                Location location = block.getLocation();
+        // Only use the custom behaviour if a block storage was included in the explosion
+        Iterator<Block> blockIterator = blocks.iterator();
+        while (blockIterator.hasNext()) {
+            Block block = blockIterator.next();
+            Location location = block.getLocation();
+            // Handle custom block storage drops, if available
+            worldStorage.getOrCreateChunkStorage(location).removeBlock(location).ifPresent(storage -> {
                 blockIterator.remove();
-                Collection<ItemStack> itemStacks = block.getDrops();
-                BlockState state = block.getState();
-                block.setType(Material.AIR);
-                // Handle custom block storage drops, if available
-                worldStorage.getOrCreateChunkStorage(location).getBlock(location).ifPresentOrElse(storage -> {
-                    World world = location.getWorld();
-                    if (world != null) {
-                        List<Item> itemDrops = itemStacks.stream().map(itemStack -> world.dropItemNaturally(location, itemStack)).toList();
-                        // Call the drop event for plugins to manipulate the drops
-                        var blockStoreDropItemsEvent = new BlockStorageDropItemsEvent(block, state, storage, null, new ArrayList<>(itemDrops));
-                        Bukkit.getPluginManager().callEvent(blockStoreDropItemsEvent);
-                        List<Item> eventItems = blockStoreDropItemsEvent.getItems();
-                        if (blockStoreDropItemsEvent.isCancelled()) {
-                            blockStoreDropItemsEvent.getItems().clear();
-                        }
-                        //Remove the items that were removed from the list
-                        itemDrops.stream().filter(item -> !eventItems.contains(item)).forEach(Entity::remove);
+                World world = location.getWorld();
+                if (world != null) {
+                    Collection<ItemStack> itemStacks = block.getDrops();
+                    List<Item> itemDrops = itemStacks.stream().map(itemStack -> world.dropItemNaturally(location, itemStack)).toList();
+                    // Call the drop event for plugins to manipulate the drops
+                    var blockStoreDropItemsEvent = new BlockStorageDropItemsEvent(block, block.getState(), storage, null, new ArrayList<>(itemDrops));
+                    Bukkit.getPluginManager().callEvent(blockStoreDropItemsEvent);
+                    List<Item> eventItems = blockStoreDropItemsEvent.getItems();
+                    if (blockStoreDropItemsEvent.isCancelled()) {
+                        blockStoreDropItemsEvent.getItems().clear();
                     }
-                }, () -> {
-                    // Otherwise just drop the items
-                    World world = location.getWorld();
-                    if (world != null) {
-                        itemStacks.forEach(itemStack -> world.dropItemNaturally(location, itemStack));
-                    }
-                });
-            }
-            return true;
+                    //Remove the items that were removed from the list
+                    itemDrops.stream().filter(item -> !eventItems.contains(item)).forEach(Entity::remove);
+                }
+                block.setType(Material.AIR); // TODO: Only remove the block when the event is destructive!
+            });
         }
         return false;
     }
