@@ -200,30 +200,34 @@ public class PersistentStorageListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onEntityExplodeBlockStorages(EntityExplodeEvent event) {
-        event.setCancelled(handleExplodedBlockStorages(persistentStorage.getOrCreateWorldStorage(event.getEntity().getWorld()), event.blockList()));
+        var destructive = switch (event.getEntityType().getKey().toString()) {
+            case "minecraft:wind_charge" -> false;
+            default -> true;
+        };
+        handleExplodedBlockStorages(persistentStorage.getOrCreateWorldStorage(event.getEntity().getWorld()), event.blockList(), destructive);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onBlockExplodeStorages(BlockExplodeEvent event) {
         var worldStorage = persistentStorage.getOrCreateWorldStorage(event.getBlock().getWorld());
         worldStorage.removeBlock(event.getBlock().getLocation()); // Remove the block that exploded, since that might have had custom data.
-        //event.setYield(0f);
-        event.setCancelled(handleExplodedBlockStorages(worldStorage, event.blockList()));
+        handleExplodedBlockStorages(worldStorage, event.blockList(), true); // For now all known block explosion sources are destructive
     }
 
-    private boolean handleExplodedBlockStorages(WorldStorage worldStorage, List<Block> blocks) {
-        // Only use the custom behaviour if a block storage was included in the explosion
+    private void handleExplodedBlockStorages(WorldStorage worldStorage, List<Block> blocks, boolean destructive) {
+        if (!destructive) {
+            return; // In this case we can skip the whole custom drop/destruction logic
+        }
         Iterator<Block> blockIterator = blocks.iterator();
         while (blockIterator.hasNext()) {
             Block block = blockIterator.next();
             Location location = block.getLocation();
             // Handle custom block storage drops, if available
             worldStorage.getOrCreateChunkStorage(location).removeBlock(location).ifPresent(storage -> {
-                blockIterator.remove();
+                blockIterator.remove(); // Remove block from the original block list to prevent vanilla drops
                 World world = location.getWorld();
                 if (world != null) {
-                    Collection<ItemStack> itemStacks = block.getDrops();
-                    List<Item> itemDrops = itemStacks.stream().map(itemStack -> world.dropItemNaturally(location, itemStack)).toList();
+                    List<Item> itemDrops = block.getDrops().stream().map(itemStack -> world.dropItemNaturally(location, itemStack)).toList();
                     // Call the drop event for plugins to manipulate the drops
                     var blockStoreDropItemsEvent = new BlockStorageDropItemsEvent(block, block.getState(), storage, null, new ArrayList<>(itemDrops));
                     Bukkit.getPluginManager().callEvent(blockStoreDropItemsEvent);
@@ -234,10 +238,9 @@ public class PersistentStorageListener implements Listener {
                     //Remove the items that were removed from the list
                     itemDrops.stream().filter(item -> !eventItems.contains(item)).forEach(Entity::remove);
                 }
-                block.setType(Material.AIR); // TODO: Only remove the block when the event is destructive!
+                block.setType(Material.AIR);
             });
         }
-        return false;
     }
 
     private void removeMultiBlockItems(Block block) {
