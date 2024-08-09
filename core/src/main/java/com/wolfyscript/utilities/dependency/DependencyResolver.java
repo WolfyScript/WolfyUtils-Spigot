@@ -73,14 +73,17 @@ public interface DependencyResolver {
                 DependencySource dependencySource = declaredField.getAnnotation(DependencySource.class);
                 if (dependencySource != null) {
                     try {
+                        Object fieldObj = declaredField.get(value);
+                        if (fieldObj == null) {
+                            continue;
+                        }
                         if (dependencySource.flattenIterable() && Iterable.class.isAssignableFrom(declaredField.getType())) {
-                            Iterable<?> iterable = (Iterable<?>) declaredField.get(value);
-                            for (Object object : iterable) {
-                                dependencies.addAll(resolveDependenciesFor(object, object.getClass()));
+                            Iterable<?> iterable = (Iterable<?>) fieldObj;
+                            for (Object element : iterable) {
+                                dependencies.addAll(resolveDependenciesFor(element, element.getClass()));
                             }
                         } else {
-                            var object = declaredField.get(value);
-                            dependencies.addAll(resolveDependenciesFor(object, object.getClass()));
+                            dependencies.addAll(resolveDependenciesFor(fieldObj, fieldObj.getClass()));
                         }
                     } catch (IllegalAccessException e) {
                         throw new MissingDependencyException("Failed to fetch dependencies of type '" + declaredField.getType().getName() + "'!", e);
