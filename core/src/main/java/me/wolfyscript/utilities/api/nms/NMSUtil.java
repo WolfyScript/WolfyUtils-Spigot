@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.util.Reflection;
+import me.wolfyscript.utilities.util.version.MinecraftVersion;
 import me.wolfyscript.utilities.util.version.ServerVersion;
 import org.bukkit.plugin.Plugin;
 
@@ -84,6 +85,9 @@ public abstract class NMSUtil {
     public static NMSUtil create(WolfyUtilities wolfyUtilities) {
         if(ServerVersion.isIsJUnitTest()) {
             return null;
+        }
+        if (ServerVersion.getVersion().isBefore(MinecraftVersion.of(1, 21, 0))) {
+            return new FallbackNMSEntry(wolfyUtilities); // When using 1.21+ WolfyUtils no longer provides NMSUtils
         }
         String version = Reflection.getVersion().orElse(null);
         try {
