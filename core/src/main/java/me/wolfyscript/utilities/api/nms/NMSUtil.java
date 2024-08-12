@@ -86,7 +86,7 @@ public abstract class NMSUtil {
         if(ServerVersion.isIsJUnitTest()) {
             return null;
         }
-        if (ServerVersion.getVersion().isBefore(MinecraftVersion.of(1, 21, 0))) {
+        if (ServerVersion.getVersion().isAfterOrEq(MinecraftVersion.of(1, 21, 0))) {
             return new FallbackNMSEntry(wolfyUtilities); // When using 1.21+ WolfyUtils no longer provides NMSUtils
         }
         String version = Reflection.getVersion().orElse(null);
