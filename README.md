@@ -9,7 +9,11 @@
 
 Core API that provides an API and Utils for plugins based on Spigot.
 
-**This is the Spigot implementation of WolfyUtils. For more info see [WolfyScript/WolfyUtilities](https://github.com/WolfyScript/WolfyUtilities)**
+> [!NOTE]  
+> **WolfyUtils is still maintained, but it will be replaced by the more modern [scafall](https://github.com/WolfyScript/scafall) project in the future!**  
+> While scafall is in development this project will still receive bug fixes and Minecraft compatibility updates.  
+> Major feature updates should not be expected! New features will be implemented in scafall instead!  
+> **There is no ETA for scafall!** *Since scafall is still in alpha, it will be a while till it's stable!*
 
 ### APIs & Utils
 - **API** is plugin dependent, which means there is one instance of the API per plugin.
