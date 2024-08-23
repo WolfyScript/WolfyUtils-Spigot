@@ -191,12 +191,18 @@ public class StackReference implements Copyable<StackReference> {
     /**
      * Gets the <b>ORIGINAL</b> stack, from which this reference was created from!<br>
      * For the linked stack from for example an external plugin use {@link #identifier()}!
+     * <p>
+     *      The original stack is the stack the reference was created from (e.g. GUI input), and falls back to the {@link #referencedStack()} if not available (e.g. loaded from config).
+     * </p>
      *
-     * @return The <b>ORIGINAL</b> stack this reference was created from
+     * @return The <b>ORIGINAL</b> stack this reference was created from; Or {@link #referencedStack()} if not available.
      * @see #identifier() Get the StackIdentifier pointing to the external stack
      * @see #referencedStack() Get the externally referenced ItemStack
      */
     public ItemStack originalStack() {
+        if (stack == null) {
+            stack = referencedStack();
+        }
         return stack;
     }
 
@@ -367,16 +373,14 @@ public class StackReference implements Copyable<StackReference> {
                     originalStack = ctxt.readTreeAsValue(root.get("stack"), ItemStack.class);
                 }
 
-                if (hasIdentifier) {
-                    // Identifier is defined, use defined identifier
+                if (hasIdentifier) { // Identifier is defined, use defined identifier. No need to parse identifier
                     var identifier = ctxt.readTreeAsValue(root.get("identifier"), StackIdentifier.class);
-                    if (originalStack == null) {
-                        originalStack = identifier.stack(ItemCreateContext.empty(1));
-                    }
+                    // We don't create the original stack here to allow async config loading. Instead, the stack is created when necessary on runtime. See StackReference.originalStack().
+                    // We only use the originalStack that may exist already if defined in the config.
                     return new StackReference(core, amount, weight, identifier, originalStack);
                 }
 
-                // Parser is defined, parse form original stack
+                // Parser is defined, parse form original stack. This was only part of CC for a very short time, but still have to support it. Replaced by the identifier property above.
                 var parserKey = ctxt.readTreeAsValue(root.get("parser"), NamespacedKey.class);
                 return new StackReference(core, amount, weight, parserKey, originalStack);
             }
