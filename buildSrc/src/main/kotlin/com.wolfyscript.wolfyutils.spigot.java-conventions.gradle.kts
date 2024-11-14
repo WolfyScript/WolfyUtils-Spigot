@@ -18,6 +18,8 @@ repositories {
     maven(url = "https://nexus.phoenixdevt.fr/repository/maven-public/")
     maven(url = "https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven(url = "https://libraries.minecraft.net/")
+
+    maven("https://repo.auxilor.io/repository/maven-public/")
 }
 
 java {
@@ -35,8 +37,7 @@ dependencies {
     compileOnly("com.mojang:authlib:1.5.21")
     compileOnly("io.netty:netty-all:4.1.85.Final")
     compileOnly("org.bstats:bstats-bukkit:3.0.0")
-    compileOnly("de.tr7zw:item-nbt-api:2.11.3")
-    compileOnly("de.tr7zw:nbt-data-api:2.11.3")
+    compileOnly("de.tr7zw:item-nbt-api:2.14.0")
     // Common Test libs
     testImplementation("com.wolfyscript.wolfyutils:wolfyutilities:${apiVersion}")
 }

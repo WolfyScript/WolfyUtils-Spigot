@@ -7,7 +7,7 @@ dependencies {
     compileOnly("com.ssomar.executableblocks:ExecutableBlocks:4.0.1")
     compileOnly("com.denizenscript:denizen:1.2.5-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.1")
-    compileOnly("com.willfp:eco:6.13.0")
+    compileOnly("com.willfp:eco:6.74.2")
     compileOnly("com.github.LoneDev6:api-itemsadder:3.1.5")
     compileOnly("com.elmakers.mine.bukkit:MagicAPI:10.2")
     compileOnly("com.github.AlessioGr:FancyBags:2.7.0")
