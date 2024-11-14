@@ -80,7 +80,7 @@ minecraftServers {
             ports.set(setOf(debugPortMapping, "25568:25565"))
         }
         register("spigot_1_21") {
-            version.set("1.21.1")
+            version.set("1.21.3")
             type.set("SPIGOT")
             extraEnv.put("BUILD_FROM_SOURCE", "true")
             imageVersion.set("java21-graalvm") // graalvm contains the jdk required to build from source
@@ -88,7 +88,7 @@ minecraftServers {
         }
         // Paper test servers
         register("paper_1_21") {
-            version.set("1.21.1")
+            version.set("1.21.3")
             type.set("PAPER")
             imageVersion.set("java21")
             ports.set(setOf(debugPortMapping, "25569:25565"))
