@@ -1,3 +1,4 @@
+/*
 package me.wolfyscript.utilities.compatibility.plugins.fancybags;
 
 import me.wolfyscript.utilities.annotations.WUPluginIntegration;
@@ -10,11 +11,13 @@ public class FancyBagsImpl extends PluginIntegrationAbstract {
 
     public static final String KEY = "FancyBags";
 
-    /**
+    */
+/**
      * The main constructor that is called whenever the integration is created.<br>
      *
      * @param core       The WolfyUtilCore.
-     */
+     *//*
+
     protected FancyBagsImpl(WolfyUtilCore core) {
         super(core, KEY);
     }
@@ -31,3 +34,4 @@ public class FancyBagsImpl extends PluginIntegrationAbstract {
         return false;
     }
 }
+*/

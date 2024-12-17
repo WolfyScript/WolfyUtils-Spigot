@@ -43,7 +43,7 @@ public class ExecutableBlocksImpl extends PluginIntegrationAbstract implements E
 
     @Override
     public List<String> getExecutableBlockIdsList() {
-        return manager.getExecutableBlockIdsList();
+        return manager.getLoadedObjectsIDs();
     }
 
     @Override

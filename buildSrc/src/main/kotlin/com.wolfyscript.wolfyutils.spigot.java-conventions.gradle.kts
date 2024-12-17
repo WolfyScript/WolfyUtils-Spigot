@@ -18,13 +18,14 @@ repositories {
     maven(url = "https://nexus.phoenixdevt.fr/repository/maven-public/")
     maven(url = "https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven(url = "https://libraries.minecraft.net/")
+    maven(url="https://mvn.lumine.io/repository/maven-public/")
 
     maven("https://repo.auxilor.io/repository/maven-public/")
 }
 
 java {
     // Configure the java toolchain. This allows gradle to auto-provision JDK 17 on systems that only have JDK 8 installed for example.
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 val apiVersion = "4.16.1-SNAPSHOT"

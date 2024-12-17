@@ -19,7 +19,7 @@
 package me.wolfyscript.utilities.compatibility.plugins.mythicmobs;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.lumine.xikage.mythicmobs.MythicMobs;
+import io.lumine.mythic.bukkit.MythicBukkit;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,7 +44,7 @@ public class MythicMobsRefImpl extends AbstractMythicMobsRef {
 
     @Override
     public ItemStack getLinkedItem() {
-        return MythicMobs.inst().getItemManager().getItemStack(itemName);
+        return MythicBukkit.inst().getItemManager().getItemStack(itemName);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class MythicMobsRefImpl extends AbstractMythicMobsRef {
 
         @Override
         protected MythicMobsRefImpl construct(String value) {
-            if (MythicMobs.inst().getItemManager().getItem(value).isPresent()) {
+            if (MythicBukkit.inst().getItemManager().getItem(value).isPresent()) {
                 return new MythicMobsRefImpl(value);
             }
             return null;

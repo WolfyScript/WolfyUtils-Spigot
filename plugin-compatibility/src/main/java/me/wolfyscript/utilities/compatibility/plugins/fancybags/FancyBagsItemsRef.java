@@ -1,3 +1,4 @@
+/*
 package me.wolfyscript.utilities.compatibility.plugins.fancybags;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -82,3 +83,4 @@ public class FancyBagsItemsRef extends APIReference {
         }
     }
 }
+*/
