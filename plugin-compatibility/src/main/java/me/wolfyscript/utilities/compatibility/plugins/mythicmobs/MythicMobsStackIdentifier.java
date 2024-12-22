@@ -13,7 +13,7 @@ import com.wolfyscript.utilities.bukkit.world.items.reference.LegacyParser;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifierParser;
 import com.wolfyscript.utilities.dependency.DependencyResolverSettings;
-import de.tr7zw.changeme.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.NBTItem;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import me.wolfyscript.utilities.compatibility.plugins.MythicMobsIntegration;
 import me.wolfyscript.utilities.util.NamespacedKey;
