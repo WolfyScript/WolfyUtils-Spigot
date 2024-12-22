@@ -47,7 +47,7 @@ dependencyResolutionManagement {
             library("fastutil", "it.unimi.dsi", "fastutil").version("8.5.6")
             library("typesafe.config", "com.typesafe", "config").version("1.3.1")
             library("bstats", "org.bstats", "bstats-bukkit").version("3.0.0")
-            library("nbtapi-api", "de.tr7zw", "item-nbt-api").version("2.13.2")
+            library("nbtapi-api", "de.tr7zw", "item-nbt-api-plugin").version("2.14.1")
         }
         // Libraries only used for testing
         create("testLibs") {

@@ -17,6 +17,9 @@ loadbefore:
   - DiSky
   - EpicWorldGenerator
 
+depend:
+  - NBTAPI
+
 softdepend:
   - Magic
   - LWC
