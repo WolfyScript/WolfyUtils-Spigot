@@ -19,7 +19,7 @@
 package me.wolfyscript.utilities.api.nms;
 
 import com.wolfyscript.utilities.paper.WolfyCorePaper;
-import de.tr7zw.changeme.nbtapi.NBT;
+import de.tr7zw.nbtapi.NBT;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;

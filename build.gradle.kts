@@ -124,7 +124,6 @@ tasks.named<ShadowJar>("shadowJar") {
         include(dependency(apis.dataformat.hocon.get().toString()))
         include(dependency("${libs.jackson.get().group}:.*"))
         include(dependency("${libs.bstats.get().group}:.*"))
-        include(dependency("${libs.nbtapi.api.get().group}:.*"))
         include(dependency("${libs.reflections.get().group}:.*"))
         include(dependency("${libs.javassist.get().group}:.*"))
         include(dependency("${libs.adventure.api.get().group}:.*"))
@@ -141,7 +140,6 @@ tasks.named<ShadowJar>("shadowJar") {
 
     // Dependencies (pre spigot plugin.yml dependency update) required to be shaded! To be removed in v5!
     relocate("com.typesafe", "com.wolfyscript.lib.com.typesafe")
-    relocate("de.tr7zw.changeme.nbtapi", "com.wolfyscript.lib.nbt.nbtapi")
 
     // Still using me.wolfyscript.lib package! To be changed/removed in v5!
     relocate("org.reflections", "me.wolfyscript.lib.org.reflections")

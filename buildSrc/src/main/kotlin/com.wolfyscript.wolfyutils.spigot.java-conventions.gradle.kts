@@ -38,7 +38,7 @@ dependencies {
     compileOnly("com.mojang:authlib:1.5.21")
     compileOnly("io.netty:netty-all:4.1.85.Final")
     compileOnly("org.bstats:bstats-bukkit:3.0.0")
-    compileOnly("de.tr7zw:item-nbt-api:2.14.0")
+    compileOnly("de.tr7zw:item-nbt-api-plugin:2.14.1")
     // Common Test libs
     testImplementation("com.wolfyscript.wolfyutils:wolfyutilities:${apiVersion}")
 }

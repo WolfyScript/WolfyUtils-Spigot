@@ -25,9 +25,9 @@ package com.wolfyscript.utilities.bukkit.nbt;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.tr7zw.changeme.nbtapi.NBTCompound;
-import de.tr7zw.changeme.nbtapi.NBTList;
-import de.tr7zw.changeme.nbtapi.NBTType;
+import de.tr7zw.nbtapi.NBTCompound;
+import de.tr7zw.nbtapi.NBTList;
+import de.tr7zw.nbtapi.NBTType;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
 import java.util.Optional;
