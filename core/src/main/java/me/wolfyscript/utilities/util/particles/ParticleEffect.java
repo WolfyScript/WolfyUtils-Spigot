@@ -94,7 +94,7 @@ public class ParticleEffect implements Keyed {
 
     @JsonCreator
     public ParticleEffect(@JsonProperty("particle") String particle) {
-        this(Particle.valueOf(ParticleDataFixer.convertWhenNecessary(particle).toUpperCase(Locale.ROOT)));
+        this(Particle.valueOf(ParticleDataFixer.convertWhenNecessary(particle.split(":").length!=2?particle:particle.split(":")[1]).toUpperCase(Locale.ROOT)));
     }
 
     public ParticleEffect(Particle particle) {
