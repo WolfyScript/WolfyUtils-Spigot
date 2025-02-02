@@ -19,7 +19,6 @@
 package me.wolfyscript.utilities.compatibility.plugins.itemsadder;
 
 import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
-import java.util.Optional;
 import me.wolfyscript.utilities.annotations.WUPluginIntegration;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
@@ -32,6 +31,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 @WUPluginIntegration(pluginName = ItemsAdderIntegration.KEY)
 public class ItemsAdderImpl extends PluginIntegrationAbstract implements ItemsAdderIntegration, Listener {

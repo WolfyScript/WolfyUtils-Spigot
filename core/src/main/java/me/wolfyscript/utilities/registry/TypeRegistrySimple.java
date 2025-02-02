@@ -18,21 +18,11 @@
 
 package me.wolfyscript.utilities.registry;
 
-import com.google.common.base.Preconditions;
-import com.wolfyscript.utilities.KeyedStaticId;
 import me.wolfyscript.utilities.util.Keyed;
 import me.wolfyscript.utilities.util.NamespacedKey;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 public class TypeRegistrySimple<V extends Keyed> extends AbstractTypeRegistry<Map<NamespacedKey, Class<? extends V>>, V> {
 

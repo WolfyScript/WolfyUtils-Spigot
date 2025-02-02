@@ -34,14 +34,8 @@ import me.wolfyscript.utilities.util.particles.ParticleEffect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -180,7 +174,7 @@ public interface Registry<V extends Keyed> extends Iterable<V> {
 
         @Override
         public Collection<V> values() {
-            System.out.println("Get values from simple Reg: " + this);
+/*            System.out.println("Get values from simple Reg: " + this);*/
             return Collections.unmodifiableCollection(this.map.values());
         }
 

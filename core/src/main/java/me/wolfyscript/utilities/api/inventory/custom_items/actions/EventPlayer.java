@@ -18,8 +18,6 @@
 
 package me.wolfyscript.utilities.api.inventory.custom_items.actions;
 
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.DataPlayer;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.Event;
 import me.wolfyscript.utilities.util.NamespacedKey;
 
 public abstract class EventPlayer<T extends DataPlayer> extends Event<T> {

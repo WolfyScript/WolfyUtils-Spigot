@@ -18,7 +18,6 @@
 
 package me.wolfyscript.utilities.api.inventory.custom_items.actions;
 
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.EventPlayerInteractEntityAbstract;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 

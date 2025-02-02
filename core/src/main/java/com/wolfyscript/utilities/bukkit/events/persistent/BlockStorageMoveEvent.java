@@ -1,11 +1,12 @@
 package com.wolfyscript.utilities.bukkit.events.persistent;
 
 import com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage;
-import java.util.Optional;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public class BlockStorageMoveEvent extends Event implements BlockStorageEvent {
 

@@ -19,10 +19,11 @@
 package me.wolfyscript.utilities.compatibility;
 
 import com.wolfyscript.utilities.bukkit.nms.ServerProperties;
-import java.util.Properties;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.util.version.MinecraftVersion;
 import me.wolfyscript.utilities.util.version.ServerVersion;
+
+import java.util.Properties;
 
 public final class CompatibilityManagerBukkit implements CompatibilityManager {
 

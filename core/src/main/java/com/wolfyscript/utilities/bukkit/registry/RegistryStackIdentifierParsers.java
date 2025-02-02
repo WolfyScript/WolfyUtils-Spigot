@@ -10,7 +10,10 @@ import me.wolfyscript.utilities.registry.RegistrySimple;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 public class RegistryStackIdentifierParsers extends RegistrySimple<StackIdentifierParser<?>> {
 

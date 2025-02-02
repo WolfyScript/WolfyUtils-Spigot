@@ -19,6 +19,7 @@ repositories {
     maven(url = "https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven(url = "https://libraries.minecraft.net/")
     maven(url="https://mvn.lumine.io/repository/maven-public/")
+    maven(url="https://maven.devs.beer/")
 
     maven("https://repo.auxilor.io/repository/maven-public/")
 }

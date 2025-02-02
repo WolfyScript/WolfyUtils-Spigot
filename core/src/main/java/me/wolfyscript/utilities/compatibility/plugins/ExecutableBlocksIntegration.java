@@ -1,12 +1,12 @@
 package me.wolfyscript.utilities.compatibility.plugins;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-
 import me.wolfyscript.utilities.compatibility.PluginIntegration;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 public interface ExecutableBlocksIntegration extends PluginIntegration {
 

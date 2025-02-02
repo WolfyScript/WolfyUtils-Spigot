@@ -18,7 +18,6 @@
 
 package me.wolfyscript.utilities.util.world;
 
-import java.nio.file.Files;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.util.NamespacedKey;
@@ -30,6 +29,7 @@ import org.bukkit.util.io.BukkitObjectInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.zip.GZIPInputStream;

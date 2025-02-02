@@ -11,7 +11,7 @@ dependencies {
     compileOnly(group = "com.sk89q.worldguard", name = "worldguard-bukkit", version = "7.1.0-SNAPSHOT")
     compileOnly(group = "com.plotsquared", name = "PlotSquared-Core", version = "6.4.0")
     compileOnly(group = "com.plotsquared", name = "PlotSquared-Bukkit", version = "6.4.0")
-    compileOnly(group = "com.gmail.nossr50.mcMMO", name = "mcMMO", version = "2.1.139-SNAPSHOT")
+    compileOnly(group = "com.gmail.nossr50.mcMMO", name = "mcMMO", version = "2.2.030")
     compileOnly(libs.guice)
     compileOnly(libs.reflections)
     compileOnly(libs.javassist)

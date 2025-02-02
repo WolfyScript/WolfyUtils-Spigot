@@ -18,6 +18,7 @@
 
 package me.wolfyscript.utilities.compatibility.plugins.eco;
 
+import com.willfp.eco.core.EcoPlugin;
 import com.willfp.eco.core.items.CustomItem;
 import com.willfp.eco.core.items.Items;
 import me.wolfyscript.utilities.annotations.WUPluginIntegration;
@@ -47,6 +48,9 @@ public class EcoIntegrationImpl extends PluginIntegrationAbstract implements Eco
         core.registerAPIReference(new EcoRefImpl.Parser());
         core.getRegistries().getStackIdentifierParsers().register(new EcoStackIdentifier.Parser());
         core.getRegistries().getStackIdentifierTypeRegistry().register(EcoStackIdentifier.class);
+        EcoPlugin pl = EcoPlugin.getPlugin("eco");
+        if(pl!=null)
+            pl.afterLoad(this::enable);
     }
 
     @Override
@@ -56,7 +60,7 @@ public class EcoIntegrationImpl extends PluginIntegrationAbstract implements Eco
 
     @Override
     public boolean hasAsyncLoading() {
-        return false;
+        return true;
     }
 
     @Override

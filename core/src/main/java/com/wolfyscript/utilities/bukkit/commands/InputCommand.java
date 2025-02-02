@@ -1,7 +1,5 @@
 package com.wolfyscript.utilities.bukkit.commands;
 
-import java.util.List;
-import java.util.Objects;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.gui.GuiHandler;
@@ -12,6 +10,9 @@ import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.Objects;
 
 public final class InputCommand extends Command implements PluginIdentifiableCommand {
 

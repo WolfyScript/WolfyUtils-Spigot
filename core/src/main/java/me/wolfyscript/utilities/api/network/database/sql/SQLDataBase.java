@@ -20,11 +20,7 @@ package me.wolfyscript.utilities.api.network.database.sql;
 
 import me.wolfyscript.utilities.api.WolfyUtilities;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Properties;
 
 public class SQLDataBase {

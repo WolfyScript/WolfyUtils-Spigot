@@ -18,19 +18,7 @@
 
 package me.wolfyscript.utilities.api.nms;
 
-import me.wolfyscript.utilities.api.nms.nbt.NBTCompound;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagByte;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagByteArray;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagDouble;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagEnd;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagFloat;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagInt;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagIntArray;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagList;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagLong;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagLongArray;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagShort;
-import me.wolfyscript.utilities.api.nms.nbt.NBTTagString;
+import me.wolfyscript.utilities.api.nms.nbt.*;
 
 @Deprecated(since = "4.16.2.0")
 public abstract class NBTTag {

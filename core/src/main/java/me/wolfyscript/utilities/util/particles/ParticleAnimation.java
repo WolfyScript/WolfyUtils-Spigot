@@ -27,11 +27,7 @@ import me.wolfyscript.utilities.util.Keyed;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.entity.PlayerUtils;
 import me.wolfyscript.utilities.util.json.jackson.annotations.OptionalKeyReference;
-import me.wolfyscript.utilities.util.particles.pos.ParticlePos;
-import me.wolfyscript.utilities.util.particles.pos.ParticlePosBlock;
-import me.wolfyscript.utilities.util.particles.pos.ParticlePosEntity;
-import me.wolfyscript.utilities.util.particles.pos.ParticlePosLocation;
-import me.wolfyscript.utilities.util.particles.pos.ParticlePosPlayer;
+import me.wolfyscript.utilities.util.particles.pos.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -43,14 +39,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**

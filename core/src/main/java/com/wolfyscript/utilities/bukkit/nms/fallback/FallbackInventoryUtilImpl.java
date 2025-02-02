@@ -3,8 +3,6 @@ package com.wolfyscript.utilities.bukkit.nms.fallback;
 import me.wolfyscript.utilities.api.nms.InventoryUtil;
 import me.wolfyscript.utilities.api.nms.NMSUtil;
 import me.wolfyscript.utilities.util.inventory.CreativeModeTab;
-import me.wolfyscript.utilities.util.version.ServerVersion;
-import org.apache.commons.lang3.NotImplementedException;
 import org.bukkit.Material;
 
 public class FallbackInventoryUtilImpl extends InventoryUtil {

@@ -22,13 +22,13 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.wolfyscript.utilities.common.WolfyUtils;
-import java.io.IOException;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.eval.context.EvalContext;
 import me.wolfyscript.utilities.util.json.jackson.ValueDeserializer;
 import me.wolfyscript.utilities.util.json.jackson.annotations.KeyedBaseType;
 import me.wolfyscript.utilities.util.json.jackson.annotations.OptionalValueDeserializer;
+
+import java.io.IOException;
 
 /**
  * An Operator that evaluates into a booleanish value.

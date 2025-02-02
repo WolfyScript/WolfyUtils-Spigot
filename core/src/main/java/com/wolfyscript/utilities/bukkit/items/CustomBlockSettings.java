@@ -1,6 +1,7 @@
 package com.wolfyscript.utilities.bukkit.items;
 
 import com.wolfyscript.utilities.Copyable;
+
 import java.util.Objects;
 
 public class CustomBlockSettings implements Copyable<CustomBlockSettings> {

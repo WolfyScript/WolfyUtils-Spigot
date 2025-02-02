@@ -19,7 +19,6 @@
 package me.wolfyscript.utilities.api.inventory.custom_items.actions;
 
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.DataEntity;
 import org.bukkit.entity.Player;
 
 public class DataPlayer extends DataEntity {

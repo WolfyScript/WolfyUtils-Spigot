@@ -1,16 +1,13 @@
 package me.wolfyscript.utilities.registry;
 
 import com.google.common.base.Preconditions;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Supplier;
 import me.wolfyscript.utilities.util.Keyed;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.function.Supplier;
 
 public abstract class AbstractRegistry<M extends Map<NamespacedKey, V>, V extends Keyed> implements Registry<V> {
 

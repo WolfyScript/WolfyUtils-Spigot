@@ -23,8 +23,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
 
-import java.util.Locale;
-
 public class Permissions {
 
     private final WolfyUtils wolfyUtilities;

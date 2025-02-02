@@ -18,10 +18,11 @@
 
 package me.wolfyscript.utilities.compatibility.plugins.itemsadder;
 
-import java.util.Optional;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public class CustomStackWrapper implements CustomStack {
 

@@ -1,10 +1,5 @@
 package com.wolfyscript.utilities.bukkit.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.chat.Chat;
 import me.wolfyscript.utilities.util.NamespacedKey;
@@ -28,6 +23,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.StringUtil;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.*;
 
 public final class SpawnParticleAnimationCommand extends Command implements PluginIdentifiableCommand {
 

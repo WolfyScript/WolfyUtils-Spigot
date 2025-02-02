@@ -7,8 +7,8 @@ dependencies {
     compileOnly(fileTree("./libs/"))
     compileOnly("com.denizenscript:denizen:1.2.5-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.1")
-    compileOnly("com.willfp:eco:6.74.2")
-    compileOnly("com.github.LoneDev6:api-itemsadder:3.1.5")
+    compileOnly("com.willfp:eco:6.75.1")
+    compileOnly("dev.lone:api-itemsadder:4.0.2-beta-release-11")
     compileOnly("com.elmakers.mine.bukkit:MagicAPI:10.2")
 /*    compileOnly("com.github.AlessioGr:FancyBags:2.7.0")*/
     compileOnly("com.github.oraxen:oraxen:1.152.0")
