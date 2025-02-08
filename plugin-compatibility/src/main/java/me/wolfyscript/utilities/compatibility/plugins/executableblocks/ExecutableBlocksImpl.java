@@ -1,8 +1,6 @@
 package me.wolfyscript.utilities.compatibility.plugins.executableblocks;
 
 import com.ssomar.executableblocks.executableblocks.ExecutableBlocksManager;
-import java.util.List;
-import java.util.Optional;
 import me.wolfyscript.utilities.annotations.WUPluginIntegration;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.compatibility.PluginIntegrationAbstract;
@@ -10,6 +8,9 @@ import me.wolfyscript.utilities.compatibility.plugins.ExecutableBlocksIntegratio
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
+
+import java.util.List;
+import java.util.Optional;
 
 @WUPluginIntegration(pluginName = ExecutableBlocksIntegration.PLUGIN_NAME)
 public class ExecutableBlocksImpl extends PluginIntegrationAbstract implements ExecutableBlocksIntegration {
@@ -43,7 +44,7 @@ public class ExecutableBlocksImpl extends PluginIntegrationAbstract implements E
 
     @Override
     public List<String> getExecutableBlockIdsList() {
-        return manager.getExecutableBlockIdsList();
+        return manager.getLoadedObjectsIDs();
     }
 
     @Override

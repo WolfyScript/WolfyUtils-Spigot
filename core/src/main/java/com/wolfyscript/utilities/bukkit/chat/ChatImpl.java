@@ -1,7 +1,7 @@
 package com.wolfyscript.utilities.bukkit.chat;
 
-import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.bukkit.adapters.PlayerImpl;
+import com.wolfyscript.utilities.common.WolfyUtils;
 import me.wolfyscript.utilities.api.chat.ChatImplOld;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;

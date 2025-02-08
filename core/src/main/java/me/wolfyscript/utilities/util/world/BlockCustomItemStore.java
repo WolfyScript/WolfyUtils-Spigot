@@ -26,11 +26,11 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.util.NamespacedKey;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.UUID;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Replaced by {@link com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage}, that is available

@@ -3,8 +3,8 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
     id("com.wolfyscript.wolfyutils.spigot.java-conventions")
     id("io.github.goooler.shadow") version "8.1.7"
-    id("com.wolfyscript.devtools.docker.run") version "2.0-SNAPSHOT"
-    id("com.wolfyscript.devtools.docker.minecraft_servers") version "2.0-SNAPSHOT"
+    //id("com.wolfyscript.devtools.docker.run") version "2.0-SNAPSHOT"
+    //id("com.wolfyscript.devtools.docker.minecraft_servers") version "2.0-SNAPSHOT"
 }
 
 description = "wolfyutils-spigot"
@@ -38,9 +38,9 @@ tasks.named<ProcessResources>("processResources") {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
-val debugPort: String = "5006"
+//val debugPort: String = "5006"
 
-minecraftDockerRun {
+/*minecraftDockerRun {
 //    clean.set(false)
     val customEnv = env.get().toMutableMap()
     customEnv["MEMORY"] = "2G"
@@ -48,9 +48,9 @@ minecraftDockerRun {
     customEnv["FORCE_REDOWNLOAD"] = "false"
     env.set(customEnv)
     arguments("--cpus", "2", "-it") // Constrain to only use 2 cpus, and allow for console interactivity with 'docker attach'
-}
+}*/
 
-minecraftServers {
+/*minecraftServers {
     serversDir.set(file("${System.getProperty("user.home")}${File.separator}minecraft${File.separator}test_servers_v4"))
     libName.set("${project.name}-${version}.jar")
     val debugPortMapping = "${debugPort}:${debugPort}"
@@ -105,7 +105,7 @@ minecraftServers {
             ports.set(setOf(debugPortMapping, "25571:25565"))
         }
     }
-}
+}*/
 
 tasks.named<ShadowJar>("shadowJar") {
     dependsOn(project(":nmsutil").tasks.named("shadowJar"))
@@ -124,7 +124,6 @@ tasks.named<ShadowJar>("shadowJar") {
         include(dependency(apis.dataformat.hocon.get().toString()))
         include(dependency("${libs.jackson.get().group}:.*"))
         include(dependency("${libs.bstats.get().group}:.*"))
-        include(dependency("${libs.nbtapi.api.get().group}:.*"))
         include(dependency("${libs.reflections.get().group}:.*"))
         include(dependency("${libs.javassist.get().group}:.*"))
         include(dependency("${libs.adventure.api.get().group}:.*"))

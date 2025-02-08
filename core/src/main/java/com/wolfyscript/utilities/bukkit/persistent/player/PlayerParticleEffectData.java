@@ -2,12 +2,13 @@ package com.wolfyscript.utilities.bukkit.persistent.player;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wolfyscript.utilities.KeyedStaticId;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.UUID;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.particles.ParticleUtils;
 import org.bukkit.inventory.EquipmentSlot;
+
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.UUID;
 
 @KeyedStaticId(value = "wolfyutilities:particles/effects")
 public class PlayerParticleEffectData extends CustomPlayerData {

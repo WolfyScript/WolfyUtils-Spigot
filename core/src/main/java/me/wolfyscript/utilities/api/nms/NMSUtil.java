@@ -19,8 +19,6 @@
 package me.wolfyscript.utilities.api.nms;
 
 import com.wolfyscript.utilities.bukkit.nms.fallback.FallbackNMSEntry;
-import java.util.ArrayList;
-import java.util.List;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.util.Reflection;
 import me.wolfyscript.utilities.util.version.MinecraftVersion;
@@ -28,7 +26,9 @@ import me.wolfyscript.utilities.util.version.ServerVersion;
 import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public abstract class NMSUtil {
 

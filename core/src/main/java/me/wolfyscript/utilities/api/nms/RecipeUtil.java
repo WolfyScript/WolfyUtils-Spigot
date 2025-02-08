@@ -18,7 +18,6 @@
 
 package me.wolfyscript.utilities.api.nms;
 
-import com.wolfyscript.utilities.bukkit.nms.inventory.NMSInventoryUtils;
 import me.wolfyscript.utilities.api.nms.inventory.RecipeType;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.inventory.Inventory;

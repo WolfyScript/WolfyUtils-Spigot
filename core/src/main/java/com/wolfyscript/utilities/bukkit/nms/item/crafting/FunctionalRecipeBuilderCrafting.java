@@ -1,9 +1,10 @@
 package com.wolfyscript.utilities.bukkit.nms.item.crafting;
 
-import java.util.Optional;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Optional;
 
 public abstract class FunctionalRecipeBuilderCrafting extends FunctionalRecipeBuilder<CraftingInventory> {
 

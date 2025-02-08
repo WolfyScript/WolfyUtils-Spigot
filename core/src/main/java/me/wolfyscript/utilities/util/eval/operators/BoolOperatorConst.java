@@ -22,10 +22,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import java.io.IOException;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.eval.context.EvalContext;
 import me.wolfyscript.utilities.util.json.jackson.annotations.OptionalValueSerializer;
+
+import java.io.IOException;
 
 @OptionalValueSerializer(serializer = BoolOperatorConst.ValueSerializer.class)
 public class BoolOperatorConst extends BoolOperator {

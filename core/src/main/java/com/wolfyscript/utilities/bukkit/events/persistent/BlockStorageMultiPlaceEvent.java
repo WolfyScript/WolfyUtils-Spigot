@@ -2,14 +2,14 @@ package com.wolfyscript.utilities.bukkit.events.persistent;
 
 import com.google.common.collect.ImmutableList;
 import com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage;
-import java.util.List;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class BlockStorageMultiPlaceEvent extends BlockStoragePlaceEvent implements BlockStorageEvent {
 

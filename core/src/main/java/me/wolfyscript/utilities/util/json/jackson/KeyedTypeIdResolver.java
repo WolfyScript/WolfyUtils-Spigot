@@ -24,11 +24,11 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.wolfyscript.utilities.json.jackson.MissingImplementationException;
-import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.registry.IRegistry;
 import me.wolfyscript.utilities.registry.Registry;
 import me.wolfyscript.utilities.registry.TypeRegistry;
 import me.wolfyscript.utilities.util.Keyed;
+import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.json.jackson.annotations.KeyedBaseType;
 import org.jetbrains.annotations.Nullable;
 

@@ -3,7 +3,6 @@ package com.wolfyscript.utilities.bukkit.commands;
 import com.wolfyscript.utilities.bukkit.nbt.NBTQuery;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTItem;
-import java.io.File;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
 import org.bukkit.command.Command;
@@ -14,6 +13,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
 
 public final class QueryDebugCommand extends Command implements PluginIdentifiableCommand {
 
@@ -43,7 +44,7 @@ public final class QueryDebugCommand extends Command implements PluginIdentifiab
                     NBTItem nbtItem = new NBTItem(stack);
                     NBTCompound result = nbtQuery.run(nbtItem);
 
-                    System.out.println(result.toString());
+                    /*System.out.println(result.toString());*/
                     if (args.length > 0) {
                         if (args[0].equalsIgnoreCase("true")) {
                             ItemStack stackToMergeIn = player.getEquipment().getItem(EquipmentSlot.OFF_HAND);

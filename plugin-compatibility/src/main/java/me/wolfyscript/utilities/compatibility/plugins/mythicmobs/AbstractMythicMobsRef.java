@@ -20,14 +20,15 @@ package me.wolfyscript.utilities.compatibility.plugins.mythicmobs;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import java.io.IOException;
-import java.util.Objects;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.api.nms.nbt.NBTItem;
 import me.wolfyscript.utilities.api.nms.nbt.NBTTagString;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
+import java.util.Objects;
 
 public abstract class AbstractMythicMobsRef extends APIReference implements MythicMobsRef {
 

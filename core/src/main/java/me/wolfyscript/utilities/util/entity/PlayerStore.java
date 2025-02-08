@@ -18,9 +18,10 @@
 
 package me.wolfyscript.utilities.util.entity;
 
+import me.wolfyscript.utilities.util.NamespacedKey;
+
 import java.util.HashMap;
 import java.util.Map;
-import me.wolfyscript.utilities.util.NamespacedKey;
 
 @Deprecated
 public class PlayerStore {

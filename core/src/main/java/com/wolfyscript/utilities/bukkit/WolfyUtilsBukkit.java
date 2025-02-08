@@ -1,13 +1,13 @@
 package com.wolfyscript.utilities.bukkit;
 
+import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
+import com.wolfyscript.utilities.bukkit.language.LangAPISpigot;
 import com.wolfyscript.utilities.common.WolfyCore;
 import com.wolfyscript.utilities.common.WolfyUtils;
 import com.wolfyscript.utilities.common.chat.Chat;
-import com.wolfyscript.utilities.bukkit.language.LangAPISpigot;
 import me.wolfyscript.utilities.api.Permissions;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.WolfyUtilities;
-import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
 import me.wolfyscript.utilities.api.config.ConfigAPI;
 import me.wolfyscript.utilities.api.console.Console;
 import me.wolfyscript.utilities.api.inventory.BookUtil;

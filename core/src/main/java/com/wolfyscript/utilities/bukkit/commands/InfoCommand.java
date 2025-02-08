@@ -18,7 +18,6 @@
 
 package com.wolfyscript.utilities.bukkit.commands;
 
-import java.util.List;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.chat.Chat;
 import me.wolfyscript.utilities.util.version.ServerVersion;
@@ -31,7 +30,6 @@ import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class InfoCommand extends Command implements PluginIdentifiableCommand {
 

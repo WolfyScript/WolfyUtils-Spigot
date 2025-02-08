@@ -1,7 +1,6 @@
 package com.wolfyscript.utilities.bukkit.commands;
 
 import com.wolfyscript.utilities.bukkit.chat.ChatImpl;
-import java.util.UUID;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.chat.PlayerAction;
 import org.bukkit.command.Command;
@@ -10,6 +9,8 @@ import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 public class ChatActionCommand extends Command implements PluginIdentifiableCommand {
 

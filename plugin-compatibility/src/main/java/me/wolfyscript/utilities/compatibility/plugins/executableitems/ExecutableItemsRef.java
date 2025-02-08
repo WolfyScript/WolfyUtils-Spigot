@@ -7,7 +7,6 @@ import com.ssomar.score.api.executableitems.config.ExecutableItemsManagerInterfa
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackIdentifier;
 import me.wolfyscript.utilities.api.inventory.custom_items.references.APIReference;
 import me.wolfyscript.utilities.compatibility.plugins.ExecutableItemsIntegration;
-import me.wolfyscript.utilities.compatibility.plugins.executableblocks.ExecutableBlocksStackIdentifier;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;

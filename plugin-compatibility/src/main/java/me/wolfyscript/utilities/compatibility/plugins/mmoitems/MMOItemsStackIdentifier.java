@@ -68,7 +68,8 @@ public class MMOItemsStackIdentifier implements StackIdentifier {
     public ItemStack stack(ItemCreateContext context) {
         MMOItem item = MMOItems.plugin.getMMOItem(itemType, itemName);
         if (item == null) return null;
-        ItemStack stack = item.newBuilder().buildSilently();
+
+        ItemStack stack = item.newBuilder().buildNBT().toItem();
         stack.setAmount(context.amount());
         return stack;
     }

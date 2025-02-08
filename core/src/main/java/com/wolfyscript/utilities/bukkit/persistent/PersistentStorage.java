@@ -5,12 +5,12 @@ import com.wolfyscript.utilities.bukkit.persistent.player.PlayerStorage;
 import com.wolfyscript.utilities.bukkit.persistent.world.WorldStorage;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * The PersistentStorage API allows plugins to store custom complex data into block/chunks and players.<br>

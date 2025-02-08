@@ -19,7 +19,6 @@
 package me.wolfyscript.utilities.api.inventory.custom_items.actions;
 
 import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
-import me.wolfyscript.utilities.api.inventory.custom_items.actions.DataLocation;
 import org.bukkit.block.Block;
 
 public class DataBlock extends DataLocation {

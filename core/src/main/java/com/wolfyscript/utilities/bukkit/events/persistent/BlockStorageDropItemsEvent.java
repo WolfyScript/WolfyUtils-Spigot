@@ -1,8 +1,6 @@
 package com.wolfyscript.utilities.bukkit.events.persistent;
 
 import com.wolfyscript.utilities.bukkit.persistent.world.BlockStorage;
-import java.util.List;
-import java.util.Optional;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Item;
@@ -12,6 +10,9 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Optional;
 
 public class BlockStorageDropItemsEvent extends Event implements BlockStorageEvent, Cancellable {
 
