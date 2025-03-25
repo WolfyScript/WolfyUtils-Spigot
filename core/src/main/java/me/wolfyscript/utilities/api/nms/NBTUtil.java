@@ -19,7 +19,7 @@
 package me.wolfyscript.utilities.api.nms;
 
 import me.wolfyscript.utilities.api.nms.nbt.NBTItem;
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 @Deprecated(since = "4.16.2.0", forRemoval = true)
 public abstract class NBTUtil extends UtilComponent {
