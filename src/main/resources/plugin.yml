@@ -1,7 +1,7 @@
 name: WolfyUtilities
 version: '${project.version}'
 main: com.wolfyscript.utilities.bukkit.WolfyCoreBukkit
-api-version: 1.16
+api-version: 1.21.4
 authors: [ WolfyScript ]
 load: STARTUP
 depend:
@@ -18,9 +18,6 @@ loadbefore:
   - StackableItems
   - DiSky
   - EpicWorldGenerator
-
-depend:
-  - NBTAPI
 
 softdepend:
   - Magic
