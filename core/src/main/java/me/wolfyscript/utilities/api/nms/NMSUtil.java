@@ -35,15 +35,7 @@ public abstract class NMSUtil {
     private static final List<VersionHandler> versionHandlers = new ArrayList<>();
     private static final HashMap<String, VersionHandler> versionAdapters = new HashMap<>();
 
-    static {
-        registerAdapter(new VersionAdapter("v1_17_R1"));
-        registerAdapter(new VersionAdapter("v1_18_R1"));
-
-        registerAdapter(new MinecraftToNMSRevision("v1_20_R1", "1.20.0", "1.20.1"));
-        registerAdapter(new MinecraftToNMSRevision("v1_20_R2", "1.20.2"));
-        registerAdapter(new MinecraftToNMSRevision("v1_20_R3", "1.20.3", "1.20.4"));
-        registerAdapter(new MinecraftToNMSRevision("v1_20_R4", "1.20.5", "1.20.6"));
-    }
+    static { }
 
     private static void registerAdapter(VersionHandler adapter) {
         for (String minecraftVersion : adapter.getMinecraftVersions()) {

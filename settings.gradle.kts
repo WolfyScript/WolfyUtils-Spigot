@@ -11,19 +11,7 @@ pluginManagement {
 
 sequenceOf(
     "core",
-    "plugin-compatibility",
-    "nmsutil",
-    "nmsutil:v1_17_R1_P1",
-    "nmsutil:v1_18_R1",
-    "nmsutil:v1_18_R1_P1",
-    "nmsutil:v1_18_R2",
-    "nmsutil:v1_19_R3",
-    "nmsutil:v1_19_R1",
-    "nmsutil:v1_19_R2",
-    "nmsutil:v1_20_R1",
-    "nmsutil:v1_20_R2",
-    "nmsutil:v1_20_R3",
-    "nmsutil:v1_20_R4",
+    "plugin-compatibility"
 ).forEach {
     include(":${it}")
     project(":${it}").projectDir = file(it.replace(":", "/"))

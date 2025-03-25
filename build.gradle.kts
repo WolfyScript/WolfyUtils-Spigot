@@ -14,7 +14,6 @@ dependencies {
     api(apis.wolfyutils)
     implementation(project(":core"))
     implementation(project(":plugin-compatibility"))
-    implementation(project(":nmsutil"))
     api(libs.bstats)
     api(libs.guice)
     api(libs.reflections)
@@ -56,32 +55,8 @@ minecraftServers {
     libName.set("${project.name}-${version}.jar")
     val debugPortMapping = "${debugPort}:${debugPort}"
     servers {
-        register("spigot_1_17") {
-            version.set("1.17.1")
-            imageVersion.set("java17")
-            type.set("SPIGOT")
-            ports.set(setOf(debugPortMapping, "25565:25565"))
-        }
-        register("spigot_1_18") {
-            version.set("1.18.2")
-            imageVersion.set("java17")
-            type.set("SPIGOT")
-            ports.set(setOf(debugPortMapping, "25566:25565"))
-        }
-        register("spigot_1_19") {
-            version.set("1.19.4")
-            imageVersion.set("java17")
-            type.set("SPIGOT")
-            ports.set(setOf(debugPortMapping, "25567:25565"))
-        }
-        register("spigot_1_20_6") {
-            version.set("1.20.6")
-            type.set("SPIGOT")
-            imageVersion.set("java21")
-            ports.set(setOf(debugPortMapping, "25568:25565"))
-        }
         register("spigot_1_21") {
-            version.set("1.21.3")
+            version.set("1.21.4")
             type.set("SPIGOT")
             extraEnv.put("BUILD_FROM_SOURCE", "true")
             imageVersion.set("java21-graalvm") // graalvm contains the jdk required to build from source
@@ -89,27 +64,15 @@ minecraftServers {
         }
         // Paper test servers
         register("paper_1_21") {
-            version.set("1.21.3")
+            version.set("1.21.4")
             type.set("PAPER")
             imageVersion.set("java21")
             ports.set(setOf(debugPortMapping, "25569:25565"))
-        }
-        register("paper_1_20") {
-            version.set("1.20.6")
-            type.set("PAPER")
-            imageVersion.set("java21")
-            ports.set(setOf(debugPortMapping, "25570:25565"))
-        }
-        register("paper_1_19") {
-            version.set("1.19.4")
-            type.set("PAPER")
-            ports.set(setOf(debugPortMapping, "25571:25565"))
         }
     }
 }
 
 tasks.named<ShadowJar>("shadowJar") {
-    dependsOn(project(":nmsutil").tasks.named("shadowJar"))
     dependsOn(project(":core").tasks.named("shadowJar"))
     mustRunAfter("jar")
     mergeServiceFiles()
@@ -133,7 +96,6 @@ tasks.named<ShadowJar>("shadowJar") {
         include(dependency("${libs.typesafe.config.get().group}:.*"))
         include(project(":core"))
         include(project(":plugin-compatibility"))
-        include(project(":nmsutil"))
     }
 
     // Always required to be shaded and relocated!
