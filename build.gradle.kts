@@ -5,6 +5,7 @@ plugins {
     id("io.github.goooler.shadow") version "8.1.7"
     id("com.wolfyscript.devtools.docker.run") version "a2.0.0.1"
     id("com.wolfyscript.devtools.docker.minecraft_servers") version "a2.0.0.1"
+    id("com.modrinth.minotaur") version "2.+"
 }
 
 description = "wolfyutils-spigot"
@@ -152,7 +153,6 @@ tasks.named("test") {
     dependsOn.add(tasks.named("shadowJar"))
 }
 
-
 artifactory {
 
     publish {
@@ -170,4 +170,15 @@ artifactory {
         }
     }
 
+}
+
+modrinth {
+    token.set(System.getenv("MODRINTH_TOKEN")) // Remember to have the MODRINTH_TOKEN environment variable set or else this will fail - just make sure it stays private!
+    projectId.set("wolfyutils") // This can be the project ID or the slug. Either will work!
+    versionNumber.set(project.version.toString()) // You don't need to set this manually. Will fail if Modrinth has this version already
+    versionType.set("release") // TODO: Automatically determine this from the version
+    uploadFile.set(tasks.shadowJar) // Use the shadowed jar !!
+    changelog.set(System.getenv("CHANGELOG"))
+    gameVersions.addAll("1.21.4") // Must be an array, even with only one version
+    loaders.addAll("bukkit", "spigot", "paper", "purpur") // Must also be an array - no need to specify this if you're using Loom or ForgeGradle
 }
