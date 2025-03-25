@@ -57,11 +57,11 @@ public final class SpawnParticleAnimationCommand extends Command implements Plug
                         particleEffect.setTimeSupplier(new TimerPi(40, 2*Math.PI));
                         particleEffect.setAnimator(new AnimatorSphere(2));
 
-                        var first = new ParticleEffect(Particle.SMOKE_NORMAL);
+                        var first = new ParticleEffect(Particle.SMOKE);
                         first.setTimeSupplier(new TimerLinear(1, 20));
                         first.setAnimator(new AnimatorBasic());
 
-                        var second = new ParticleEffect(Particle.SMOKE_NORMAL);
+                        var second = new ParticleEffect(Particle.SMOKE);
                         second.setTimeSupplier(new TimerPi(20, 2*Math.PI));
                         second.setAnimator(new AnimatorCircle(1));
 

@@ -114,7 +114,7 @@ public class ItemUtils {
         if (ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 20, 5))) {
             return ItemFlag.valueOf("HIDE_ADDITIONAL_TOOLTIP");
         } else {
-            return ItemFlag.HIDE_POTION_EFFECTS;
+            return ItemFlag.HIDE_ADDITIONAL_TOOLTIP;
         }
     }
 

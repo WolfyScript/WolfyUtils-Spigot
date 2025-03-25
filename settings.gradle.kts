@@ -22,7 +22,7 @@ dependencyResolutionManagement {
         // Third-party libraries
         create("libs") {
             // versions
-            version("adventure", "4.14.0")
+            version("adventure", "4.18.0")
 
             // libs
             library("guice", "com.google.inject:guice:5.1.0")

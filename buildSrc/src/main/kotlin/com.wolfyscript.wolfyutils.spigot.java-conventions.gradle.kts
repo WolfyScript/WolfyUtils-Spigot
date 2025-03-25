@@ -32,7 +32,7 @@ java {
 val apiVersion = "4.16.1-SNAPSHOT"
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
     compileOnly("com.wolfyscript.wolfyutils:wolfyutilities:${apiVersion}")
     compileOnly("com.fasterxml.jackson.core:jackson-databind:2.14.0-rc1")
     compileOnly("org.jetbrains:annotations:23.0.0")

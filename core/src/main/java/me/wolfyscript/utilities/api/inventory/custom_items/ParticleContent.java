@@ -253,7 +253,7 @@ public class ParticleContent {
         public ParticleAnimation getByEquipmentSlot(EquipmentSlot equipmentSlot) {
             return switch (equipmentSlot) {
                 case HEAD -> getHead();
-                case CHEST -> getChest();
+                case CHEST, BODY -> getChest(); // TODO
                 case LEGS -> getLegs();
                 case FEET -> getFeet();
                 case HAND -> getMainHand();
