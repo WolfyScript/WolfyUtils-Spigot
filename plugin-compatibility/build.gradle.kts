@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     compileOnly("com.ssomar.executableblocks:ExecutableBlocks:4.24.4.15")
-    compileOnly(fileTree("./libs/"))
+    compileOnly("com.ssomar.score:SCore:4.24.4.15")
     compileOnly("com.denizenscript:denizen:1.2.5-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.1")
     compileOnly("com.willfp:eco:6.75.1")
