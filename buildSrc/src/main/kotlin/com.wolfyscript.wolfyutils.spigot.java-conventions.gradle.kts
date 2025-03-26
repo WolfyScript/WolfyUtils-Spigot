@@ -20,6 +20,7 @@ repositories {
     maven(url = "https://mvn.lumine.io/repository/maven-public/")
     maven(url = "https://maven.devs.beer/")
     maven(url = "https://repo.auxilor.io/repository/maven-public/")
+    maven(url = "https://repo.oraxen.com/releases")
 }
 
 java {
