@@ -9,7 +9,6 @@ repositories {
     mavenCentral()
 
     maven(url = "https://artifacts.wolfyscript.com/artifactory/gradle-dev")
-
     maven(url = "https://repo.codemc.io/repository/maven-public/")
     maven(url = "https://maven.enginehub.org/repo/")
     maven(url = "https://repo.maven.apache.org/maven2/")
@@ -18,10 +17,9 @@ repositories {
     maven(url = "https://nexus.phoenixdevt.fr/repository/maven-public/")
     maven(url = "https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven(url = "https://libraries.minecraft.net/")
-    maven(url="https://mvn.lumine.io/repository/maven-public/")
-    maven(url="https://maven.devs.beer/")
-
-    maven("https://repo.auxilor.io/repository/maven-public/")
+    maven(url = "https://mvn.lumine.io/repository/maven-public/")
+    maven(url = "https://maven.devs.beer/")
+    maven(url = "https://repo.auxilor.io/repository/maven-public/")
 }
 
 java {

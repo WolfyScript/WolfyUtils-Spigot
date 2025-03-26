@@ -6,7 +6,7 @@ dependencies {
     compileOnly("com.ssomar.executableblocks:ExecutableBlocks:4.24.4.15")
     compileOnly("com.ssomar.score:SCore:4.24.4.15")
     compileOnly("com.denizenscript:denizen:1.2.5-SNAPSHOT")
-    compileOnly("me.clip:placeholderapi:2.11.1")
+    compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.willfp:eco:6.75.1")
     compileOnly("dev.lone:api-itemsadder:4.0.2-beta-release-11")
     compileOnly("com.elmakers.mine.bukkit:MagicAPI:10.2")
