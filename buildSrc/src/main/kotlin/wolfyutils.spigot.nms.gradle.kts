@@ -16,13 +16,13 @@ repositories {
     maven(url = "https://libraries.minecraft.net/")
 }
 
-val apiVersion = "4.16.1-SNAPSHOT"
+val libs = extensions.getByType(org.gradle.accessors.dm.LibrariesForLibs::class)
 
 dependencies {
-    compileOnly("com.wolfyscript.wolfyutils:wolfyutilities:${apiVersion}")
+    compileOnly(libs.wolfyutils)
     compileOnly(project(":core"))
     // Common Test libs
-    testImplementation("com.wolfyscript.wolfyutils:wolfyutilities:${apiVersion}")
+    testImplementation(libs.wolfyutils)
 }
 
 java {

@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly(files(libs::class.java.protectionDomain.codeSource.location))
     implementation("org.jfrog.buildinfo:build-info-extractor-gradle:5.2.0")
     implementation("io.papermc.paperweight.userdev:io.papermc.paperweight.userdev.gradle.plugin:2.0.0-beta.14")
 }

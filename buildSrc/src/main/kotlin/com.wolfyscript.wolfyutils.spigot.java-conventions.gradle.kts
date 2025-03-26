@@ -29,19 +29,19 @@ java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
-val apiVersion = "4.16.1-SNAPSHOT"
+val libs = extensions.getByType(org.gradle.accessors.dm.LibrariesForLibs::class)
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
-    compileOnly("com.wolfyscript.wolfyutils:wolfyutilities:${apiVersion}")
-    compileOnly("com.fasterxml.jackson.core:jackson-databind:2.14.0-rc1")
-    compileOnly("org.jetbrains:annotations:23.0.0")
-    compileOnly("com.mojang:authlib:1.5.21")
-    compileOnly("io.netty:netty-all:4.1.85.Final")
-    compileOnly("org.bstats:bstats-bukkit:3.0.0")
-    compileOnly("de.tr7zw:item-nbt-api-plugin:2.14.1")
+    compileOnly(libs.io.papermc.paper)
+    compileOnly(libs.wolfyutils)
+    compileOnly(libs.jackson.dataformat.hocon)
+    compileOnly(libs.jetbrains.annotations)
+    compileOnly(libs.mojang.authlib)
+    compileOnly(libs.netty)
+    compileOnly(libs.bstats)
+    compileOnly(libs.nbtapi)
     // Common Test libs
-    testImplementation("com.wolfyscript.wolfyutils:wolfyutilities:${apiVersion}")
+    testImplementation(libs.wolfyutils)
 }
 
 publishing {

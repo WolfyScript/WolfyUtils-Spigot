@@ -2,31 +2,28 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id("com.wolfyscript.wolfyutils.spigot.java-conventions")
-    id("io.github.goooler.shadow") version "8.1.7"
-    id("com.wolfyscript.devtools.docker.run") version "a2.0.0.1"
-    id("com.wolfyscript.devtools.docker.minecraft_servers") version "a2.0.0.1"
-    id("com.modrinth.minotaur") version "2.+"
+    alias(libs.plugins.goooler.shadow)
+    alias(libs.plugins.devtools.docker.run)
+    alias(libs.plugins.devtools.docker.minecraft)
+    alias(libs.plugins.modrinth.minotaur)
 }
 
 description = "wolfyutils-spigot"
 
 dependencies {
-    api(apis.wolfyutils)
+    api(libs.wolfyutils)
     implementation(project(":core"))
     implementation(project(":plugin-compatibility"))
     api(libs.bstats)
-    api(libs.guice)
+    api(libs.inject.guice)
     api(libs.reflections)
     api(libs.javassist)
     api(libs.adventure.api)
     api(libs.adventure.minimessage)
     api(libs.adventure.platform.bukkit)
-    api(libs.nbtapi.api)
+    api(libs.nbtapi)
 
     testImplementation(project(":core"))
-    testImplementation(testLibs.junit.jupiter)
-    testImplementation(testLibs.mockito)
-    testImplementation(testLibs.mockbukkit)
 }
 
 java {
@@ -84,9 +81,9 @@ tasks.named<ShadowJar>("shadowJar") {
     archiveClassifier.set("")
 
     dependencies {
-        include(dependency(apis.wolfyutils.get().toString()))
-        include(dependency(apis.dataformat.hocon.get().toString()))
-        include(dependency("${libs.jackson.get().group}:.*"))
+        include(dependency(libs.wolfyutils.get().toString()))
+        include(dependency(libs.jackson.dataformat.hocon.get().toString()))
+        include(dependency("${libs.jackson.databind.get().group}:.*"))
         include(dependency("${libs.bstats.get().group}:.*"))
         include(dependency("${libs.reflections.get().group}:.*"))
         include(dependency("${libs.javassist.get().group}:.*"))

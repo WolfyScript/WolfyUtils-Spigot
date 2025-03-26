@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id("com.wolfyscript.wolfyutils.spigot.java-conventions")
-    id("com.github.johnrengelman.shadow") version ("8.1.1")
+    alias(libs.plugins.goooler.shadow)
 }
 
 dependencies {
@@ -12,7 +12,7 @@ dependencies {
     compileOnly(group = "com.plotsquared", name = "PlotSquared-Core", version = "6.4.0")
     compileOnly(group = "com.plotsquared", name = "PlotSquared-Bukkit", version = "6.4.0")
     compileOnly(group = "com.gmail.nossr50.mcMMO", name = "mcMMO", version = "2.2.030")
-    compileOnly(libs.guice)
+    compileOnly(libs.inject.guice)
     compileOnly(libs.reflections)
     compileOnly(libs.javassist)
     compileOnly(libs.adventure.api)
@@ -25,6 +25,6 @@ description = "core"
 
 tasks.named<ShadowJar>("shadowJar") {
     dependencies {
-        include("com.wolfyscript.wolfyutils:wolfyutilities:4.16.1-SNAPSHOT")
+        include(libs.wolfyutils.toString())
     }
 }
