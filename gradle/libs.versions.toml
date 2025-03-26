@@ -5,7 +5,7 @@ kotlin-stdlib = "2.0.20"
 jackson = "2.15.4"
 guava = "31.1-jre"
 guice = "7.0.0"
-authlib = "1.5.21"
+authlib = "3.11.50"
 bstats = "3.0.0"
 dataformat-hocon = "2.1-SNAPSHOT"
 netty = "4.1.85.Final"
@@ -37,8 +37,8 @@ jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "j
 
 # Misc (Utils, Datastructurs, etc.)
 inject-guice = { module = "com.google.inject:guice", version.ref = "guice" }
-com-google-guava-guava = { module = "com.google.guava:guava", version.ref = "guava" }
-org-apache-commons-commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang3" }
+google-guava = { module = "com.google.guava:guava", version.ref = "guava" }
+commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commons-lang3" }
 reflections = { module = "org.reflections:reflections", version.ref = "reflections" }
 fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil" }
 netty = { module = "io.netty:netty-all", version.ref = "netty" }
