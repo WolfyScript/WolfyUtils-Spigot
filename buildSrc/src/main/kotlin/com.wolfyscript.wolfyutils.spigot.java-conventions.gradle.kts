@@ -41,6 +41,7 @@ dependencies {
     compileOnly(libs.nbtapi)
     // Common Test libs
     testImplementation(libs.wolfyutils)
+    testImplementation(libs.junit.jupiter)
 }
 
 publishing {

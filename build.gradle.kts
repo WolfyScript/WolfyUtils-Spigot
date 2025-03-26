@@ -24,6 +24,7 @@ dependencies {
     api(libs.nbtapi)
 
     testImplementation(project(":core"))
+
 }
 
 java {

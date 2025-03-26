@@ -30,6 +30,9 @@ wolfyutils = "4.16.1-SNAPSHOT"
 nbtapi = "2.14.1"
 ## ##
 
+## Testing
+junit-jupiter = "5.8.2"
+
 [libraries]
 # Kotlin & Jetbrains dependencies
 jetbrains-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin-stdlib" }
@@ -63,6 +66,9 @@ bstats = { module = "org.bstats:bstats-bukkit", version.ref = "bstats" }
 nbtapi = { module = "de.tr7zw:item-nbt-api-plugin", version.ref = "nbtapi"}
 adventure-platform-bukkit = { module = "net.kyori:adventure-platform-bukkit", version.ref = "adventure-platform-api" }
 ## ##
+
+## Testing
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
 
 [plugins]
 goooler-shadow = { id = "io.github.goooler.shadow", version.ref = "shadow" }
