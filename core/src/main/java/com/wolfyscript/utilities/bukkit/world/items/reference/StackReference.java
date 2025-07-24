@@ -97,7 +97,7 @@ public class StackReference implements Copyable<StackReference> {
         this.amount = stackReference.amount;
         this.core = stackReference.core;
         this.parserKey = stackReference.parserKey;
-        this.stack = stackReference.stack;
+        this.stack = stackReference.originalStack();
         this.identifier = getOrParseIdentifier();
     }
 
